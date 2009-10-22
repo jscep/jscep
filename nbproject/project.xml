@@ -6,7 +6,7 @@
             <name>jSCEP</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <source-roots>
-                <root id="src.com.dir"/>
+                <root id="src.main.dir"/>
             </source-roots>
             <test-roots>
                 <root id="test.test.dir"/>
