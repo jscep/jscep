@@ -22,19 +22,12 @@
 
 package com.google.code.jscep.response;
 
-import javax.security.cert.X509Certificate;
+import java.security.cert.X509Certificate;
 
-/**
- * Created by IntelliJ IDEA.
- * User: david
- * Date: 23-Oct-2009
- * Time: 16:41:48
- * To change this template use File | Settings | File Templates.
- */
 public class CaCertificateResponse implements ScepResponse {
     private final X509Certificate ca;
     private final X509Certificate ra;
-    
+
     public CaCertificateResponse(X509Certificate ca) {
         this(ca, null);
     }

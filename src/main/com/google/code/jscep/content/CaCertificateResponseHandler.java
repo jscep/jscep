@@ -24,8 +24,9 @@ package com.google.code.jscep.content;
 
 import com.google.code.jscep.response.CaCertificateResponse;
 
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.io.IOException;
 import java.net.ContentHandler;
 import java.net.URLConnection;
@@ -33,9 +34,10 @@ import java.net.URLConnection;
 public class CaCertificateResponseHandler extends ContentHandler {
     public CaCertificateResponse getContent(URLConnection conn) throws IOException {
         try {
-            X509Certificate cert = X509Certificate.getInstance(conn.getInputStream());
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            X509Certificate ca = (X509Certificate) cf.generateCertificate(conn.getInputStream());
 
-            return new CaCertificateResponse(cert);
+            return new CaCertificateResponse(ca);
         } catch (CertificateException ce) {
             throw new IOException(ce);
         }

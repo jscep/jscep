@@ -22,9 +22,6 @@
 
 package com.google.code.jscep.content;
 
-import com.google.code.jscep.content.CaCapabilitiesResponseHandler;
-import com.google.code.jscep.content.CaCertificateResponseHandler;
-
 import java.net.ContentHandler;
 import java.net.ContentHandlerFactory;
 

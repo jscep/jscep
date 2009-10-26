@@ -20,24 +20,12 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep;
 
-public class GetNextCaCert implements ScepRequest {
-    private static final String OPERATION = "GetNextCaCert";
-    private String ca;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
 
-    public GetNextCaCert() {
-    }
-
-    public GetNextCaCert(String ca) {
-        this.ca = ca;
-    }
-
-    public String getOperation() {
-        return OPERATION;
-    }
-
-    public String getMessage() {
-        return ca;
+public class MessageGenerator {
+    public MessageGenerator() {
+        CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
     }
 }

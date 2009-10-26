@@ -20,24 +20,28 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep.response;
 
-public class GetNextCaCert implements ScepRequest {
-    private static final String OPERATION = "GetNextCaCert";
-    private String ca;
+import com.google.code.jscep.PkiStatus;
 
-    public GetNextCaCert() {
+public class CertRep {
+    public String getTransactionId() {
+        return "";
     }
 
-    public GetNextCaCert(String ca) {
-        this.ca = ca;
+    public int getMessageType() {
+        return 3;
     }
 
-    public String getOperation() {
-        return OPERATION;
+    public byte[] getRecipientNonce() {
+        return new byte[16];
     }
 
-    public String getMessage() {
-        return ca;
+    public byte[] getSenderNonce() {
+        return new byte[16];
+    }
+
+    public int getPkiStatus() {
+        return PkiStatus.FAILURE;
     }
 }

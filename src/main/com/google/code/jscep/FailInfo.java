@@ -22,10 +22,10 @@
 
 package com.google.code.jscep;
 
-public enum FailInfo {
-    BAD_ALG,
-    BAD_MESSAGE_CHECK,
-    BAD_REQUEST,
-    BAD_TIME,
-    BAD_CERT_ID
+public interface FailInfo {
+    int badAlg = 0;
+    int badMessageCheck = 1;
+    int badRequest = 2;
+    int badTime = 3;
+    int badCertId = 4;
 }

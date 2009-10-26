@@ -20,24 +20,45 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep;
 
-public class GetNextCaCert implements ScepRequest {
-    private static final String OPERATION = "GetNextCaCert";
-    private String ca;
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.x509.X509Name;
 
-    public GetNextCaCert() {
+/**
+ * IssuerAndSubject ::= SEQUENCE {
+ * issuer Name,
+ * subject Name,
+ * }
+ */
+public class IssuerAndSubject implements DEREncodable {
+    private final X509Name issuer;
+    private final X509Name subject;
+
+    public IssuerAndSubject(ASN1Sequence seq) {
+        this.issuer = (X509Name) seq.getObjectAt(0);
+        this.subject = (X509Name) seq.getObjectAt(1);
     }
 
-    public GetNextCaCert(String ca) {
-        this.ca = ca;
+    public IssuerAndSubject(X509Name issuer, X509Name subject) {
+        this.issuer = issuer;
+        this.subject = subject;
     }
 
-    public String getOperation() {
-        return OPERATION;
+    public DERObject getDERObject() {
+        ASN1EncodableVector v = new ASN1EncodableVector();
+
+        v.add(issuer);
+        v.add(subject);
+
+        return new DERSequence(v);
     }
 
-    public String getMessage() {
-        return ca;
+    public X509Name getIssuer() {
+        return issuer;
+    }
+
+    public X509Name getSubject() {
+        return subject;
     }
 }

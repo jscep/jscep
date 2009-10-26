@@ -23,29 +23,31 @@
 package com.google.code.jscep;
 
 import com.google.code.jscep.content.ScepContentHandlerFactory;
-import com.google.code.jscep.request.GetCACaps;
-import com.google.code.jscep.request.GetCACert;
-import com.google.code.jscep.request.ScepRequest;
+import com.google.code.jscep.request.*;
 import com.google.code.jscep.response.CaCapabilitiesResponse;
 import com.google.code.jscep.response.CaCertificateResponse;
+import com.google.code.jscep.response.CertRep;
 import com.google.code.jscep.response.ScepResponse;
-import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.x509.X509V3CertificateGenerator;
 
-import javax.crypto.KeyGenerator;
 import javax.net.ssl.*;
 import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.*;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 
 public class Requester {
     static {
@@ -81,24 +83,68 @@ public class Requester {
     public CaCertificateResponse getCaCertificate(String caIdentifier) throws IOException {
         ScepRequest req = new GetCACert(caIdentifier);
 
-        return (CaCertificateResponse) sendRequest(req); 
+        return (CaCertificateResponse) sendRequest(req);
+    }
+
+    public ScepResponse getCrl(X500Principal issuer, BigInteger serial) throws IOException {
+        Postable req = new GetCRL(issuer, serial);
+
+        return sendRequest(req);
+    }
+
+    public CertRep enroll(KeyPair pair, X500Principal subject, char[] password) throws IOException {
+        X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
+        try {
+            generator.setIssuerDN(subject);
+            generator.setSerialNumber(BigInteger.ONE);
+            generator.setSignatureAlgorithm("MD5withRSA");
+            generator.setSubjectDN(subject);
+            generator.setNotAfter(new Date());
+            generator.setNotBefore(new Date());
+            generator.setPublicKey(pair.getPublic());
+            X509Certificate cert = generator.generate(pair.getPrivate());
+            Postable req = new PkcsReq(cert, pair, password);
+
+            return (CertRep) sendRequest(req);
+        } catch (GeneralSecurityException gse) {
+            throw new RuntimeException(gse);
+        }
     }
 
     private ScepResponse sendRequest(ScepRequest msg) throws IOException {
+        return sendGetRequest(msg);
+    }
 
+    private ScepResponse sendRequest(Postable msg) throws IOException {
+        return sendPostRequest(msg);
+    }
+
+    private ScepResponse sendGetRequest(ScepRequest msg) throws IOException {
         URL operation;
         if (msg.getMessage() == null) {
             operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation());
         } else {
             operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation() + "&message=" + msg.getMessage());
         }
+        URLConnection conn = operation.openConnection(proxy);
+
+        return (ScepResponse) conn.getContent();
+    }
+
+    private ScepResponse sendPostRequest(Postable msg) throws IOException {
+        URL operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation());
         HttpURLConnection conn = (HttpURLConnection) operation.openConnection(proxy);
-        conn.setRequestMethod("GET");
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+
+        conn.getOutputStream().write((byte[]) msg.getMessage());
 
         return (ScepResponse) conn.getContent();
     }
 
     public static void main(String[] args) throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+
 
         HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
             public boolean verify(String hostname, SSLSession session) {
@@ -106,49 +152,32 @@ public class Requester {
             }
         });
         SSLContext ctx = SSLContext.getInstance("TLS");
-        ctx.init(null, new TrustManager[] {new X509TrustManager() {
+        ctx.init(null, new TrustManager[]{new X509TrustManager() {
             public void checkClientTrusted(X509Certificate[] chain, String authType) {
 
             }
+
             public void checkServerTrusted(X509Certificate[] chain, String authType) {
-                
+
             }
+
             public X509Certificate[] getAcceptedIssuers() {
-                   return null;
+                return null;
             }
         }}, null);
         HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
 
-        URL url = new URL("https://engtest76-3.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
+        URL url = new URL("https://engtest81-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("nj.proxy.avaya.com", 8000));
 //        Requester client = new Requester(url, proxy);
         Requester client = new Requester(url);
-        System.out.println(client.getCapabilities("tmdefaultca"));
-
-        CaCertificateResponse res = client.getCaCertificate("tmdefaultca");
-        System.out.println(res.getCaCertificate());
-        if (res.hasRaCertificate()) {
-            System.out.println(res.getRaCertificate());
-        }
 
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
         KeyPair pair = gen.genKeyPair();
-        AlgorithmIdentifier id = new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption);
-        SubjectPublicKeyInfo pki = new SubjectPublicKeyInfo(id, pair.getPublic().getEncoded());
-        System.out.println(pki);
 
-        X500Principal x500 = new X500Principal("CN=foo");
-        X509Principal x509 = new X509Principal(x500.getEncoded());
+        CaCertificateResponse res = client.getCaCertificate("tmclientca");
+        X509Certificate ca = res.getCaCertificate();
 
-        CertificationRequestInfo reqInfo = new CertificationRequestInfo(x509, pki, null);
-
-        AlgorithmIdentifier certReqAlg = new AlgorithmIdentifier(PKCSObjectIdentifiers.md5WithRSAEncryption);
-        CertificationRequest req = new CertificationRequest(reqInfo, certReqAlg, null);
-
-        System.out.println(req);
-
-        // org.bouncycastle.cms.CMSSignedData
-        // org.bouncycastle.cms.CMSEnvelopedData
-        // PKCS10CertificationRequest
+        client.getCrl(ca.getIssuerX500Principal(), ca.getSerialNumber());
     }
 }

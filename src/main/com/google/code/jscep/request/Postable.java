@@ -22,22 +22,5 @@
 
 package com.google.code.jscep.request;
 
-public class GetNextCaCert implements ScepRequest {
-    private static final String OPERATION = "GetNextCaCert";
-    private String ca;
-
-    public GetNextCaCert() {
-    }
-
-    public GetNextCaCert(String ca) {
-        this.ca = ca;
-    }
-
-    public String getOperation() {
-        return OPERATION;
-    }
-
-    public String getMessage() {
-        return ca;
-    }
+public interface Postable extends ScepRequest {
 }

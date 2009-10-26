@@ -81,7 +81,7 @@ public class CaCapabilitiesResponse implements ScepResponse {
     }
 
     public boolean supportsTripleDes() {
-       return supports(Capability.TRIPLE_DES);
+        return supports(Capability.TRIPLE_DES);
     }
 
     @Override

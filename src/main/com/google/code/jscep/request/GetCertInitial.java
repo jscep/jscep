@@ -22,12 +22,48 @@
 
 package com.google.code.jscep.request;
 
+import com.google.code.jscep.IssuerAndSubject;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.jce.X509Principal;
+
+import javax.security.auth.x500.X500Principal;
+import java.io.IOException;
+import java.security.KeyPair;
+import java.security.cert.X509Certificate;
+
 public class GetCertInitial extends AbstractPkiRequest {
-    public String getMessage() {
+    private final X500Principal issuer;
+    private final X500Principal subject;
+
+    public GetCertInitial(X500Principal issuer, X500Principal subject) {
+        this.issuer = issuer;
+        this.subject = subject;
+    }
+
+    @Override
+    protected DERPrintableString getMessageType() {
+        return new DERPrintableString("20");
+    }
+
+    @Override
+    protected ContentInfo getMessageData() throws IOException {
+        X509Name issuerName = new X509Principal(issuer.getEncoded());
+        X509Name subjectName = new X509Principal(subject.getEncoded());
+        IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
+
+        return new ContentInfo(PKCSObjectIdentifiers.data, ias);
+    }
+
+    @Override
+    protected X509Certificate getCertificate() {
         return null;
     }
 
-    public int getMessageType() {
-        return 20;
+    @Override
+    protected KeyPair getKeyPair() {
+        return null;
     }
 }

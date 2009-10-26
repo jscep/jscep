@@ -36,8 +36,7 @@ public class GetCACaps implements ScepRequest {
     public GetCACaps() {
     }
 
-    public GetCACaps(String ca)
-    {
+    public GetCACaps(String ca) {
         this.ca = ca;
     }
 
@@ -45,7 +44,7 @@ public class GetCACaps implements ScepRequest {
         return OPERATION;
     }
 
-    public String getMessage() {
+    public Object getMessage() {
         return ca;
     }
 }

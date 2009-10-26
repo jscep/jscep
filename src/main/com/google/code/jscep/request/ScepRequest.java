@@ -24,5 +24,5 @@ package com.google.code.jscep.request;
 
 public interface ScepRequest {
     String getOperation();
-    String getMessage();
+    Object getMessage();
 }

@@ -22,15 +22,8 @@
 
 package com.google.code.jscep;
 
-/**
- * Created by IntelliJ IDEA.
- * User: david
- * Date: 23-Oct-2009
- * Time: 17:27:30
- * To change this template use File | Settings | File Templates.
- */
-public enum PkiStatus {
-    SUCCESS,
-    PENDING,
-    FAILURE
+public interface PkiStatus {
+    int SUCCESS = 0;
+    int FAILURE = 2;
+    int PENDING = 3;
 }
