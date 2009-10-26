@@ -20,24 +20,16 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep;
 
-public class GetCACert implements ScepRequest {
-    private static final String OPERATION = "GetCACert";
-    private String ca;
+import org.bouncycastle.asn1.DERObjectIdentifier;
 
-    public GetCACert() {
-    }
-
-    public GetCACert(String ca) {
-        this.ca = ca;
-    }
-
-    public String getOperation() {
-        return OPERATION;
-    }
-
-    public String getMessage() {
-        return ca;
-    }
+public interface SCEPObjectIdentifiers {
+    DERObjectIdentifier messageType = new DERObjectIdentifier("2.16.840.1.113733.1.9.2");
+    DERObjectIdentifier pkiStatus = new DERObjectIdentifier("2.16.840.1.113733.1.9.3");
+    DERObjectIdentifier failInfo = new DERObjectIdentifier("2.16.840.1.113733.1.9.4");
+    DERObjectIdentifier senderNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.5");
+    DERObjectIdentifier recipientNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.6");
+    DERObjectIdentifier transId = new DERObjectIdentifier("2.16.840.1.113733.1.9.7");
+    DERObjectIdentifier extensionReq = new DERObjectIdentifier("2.16.840.1.113733.1.9.8");
 }

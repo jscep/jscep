@@ -20,24 +20,25 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep.content;
 
-public class GetCACert implements ScepRequest {
-    private static final String OPERATION = "GetCACert";
-    private String ca;
+import com.google.code.jscep.response.CaCertificateResponse;
 
-    public GetCACert() {
-    }
+import javax.security.cert.CertificateException;
+import javax.security.cert.X509Certificate;
+import java.io.IOException;
+import java.net.ContentHandler;
+import java.net.URLConnection;
 
-    public GetCACert(String ca) {
-        this.ca = ca;
-    }
+public class CaRaCertificateResponseHandler extends ContentHandler {
+    public CaCertificateResponse getContent(URLConnection conn) throws IOException {
+        try {
+            X509Certificate ca = X509Certificate.getInstance(conn.getInputStream());
+            X509Certificate ra = null;
 
-    public String getOperation() {
-        return OPERATION;
-    }
-
-    public String getMessage() {
-        return ca;
+            return new CaCertificateResponse(ca, ra);
+        } catch (CertificateException ce) {
+            throw new IOException(ce);
+        }
     }
 }
