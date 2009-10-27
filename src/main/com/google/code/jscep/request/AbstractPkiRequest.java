@@ -159,11 +159,11 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         AttributeTable table = new AttributeTable(attributes);
 
         List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
-        certList.add(getCertificate());
+        certList.add(getCaCertificate());
         CertStore certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
 
         signer.addCertificatesAndCRLs(certs);
-        signer.addSigner(getKeyPair().getPrivate(), getCertificate(), getDigestId(), table, null);
+        signer.addSigner(getKeyPair().getPrivate(), getCaCertificate(), getDigestId(), table, null);
 
         return signer.generate(signable, true, "BC").getEncoded();
     }
@@ -206,7 +206,7 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         return new DEROctetString(senderNonce);
     }
 
-    protected X509Certificate getCertificate() {
+    protected X509Certificate getCaCertificate() {
         return ca;
     }
 

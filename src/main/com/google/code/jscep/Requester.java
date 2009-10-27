@@ -38,14 +38,16 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 
 import javax.net.ssl.*;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.*;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.Security;
+import java.security.*;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +61,10 @@ public class Requester {
     private final URL url;
     private final Proxy proxy;
     private String caIdentifier;
+    private X509Certificate existing;
+    private X509Certificate ca;
+    private X509Certificate ra;
+    private KeyPair keyPair;
 
     public Requester(URL url) {
         this(url, Proxy.NO_PROXY);
@@ -69,17 +75,27 @@ public class Requester {
         this.proxy = proxy;
     }
 
+    public void initialize(X509Certificate ca) {
+        this.ca = ca;
+        try {
+            KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+            keyPair = gen.generateKeyPair();
+        } catch (NoSuchAlgorithmException nsae) {
+            throw new RuntimeException(nsae);
+        }
+    }
+
     public void setCaIdentifier(String caIdentifier) {
         this.caIdentifier = caIdentifier;
     }
 
-    public CaCapabilitiesResponse getCapabilities() throws IOException {
+    private CaCapabilitiesResponse getCapabilities() throws IOException {
         ScepRequest req = new GetCACaps(caIdentifier);
 
         return (CaCapabilitiesResponse) sendRequest(req);
     }
 
-    public List<X509Certificate> getCaCertificate() throws IOException {
+    private List<X509Certificate> getCaCertificate() throws IOException {
         ScepRequest req = new GetCACert(caIdentifier);
         CaCertificateResponse res = (CaCertificateResponse) sendRequest(req);
         
@@ -92,16 +108,60 @@ public class Requester {
         return certs;
     }
 
-    public ScepResponse getCrl(X509Certificate ca) throws IOException {
-        Postable req = new GetCRL(ca);
+    private void updateCertificates() throws IOException {
+        List<X509Certificate> certs = getCaCertificate();
 
-        return sendRequest(req);
+        ca = certs.get(0);
+        if (certs.size() == 2) {
+            ra = certs.get(1);
+        }
     }
 
-    public CertRep enroll(KeyPair pair, X500Principal subject, char[] password) throws IOException {
-        Postable req = new PkcsReq(getCaCertificate().get(0), subject, pair, password);
+    public X509CRL getCrl() throws IOException {
+        updateCertificates();
+        // PKI Operation
+        Postable req = new GetCRL(ca);
 
-        return (CertRep) sendRequest(req);
+        sendRequest(req);
+
+        return null;
+    }
+
+    public void setExistingCertificate(X509Certificate cert) {
+        existing = cert;
+    }
+
+    public List<X509Certificate> enroll(X500Principal subject, CallbackHandler cbh) throws IOException, UnsupportedCallbackException {
+        updateCertificates();
+        // PKI Operation
+        PasswordCallback cb = new PasswordCallback("Password", false);
+        cbh.handle(new Callback[] {cb});
+        Postable req = new PkcsReq(ca, subject, keyPair, cb.getPassword());
+        cb.clearPassword();
+
+        sendRequest(req);
+
+        return null;
+    }
+
+    public List<X509Certificate> getCertInitial(X500Principal subject) throws IOException {
+        updateCertificates();
+        // PKI Operation
+        Postable req = new GetCertInitial(ca, subject);
+
+        sendRequest(req);
+
+        return null;
+    }
+
+    public List<X509Certificate> getCert(BigInteger serialNumber) throws IOException {
+        updateCertificates();
+        // PKI Operation
+        Postable req = new GetCert(ca, serialNumber);
+
+        sendRequest(req);
+
+        return null;
     }
 
     private ScepResponse sendRequest(ScepRequest msg) throws IOException {
@@ -133,43 +193,5 @@ public class Requester {
         conn.getOutputStream().write((byte[]) msg.getMessage());
 
         return (ScepResponse) conn.getContent();
-    }
-
-    public static void main(String[] args) throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
-
-
-        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        });
-        SSLContext ctx = SSLContext.getInstance("TLS");
-        ctx.init(null, new TrustManager[]{new X509TrustManager() {
-            public void checkClientTrusted(X509Certificate[] chain, String authType) {
-
-            }
-
-            public void checkServerTrusted(X509Certificate[] chain, String authType) {
-
-            }
-
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-        }}, null);
-        HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
-
-        URL url = new URL("https://engtest81-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("nj.proxy.avaya.com", 8000));
-//        Requester client = new Requester(url, proxy);
-        Requester client = new Requester(url);
-        client.setCaIdentifier("tmclientca");
-
-        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        KeyPair pair = gen.genKeyPair();
-
-        X509Certificate ca = client.getCaCertificate().get(0);
-        client.enroll(pair, new X500Principal("CN=david"), "foo".toCharArray());
     }
 }

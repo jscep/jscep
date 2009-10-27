@@ -37,13 +37,11 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
 public class GetCert extends AbstractPkiRequest {
-    private final X500Principal issuer;
     private final BigInteger serial;
 
-    public GetCert(X509Certificate ca, X500Principal issuer, BigInteger serial) {
+    public GetCert(X509Certificate ca, BigInteger serial) {
         super(ca);
         
-        this.issuer = issuer;
         this.serial = serial;
     }
 
@@ -54,14 +52,9 @@ public class GetCert extends AbstractPkiRequest {
 
     @Override
     protected DEREncodable getMessageData() throws IOException {
-        X509Name issuerName = new X509Principal(issuer.getEncoded());
+        X509Name issuerName = new X509Principal(getCaCertificate().getIssuerX500Principal().getEncoded());
         
         return new IssuerAndSerialNumber(issuerName, serial);
-    }
-
-    @Override
-    protected X509Certificate getCertificate() {
-        return null;
     }
 
     @Override

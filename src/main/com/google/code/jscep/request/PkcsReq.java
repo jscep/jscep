@@ -123,11 +123,6 @@ public class PkcsReq extends AbstractPkiRequest {
     }
 
     @Override
-    protected X509Certificate getCertificate() {
-        return null;
-    }
-
-    @Override
     protected KeyPair getKeyPair() {
         return pair;
     }

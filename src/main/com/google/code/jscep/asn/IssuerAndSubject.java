@@ -20,43 +20,45 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep.asn;
 
-import com.google.code.jscep.asn.IssuerAndSubject;
-import org.bouncycastle.asn1.DEREncodable;
-import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.X509Principal;
 
-import javax.security.auth.x500.X500Principal;
-import java.io.IOException;
-import java.security.KeyPair;
-import java.security.cert.X509Certificate;
+/**
+ * IssuerAndSubject ::= SEQUENCE {
+ * issuer Name,
+ * subject Name,
+ * }
+ */
+public class IssuerAndSubject implements DEREncodable {
+    private final X509Name issuer;
+    private final X509Name subject;
 
-public class GetCertInitial extends AbstractPkiRequest {
-    private final X500Principal subject;
+    public IssuerAndSubject(ASN1Sequence seq) {
+        this.issuer = (X509Name) seq.getObjectAt(0);
+        this.subject = (X509Name) seq.getObjectAt(1);
+    }
 
-    public GetCertInitial(X509Certificate ca, X500Principal subject) {
-        super(ca);
-        
+    public IssuerAndSubject(X509Name issuer, X509Name subject) {
+        this.issuer = issuer;
         this.subject = subject;
     }
 
-    @Override
-    protected DERPrintableString getMessageType() {
-        return new DERPrintableString("20");
+    public DERObject getDERObject() {
+        ASN1EncodableVector v = new ASN1EncodableVector();
+
+        v.add(issuer);
+        v.add(subject);
+
+        return new DERSequence(v);
     }
 
-    @Override
-    protected DEREncodable getMessageData() throws IOException {
-        X509Name issuerName = new X509Principal(getCaCertificate().getIssuerX500Principal().getEncoded());
-        X509Name subjectName = new X509Principal(subject.getEncoded());
-
-        return new IssuerAndSubject(issuerName, subjectName);
+    public X509Name getIssuer() {
+        return issuer;
     }
 
-    @Override
-    protected KeyPair getKeyPair() {
-        return null;
+    public X509Name getSubject() {
+        return subject;
     }
 }
