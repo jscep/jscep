@@ -38,7 +38,9 @@ public class GetCertInitial extends AbstractPkiRequest {
     private final X500Principal issuer;
     private final X500Principal subject;
 
-    public GetCertInitial(X500Principal issuer, X500Principal subject) {
+    public GetCertInitial(X509Certificate ca, X500Principal issuer, X500Principal subject) {
+        super(ca);
+        
         this.issuer = issuer;
         this.subject = subject;
     }

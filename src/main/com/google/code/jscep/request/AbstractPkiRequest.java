@@ -51,8 +51,11 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
     private static final Random RANDOM = new SecureRandom();
     private static final String OPERATION = "PKIOperation";
     private final byte[] senderNonce = new byte[16];
+    private final X509Certificate ca;
 
-    public AbstractPkiRequest() {
+    public AbstractPkiRequest(X509Certificate ca) {
+        this.ca = ca;
+        
         RANDOM.nextBytes(senderNonce);
     }
 
@@ -61,47 +64,9 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
     }
 
     public final Object getMessage() {
-        // DES
-//        DERObjectIdentifier algOid = SMIMECapability.dES_CBC;
-        // Triple-DES
-        DERObjectIdentifier algOid = SMIMECapability.dES_EDE3_CBC;
-        // MD5
-        String hashOid = CMSSignedDataGenerator.DIGEST_MD5;
-        // SHA-1
-//        String hashOid = CMSSignedDataGenerator.DIGEST_SHA1;
-        // SHA-256
-//        String hashOid = CMSSignedDataGenerator.DIGEST_SHA256;
-        // SHA-512
-//        String hashOid = CMSSignedDataGenerator.DIGEST_SHA512;
-
         try {
-            byte[] messageData = getMessageData().getDEREncoded();
-            CMSProcessable envelopable = new CMSProcessableByteArray(messageData);
-            CMSEnvelopedDataGenerator enGenerator = new CMSEnvelopedDataGenerator();
-            CMSEnvelopedData env = enGenerator.generate(envelopable, algOid.getId(), "BC");
-            CMSProcessable signable = new CMSProcessableByteArray(env.getEncoded());
-
-            CMSSignedDataGenerator signer = new CMSSignedDataGenerator();
-
-            Attribute msgType = getMessageTypeAttribute();
-            Attribute transId = getTransactionIdAttribute();
-            Attribute senderNonce = getSenderNonceAttribute();
-
-            Hashtable<DERObjectIdentifier, Attribute> attrs = new Hashtable<DERObjectIdentifier, Attribute>();
-            attrs.put(msgType.getAttrType(), msgType);
-            attrs.put(transId.getAttrType(), transId);
-            attrs.put(senderNonce.getAttrType(), senderNonce);
-            AttributeTable table = new AttributeTable(attrs);
-
-            List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
-            certList.add(getCertificate());
-            CertStore certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
-
-            signer.addCertificatesAndCRLs(certs);
-            signer.addSigner(getKeyPair().getPrivate(), getCertificate(), hashOid, table, null);
-
-            return signer.generate(signable, true, "BC").getEncoded();
-
+            byte[] data = getMessageData().getDEREncoded();
+            return sign(envelope(data));
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         } catch (GeneralSecurityException gse) {
@@ -109,6 +74,56 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         } catch (CMSException cmse) {
             throw new RuntimeException(cmse);
         }
+    }
+
+    private byte[] envelope(byte[] bytes) throws IOException, GeneralSecurityException, CMSException {
+        CMSProcessable messageData = new CMSProcessableByteArray(bytes);
+        CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
+        
+        return gen.generate(messageData, getCipherId(), "BC").getEncoded();
+    }
+
+    private byte[] sign(byte[] bytes) throws IOException, GeneralSecurityException, CMSException {
+        CMSProcessable signable = new CMSProcessableByteArray(bytes);
+
+        CMSSignedDataGenerator signer = new CMSSignedDataGenerator();
+
+        Attribute msgType = getMessageTypeAttribute();
+        Attribute transId = getTransactionIdAttribute();
+        Attribute senderNonce = getSenderNonceAttribute();
+
+        Hashtable<DERObjectIdentifier, Attribute> attributes = new Hashtable<DERObjectIdentifier, Attribute>();
+        attributes.put(msgType.getAttrType(), msgType);
+        attributes.put(transId.getAttrType(), transId);
+        attributes.put(senderNonce.getAttrType(), senderNonce);
+        AttributeTable table = new AttributeTable(attributes);
+
+        List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
+        certList.add(getCertificate());
+        CertStore certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
+
+        signer.addCertificatesAndCRLs(certs);
+        signer.addSigner(getKeyPair().getPrivate(), getCertificate(), getDigestId(), table, null);
+
+        return signer.generate(signable, true, "BC").getEncoded();
+    }
+
+    private String getCipherId() {
+        // DES
+        // return SMIMECapability.dES_CBC.getId();
+        // Triple-DES
+        return SMIMECapability.dES_EDE3_CBC.getId();
+    }
+
+    private String getDigestId() {
+        // MD5
+        return CMSSignedDataGenerator.DIGEST_MD5;
+        // SHA-1
+        // return CMSSignedDataGenerator.DIGEST_SHA1;
+        // SHA-256
+        // return CMSSignedDataGenerator.DIGEST_SHA256;
+        // SHA-512
+        // return CMSSignedDataGenerator.DIGEST_SHA512;
     }
 
     private Attribute getMessageTypeAttribute() {
@@ -131,8 +146,11 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         return new DEROctetString(senderNonce);
     }
 
+    protected X509Certificate getCertificate() {
+        return ca;
+    }
+
     abstract protected KeyPair getKeyPair();
-    abstract protected X509Certificate getCertificate();
     abstract protected DERPrintableString getMessageType();
     abstract protected ContentInfo getMessageData() throws IOException, GeneralSecurityException;
 }

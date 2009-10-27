@@ -40,12 +40,10 @@ public class GetCRL extends AbstractPkiRequest {
     private final BigInteger serial;
 
     public GetCRL(X509Certificate certificate) {
-        this(certificate.getIssuerX500Principal(), certificate.getSerialNumber());
-    }
-
-    public GetCRL(X500Principal issuer, BigInteger serial) {
-        this.issuer = issuer;
-        this.serial = serial;
+        super(certificate);
+        
+        issuer = certificate.getIssuerX500Principal();
+        serial = certificate.getSerialNumber();
     }
 
     @Override

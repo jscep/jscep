@@ -56,6 +56,7 @@ public class Requester {
 
     private final URL url;
     private final Proxy proxy;
+    private String caIdentifier;
 
     public Requester(URL url) {
         this(url, Proxy.NO_PROXY);
@@ -66,49 +67,32 @@ public class Requester {
         this.proxy = proxy;
     }
 
-    public CaCapabilitiesResponse getCapabilities() throws IOException {
-        return getCapabilities(null);
+    public void setCaIdentifier(String caIdentifier) {
+        this.caIdentifier = caIdentifier;
     }
 
-    public CaCapabilitiesResponse getCapabilities(String caIdentifer) throws IOException {
-        ScepRequest req = new GetCACaps(caIdentifer);
+    public CaCapabilitiesResponse getCapabilities() throws IOException {
+        ScepRequest req = new GetCACaps(caIdentifier);
 
         return (CaCapabilitiesResponse) sendRequest(req);
     }
 
     public CaCertificateResponse getCaCertificate() throws IOException {
-        return getCaCertificate(null);
-    }
-
-    public CaCertificateResponse getCaCertificate(String caIdentifier) throws IOException {
         ScepRequest req = new GetCACert(caIdentifier);
 
         return (CaCertificateResponse) sendRequest(req);
     }
 
-    public ScepResponse getCrl(X500Principal issuer, BigInteger serial) throws IOException {
-        Postable req = new GetCRL(issuer, serial);
+    public ScepResponse getCrl(X509Certificate ca) throws IOException {
+        Postable req = new GetCRL(ca);
 
         return sendRequest(req);
     }
 
     public CertRep enroll(KeyPair pair, X500Principal subject, char[] password) throws IOException {
-        X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
-        try {
-            generator.setIssuerDN(subject);
-            generator.setSerialNumber(BigInteger.ONE);
-            generator.setSignatureAlgorithm("MD5withRSA");
-            generator.setSubjectDN(subject);
-            generator.setNotAfter(new Date());
-            generator.setNotBefore(new Date());
-            generator.setPublicKey(pair.getPublic());
-            X509Certificate cert = generator.generate(pair.getPrivate());
-            Postable req = new PkcsReq(cert, pair, password);
+        Postable req = new PkcsReq(subject, pair, password);
 
-            return (CertRep) sendRequest(req);
-        } catch (GeneralSecurityException gse) {
-            throw new RuntimeException(gse);
-        }
+        return (CertRep) sendRequest(req);
     }
 
     private ScepResponse sendRequest(ScepRequest msg) throws IOException {
@@ -171,13 +155,16 @@ public class Requester {
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("nj.proxy.avaya.com", 8000));
 //        Requester client = new Requester(url, proxy);
         Requester client = new Requester(url);
+        client.setCaIdentifier("tmclientca");
 
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
         KeyPair pair = gen.genKeyPair();
 
-        CaCertificateResponse res = client.getCaCertificate("tmclientca");
+        CaCertificateResponse res = client.getCaCertificate();
         X509Certificate ca = res.getCaCertificate();
 
-        client.getCrl(ca.getIssuerX500Principal(), ca.getSerialNumber());
+        System.out.println(ca);
+
+        client.getCrl(ca);
     }
 }

@@ -25,25 +25,28 @@ package com.google.code.jscep.request;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
+import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.util.encoders.Base64;
 
+import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 
 public class PkcsReq extends AbstractPkiRequest {
-    private final X509Certificate cert;
+    private final X500Principal subject;
     private final KeyPair pair;
     private final char[] pass;
 
-    public PkcsReq(X509Certificate cert, KeyPair pair, char[] pass) {
-        this.cert = cert;
+    public PkcsReq(X509Certificate ca, X500Principal subject, KeyPair pair, char[] pass) {
+        super(ca);
+        
+        this.subject = subject;
         this.pair = pair;
         this.pass = pass;
     }
@@ -52,7 +55,7 @@ public class PkcsReq extends AbstractPkiRequest {
     protected DERPrintableString getTransactionId() {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(cert.getPublicKey().getEncoded());
+            byte[] digest = md.digest(pair.getPublic().getEncoded());
 
             return new DERPrintableString(Base64.encode(digest));
         } catch (NoSuchAlgorithmException nsae) {
@@ -67,20 +70,46 @@ public class PkcsReq extends AbstractPkiRequest {
 
     @Override
     protected ContentInfo getMessageData() throws IOException, GeneralSecurityException {
-        String sigAlg = "SHA1withRSA";
-        PublicKey pubKey = pair.getPublic();
-        X509Name subject = new X509Principal(cert.getSubjectX500Principal().getEncoded());
+        CertificationRequestInfo reqInfo = getRequestInfo();
+        DERBitString signature = signRequestInfo(reqInfo);
 
+        CertificationRequest pkcs10 = new CertificationRequest(reqInfo, getDigestAlgorithm(), signature);
+
+        return new ContentInfo(PKCSObjectIdentifiers.data, pkcs10);
+    }
+
+    private DERBitString signRequestInfo(CertificationRequestInfo reqInfo) throws IOException, GeneralSecurityException {
+        Signature sig = Signature.getInstance(getDigestAlgorithm().getObjectId().getId());
+        sig.initSign(pair.getPrivate());
+        sig.update(reqInfo.getEncoded());
+
+        return new DERBitString(sig.sign());
+    }
+
+    private CertificationRequestInfo getRequestInfo() throws IOException {
+        X509Name subjName = new X509Principal(subject.getEncoded());
         // Build PKCS#10 Attributes
-        ASN1EncodableVector attrs = new ASN1EncodableVector();
-        // Add the Challenge Password
-        attrs.add(getPassword());
-        DERSet attrSet = new DERSet(attrs);
+        ASN1EncodableVector attributes = new ASN1EncodableVector();
+        attributes.add(getPassword());
+        DERSet attributeSet = new DERSet(attributes);
 
-        // Create the Certification Request
-        CertificationRequest csr = new PKCS10CertificationRequest(sigAlg, subject, pubKey, attrSet, pair.getPrivate());
+        return new CertificationRequestInfo(subjName, getSubjectPublicKeyInfo(), attributeSet);
+    }
 
-        return new ContentInfo(PKCSObjectIdentifiers.data, csr);
+    public X500Principal getSubject() {
+        return subject;
+    }
+
+    private SubjectPublicKeyInfo getSubjectPublicKeyInfo() {
+        return new SubjectPublicKeyInfo(getPublicKeyAlgorithm(), pair.getPublic().getEncoded());
+    }
+
+    private AlgorithmIdentifier getPublicKeyAlgorithm() {
+        return new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption);
+    }
+
+    private AlgorithmIdentifier getDigestAlgorithm() {
+        return new AlgorithmIdentifier(PKCSObjectIdentifiers.md5WithRSAEncryption);
     }
 
     private DERSequence getPassword() {
@@ -97,7 +126,7 @@ public class PkcsReq extends AbstractPkiRequest {
 
     @Override
     protected X509Certificate getCertificate() {
-        return cert;
+        return null;
     }
 
     @Override
