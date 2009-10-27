@@ -20,20 +20,16 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.asn1;
 
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.CMSProcessable;
-import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.asn1.DERObjectIdentifier;
 
-public class MessageParser {
-    public MessageParser() throws Exception {
-        byte[] bytes = new byte[0];
-        CMSSignedData signedData = new CMSSignedData(bytes);
-        ContentInfo contentInfo = signedData.getContentInfo();
-        CMSProcessable signedContent = signedData.getSignedContent();
-        CMSEnvelopedData envelopedData = new CMSEnvelopedData((byte[]) signedContent.getContent());
-        ContentInfo content = envelopedData.getContentInfo();
-    }
+public interface ScepObjectIdentifiers {
+    DERObjectIdentifier messageType = new DERObjectIdentifier("2.16.840.1.113733.1.9.2");
+    DERObjectIdentifier pkiStatus = new DERObjectIdentifier("2.16.840.1.113733.1.9.3");
+    DERObjectIdentifier failInfo = new DERObjectIdentifier("2.16.840.1.113733.1.9.4");
+    DERObjectIdentifier senderNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.5");
+    DERObjectIdentifier recipientNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.6");
+    DERObjectIdentifier transId = new DERObjectIdentifier("2.16.840.1.113733.1.9.7");
+    DERObjectIdentifier extensionReq = new DERObjectIdentifier("2.16.840.1.113733.1.9.8");
 }

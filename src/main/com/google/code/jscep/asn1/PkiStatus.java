@@ -20,30 +20,10 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.asn1;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.pkcs.SignedData;
-
-public class PkiMessage extends ASN1Encodable {
-    private ASN1Encodable pkcsPkiEnvelope;
-    private SignedData foo;
-    private final int messageType;
-
-    public PkiMessage(int messageType) {
-        this.messageType = messageType;
-    }
-
-    public int getMessageType() {
-        return messageType;
-    }
-
-    public int getPkiStatus() {
-        return PkiStatus.FAILURE;
-    }
-
-    public DERObject toASN1Object() {
-        return null;
-    }
+public interface PkiStatus {
+    int SUCCESS = 0;
+    int FAILURE = 2;
+    int PENDING = 3;
 }

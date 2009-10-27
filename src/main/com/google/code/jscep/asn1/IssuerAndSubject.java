@@ -20,12 +20,45 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.asn1;
 
-public interface FailInfo {
-    int badAlg = 0;
-    int badMessageCheck = 1;
-    int badRequest = 2;
-    int badTime = 3;
-    int badCertId = 4;
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.x509.X509Name;
+
+/**
+ * IssuerAndSubject ::= SEQUENCE {
+ * issuer Name,
+ * subject Name,
+ * }
+ */
+public class IssuerAndSubject implements DEREncodable {
+    private final X509Name issuer;
+    private final X509Name subject;
+
+    public IssuerAndSubject(ASN1Sequence seq) {
+        this.issuer = (X509Name) seq.getObjectAt(0);
+        this.subject = (X509Name) seq.getObjectAt(1);
+    }
+
+    public IssuerAndSubject(X509Name issuer, X509Name subject) {
+        this.issuer = issuer;
+        this.subject = subject;
+    }
+
+    public DERObject getDERObject() {
+        ASN1EncodableVector v = new ASN1EncodableVector();
+
+        v.add(issuer);
+        v.add(subject);
+
+        return new DERSequence(v);
+    }
+
+    public X509Name getIssuer() {
+        return issuer;
+    }
+
+    public X509Name getSubject() {
+        return subject;
+    }
 }
