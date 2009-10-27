@@ -22,7 +22,7 @@
 
 package com.google.code.jscep.request;
 
-import com.google.code.jscep.SCEPObjectIdentifiers;
+import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.cms.*;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -187,15 +187,15 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
     }
 
     private Attribute getMessageTypeAttribute() {
-        return new Attribute(SCEPObjectIdentifiers.messageType, new DERSet(getMessageType()));
+        return new Attribute(ScepObjectIdentifiers.messageType, new DERSet(getMessageType()));
     }
 
     private Attribute getTransactionIdAttribute() {
-        return new Attribute(SCEPObjectIdentifiers.transId, new DERSet(getTransactionId()));
+        return new Attribute(ScepObjectIdentifiers.transId, new DERSet(getTransactionId()));
     }
 
     private Attribute getSenderNonceAttribute() {
-        return new Attribute(SCEPObjectIdentifiers.senderNonce, new DERSet(getSenderNonce()));
+        return new Attribute(ScepObjectIdentifiers.senderNonce, new DERSet(getSenderNonce()));
     }
 
     protected DERPrintableString getTransactionId() {

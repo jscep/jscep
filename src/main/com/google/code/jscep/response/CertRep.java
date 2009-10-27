@@ -22,7 +22,7 @@
 
 package com.google.code.jscep.response;
 
-import com.google.code.jscep.PkiStatus;
+import com.google.code.jscep.asn1.PkiStatus;
 
 public class CertRep {
     public String getTransactionId() {
