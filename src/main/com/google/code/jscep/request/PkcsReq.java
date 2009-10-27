@@ -69,13 +69,11 @@ public class PkcsReq extends AbstractPkiRequest {
     }
 
     @Override
-    protected ContentInfo getMessageData() throws IOException, GeneralSecurityException {
+    protected DEREncodable getMessageData() throws IOException, GeneralSecurityException {
         CertificationRequestInfo reqInfo = getRequestInfo();
         DERBitString signature = signRequestInfo(reqInfo);
 
-        CertificationRequest pkcs10 = new CertificationRequest(reqInfo, getDigestAlgorithm(), signature);
-
-        return new ContentInfo(PKCSObjectIdentifiers.data, pkcs10);
+        return new CertificationRequest(reqInfo, getDigestAlgorithm(), signature);
     }
 
     private DERBitString signRequestInfo(CertificationRequestInfo reqInfo) throws IOException, GeneralSecurityException {

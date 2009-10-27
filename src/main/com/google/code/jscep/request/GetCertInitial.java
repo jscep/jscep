@@ -23,6 +23,7 @@
 package com.google.code.jscep.request;
 
 import com.google.code.jscep.IssuerAndSubject;
+import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -51,12 +52,11 @@ public class GetCertInitial extends AbstractPkiRequest {
     }
 
     @Override
-    protected ContentInfo getMessageData() throws IOException {
+    protected DEREncodable getMessageData() throws IOException {
         X509Name issuerName = new X509Principal(issuer.getEncoded());
         X509Name subjectName = new X509Principal(subject.getEncoded());
-        IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
 
-        return new ContentInfo(PKCSObjectIdentifiers.data, ias);
+        return new IssuerAndSubject(issuerName, subjectName);
     }
 
     @Override

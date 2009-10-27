@@ -47,7 +47,9 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Requester {
     static {
@@ -77,10 +79,17 @@ public class Requester {
         return (CaCapabilitiesResponse) sendRequest(req);
     }
 
-    public CaCertificateResponse getCaCertificate() throws IOException {
+    public List<X509Certificate> getCaCertificate() throws IOException {
         ScepRequest req = new GetCACert(caIdentifier);
+        CaCertificateResponse res = (CaCertificateResponse) sendRequest(req);
+        
+        List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
+        certs.add(res.getCaCertificate());
+        if (res.hasRaCertificate()) {
+            certs.add(res.getRaCertificate());
+        }
 
-        return (CaCertificateResponse) sendRequest(req);
+        return certs;
     }
 
     public ScepResponse getCrl(X509Certificate ca) throws IOException {
@@ -90,7 +99,7 @@ public class Requester {
     }
 
     public CertRep enroll(KeyPair pair, X500Principal subject, char[] password) throws IOException {
-        Postable req = new PkcsReq(subject, pair, password);
+        Postable req = new PkcsReq(getCaCertificate().get(0), subject, pair, password);
 
         return (CertRep) sendRequest(req);
     }
@@ -160,11 +169,7 @@ public class Requester {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
         KeyPair pair = gen.genKeyPair();
 
-        CaCertificateResponse res = client.getCaCertificate();
-        X509Certificate ca = res.getCaCertificate();
-
-        System.out.println(ca);
-
-        client.getCrl(ca);
+        X509Certificate ca = client.getCaCertificate().get(0);
+        client.enroll(pair, new X500Principal("CN=david"), "foo".toCharArray());
     }
 }

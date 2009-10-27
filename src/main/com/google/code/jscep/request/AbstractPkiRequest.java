@@ -23,14 +23,11 @@
 package com.google.code.jscep.request;
 
 import com.google.code.jscep.SCEPObjectIdentifiers;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.cms.*;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.smime.SMIMECapability;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cms.*;
 
 import java.io.IOException;
@@ -63,9 +60,72 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         return OPERATION;
     }
 
+    private EnvelopedData getPkcsPkiEnvelope() {
+        return new EnvelopedData(null, getRecipientInfos(), getEncryptedContentInfo(), null);
+    }
+
+    private EncryptedContentInfo getEncryptedContentInfo() {
+        DERObjectIdentifier type = PKCSObjectIdentifiers.data;
+        AlgorithmIdentifier rsaEncryption = new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption);
+        ASN1OctetString encryptedContent = null;
+        
+        return new EncryptedContentInfo(type, rsaEncryption, encryptedContent);
+    }
+
+    private ASN1Set getRecipientInfos() {
+        RecipientInfo recipientInfo = null;
+        
+        return new DERSet(new ASN1Encodable[] {recipientInfo});        
+    }
+
+    private ContentInfo getContentInfo() {
+        return new ContentInfo(PKCSObjectIdentifiers.envelopedData, getPkcsPkiEnvelope());
+    }
+
+    private ASN1Set getAuthenticatedAttributes() {
+        ASN1EncodableVector attributes = new ASN1EncodableVector();
+
+        // PKCS #10
+        attributes.add(getContentTypeAttribute());
+        attributes.add(getMessageDigestAttribute());
+
+        // SCEP
+        attributes.add(getTransactionIdAttribute());
+        attributes.add(getMessageTypeAttribute());
+        attributes.add(getSenderNonceAttribute());
+
+        return new DERSet(attributes);
+    }
+
+    private Attribute getContentTypeAttribute() {
+        return new Attribute(CMSAttributes.contentType, new DERSet());
+    }
+
+    private Attribute getMessageDigestAttribute() {
+        return new Attribute(CMSAttributes.messageDigest, new DERSet());
+    }
+
+    private ASN1Set getSignerInfos() {
+        SignerInfo signerInfo = new SignerInfo(null, null, getAuthenticatedAttributes(), null, null, null);
+        
+        return new DERSet(new ASN1Encodable[] {signerInfo});
+    }
+
+    private ASN1Set getDigestAlgorithms() {
+        AlgorithmIdentifier md5 = new AlgorithmIdentifier(PKCSObjectIdentifiers.md5);
+
+        return new DERSet(new ASN1Encodable[] {md5});
+    }
+
+    private SignedData getPkiMessage() {
+        return new SignedData(getDigestAlgorithms(), getContentInfo(), null, null, getSignerInfos());
+    }
+
     public final Object getMessage() {
         try {
-            byte[] data = getMessageData().getDEREncoded();
+            ContentInfo contentInfo = new ContentInfo(PKCSObjectIdentifiers.data, getMessageData());
+
+            byte[] data = contentInfo.getDEREncoded();
             return sign(envelope(data));
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
@@ -152,5 +212,5 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
 
     abstract protected KeyPair getKeyPair();
     abstract protected DERPrintableString getMessageType();
-    abstract protected ContentInfo getMessageData() throws IOException, GeneralSecurityException;
+    abstract protected DEREncodable getMessageData() throws IOException, GeneralSecurityException;
 }
