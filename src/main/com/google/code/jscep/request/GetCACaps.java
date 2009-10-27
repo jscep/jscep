@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.request;
 
+import com.google.code.jscep.ScepMessage;
+
 /**
  * Created by IntelliJ IDEA.
  * User: david
@@ -44,7 +46,7 @@ public class GetCACaps implements ScepRequest {
         return OPERATION;
     }
 
-    public Object getMessage() {
-        return ca;
+    public ScepMessage getMessage() {
+        return new ScepMessage(ca);
     }
 }

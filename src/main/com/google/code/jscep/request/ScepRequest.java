@@ -22,7 +22,9 @@
 
 package com.google.code.jscep.request;
 
+import com.google.code.jscep.ScepMessage;
+
 public interface ScepRequest {
     String getOperation();
-    Object getMessage();
+    ScepMessage getMessage();
 }

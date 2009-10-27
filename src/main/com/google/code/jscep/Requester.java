@@ -169,7 +169,11 @@ public class Requester {
     }
 
     private ScepResponse sendRequest(Postable msg) throws IOException {
-        return sendPostRequest(msg);
+        if (getCapabilities().supportsPost() && false) {
+            return sendPostRequest(msg);
+        } else {
+            return sendGetRequest(msg);
+        }
     }
 
     private ScepResponse sendGetRequest(ScepRequest msg) throws IOException {
@@ -177,7 +181,7 @@ public class Requester {
         if (msg.getMessage() == null) {
             operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation());
         } else {
-            operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation() + "&message=" + msg.getMessage());
+            operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation() + "&message=" + msg.getMessage().toString());
         }
         URLConnection conn = operation.openConnection(proxy);
 
@@ -190,7 +194,7 @@ public class Requester {
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
 
-        conn.getOutputStream().write((byte[]) msg.getMessage());
+        conn.getOutputStream().write(msg.getMessage().toBinary());
 
         return (ScepResponse) conn.getContent();
     }

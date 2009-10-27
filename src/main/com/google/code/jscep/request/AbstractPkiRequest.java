@@ -22,6 +22,7 @@
 
 package com.google.code.jscep.request;
 
+import com.google.code.jscep.ScepMessage;
 import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.cms.*;
@@ -121,12 +122,9 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         return new SignedData(getDigestAlgorithms(), getContentInfo(), null, null, getSignerInfos());
     }
 
-    public final Object getMessage() {
+    public final ScepMessage getMessage() {
         try {
-            ContentInfo contentInfo = new ContentInfo(PKCSObjectIdentifiers.data, getMessageData());
-
-            byte[] data = contentInfo.getDEREncoded();
-            return sign(envelope(data));
+            return new ScepMessage(getSignedData().getEncoded());
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         } catch (GeneralSecurityException gse) {
@@ -136,15 +134,18 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         }
     }
 
-    private byte[] envelope(byte[] bytes) throws IOException, GeneralSecurityException, CMSException {
-        CMSProcessable messageData = new CMSProcessableByteArray(bytes);
+    private CMSEnvelopedData getEnvelopedData() throws IOException, GeneralSecurityException, CMSException {
+        DEREncodable content = getMessageData();
+        ContentInfo contentInfo = new ContentInfo(PKCSObjectIdentifiers.data, content);
+        
+        CMSProcessable messageData = new CMSProcessableByteArray(contentInfo.getDEREncoded());
         CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
         
-        return gen.generate(messageData, getCipherId(), "BC").getEncoded();
+        return gen.generate(messageData, getCipherId(), "BC");
     }
 
-    private byte[] sign(byte[] bytes) throws IOException, GeneralSecurityException, CMSException {
-        CMSProcessable signable = new CMSProcessableByteArray(bytes);
+    private CMSSignedData getSignedData() throws IOException, GeneralSecurityException, CMSException {
+        CMSProcessable envelopedData = new CMSProcessableByteArray(getEnvelopedData().getEncoded());
 
         CMSSignedDataGenerator signer = new CMSSignedDataGenerator();
 
@@ -165,7 +166,7 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         signer.addCertificatesAndCRLs(certs);
         signer.addSigner(getKeyPair().getPrivate(), getCaCertificate(), getDigestId(), table, null);
 
-        return signer.generate(signable, true, "BC").getEncoded();
+        return signer.generate(envelopedData, true, "BC");
     }
 
     private String getCipherId() {

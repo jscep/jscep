@@ -51,6 +51,7 @@ public class RequesterTest {
     public void testAll() throws Exception {
         URL url = new URL("https://engtest81-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
         Requester client = new Requester(url);
+        client.initialize(null);
         client.setCaIdentifier("tmclientca");
         client.enroll(new X500Principal("CN=david"), new TestCallbackHandler() {});
     }
