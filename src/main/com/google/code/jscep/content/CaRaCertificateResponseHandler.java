@@ -31,14 +31,21 @@ import java.security.cert.X509Certificate;
 import java.io.IOException;
 import java.net.ContentHandler;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CaRaCertificateResponseHandler extends ContentHandler {
-    public CaCertificateResponse getContent(URLConnection conn) throws IOException {
+    @Override
+    public Object getContent(URLConnection conn) throws IOException {
         try {
+            List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
+
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             X509Certificate ca = (X509Certificate) cf.generateCertificate(conn.getInputStream());
 
-            return new CaCertificateResponse(ca, null);
+            certs.add(ca);
+
+            return certs;
         } catch (CertificateException ce) {
             throw new IOException(ce);
         }

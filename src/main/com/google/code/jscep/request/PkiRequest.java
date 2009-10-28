@@ -22,13 +22,11 @@
 
 package com.google.code.jscep.request;
 
-import com.google.code.jscep.ScepMessage;
 import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.cms.*;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cms.*;
 
 import java.io.IOException;
@@ -44,7 +42,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
-abstract public class PkiRequest implements ScepRequest {
+abstract public class PkiRequest implements Request {
     private static final AtomicLong transCounter = new AtomicLong();
     private static final Random RANDOM = new SecureRandom();
     private static final String OPERATION = "PKIOperation";
@@ -63,9 +61,9 @@ abstract public class PkiRequest implements ScepRequest {
         return OPERATION;
     }
 
-    public final ScepMessage getMessage() {
+    public final byte[] getMessage() {
         try {
-            return new ScepMessage(getSignedData().getEncoded());
+            return getSignedData().getEncoded();
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         } catch (GeneralSecurityException gse) {

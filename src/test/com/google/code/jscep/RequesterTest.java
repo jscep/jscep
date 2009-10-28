@@ -54,11 +54,8 @@ public class RequesterTest {
         URL url = new URL("https://engtest81-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
         Requester client = new Requester(url);
         client.initialize(null);
-        client.setCaIdentifier("tmclientca");
-        X509CRL crl = client.getCrl();
-        System.out.println(crl);
 //        client.getCert(BigInteger.ONE);
-//        client.enroll(new X500Principal("CN=david"), new TestCallbackHandler() {});
+        client.getCrl();
     }
 
     class TestCallbackHandler implements CallbackHandler {

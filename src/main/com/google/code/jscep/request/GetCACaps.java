@@ -22,16 +22,7 @@
 
 package com.google.code.jscep.request;
 
-import com.google.code.jscep.ScepMessage;
-
-/**
- * Created by IntelliJ IDEA.
- * User: david
- * Date: 22-Oct-2009
- * Time: 17:34:55
- * To change this template use File | Settings | File Templates.
- */
-public class GetCACaps implements ScepRequest {
+public class GetCACaps implements Request {
     private static final String OPERATION = "GetCACaps";
     private String ca;
 
@@ -46,7 +37,7 @@ public class GetCACaps implements ScepRequest {
         return OPERATION;
     }
 
-    public ScepMessage getMessage() {
-        return new ScepMessage(ca);
+    public Object getMessage() {
+        return ca;
     }
 }

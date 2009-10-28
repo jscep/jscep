@@ -22,9 +22,7 @@
 
 package com.google.code.jscep.request;
 
-import com.google.code.jscep.ScepMessage;
-
-public class GetNextCaCert implements ScepRequest {
+public class GetNextCaCert implements Request {
     private static final String OPERATION = "GetNextCaCert";
     private String ca;
 
@@ -39,7 +37,7 @@ public class GetNextCaCert implements ScepRequest {
         return OPERATION;
     }
 
-    public ScepMessage getMessage() {
-        return new ScepMessage(ca);
+    public Object getMessage() {
+        return ca;
     }
 }

@@ -54,9 +54,4 @@ public class GetCertInitial extends PkiRequest {
 
         return new IssuerAndSubject(issuerName, subjectName);
     }
-
-    @Override
-    protected KeyPair getKeyPair() {
-        return null;
-    }
 }

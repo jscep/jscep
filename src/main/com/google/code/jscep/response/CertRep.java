@@ -30,18 +30,28 @@ import java.security.GeneralSecurityException;
 import java.security.cert.CertStore;
 
 public class CertRep implements ScepResponse {
+    private String transId;
+    private int msgType;
     private final CMSSignedDataParser parser;
 
     public CertRep(CMSSignedDataParser parser) {
         this.parser = parser;
     }
 
+    public void setTransactionId(String transId) {
+        this.transId = transId;
+    }
+
     public String getTransactionId() {
-        return "";
+        return transId;
     }
 
     public int getMessageType() {
-        return 3;
+        return msgType;
+    }
+
+    public void setMessageType(int msgType) {
+        this.msgType = msgType;
     }
 
     public byte[] getRecipientNonce() {

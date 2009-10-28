@@ -25,7 +25,7 @@ package com.google.code.jscep.response;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CaCapabilitiesResponse implements ScepResponse {
+public class Capabilities {
     public static enum Capability {
         GET_NEXT_CA_CERT("GetNextCACert"),
         POST_PKI_OPERATION("POSTPKIOperation"),

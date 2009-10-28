@@ -22,7 +22,7 @@
 
 package com.google.code.jscep.content;
 
-import com.google.code.jscep.response.CaCapabilitiesResponse;
+import com.google.code.jscep.response.Capabilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,13 +33,13 @@ import java.net.URLConnection;
 public class CaCapabilitiesResponseHandler extends ContentHandler {
     public Object getContent(URLConnection conn) throws IOException {
 
-        CaCapabilitiesResponse response = new CaCapabilitiesResponse();
+        Capabilities response = new Capabilities();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String capability;
 
         while ((capability = reader.readLine()) != null) {
-            for (CaCapabilitiesResponse.Capability capabilityEnum : CaCapabilitiesResponse.Capability.values()) {
+            for (Capabilities.Capability capabilityEnum : Capabilities.Capability.values()) {
                 if (capabilityEnum.getName().equals(capability.trim())) {
                     response.add(capabilityEnum);
                 }

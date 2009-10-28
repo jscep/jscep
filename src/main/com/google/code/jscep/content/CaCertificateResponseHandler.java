@@ -24,20 +24,28 @@ package com.google.code.jscep.content;
 
 import com.google.code.jscep.response.CaCertificateResponse;
 
+import java.net.HttpURLConnection;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.io.IOException;
 import java.net.ContentHandler;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CaCertificateResponseHandler extends ContentHandler {
-    public CaCertificateResponse getContent(URLConnection conn) throws IOException {
+    @Override
+    public Object getContent(URLConnection conn) throws IOException {
         try {
+            List<X509Certificate> certs = new ArrayList<X509Certificate>(0);
+
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             X509Certificate ca = (X509Certificate) cf.generateCertificate(conn.getInputStream());
 
-            return new CaCertificateResponse(ca);
+            certs.add(ca);
+
+            return certs;
         } catch (CertificateException ce) {
             throw new IOException(ce);
         }

@@ -22,28 +22,34 @@
 
 package com.google.code.jscep;
 
+import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 import com.google.code.jscep.content.ScepContentHandlerFactory;
 import com.google.code.jscep.request.*;
 import com.google.code.jscep.request.PkiRequest;
-import com.google.code.jscep.response.CaCapabilitiesResponse;
-import com.google.code.jscep.response.CaCertificateResponse;
-import com.google.code.jscep.response.CertRep;
-import com.google.code.jscep.response.ScepResponse;
+import com.google.code.jscep.response.Capabilities;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerId;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.util.encoders.Base64;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.*;
 import java.security.*;
 import java.security.cert.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -83,23 +89,16 @@ public class Requester {
         this.caIdentifier = caIdentifier;
     }
 
-    private CaCapabilitiesResponse getCapabilities() throws IOException {
-        ScepRequest req = new GetCACaps(caIdentifier);
+    private Capabilities getCapabilities() throws IOException {
+        Request req = new GetCACaps(caIdentifier);
 
-        return (CaCapabilitiesResponse) sendRequest(req);
+        return (Capabilities) sendRequest(req);
     }
 
     private List<X509Certificate> getCaCertificate() throws IOException {
-        ScepRequest req = new GetCACert(caIdentifier);
-        CaCertificateResponse res = (CaCertificateResponse) sendRequest(req);
+        Request req = new GetCACert(caIdentifier);
         
-        List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
-        certs.add(res.getCaCertificate());
-        if (res.hasRaCertificate()) {
-            certs.add(res.getRaCertificate());
-        }
-
-        return certs;
+        return (List<X509Certificate>) sendRequest(req);
     }
 
     private void updateCertificates() throws IOException {
@@ -116,21 +115,27 @@ public class Requester {
         // PKI Operation
         PkiRequest req = new GetCRL(ca, keyPair);
 
-        CertRep res = (CertRep) sendRequest(req);
-        try {
-            CertStore store = res.getCRL();
-            X509CRLSelector selector = new X509CRLSelector();
-            selector.addIssuer(ca.getIssuerX500Principal());
-            Collection<? extends CRL> crls = store.getCRLs(selector);
+        CMSSignedData signedData = (CMSSignedData) sendRequest(req);
+        SignerInformationStore store = signedData.getSignerInfos();
+        Collection<?> signers = store.getSigners();
+        for (Object signer : signers) {
+            SignerInformation signerInformation = (SignerInformation) signer;
+            AttributeTable signedAttrs = signerInformation.getSignedAttributes();
 
-            if (crls.size() > 0) {
-                return (X509CRL) crls.iterator().next();
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            throw new IOException(e);
+            Attribute transIdAttr = signedAttrs.get(ScepObjectIdentifiers.transId);
+            DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
+            Attribute pkiStatusAttribute = signedAttrs.get(ScepObjectIdentifiers.pkiStatus);
+            DERPrintableString pkiStatus = (DERPrintableString) pkiStatusAttribute.getAttrValues().getObjectAt(0);
+            Attribute msgTypeAttribute = signedAttrs.get(ScepObjectIdentifiers.messageType);
+            DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);
+            Attribute senderNoneAttribute = signedAttrs.get(ScepObjectIdentifiers.senderNonce);
+            DEROctetString senderNonce = (DEROctetString) senderNoneAttribute.getAttrValues().getObjectAt(0);
+            Attribute recipientNonceAttribute = signedAttrs.get(ScepObjectIdentifiers.recipientNonce);
+            DEROctetString recipientNonce = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
         }
+        ContentInfo contentInfo = signedData.getContentInfo();
+
+        return null;
     }
 
     public void setExistingCertificate(X509Certificate cert) {
@@ -170,43 +175,52 @@ public class Requester {
         return null;
     }
 
-    private ScepResponse sendRequest(ScepRequest msg) throws IOException {
-        return sendGetRequest(msg);
+    private Object sendRequest(Request msg) throws IOException {
+        URL url = getUrl(msg.getOperation(), msg.getMessage());
+        URLConnection conn = url.openConnection(proxy);
+        System.out.println(url);
+
+        return conn.getContent();
     }
 
-    private ScepResponse sendRequest(PkiRequest msg) throws IOException {
-        if (getCapabilities().supportsPost()) {
-            return sendPostRequest(msg);
+    private Object sendRequest(PkiRequest msg) throws IOException {
+        boolean usePost = getCapabilities().supportsPost();
+        String op = msg.getOperation();
+        URL url;
+        if (usePost) {
+            url = getUrl(op);
         } else {
-            return sendGetRequest(msg);
+            url = getUrl(op, msg.getMessage());
+        }
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+        if (usePost) {
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.addRequestProperty("Content-Length", Integer.toString(msg.getMessage().length));
+
+            OutputStream stream = conn.getOutputStream();
+            stream.write(msg.getMessage());
+            stream.close();
+        }
+
+        return conn.getContent();
+    }
+
+    private URL getUrl(String op, Object message) throws MalformedURLException {
+        if (message == null) {
+            return new URL(getUrl(op).toExternalForm() + "&message=");
+        } else {
+            return new URL(getUrl(op).toExternalForm() + "&message=" + message);
         }
     }
 
-    private ScepResponse sendGetRequest(ScepRequest msg) throws IOException {
-        URL operation;
-        if (msg.getMessage() == null) {
-            operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation());
-        } else {
-            operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation() + "&message=" + URLEncoder.encode(msg.getMessage().toString(), "UTF-8"));
-        }
-        URLConnection conn = operation.openConnection(proxy);
-
-        return (ScepResponse) conn.getContent();
+    private URL getUrl(String op, byte[] msg) throws MalformedURLException, UnsupportedEncodingException {
+        String encodedMsg = URLEncoder.encode(new String(Base64.encode(msg)), "UTF-8");
+        
+        return new URL(getUrl(op).toExternalForm() + "&message=" + encodedMsg);
     }
 
-    private ScepResponse sendPostRequest(PkiRequest msg) throws IOException {
-        byte[] bytes = msg.getMessage().getBytes();
-
-        URL operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation());
-        HttpURLConnection conn = (HttpURLConnection) operation.openConnection(proxy);
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
-        conn.addRequestProperty("Content-Length", Integer.toString(bytes.length));
-
-        OutputStream os = conn.getOutputStream();
-        os.write(msg.getMessage().getBytes());
-        os.close();
-
-        return (ScepResponse) conn.getContent();
+    private URL getUrl(String op) throws MalformedURLException {
+        return new URL(url.toExternalForm() + "?operation=" + op);
     }
 }
