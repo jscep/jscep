@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.security.*;
 import java.security.cert.X509Certificate;
 
-public class PkcsReq extends PkiRequest {
+public class PkcsReq extends Operation {
     private final X500Principal subject;
     private final char[] pass;
 
@@ -61,7 +61,7 @@ public class PkcsReq extends PkiRequest {
     }
 
     @Override
-    protected DERPrintableString getMessageType() {
+    public DERPrintableString getMessageType() {
         return new DERPrintableString("19");
     }
 

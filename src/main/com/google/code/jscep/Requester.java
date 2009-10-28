@@ -25,7 +25,7 @@ package com.google.code.jscep;
 import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 import com.google.code.jscep.content.ScepContentHandlerFactory;
 import com.google.code.jscep.request.*;
-import com.google.code.jscep.request.PkiRequest;
+import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.response.Capabilities;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -33,7 +33,6 @@ import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.util.encoders.Base64;
@@ -113,7 +112,7 @@ public class Requester {
     public X509CRL getCrl() throws IOException {
         updateCertificates();
         // PKI Operation
-        PkiRequest req = new GetCRL(ca, keyPair);
+        Operation req = new GetCRL(ca, keyPair);
 
         CMSSignedData signedData = (CMSSignedData) sendRequest(req);
         SignerInformationStore store = signedData.getSignerInfos();
@@ -147,7 +146,7 @@ public class Requester {
         // PKI Operation
         PasswordCallback cb = new PasswordCallback("Password", false);
         cbh.handle(new Callback[] {cb});
-        PkiRequest req = new PkcsReq(ca, keyPair, subject, cb.getPassword());
+        Operation req = new PkcsReq(ca, keyPair, subject, cb.getPassword());
         cb.clearPassword();
 
         sendRequest(req);
@@ -158,7 +157,7 @@ public class Requester {
     public List<X509Certificate> getCertInitial(X500Principal subject) throws IOException {
         updateCertificates();
         // PKI Operation
-        PkiRequest req = new GetCertInitial(ca, keyPair, subject);
+        Operation req = new GetCertInitial(ca, keyPair, subject);
 
         sendRequest(req);
 
@@ -168,7 +167,7 @@ public class Requester {
     public List<X509Certificate> getCert(BigInteger serialNumber) throws IOException {
         updateCertificates();
         // PKI Operation
-        PkiRequest req = new GetCert(ca, keyPair, serialNumber);
+        Operation req = new GetCert(ca, keyPair, serialNumber);
 
         sendRequest(req);
 
@@ -183,7 +182,7 @@ public class Requester {
         return conn.getContent();
     }
 
-    private Object sendRequest(PkiRequest msg) throws IOException {
+    private Object sendRequest(Operation msg) throws IOException {
         boolean usePost = getCapabilities().supportsPost();
         String op = msg.getOperation();
         URL url;

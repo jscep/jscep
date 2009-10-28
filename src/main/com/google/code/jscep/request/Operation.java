@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
-abstract public class PkiRequest implements Request {
+abstract public class Operation implements Request {
     private static final AtomicLong transCounter = new AtomicLong();
     private static final Random RANDOM = new SecureRandom();
     private static final String OPERATION = "PKIOperation";
@@ -50,7 +50,7 @@ abstract public class PkiRequest implements Request {
     private final X509Certificate ca;
     private final KeyPair keyPair;
 
-    public PkiRequest(X509Certificate ca, KeyPair keyPair) {
+    public Operation(X509Certificate ca, KeyPair keyPair) {
         this.ca = ca;
         this.keyPair = keyPair;
         
@@ -154,6 +154,6 @@ abstract public class PkiRequest implements Request {
     protected KeyPair getKeyPair() {
         return keyPair;
     }
-    abstract protected DERPrintableString getMessageType();
+    abstract public DERPrintableString getMessageType();
     abstract protected DEREncodable getMessageData() throws IOException, GeneralSecurityException;
 }

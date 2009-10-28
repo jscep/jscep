@@ -1,5 +1,8 @@
 package com.google.code.jscep;
 
+import com.google.code.jscep.request.Operation;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.security.MessageDigest;
@@ -41,11 +44,14 @@ public class Transaction {
         transactionId = Long.toHexString(transactionCounter.getAndIncrement()).getBytes();
     }
 
-    public byte[] getTransactionId() {
-        return transactionId;
+    public DERPrintableString getTransactionId() {
+        return new DERPrintableString(transactionId);
     }
 
-    public byte[] getSenderNonce() {
-        return senderNonce;
+    public DEROctetString getSenderNonce() {
+        return new DEROctetString(senderNonce);
+    }
+
+    public void performOperation(Operation operation) {
     }
 }

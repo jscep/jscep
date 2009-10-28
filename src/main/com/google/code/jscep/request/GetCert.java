@@ -33,7 +33,7 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
-public class GetCert extends PkiRequest {
+public class GetCert extends Operation {
     private final BigInteger serial;
 
     public GetCert(X509Certificate ca, KeyPair keyPair, BigInteger serial) {
@@ -43,7 +43,7 @@ public class GetCert extends PkiRequest {
     }
 
     @Override
-    protected DERPrintableString getMessageType() {
+    public DERPrintableString getMessageType() {
         return new DERPrintableString("21");
     }
 

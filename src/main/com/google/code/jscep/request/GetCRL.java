@@ -34,7 +34,7 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
-public class GetCRL extends PkiRequest {
+public class GetCRL extends Operation {
     private final X500Principal issuer;
     private final BigInteger serial;
 
@@ -46,7 +46,7 @@ public class GetCRL extends PkiRequest {
     }
 
     @Override
-    protected DERPrintableString getMessageType() {
+    public DERPrintableString getMessageType() {
         return new DERPrintableString("22");
     }
 

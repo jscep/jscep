@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
-public class GetCertInitial extends PkiRequest {
+public class GetCertInitial extends Operation {
     private final X500Principal subject;
 
     public GetCertInitial(X509Certificate ca, KeyPair keyPair, X500Principal subject) {
@@ -43,7 +43,7 @@ public class GetCertInitial extends PkiRequest {
     }
 
     @Override
-    protected DERPrintableString getMessageType() {
+    public DERPrintableString getMessageType() {
         return new DERPrintableString("20");
     }
 
