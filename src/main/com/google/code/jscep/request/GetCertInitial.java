@@ -33,11 +33,11 @@ import java.io.IOException;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
-public class GetCertInitial extends AbstractPkiRequest {
+public class GetCertInitial extends PkiRequest {
     private final X500Principal subject;
 
-    public GetCertInitial(X509Certificate ca, X500Principal subject) {
-        super(ca);
+    public GetCertInitial(X509Certificate ca, KeyPair keyPair, X500Principal subject) {
+        super(ca, keyPair);
         
         this.subject = subject;
     }

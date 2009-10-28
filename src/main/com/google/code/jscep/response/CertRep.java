@@ -23,8 +23,19 @@
 package com.google.code.jscep.response;
 
 import com.google.code.jscep.asn1.PkiStatus;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedDataParser;
 
-public class CertRep {
+import java.security.GeneralSecurityException;
+import java.security.cert.CertStore;
+
+public class CertRep implements ScepResponse {
+    private final CMSSignedDataParser parser;
+
+    public CertRep(CMSSignedDataParser parser) {
+        this.parser = parser;
+    }
+
     public String getTransactionId() {
         return "";
     }
@@ -43,5 +54,9 @@ public class CertRep {
 
     public int getPkiStatus() {
         return PkiStatus.FAILURE;
+    }
+
+    public CertStore getCRL() throws GeneralSecurityException, CMSException {
+        return parser.getCertificatesAndCRLs("Collection", "BC");
     }
 }

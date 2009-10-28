@@ -24,23 +24,20 @@ package com.google.code.jscep.request;
 
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
 
-import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
-public class GetCert extends AbstractPkiRequest {
+public class GetCert extends PkiRequest {
     private final BigInteger serial;
 
-    public GetCert(X509Certificate ca, BigInteger serial) {
-        super(ca);
+    public GetCert(X509Certificate ca, KeyPair keyPair, BigInteger serial) {
+        super(ca, keyPair);
         
         this.serial = serial;
     }
@@ -55,10 +52,5 @@ public class GetCert extends AbstractPkiRequest {
         X509Name issuerName = new X509Principal(getCaCertificate().getIssuerX500Principal().getEncoded());
         
         return new IssuerAndSerialNumber(issuerName, serial);
-    }
-
-    @Override
-    protected KeyPair getKeyPair() {
-        return null;
     }
 }

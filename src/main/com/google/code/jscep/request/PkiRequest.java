@@ -44,82 +44,23 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
-abstract class AbstractPkiRequest implements ScepRequest, Postable {
+abstract public class PkiRequest implements ScepRequest {
     private static final AtomicLong transCounter = new AtomicLong();
     private static final Random RANDOM = new SecureRandom();
     private static final String OPERATION = "PKIOperation";
     private final byte[] senderNonce = new byte[16];
     private final X509Certificate ca;
+    private final KeyPair keyPair;
 
-    public AbstractPkiRequest(X509Certificate ca) {
+    public PkiRequest(X509Certificate ca, KeyPair keyPair) {
         this.ca = ca;
+        this.keyPair = keyPair;
         
         RANDOM.nextBytes(senderNonce);
     }
 
     public final String getOperation() {
         return OPERATION;
-    }
-
-    private EnvelopedData getPkcsPkiEnvelope() {
-        return new EnvelopedData(null, getRecipientInfos(), getEncryptedContentInfo(), null);
-    }
-
-    private EncryptedContentInfo getEncryptedContentInfo() {
-        DERObjectIdentifier type = PKCSObjectIdentifiers.data;
-        AlgorithmIdentifier rsaEncryption = new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption);
-        ASN1OctetString encryptedContent = null;
-        
-        return new EncryptedContentInfo(type, rsaEncryption, encryptedContent);
-    }
-
-    private ASN1Set getRecipientInfos() {
-        RecipientInfo recipientInfo = null;
-        
-        return new DERSet(new ASN1Encodable[] {recipientInfo});        
-    }
-
-    private ContentInfo getContentInfo() {
-        return new ContentInfo(PKCSObjectIdentifiers.envelopedData, getPkcsPkiEnvelope());
-    }
-
-    private ASN1Set getAuthenticatedAttributes() {
-        ASN1EncodableVector attributes = new ASN1EncodableVector();
-
-        // PKCS #10
-        attributes.add(getContentTypeAttribute());
-        attributes.add(getMessageDigestAttribute());
-
-        // SCEP
-        attributes.add(getTransactionIdAttribute());
-        attributes.add(getMessageTypeAttribute());
-        attributes.add(getSenderNonceAttribute());
-
-        return new DERSet(attributes);
-    }
-
-    private Attribute getContentTypeAttribute() {
-        return new Attribute(CMSAttributes.contentType, new DERSet());
-    }
-
-    private Attribute getMessageDigestAttribute() {
-        return new Attribute(CMSAttributes.messageDigest, new DERSet());
-    }
-
-    private ASN1Set getSignerInfos() {
-        SignerInfo signerInfo = new SignerInfo(null, null, getAuthenticatedAttributes(), null, null, null);
-        
-        return new DERSet(new ASN1Encodable[] {signerInfo});
-    }
-
-    private ASN1Set getDigestAlgorithms() {
-        AlgorithmIdentifier md5 = new AlgorithmIdentifier(PKCSObjectIdentifiers.md5);
-
-        return new DERSet(new ASN1Encodable[] {md5});
-    }
-
-    private SignedData getPkiMessage() {
-        return new SignedData(getDigestAlgorithms(), getContentInfo(), null, null, getSignerInfos());
     }
 
     public final ScepMessage getMessage() {
@@ -140,6 +81,7 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         
         CMSProcessable messageData = new CMSProcessableByteArray(contentInfo.getDEREncoded());
         CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
+        gen.addKeyTransRecipient(getCaCertificate());
         
         return gen.generate(messageData, getCipherId(), "BC");
     }
@@ -211,7 +153,9 @@ abstract class AbstractPkiRequest implements ScepRequest, Postable {
         return ca;
     }
 
-    abstract protected KeyPair getKeyPair();
+    protected KeyPair getKeyPair() {
+        return keyPair;
+    }
     abstract protected DERPrintableString getMessageType();
     abstract protected DEREncodable getMessageData() throws IOException, GeneralSecurityException;
 }

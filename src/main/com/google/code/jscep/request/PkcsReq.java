@@ -23,7 +23,6 @@
 package com.google.code.jscep.request;
 
 import org.bouncycastle.asn1.*;
-import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -38,16 +37,14 @@ import java.io.IOException;
 import java.security.*;
 import java.security.cert.X509Certificate;
 
-public class PkcsReq extends AbstractPkiRequest {
+public class PkcsReq extends PkiRequest {
     private final X500Principal subject;
-    private final KeyPair pair;
     private final char[] pass;
 
-    public PkcsReq(X509Certificate ca, X500Principal subject, KeyPair pair, char[] pass) {
-        super(ca);
+    public PkcsReq(X509Certificate ca, KeyPair keyPair, X500Principal subject, char[] pass) {
+        super(ca, keyPair);
         
         this.subject = subject;
-        this.pair = pair;
         this.pass = pass;
     }
 
@@ -55,7 +52,7 @@ public class PkcsReq extends AbstractPkiRequest {
     protected DERPrintableString getTransactionId() {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(pair.getPublic().getEncoded());
+            byte[] digest = md.digest(getKeyPair().getPublic().getEncoded());
 
             return new DERPrintableString(Base64.encode(digest));
         } catch (NoSuchAlgorithmException nsae) {
@@ -78,7 +75,7 @@ public class PkcsReq extends AbstractPkiRequest {
 
     private DERBitString signRequestInfo(CertificationRequestInfo reqInfo) throws IOException, GeneralSecurityException {
         Signature sig = Signature.getInstance(getDigestAlgorithm().getObjectId().getId());
-        sig.initSign(pair.getPrivate());
+        sig.initSign(getKeyPair().getPrivate());
         sig.update(reqInfo.getEncoded());
 
         return new DERBitString(sig.sign());
@@ -99,7 +96,7 @@ public class PkcsReq extends AbstractPkiRequest {
     }
 
     private SubjectPublicKeyInfo getSubjectPublicKeyInfo() {
-        return new SubjectPublicKeyInfo(getPublicKeyAlgorithm(), pair.getPublic().getEncoded());
+        return new SubjectPublicKeyInfo(getPublicKeyAlgorithm(), getKeyPair().getPublic().getEncoded());
     }
 
     private AlgorithmIdentifier getPublicKeyAlgorithm() {
@@ -120,10 +117,5 @@ public class PkcsReq extends AbstractPkiRequest {
         attrVector.add(new DERSet(attrValues));
 
         return new DERSequence(attrVector);
-    }
-
-    @Override
-    protected KeyPair getKeyPair() {
-        return pair;
     }
 }

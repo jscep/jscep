@@ -16,7 +16,7 @@ public class ScepMessage {
         this.string = new String(Base64.encode(msg));
     }
 
-    public byte[] toBinary() {
+    public byte[] getBytes() {
         return binary;
     }
 

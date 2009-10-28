@@ -12,12 +12,14 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Security;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 
 public class RequesterTest {
@@ -53,7 +55,10 @@ public class RequesterTest {
         Requester client = new Requester(url);
         client.initialize(null);
         client.setCaIdentifier("tmclientca");
-        client.enroll(new X500Principal("CN=david"), new TestCallbackHandler() {});
+        X509CRL crl = client.getCrl();
+        System.out.println(crl);
+//        client.getCert(BigInteger.ONE);
+//        client.enroll(new X500Principal("CN=david"), new TestCallbackHandler() {});
     }
 
     class TestCallbackHandler implements CallbackHandler {

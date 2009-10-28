@@ -24,33 +24,27 @@ package com.google.code.jscep;
 
 import com.google.code.jscep.content.ScepContentHandlerFactory;
 import com.google.code.jscep.request.*;
+import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.response.CaCapabilitiesResponse;
 import com.google.code.jscep.response.CaCertificateResponse;
 import com.google.code.jscep.response.CertRep;
 import com.google.code.jscep.response.ScepResponse;
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.x509.X509V3CertificateGenerator;
 
-import javax.net.ssl.*;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.*;
 import java.security.*;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collection;
 import java.util.List;
 
 public class Requester {
@@ -120,11 +114,23 @@ public class Requester {
     public X509CRL getCrl() throws IOException {
         updateCertificates();
         // PKI Operation
-        Postable req = new GetCRL(ca);
+        PkiRequest req = new GetCRL(ca, keyPair);
 
-        sendRequest(req);
+        CertRep res = (CertRep) sendRequest(req);
+        try {
+            CertStore store = res.getCRL();
+            X509CRLSelector selector = new X509CRLSelector();
+            selector.addIssuer(ca.getIssuerX500Principal());
+            Collection<? extends CRL> crls = store.getCRLs(selector);
 
-        return null;
+            if (crls.size() > 0) {
+                return (X509CRL) crls.iterator().next();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 
     public void setExistingCertificate(X509Certificate cert) {
@@ -136,7 +142,7 @@ public class Requester {
         // PKI Operation
         PasswordCallback cb = new PasswordCallback("Password", false);
         cbh.handle(new Callback[] {cb});
-        Postable req = new PkcsReq(ca, subject, keyPair, cb.getPassword());
+        PkiRequest req = new PkcsReq(ca, keyPair, subject, cb.getPassword());
         cb.clearPassword();
 
         sendRequest(req);
@@ -147,7 +153,7 @@ public class Requester {
     public List<X509Certificate> getCertInitial(X500Principal subject) throws IOException {
         updateCertificates();
         // PKI Operation
-        Postable req = new GetCertInitial(ca, subject);
+        PkiRequest req = new GetCertInitial(ca, keyPair, subject);
 
         sendRequest(req);
 
@@ -157,7 +163,7 @@ public class Requester {
     public List<X509Certificate> getCert(BigInteger serialNumber) throws IOException {
         updateCertificates();
         // PKI Operation
-        Postable req = new GetCert(ca, serialNumber);
+        PkiRequest req = new GetCert(ca, keyPair, serialNumber);
 
         sendRequest(req);
 
@@ -168,8 +174,8 @@ public class Requester {
         return sendGetRequest(msg);
     }
 
-    private ScepResponse sendRequest(Postable msg) throws IOException {
-        if (getCapabilities().supportsPost() && false) {
+    private ScepResponse sendRequest(PkiRequest msg) throws IOException {
+        if (getCapabilities().supportsPost()) {
             return sendPostRequest(msg);
         } else {
             return sendGetRequest(msg);
@@ -181,20 +187,25 @@ public class Requester {
         if (msg.getMessage() == null) {
             operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation());
         } else {
-            operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation() + "&message=" + msg.getMessage().toString());
+            operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation() + "&message=" + URLEncoder.encode(msg.getMessage().toString(), "UTF-8"));
         }
         URLConnection conn = operation.openConnection(proxy);
 
         return (ScepResponse) conn.getContent();
     }
 
-    private ScepResponse sendPostRequest(Postable msg) throws IOException {
+    private ScepResponse sendPostRequest(PkiRequest msg) throws IOException {
+        byte[] bytes = msg.getMessage().getBytes();
+
         URL operation = new URL(url.toExternalForm() + "?operation=" + msg.getOperation());
         HttpURLConnection conn = (HttpURLConnection) operation.openConnection(proxy);
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
+        conn.addRequestProperty("Content-Length", Integer.toString(bytes.length));
 
-        conn.getOutputStream().write(msg.getMessage().toBinary());
+        OutputStream os = conn.getOutputStream();
+        os.write(msg.getMessage().getBytes());
+        os.close();
 
         return (ScepResponse) conn.getContent();
     }
