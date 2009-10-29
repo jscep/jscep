@@ -1,26 +1,24 @@
 package com.google.code.jscep;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.io.IOException;
+import java.net.URL;
+import java.security.Security;
+import java.security.cert.X509Certificate;
 
-import javax.net.ssl.*;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.x500.X500Principal;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URL;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.Security;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class RequesterTest {
     @BeforeClass

@@ -1,12 +1,12 @@
 package com.google.code.jscep;
 
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.util.Arrays;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class TransactionTest {
     private Transaction trans;
@@ -21,7 +21,7 @@ public class TransactionTest {
         Transaction a = new Transaction();
         Transaction b = new Transaction();
 
-        Assert.assertFalse(Arrays.equals(a.getTransactionId(), b.getTransactionId()));
+        Assert.assertFalse(a.getTransactionId().equals(b.getTransactionId()));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class TransactionTest {
         Transaction a = new Transaction(keyPair.getPublic());
         Transaction b = new Transaction(keyPair.getPublic());
 
-        Assert.assertTrue(Arrays.equals(a.getTransactionId(), b.getTransactionId()));
+        Assert.assertTrue(a.getTransactionId().equals(b.getTransactionId()));
     }
 
     @Test
@@ -39,6 +39,6 @@ public class TransactionTest {
         Transaction a = new Transaction();
         Transaction b = new Transaction();
 
-        Assert.assertFalse(Arrays.equals(a.getSenderNonce(), b.getSenderNonce()));
+        Assert.assertFalse(a.getSenderNonce().equals(b.getSenderNonce()));
     }
 }

@@ -60,7 +60,6 @@ public class Requester {
     private final URL url;
     private final Proxy proxy;
     private String caIdentifier;
-    private X509Certificate existing;
     private X509Certificate ca;
     private X509Certificate ra;
     private KeyPair keyPair;
@@ -104,9 +103,6 @@ public class Requester {
         List<X509Certificate> certs = getCaCertificate();
 
         ca = certs.get(0);
-        if (certs.size() == 2) {
-            ra = certs.get(1);
-        }
     }
 
     public X509CRL getCrl() throws IOException {
@@ -135,10 +131,6 @@ public class Requester {
         ContentInfo contentInfo = signedData.getContentInfo();
 
         return null;
-    }
-
-    public void setExistingCertificate(X509Certificate cert) {
-        existing = cert;
     }
 
     public List<X509Certificate> enroll(X500Principal subject, CallbackHandler cbh) throws IOException, UnsupportedCallbackException {

@@ -22,7 +22,6 @@
 
 package com.google.code.jscep.request;
 
-import com.google.code.jscep.ScepMessage;
 
 public interface Request {
     String getOperation();

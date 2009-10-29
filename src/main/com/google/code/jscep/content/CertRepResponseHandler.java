@@ -1,15 +1,11 @@
 package com.google.code.jscep.content;
 
-import com.google.code.jscep.response.CertRep;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataParser;
-import org.bouncycastle.cms.SignerInformationStore;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ContentHandler;
 import java.net.URLConnection;
+
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 
 public class CertRepResponseHandler extends ContentHandler {
     @Override

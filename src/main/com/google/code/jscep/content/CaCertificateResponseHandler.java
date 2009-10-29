@@ -22,15 +22,12 @@
 
 package com.google.code.jscep.content;
 
-import com.google.code.jscep.response.CaCertificateResponse;
-
-import java.net.HttpURLConnection;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.io.IOException;
 import java.net.ContentHandler;
 import java.net.URLConnection;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
