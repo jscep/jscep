@@ -44,21 +44,27 @@ import java.util.concurrent.atomic.AtomicLong;
 
 abstract public class Operation implements Request {
     private static final AtomicLong transCounter = new AtomicLong();
-    private static final Random RANDOM = new SecureRandom();
     private static final String OPERATION = "PKIOperation";
-    private final byte[] senderNonce = new byte[16];
     private final X509Certificate ca;
     private final KeyPair keyPair;
+    private DERPrintableString transId;
+    private DEROctetString senderNonce;
 
     public Operation(X509Certificate ca, KeyPair keyPair) {
         this.ca = ca;
         this.keyPair = keyPair;
-        
-        RANDOM.nextBytes(senderNonce);
     }
 
     public final String getOperation() {
         return OPERATION;
+    }
+    
+    public void setTransactionId(DERPrintableString transId) {
+    	this.transId = transId;
+    }
+    
+    public void setSenderNonce(DEROctetString senderNonce) {
+    	this.senderNonce = senderNonce;
     }
 
     public final byte[] getMessage() {
@@ -132,19 +138,11 @@ abstract public class Operation implements Request {
     }
 
     private Attribute getTransactionIdAttribute() {
-        return new Attribute(ScepObjectIdentifiers.transId, new DERSet(getTransactionId()));
+        return new Attribute(ScepObjectIdentifiers.transId, new DERSet(transId));
     }
 
     private Attribute getSenderNonceAttribute() {
-        return new Attribute(ScepObjectIdentifiers.senderNonce, new DERSet(getSenderNonce()));
-    }
-
-    protected DERPrintableString getTransactionId() {
-        return new DERPrintableString(Long.toString(transCounter.incrementAndGet()));
-    }
-
-    protected DEROctetString getSenderNonce() {
-        return new DEROctetString(senderNonce);
+        return new Attribute(ScepObjectIdentifiers.senderNonce, new DERSet(senderNonce));
     }
 
     protected X509Certificate getCaCertificate() {

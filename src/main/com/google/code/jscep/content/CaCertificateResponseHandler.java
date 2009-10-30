@@ -28,19 +28,17 @@ import java.net.URLConnection;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CaCertificateResponseHandler extends ContentHandler {
     @Override
     public Object getContent(URLConnection conn) throws IOException {
         try {
-            List<X509Certificate> certs = new ArrayList<X509Certificate>(0);
+            X509Certificate[] certs = new X509Certificate[1];
 
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             X509Certificate ca = (X509Certificate) cf.generateCertificate(conn.getInputStream());
 
-            certs.add(ca);
+            certs[0] = ca;
 
             return certs;
         } catch (CertificateException ce) {

@@ -1,6 +1,7 @@
 package com.google.code.jscep;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URL;
 import java.security.Security;
 import java.security.cert.X509Certificate;
@@ -51,9 +52,9 @@ public class RequesterTest {
     public void testAll() throws Exception {
         URL url = new URL("https://engtest81-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
         Requester client = new Requester(url);
-        client.initialize(null);
-//        client.getCert(BigInteger.ONE);
-        client.getCrl();
+        client.setCA(null);
+        client.getCert(BigInteger.ONE);
+//        client.getCrl();
     }
 
     class TestCallbackHandler implements CallbackHandler {

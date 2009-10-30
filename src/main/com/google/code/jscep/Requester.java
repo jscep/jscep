@@ -22,35 +22,42 @@
 
 package com.google.code.jscep;
 
-import com.google.code.jscep.asn1.ScepObjectIdentifiers;
-import com.google.code.jscep.content.ScepContentHandlerFactory;
-import com.google.code.jscep.request.*;
-import com.google.code.jscep.request.Operation;
-import com.google.code.jscep.response.Capabilities;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.SignerInformation;
-import org.bouncycastle.cms.SignerInformationStore;
-import org.bouncycastle.util.encoders.Base64;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CRL;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
+import java.security.cert.Certificate;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.net.*;
-import java.security.*;
-import java.security.cert.*;
-import java.util.Collection;
-import java.util.List;
+
+import com.google.code.jscep.content.ScepContentHandlerFactory;
+import com.google.code.jscep.request.GetCACaps;
+import com.google.code.jscep.request.GetCACert;
+import com.google.code.jscep.request.GetCRL;
+import com.google.code.jscep.request.GetCert;
+import com.google.code.jscep.request.GetCertInitial;
+import com.google.code.jscep.request.Operation;
+import com.google.code.jscep.request.PkcsReq;
+import com.google.code.jscep.request.Request;
+import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.transport.Transport;
 
 public class Requester {
     static {
@@ -63,6 +70,7 @@ public class Requester {
     private X509Certificate ca;
     private X509Certificate ra;
     private KeyPair keyPair;
+    private Transaction trans;
 
     public Requester(URL url) {
         this(url, Proxy.NO_PROXY);
@@ -73,7 +81,7 @@ public class Requester {
         this.proxy = proxy;
     }
 
-    public void initialize(X509Certificate ca) {
+    public void setCA(X509Certificate ca) {
         this.ca = ca;
         try {
             KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
@@ -89,129 +97,83 @@ public class Requester {
 
     private Capabilities getCapabilities() throws IOException {
         Request req = new GetCACaps(caIdentifier);
+        Transport trans = Transport.createTransport("GET", url, proxy);
 
-        return (Capabilities) sendRequest(req);
+        return (Capabilities) trans.sendMessage(req);
     }
 
-    private List<X509Certificate> getCaCertificate() throws IOException {
+    private X509Certificate[] getCaCertificate() throws IOException {
         Request req = new GetCACert(caIdentifier);
+        Transport trans = Transport.createTransport("GET", url, proxy);
         
-        return (List<X509Certificate>) sendRequest(req);
+        return (X509Certificate[]) trans.sendMessage(req);
     }
 
     private void updateCertificates() throws IOException {
-        List<X509Certificate> certs = getCaCertificate();
+        X509Certificate[] certs = getCaCertificate();
 
-        ca = certs.get(0);
+        ca = certs[0];
+        if (certs.length == 2)
+        	ra = certs[1];
     }
 
-    public X509CRL getCrl() throws IOException {
+    public X509CRL getCrl() throws IOException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
         Operation req = new GetCRL(ca, keyPair);
+        Transaction trans = new Transaction();
+        CertStore store = trans.performOperation(url, proxy, req);
+        Collection<? extends CRL> crls = store.getCRLs(null); 
 
-        CMSSignedData signedData = (CMSSignedData) sendRequest(req);
-        SignerInformationStore store = signedData.getSignerInfos();
-        Collection<?> signers = store.getSigners();
-        for (Object signer : signers) {
-            SignerInformation signerInformation = (SignerInformation) signer;
-            AttributeTable signedAttrs = signerInformation.getSignedAttributes();
-
-            Attribute transIdAttr = signedAttrs.get(ScepObjectIdentifiers.transId);
-            DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
-            Attribute pkiStatusAttribute = signedAttrs.get(ScepObjectIdentifiers.pkiStatus);
-            DERPrintableString pkiStatus = (DERPrintableString) pkiStatusAttribute.getAttrValues().getObjectAt(0);
-            Attribute msgTypeAttribute = signedAttrs.get(ScepObjectIdentifiers.messageType);
-            DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);
-            Attribute senderNoneAttribute = signedAttrs.get(ScepObjectIdentifiers.senderNonce);
-            DEROctetString senderNonce = (DEROctetString) senderNoneAttribute.getAttrValues().getObjectAt(0);
-            Attribute recipientNonceAttribute = signedAttrs.get(ScepObjectIdentifiers.recipientNonce);
-            DEROctetString recipientNonce = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
+        List<X509CRL> x509 = new ArrayList<X509CRL>();
+        
+        for (CRL crl : crls) {
+        	x509.add((X509CRL) crl);
         }
-        ContentInfo contentInfo = signedData.getContentInfo();
-
-        return null;
+        
+        return x509.get(0);
     }
 
-    public List<X509Certificate> enroll(X500Principal subject, CallbackHandler cbh) throws IOException, UnsupportedCallbackException {
+    public List<X509Certificate> enroll(X500Principal subject, CallbackHandler cbh) throws IOException, UnsupportedCallbackException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
         PasswordCallback cb = new PasswordCallback("Password", false);
         cbh.handle(new Callback[] {cb});
         Operation req = new PkcsReq(ca, keyPair, subject, cb.getPassword());
         cb.clearPassword();
+        Transaction trans = new Transaction();
+        CertStore store = trans.performOperation(url, proxy, req);
 
-        sendRequest(req);
-
-        return null;
+        return getCertificates(store.getCertificates(null));
     }
 
-    public List<X509Certificate> getCertInitial(X500Principal subject) throws IOException {
+    public List<X509Certificate> getCertInitial(X500Principal subject) throws IOException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
         Operation req = new GetCertInitial(ca, keyPair, subject);
+        Transaction trans = new Transaction();
+        CertStore store = trans.performOperation(url, proxy, req);
 
-        sendRequest(req);
-
-        return null;
+        return getCertificates(store.getCertificates(null));
     }
 
-    public List<X509Certificate> getCert(BigInteger serialNumber) throws IOException {
+    public List<X509Certificate> getCert(BigInteger serialNumber) throws IOException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
         Operation req = new GetCert(ca, keyPair, serialNumber);
+        Transaction trans = new Transaction();
+        CertStore store = trans.performOperation(url, proxy, req);
 
-        sendRequest(req);
-
-        return null;
+        return getCertificates(store.getCertificates(null));
     }
-
-    private Object sendRequest(Request msg) throws IOException {
-        URL url = getUrl(msg.getOperation(), msg.getMessage());
-        URLConnection conn = url.openConnection(proxy);
-        System.out.println(url);
-
-        return conn.getContent();
-    }
-
-    private Object sendRequest(Operation msg) throws IOException {
-        boolean usePost = getCapabilities().supportsPost();
-        String op = msg.getOperation();
-        URL url;
-        if (usePost) {
-            url = getUrl(op);
-        } else {
-            url = getUrl(op, msg.getMessage());
-        }
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
-        if (usePost) {
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.addRequestProperty("Content-Length", Integer.toString(msg.getMessage().length));
-
-            OutputStream stream = conn.getOutputStream();
-            stream.write(msg.getMessage());
-            stream.close();
-        }
-
-        return conn.getContent();
-    }
-
-    private URL getUrl(String op, Object message) throws MalformedURLException {
-        if (message == null) {
-            return new URL(getUrl(op).toExternalForm() + "&message=");
-        } else {
-            return new URL(getUrl(op).toExternalForm() + "&message=" + message);
-        }
-    }
-
-    private URL getUrl(String op, byte[] msg) throws MalformedURLException, UnsupportedEncodingException {
-        String encodedMsg = URLEncoder.encode(new String(Base64.encode(msg)), "UTF-8");
-        
-        return new URL(getUrl(op).toExternalForm() + "&message=" + encodedMsg);
-    }
-
-    private URL getUrl(String op) throws MalformedURLException {
-        return new URL(url.toExternalForm() + "?operation=" + op);
+    
+    private List<X509Certificate> getCertificates(Collection<? extends Certificate> certs) {
+    	List<X509Certificate> x509 = new ArrayList<X509Certificate>();
+    	
+    	for (Certificate cert : certs) {
+    		x509.add((X509Certificate) cert);
+    	}
+    	
+    	return x509;
     }
 }
