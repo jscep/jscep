@@ -22,34 +22,35 @@
 
 package com.google.code.jscep.request;
 
-import com.google.code.jscep.asn1.IssuerAndSubject;
+import java.io.IOException;
+
+import javax.security.auth.x500.X500Principal;
+
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
 
-import javax.security.auth.x500.X500Principal;
-import java.io.IOException;
-import java.security.KeyPair;
-import java.security.cert.X509Certificate;
+import com.google.code.jscep.asn1.IssuerAndSubject;
+import com.google.code.jscep.asn1.MessageType;
 
-public class GetCertInitial extends Operation {
+public class GetCertInitial implements PkiOperation {
+	private final X500Principal issuer;
     private final X500Principal subject;
 
-    public GetCertInitial(X509Certificate ca, KeyPair keyPair, X500Principal subject) {
-        super(ca, keyPair);
-        
+    public GetCertInitial(X500Principal issuer, X500Principal subject) {
+        this.issuer = issuer;
         this.subject = subject;
     }
 
     @Override
     public DERPrintableString getMessageType() {
-        return new DERPrintableString("20");
+        return MessageType.GetCertInitial;
     }
 
     @Override
-    protected DEREncodable getMessageData() throws IOException {
-        X509Name issuerName = new X509Principal(getCaCertificate().getIssuerX500Principal().getEncoded());
+	public DEREncodable getMessageData() throws IOException {
+        X509Name issuerName = new X509Principal(issuer.getEncoded());
         X509Name subjectName = new X509Principal(subject.getEncoded());
 
         return new IssuerAndSubject(issuerName, subjectName);

@@ -19,6 +19,7 @@ public class HttpPostTransport extends Transport {
 	
 	@Override
 	public Object sendMessage(Request msg) throws IOException, MalformedURLException {
+		System.out.println("Sending " + msg + " by POST");
 		byte[] body = (byte[]) msg.getMessage();
 		
         URL url = getUrl(msg.getOperation());

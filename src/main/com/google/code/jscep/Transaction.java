@@ -1,107 +1,199 @@
 package com.google.code.jscep;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.cert.CRL;
+import java.security.SignatureException;
 import java.security.cert.CertStore;
-import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.smime.SMIMECapability;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSProcessable;
+import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.x509.X509V1CertificateGenerator;
 
+import com.google.code.jscep.asn1.MessageType;
 import com.google.code.jscep.asn1.PkiStatus;
 import com.google.code.jscep.asn1.ScepObjectIdentifiers;
-import com.google.code.jscep.request.GetCRL;
-import com.google.code.jscep.request.Operation;
+import com.google.code.jscep.request.PkiOperation;
+import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.transport.Transport;
 
 public class Transaction {
     private static AtomicLong transactionCounter = new AtomicLong();
     private static Random rnd = new SecureRandom(); 
-    private final byte[] transactionId;
-    private final byte[] senderNonce = new byte[16];
-    private int status;
+    private DERPrintableString transId;
+    private DEROctetString senderNonce;
     private int reason;
-    private Operation operation;
+    private KeyPair keyPair;
+    private X509Certificate ca;
+    private X509Certificate identity;
     private List<X509CRL> crls;
     private List<X509Certificate> certs;
-
-    {
-        rnd.nextBytes(senderNonce);
+    private final Transport transport;
+    
+    protected Transaction(Transport transport, X509Certificate ca, KeyPair keyPair) {
+    	this.transport = transport;
+    	this.ca = ca;
+    	this.keyPair = keyPair;
+        this.transId = generateTransactionId(keyPair);
+        
+    	// FUDGED.  What identity do we send for getCRL?
+    	X509V1CertificateGenerator gen = new X509V1CertificateGenerator();
+    	gen.setIssuerDN(new X500Principal("CN=foo"));
+    	gen.setNotAfter(new Date());
+    	gen.setNotBefore(new Date());
+    	gen.setPublicKey(keyPair.getPublic());
+    	gen.setSerialNumber(BigInteger.ONE);
+    	gen.setSignatureAlgorithm("MD5withRSA");
+    	gen.setSubjectDN(new X500Principal("CN=foo"));
+    	try {
+			this.identity = gen.generate(keyPair.getPrivate());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+        
+        init();
     }
     
-    /**
-     * Creates a new enrollment transaction.
-     *
-     * @param publicKey the public key to enrol.
-     */
-    public Transaction(PublicKey publicKey) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        transactionId = Hex.encode(digest.digest(publicKey.getEncoded()));
-    }
-
-    /**
-     * Creates a new non-enrollment transaction.
-     */
-    public Transaction() {
-        transactionId = Long.toHexString(transactionCounter.getAndIncrement()).getBytes();
+    private void init() {
+    	final byte[] nonce = new byte[16];
+    	rnd.nextBytes(nonce);
+    	
+    	this.senderNonce = new DEROctetString(nonce);
     }
     
-    public int getStatus() {
-    	return status;
+    private DERPrintableString generateTransactionId(KeyPair keyPair) {
+    	if (keyPair == null) {
+    		return new DERPrintableString(Long.toHexString(transactionCounter.getAndIncrement()).getBytes());
+    	} else {
+	    	MessageDigest digest = null;
+	        try {
+	            digest = MessageDigest.getInstance("MD5");
+	        } catch (NoSuchAlgorithmException e) {
+	            throw new RuntimeException(e);
+	        }
+	        return new DERPrintableString(Hex.encode(digest.digest(keyPair.getPublic().getEncoded())));
+    	}
     }
     
     public int getFailureReason() {
     	return reason;
     }
-
-    public DERPrintableString getTransactionId() {
-        return new DERPrintableString(transactionId);
+    
+    private CMSEnvelopedData envelope(DEREncodable data) throws GeneralSecurityException, CMSException {
+    	CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
+    	gen.addKeyTransRecipient(ca);
+    	
+    	ContentInfo contentInfo = new ContentInfo(PKCSObjectIdentifiers.data, data);
+    	CMSProcessable processableData = new CMSProcessableByteArray(contentInfo.getDEREncoded());
+    	
+    	return gen.generate(processableData, getCipherId(), "BC");
+    }
+    
+    private CMSSignedData sign(CMSProcessable data, AttributeTable table) throws GeneralSecurityException, CMSException {
+    	CMSSignedDataGenerator signer = new CMSSignedDataGenerator();
+    	
+    	List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
+        certList.add(identity);
+        CertStore certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
+        signer.addCertificatesAndCRLs(certs);
+        signer.addSigner(keyPair.getPrivate(), identity, getDigestId(), table, null);
+        
+    	return signer.generate(data, true, "BC");
     }
 
-    public DEROctetString getSenderNonce() {
-        return new DEROctetString(senderNonce);
+    public CertStore performOperation(PkiOperation operation) throws MalformedURLException, IOException, ScepException {
+    	try {
+    		CMSEnvelopedData enveloped = envelope(operation.getMessageData());
+    		CMSProcessable envelopedData = new CMSProcessableByteArray(enveloped.getEncoded());
+	
+	        Attribute msgType = getMessageTypeAttribute(operation);
+	        Attribute transId = getTransactionIdAttribute();
+	        Attribute senderNonce = getSenderNonceAttribute();
+	
+	        Hashtable<DERObjectIdentifier, Attribute> attributes = new Hashtable<DERObjectIdentifier, Attribute>();
+	        attributes.put(msgType.getAttrType(), msgType);
+	        attributes.put(transId.getAttrType(), transId);
+	        attributes.put(senderNonce.getAttrType(), senderNonce);
+	        AttributeTable table = new AttributeTable(attributes);
+	
+	        CMSSignedData signedData = sign(envelopedData, table);
+	        PkiRequest request = new PkiRequest(signedData);
+	        CMSSignedData response = (CMSSignedData) transport.sendMessage(request);
+    	
+	        return handleResponse(response);
+    	} catch (CMSException e) {
+    		throw new ScepException(e);
+    	} catch (GeneralSecurityException e) {
+    		throw new ScepException(e);
+    	}
+    }
+    
+    private Attribute getMessageTypeAttribute(PkiOperation operation) {
+        return new Attribute(ScepObjectIdentifiers.messageType, new DERSet(operation.getMessageType()));
+    }
+    
+
+    private Attribute getTransactionIdAttribute() {
+        return new Attribute(ScepObjectIdentifiers.transId, new DERSet(transId));
     }
 
-    public CertStore performOperation(URL url, Proxy proxy, Operation operation) throws MalformedURLException, IOException, ScepException {
-    	this.operation = operation;
-    	
-    	operation.setSenderNonce(getSenderNonce());
-    	operation.setTransactionId(getTransactionId());
-    	
-    	Transport transport = Transport.createTransport("POST", url, proxy);
-    	CMSSignedData signedData = (CMSSignedData) transport.sendMessage(operation);
-    	
-    	return handleResponse(signedData);
+    private Attribute getSenderNonceAttribute() {
+        return new Attribute(ScepObjectIdentifiers.senderNonce, new DERSet(senderNonce));
+    }
+
+    private String getCipherId() {
+        // DES
+        // return SMIMECapability.dES_CBC.getId();
+        // Triple-DES
+        return SMIMECapability.dES_EDE3_CBC.getId();
+    }
+
+    private String getDigestId() {
+        // MD5
+        return CMSSignedDataGenerator.DIGEST_MD5;
+        // SHA-1
+        // return CMSSignedDataGenerator.DIGEST_SHA1;
+        // SHA-256
+        // return CMSSignedDataGenerator.DIGEST_SHA256;
+        // SHA-512
+        // return CMSSignedDataGenerator.DIGEST_SHA512;
     }
     
     public CertStore handleResponse(CMSSignedData signedData) throws ScepException {
@@ -116,39 +208,37 @@ public class Transaction {
 
         Attribute transIdAttr = signedAttrs.get(ScepObjectIdentifiers.transId);
         DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
-        if (transId.equals(getTransactionId()) == false) {
-            throw new ScepException("Transaction ID Mismatch: Sent [" + getTransactionId() + "]; Received [" + transId + "]");
+        if (transId.equals(this.transId) == false) {
+            throw new ScepException("Transaction ID Mismatch: Sent [" + this.transId + "]; Received [" + transId + "]");
         }
         
         Attribute msgTypeAttribute = signedAttrs.get(ScepObjectIdentifiers.messageType);
         DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);
-        if (msgType.getString().equals("3") == false) {
+        if (msgType.equals(MessageType.CertRep) == false) {
         	throw new ScepException("Invalid Message Type: " + msgType);
         }
         
-        Attribute senderNoneAttribute = signedAttrs.get(ScepObjectIdentifiers.senderNonce);
-        DEROctetString senderNonce = (DEROctetString) senderNoneAttribute.getAttrValues().getObjectAt(0);
+//        Attribute senderNoneAttribute = signedAttrs.get(ScepObjectIdentifiers.senderNonce);
+//        DEROctetString senderNonce = (DEROctetString) senderNoneAttribute.getAttrValues().getObjectAt(0);
         
         Attribute recipientNonceAttribute = signedAttrs.get(ScepObjectIdentifiers.recipientNonce);
         DEROctetString recipientNonce = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
         
-        if (recipientNonce.equals(getSenderNonce()) == false) {
-        	throw new ScepException("Sender Nonce Mismatch.  Sent [" + getSenderNonce() + "]; Received [" + recipientNonce + "]");
+        if (recipientNonce.equals(this.senderNonce) == false) {
+        	throw new ScepException("Sender Nonce Mismatch.  Sent [" + this.senderNonce + "]; Received [" + recipientNonce + "]");
         }
         
         Attribute pkiStatusAttribute = signedAttrs.get(ScepObjectIdentifiers.pkiStatus);
         DERPrintableString pkiStatus = (DERPrintableString) pkiStatusAttribute.getAttrValues().getObjectAt(0);
         
-        status = Integer.parseInt(pkiStatus.toString());
-        
-        if (status == PkiStatus.FAILURE) {
+        if (pkiStatus.equals(PkiStatus.FAILURE)) {
         	
         	Attribute failInfoAttribute = signedAttrs.get(ScepObjectIdentifiers.failInfo);
         	DERPrintableString failInfo = (DERPrintableString) failInfoAttribute.getAttrValues().getObjectAt(0);
         	
         	reason = Integer.parseInt(failInfo.toString());
         	return null;
-        } else if (status == PkiStatus.PENDING) {
+        } else if (pkiStatus.equals(PkiStatus.PENDING)) {
         	return null;
         }
         

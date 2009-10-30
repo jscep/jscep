@@ -22,36 +22,35 @@
 
 package com.google.code.jscep.request;
 
+import java.io.IOException;
+import java.math.BigInteger;
+
+import javax.security.auth.x500.X500Principal;
+
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
 
-import javax.security.auth.x500.X500Principal;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.cert.X509Certificate;
+import com.google.code.jscep.asn1.MessageType;
 
-public class GetCRL extends Operation {
+public class GetCRL implements PkiOperation {
     private final X500Principal issuer;
     private final BigInteger serial;
 
-    public GetCRL(X509Certificate certificate, KeyPair keyPair) {
-        super(certificate, keyPair);
-        
-        issuer = certificate.getIssuerX500Principal();
-        serial = certificate.getSerialNumber();
+    public GetCRL(X500Principal issuer, BigInteger serial) {
+        this.issuer = issuer;
+        this.serial = serial;
     }
 
     @Override
     public DERPrintableString getMessageType() {
-        return new DERPrintableString("22");
+        return MessageType.GetCRL;
     }
 
     @Override
-    protected DEREncodable getMessageData() throws IOException {
+	public DEREncodable getMessageData() throws IOException {
         X509Name issuerName = new X509Principal(issuer.getEncoded());
 
         return new IssuerAndSerialNumber(issuerName, serial);

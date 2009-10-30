@@ -18,6 +18,7 @@ public class HttpGetTransport extends Transport {
 	
 	@Override
 	public Object sendMessage(Request msg) throws IOException, MalformedURLException {
+		System.out.println("Sending " + msg + " by GET");
 		URL url = getUrl(msg.getOperation(), msg.getMessage());
         URLConnection conn = url.openConnection(proxy);
 

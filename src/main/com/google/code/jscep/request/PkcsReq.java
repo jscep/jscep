@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.Signature;
-import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -46,24 +45,26 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
 
-public class PkcsReq extends Operation {
-    private final X500Principal subject;
-    private final char[] pass;
+import com.google.code.jscep.asn1.MessageType;
 
-    public PkcsReq(X509Certificate ca, KeyPair keyPair, X500Principal subject, char[] pass) {
-        super(ca, keyPair);
-        
+public class PkcsReq implements PkiOperation {
+    private final X500Principal subject;
+    private final char[] password;
+    private final KeyPair keyPair;
+
+    public PkcsReq(KeyPair keyPair, X500Principal subject, char[] password) {
+        this.keyPair = keyPair;
         this.subject = subject;
-        this.pass = pass;
+        this.password = password;
     }
 
     @Override
     public DERPrintableString getMessageType() {
-        return new DERPrintableString("19");
+        return MessageType.PKCSReq;
     }
 
     @Override
-    protected DEREncodable getMessageData() throws IOException, GeneralSecurityException {
+    public DEREncodable getMessageData() throws IOException, GeneralSecurityException {
         CertificationRequestInfo reqInfo = getRequestInfo();
         DERBitString signature = signRequestInfo(reqInfo);
 
@@ -72,7 +73,7 @@ public class PkcsReq extends Operation {
 
     private DERBitString signRequestInfo(CertificationRequestInfo reqInfo) throws IOException, GeneralSecurityException {
         Signature sig = Signature.getInstance(getDigestAlgorithm().getObjectId().getId());
-        sig.initSign(getKeyPair().getPrivate());
+        sig.initSign(keyPair.getPrivate());
         sig.update(reqInfo.getEncoded());
 
         return new DERBitString(sig.sign());
@@ -88,12 +89,8 @@ public class PkcsReq extends Operation {
         return new CertificationRequestInfo(subjName, getSubjectPublicKeyInfo(), attributeSet);
     }
 
-    public X500Principal getSubject() {
-        return subject;
-    }
-
     private SubjectPublicKeyInfo getSubjectPublicKeyInfo() {
-        return new SubjectPublicKeyInfo(getPublicKeyAlgorithm(), getKeyPair().getPublic().getEncoded());
+        return new SubjectPublicKeyInfo(getPublicKeyAlgorithm(), keyPair.getPublic().getEncoded());
     }
 
     private AlgorithmIdentifier getPublicKeyAlgorithm() {
@@ -107,8 +104,7 @@ public class PkcsReq extends Operation {
     private DERSequence getPassword() {
         ASN1Encodable attrType = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
         ASN1EncodableVector attrValues = new ASN1EncodableVector();
-        attrValues.add(new DERUTF8String(new String(pass)));
-
+        attrValues.add(new DERUTF8String(new String(password)));
         ASN1EncodableVector attrVector = new ASN1EncodableVector();
         attrVector.add(attrType);
         attrVector.add(new DERSet(attrValues));

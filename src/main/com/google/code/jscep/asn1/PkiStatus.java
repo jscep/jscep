@@ -22,8 +22,10 @@
 
 package com.google.code.jscep.asn1;
 
+import org.bouncycastle.asn1.DERPrintableString;
+
 public interface PkiStatus {
-    int SUCCESS = 0;
-    int FAILURE = 2;
-    int PENDING = 3;
+    DERPrintableString SUCCESS = new DERPrintableString("0");
+    DERPrintableString FAILURE = new DERPrintableString("2");
+    DERPrintableString PENDING = new DERPrintableString("3");
 }

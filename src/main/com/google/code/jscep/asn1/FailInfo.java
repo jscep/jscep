@@ -22,10 +22,12 @@
 
 package com.google.code.jscep.asn1;
 
+import org.bouncycastle.asn1.DERPrintableString;
+
 public interface FailInfo {
-    int badAlg = 0;
-    int badMessageCheck = 1;
-    int badRequest = 2;
-    int badTime = 3;
-    int badCertId = 4;
+    DERPrintableString badAlg = new DERPrintableString("0");
+    DERPrintableString badMessageCheck = new DERPrintableString("1");
+    DERPrintableString badRequest = new DERPrintableString("2");
+    DERPrintableString badTime = new DERPrintableString("3");
+    DERPrintableString badCertId = new DERPrintableString("4");
 }
