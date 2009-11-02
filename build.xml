@@ -23,7 +23,7 @@
 	</target>
 	
 	<target name="compile">
-		<javac srcdir="${src}" destdir="${output}">
+		<javac srcdir="${src}" destdir="${output}" source="5">
 			<classpath>
 				<fileset dir="lib">
     				<include name="bcmail-jdk16-144.jar"/>
@@ -47,6 +47,13 @@
 	</target>
 	
 	<target name="compress">
-		<jar destfile="${output}/jSCEP-r${svn.revision.max}.jar" basedir="${output}" includes="**/*.class"/>
+		<jar destfile="${output}/jSCEP-r${svn.revision.max}.jar">
+			<fileset dir="${output}">
+				<include name="**/*.class"/>
+			</fileset>
+			<fileset dir="${basedir}">
+				<include name="COPYRIGHT"/>
+			</fileset>
+		</jar>
 	</target>
 </project>

@@ -106,7 +106,7 @@ public class Requester {
     			throw new IllegalStateException();
     		}
     	} else if (builder.subject != null) {
-    		identity = createCertificate(builder.subject);
+//    		identity = createCertificate(builder.subject);
     	}
     	
     	caIdentifier = builder.identifier;
