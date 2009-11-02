@@ -23,7 +23,6 @@
 package com.google.code.jscep;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
@@ -36,13 +35,10 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-
-import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
@@ -64,7 +60,6 @@ import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.util.encoders.Hex;
-import org.bouncycastle.x509.X509V1CertificateGenerator;
 
 import com.google.code.jscep.asn1.MessageType;
 import com.google.code.jscep.asn1.PkiStatus;
@@ -74,52 +69,37 @@ import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.transport.Transport;
 
 public class Transaction {
-    private static AtomicLong transactionCounter = new AtomicLong();
-    private static Random rnd = new SecureRandom(); 
-    private DERPrintableString transId;
+    private static final AtomicLong COUNTER = new AtomicLong();
+    private static final Random RANDOM = new SecureRandom(); 
+    private final DERPrintableString transId;
     private DEROctetString senderNonce;
     private int reason;
-    private KeyPair keyPair;
-    private X509Certificate ca;
-    private X509Certificate identity;
+    private final KeyPair keyPair;
+    private final X509Certificate ca;
+    private final X509Certificate identity;
     private List<X509CRL> crls;
     private List<X509Certificate> certs;
     private final Transport transport;
     
-    protected Transaction(Transport transport, X509Certificate ca, KeyPair keyPair) {
+    protected Transaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair) {
     	this.transport = transport;
     	this.ca = ca;
     	this.keyPair = keyPair;
-        this.transId = generateTransactionId(keyPair);
-        
-    	// FUDGED.  What identity do we send for getCRL?
-    	X509V1CertificateGenerator gen = new X509V1CertificateGenerator();
-    	gen.setIssuerDN(new X500Principal("CN=foo"));
-    	gen.setNotAfter(new Date());
-    	gen.setNotBefore(new Date());
-    	gen.setPublicKey(keyPair.getPublic());
-    	gen.setSerialNumber(BigInteger.ONE);
-    	gen.setSignatureAlgorithm("MD5withRSA");
-    	gen.setSubjectDN(new X500Principal("CN=foo"));
-    	try {
-			this.identity = gen.generate(keyPair.getPrivate());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-        
-        init();
+    	this.identity = identity;
+        this.transId = generateTransactionId();
+        this.senderNonce = generateSenderNonce();
     }
     
-    private void init() {
+    private DEROctetString generateSenderNonce() {
     	final byte[] nonce = new byte[16];
-    	rnd.nextBytes(nonce);
+    	RANDOM.nextBytes(nonce);
     	
-    	this.senderNonce = new DEROctetString(nonce);
+    	return new DEROctetString(nonce);
     }
     
-    private DERPrintableString generateTransactionId(KeyPair keyPair) {
+    private DERPrintableString generateTransactionId() {
     	if (keyPair == null) {
-    		return new DERPrintableString(Long.toHexString(transactionCounter.getAndIncrement()).getBytes());
+    		return new DERPrintableString(Long.toHexString(COUNTER.getAndIncrement()).getBytes());
     	} else {
 	    	MessageDigest digest = null;
 	        try {
@@ -146,15 +126,16 @@ public class Transaction {
     }
     
     private CMSSignedData sign(CMSProcessable data, AttributeTable table) throws GeneralSecurityException, CMSException {
-    	CMSSignedDataGenerator signer = new CMSSignedDataGenerator();
+    	CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
     	
     	List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
         certList.add(identity);
-        CertStore certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
-        signer.addCertificatesAndCRLs(certs);
-        signer.addSigner(keyPair.getPrivate(), identity, getDigestId(), table, null);
         
-    	return signer.generate(data, true, "BC");
+        CertStore certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
+        gen.addCertificatesAndCRLs(certs);
+        gen.addSigner(keyPair.getPrivate(), identity, getDigestId(), table, null);
+        
+    	return gen.generate(data, true, "BC");
     }
 
     public CertStore performOperation(PkiOperation operation) throws MalformedURLException, IOException, ScepException {
@@ -199,16 +180,16 @@ public class Transaction {
 
     private String getCipherId() {
         // DES
-        // return SMIMECapability.dES_CBC.getId();
+         return SMIMECapability.dES_CBC.getId();
         // Triple-DES
-        return SMIMECapability.dES_EDE3_CBC.getId();
+//        return SMIMECapability.dES_EDE3_CBC.getId();
     }
 
     private String getDigestId() {
         // MD5
-        return CMSSignedDataGenerator.DIGEST_MD5;
+//        return CMSSignedDataGenerator.DIGEST_MD5;
         // SHA-1
-        // return CMSSignedDataGenerator.DIGEST_SHA1;
+         return CMSSignedDataGenerator.DIGEST_SHA1;
         // SHA-256
         // return CMSSignedDataGenerator.DIGEST_SHA256;
         // SHA-512

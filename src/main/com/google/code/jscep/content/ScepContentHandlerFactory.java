@@ -40,7 +40,7 @@ public class ScepContentHandlerFactory implements ContentHandlerFactory {
         } else if (mimeType.equals(X509_CA_CERT)) {
             return new CaCertificateResponseHandler();
         } else if (mimeType.equals(X509_CA_RA_CERT)) {
-            return null;
+            return new CaRaCertificateResponseHandler();
         } else if (mimeType.equals(X509_NEXT_CA_CERT)) {
             return null;
         } else {

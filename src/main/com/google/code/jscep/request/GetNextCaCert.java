@@ -40,4 +40,8 @@ public class GetNextCaCert implements Request {
     public Object getMessage() {
         return ca;
     }
+    
+    public String toString() {
+    	return OPERATION;
+    }
 }

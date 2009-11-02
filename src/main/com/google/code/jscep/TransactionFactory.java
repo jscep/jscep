@@ -32,14 +32,14 @@ public final class TransactionFactory {
 	}
 	
 	public static Transaction createTransaction(Transport transport) {
-		return createTransaction(transport, null);
+		return createTransaction(transport, null, null, null);
 	}
 	
 	public static Transaction createTransaction(Transport transport, X509Certificate ca) {
-		return createTransaction(transport, ca, null);
+		return createTransaction(transport, ca, null, null);
 	}
 	
-	public static Transaction createTransaction(Transport transport, X509Certificate ca, KeyPair keyPair) {
-		return new Transaction(transport, ca, keyPair);
+	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair) {
+		return new Transaction(transport, ca, identity, keyPair);
 	}
 }

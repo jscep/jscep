@@ -54,6 +54,9 @@ public class HttpPostTransport extends Transport {
         stream.write(body);
         stream.close();
 
+        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+        	throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
+        }
         return conn.getContent();
 	}
 }

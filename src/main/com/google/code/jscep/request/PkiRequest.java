@@ -43,5 +43,8 @@ public class PkiRequest implements Request {
 	public String getOperation() {
 		return OPERATION;
 	}
-
+	
+    public String toString() {
+    	return OPERATION;
+    }
 }

@@ -23,10 +23,10 @@
 package com.google.code.jscep.transport;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 
 import com.google.code.jscep.request.Request;
 
@@ -42,8 +42,11 @@ public class HttpGetTransport extends Transport {
 	public Object sendMessage(Request msg) throws IOException, MalformedURLException {
 		System.out.println("Sending " + msg + " by GET");
 		URL url = getUrl(msg.getOperation(), msg.getMessage());
-        URLConnection conn = url.openConnection(proxy);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 
+        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+        	throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
+        }
         return conn.getContent();
 	}
 	

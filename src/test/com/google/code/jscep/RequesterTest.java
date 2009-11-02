@@ -1,9 +1,6 @@
 package com.google.code.jscep;
 
-import java.io.IOException;
-import java.math.BigInteger;
 import java.net.URL;
-import java.security.KeyPairGenerator;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 
@@ -13,10 +10,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -52,21 +45,12 @@ public class RequesterTest {
 
     @Test
     public void testAll() throws Exception {
+    	X500Principal subject = new X500Principal("CN=jscep.googlecode.com");
+    	
         URL url = new URL("https://engtest81-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
-        Requester client = new Requester(url);
-        client.enroll(new X500Principal("CN=foo"), "foo".toCharArray());
+        Requester client = new Requester.Builder(url).subject(subject).build();
+        client.enroll("foo".toCharArray());
 //        client.getCert(BigInteger.ONE);
-        client.getCrl();
-    }
-
-    class TestCallbackHandler implements CallbackHandler {
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-            for (Callback callback : callbacks) {
-                if (callback instanceof PasswordCallback) {
-                    PasswordCallback pc = (PasswordCallback) callback;
-                    pc.setPassword("foo".toCharArray());
-                }
-            }
-        }
+//        client.getCrl();
     }
 }

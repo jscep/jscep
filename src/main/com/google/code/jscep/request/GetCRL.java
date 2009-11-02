@@ -55,4 +55,8 @@ public class GetCRL implements PkiOperation {
 
         return new IssuerAndSerialNumber(issuerName, serial);
     }
+    
+    public String toString() {
+    	return getMessageType().getString();
+    }
 }

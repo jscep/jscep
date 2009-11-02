@@ -55,4 +55,8 @@ public class GetCertInitial implements PkiOperation {
 
         return new IssuerAndSubject(issuerName, subjectName);
     }
+    
+    public String toString() {
+    	return getMessageType().getString();
+    }
 }

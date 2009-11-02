@@ -25,36 +25,32 @@ package com.google.code.jscep.request;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.security.Signature;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERUTF8String;
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.X509Principal;
+import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import com.google.code.jscep.asn1.MessageType;
 
 public class PkcsReq implements PkiOperation {
-    private final X500Principal subject;
+    private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;
 
-    public PkcsReq(KeyPair keyPair, X500Principal subject, char[] password) {
+    public PkcsReq(KeyPair keyPair, X509Certificate identity, char[] password) {
         this.keyPair = keyPair;
-        this.subject = subject;
+        this.identity = identity;
         this.password = password;
     }
 
@@ -65,41 +61,19 @@ public class PkcsReq implements PkiOperation {
 
     @Override
     public DEREncodable getMessageData() throws IOException, GeneralSecurityException {
-        CertificationRequestInfo reqInfo = getRequestInfo();
-        DERBitString signature = signRequestInfo(reqInfo);
-
-        return new CertificationRequest(reqInfo, getDigestAlgorithm(), signature);
+    	PrivateKey priv = keyPair.getPrivate();
+    	PublicKey pub = keyPair.getPublic();
+    	X500Principal subject = identity.getSubjectX500Principal();
+    	
+    	return new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv);
     }
 
-    private DERBitString signRequestInfo(CertificationRequestInfo reqInfo) throws IOException, GeneralSecurityException {
-        Signature sig = Signature.getInstance(getDigestAlgorithm().getObjectId().getId());
-        sig.initSign(keyPair.getPrivate());
-        sig.update(reqInfo.getEncoded());
-
-        return new DERBitString(sig.sign());
-    }
-
-    private CertificationRequestInfo getRequestInfo() throws IOException {
-        X509Name subjName = new X509Principal(subject.getEncoded());
-        // Build PKCS#10 Attributes
-        ASN1EncodableVector attributes = new ASN1EncodableVector();
+	private DERSet getAttributes() {
+		ASN1EncodableVector attributes = new ASN1EncodableVector();
         attributes.add(getPassword());
-        DERSet attributeSet = new DERSet(attributes);
-
-        return new CertificationRequestInfo(subjName, getSubjectPublicKeyInfo(), attributeSet);
-    }
-
-    private SubjectPublicKeyInfo getSubjectPublicKeyInfo() {
-        return new SubjectPublicKeyInfo(getPublicKeyAlgorithm(), keyPair.getPublic().getEncoded());
-    }
-
-    private AlgorithmIdentifier getPublicKeyAlgorithm() {
-        return new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption);
-    }
-
-    private AlgorithmIdentifier getDigestAlgorithm() {
-        return new AlgorithmIdentifier(PKCSObjectIdentifiers.md5WithRSAEncryption);
-    }
+        
+        return new DERSet(attributes);
+	}
 
     private DERSequence getPassword() {
         ASN1Encodable attrType = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
@@ -110,5 +84,9 @@ public class PkcsReq implements PkiOperation {
         attrVector.add(new DERSet(attrValues));
 
         return new DERSequence(attrVector);
+    }
+    
+    public String toString() {
+    	return getMessageType().getString();
     }
 }

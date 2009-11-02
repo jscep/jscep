@@ -37,11 +37,15 @@ import java.security.cert.Certificate;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.x509.X509V3CertificateGenerator;
 
 import com.google.code.jscep.content.ScepContentHandlerFactory;
 import com.google.code.jscep.request.GetCACaps;
@@ -60,46 +64,103 @@ public class Requester {
         URLConnection.setContentHandlerFactory(new ScepContentHandlerFactory());
     }
 
-    private final URL url;
-    private final Proxy proxy;
-    private String caIdentifier;
+    private URL url;						// Required
+    private Proxy proxy;					// Optional
+    private String caIdentifier;			// Optional
+    private KeyPair keyPair;				// Optional
+    private X509Certificate identity;		// Optional
+    
     private X509Certificate ca;
-    private final KeyPair keyPair;
-    private Transaction transaction;
-    
-    public Requester(URL url) {
-    	this(null, url, Proxy.NO_PROXY);
-    }
 
-    public Requester(KeyPair keyPair, URL url) {
-        this(keyPair, url, Proxy.NO_PROXY);
-    }
-    
-    public Requester(URL url, Proxy proxy) {
-    	this(null, url, proxy);
-    }
-
-    public Requester(KeyPair keyPair, URL url, Proxy proxy) {
-        this.url = url;
-        this.proxy = proxy;
-        
-        if (keyPair == null) {
-        	try {
-				this.keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
-			} catch (NoSuchAlgorithmException e) {
-				throw new RuntimeException(e);
-			}
+    private Requester(Builder builder) throws IllegalStateException {
+    	// Must have only one way of obtaining an identity.
+    	if (builder.identity == null && builder.subject == null) {
+    		throw new IllegalStateException("Need Identity OR Subject");
+    	}
+    	if (builder.identity != null && builder.subject != null) {
+    		throw new IllegalStateException("Need Identity OR Subject");
+    	}
+    	if (builder.identity != null && builder.keyPair == null) {
+    		throw new IllegalStateException("Missing Key Pair for Identity");
+    	}
+    	
+    	url = builder.url;
+    	if (builder.proxy == null) {
+    		proxy = Proxy.NO_PROXY;
     	} else {
-    		this.keyPair = keyPair;
+    		proxy = builder.proxy;
+    	}
+    	if (builder.keyPair != null) {
+    		keyPair = builder.keyPair;
+    	} else {
+    		keyPair = createKeyPair();		
+    	}
+    	
+    	if (identity != null) {
+    		identity = builder.identity;
+    		// If we're replacing a certificate, we must have the same key pair.
+    		if (identity.getPublicKey().equals(keyPair.getPublic()) == false) {
+    			throw new IllegalStateException();
+    		}
+    	} else if (builder.subject != null) {
+    		identity = createCertificate(builder.subject);
+    	}
+    	
+    	caIdentifier = builder.identifier;
+    }
+    
+    private void debug(String msg) {
+    	System.out.println(msg);
+    }
+    
+    private KeyPair createKeyPair() {
+    	debug("Creating RSA Key Pair");
+    	
+    	try {
+			return KeyPairGenerator.getInstance("RSA").genKeyPair();
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
 		}
+    }
+    
+    private X509Certificate createCertificate(X500Principal subject) {
+    	debug("Creating Self-Signed Certificate for " + subject);
+    	
+    	Calendar cal = Calendar.getInstance();
+    	cal.add(Calendar.DATE, -1);
+    	Date notBefore = cal.getTime();
+    	cal.add(Calendar.DATE, 2);
+    	Date notAfter = cal.getTime();
+    	X509V3CertificateGenerator gen = new X509V3CertificateGenerator();
+    	gen.setIssuerDN(subject);
+    	gen.setNotBefore(notBefore);
+    	gen.setNotAfter(notAfter);
+    	gen.setPublicKey(keyPair.getPublic());
+    	gen.setSerialNumber(BigInteger.ONE);
+    	// TODO: Is this right?
+    	gen.setSignatureAlgorithm("SHA1withRSA");
+    	gen.setSubjectDN(subject);
+    	try {
+			return gen.generate(keyPair.getPrivate());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+    }
+    
+    private Transaction createTransaction() throws IOException {
+    	return TransactionFactory.createTransaction(createTransport(), ca, identity, keyPair);
+    }
+    
+    private Transport createTransport() throws IOException {
+    	if (getCapabilities().supportsPost()) {
+    		return Transport.createTransport("POST", url, proxy);
+    	} else {
+    		return Transport.createTransport("GET", url, proxy);
+    	}
     }
     
     public KeyPair getKeyPair() {
     	return keyPair;
-    }
-
-    public void setCaIdentifier(String caIdentifier) {
-        this.caIdentifier = caIdentifier;
     }
 
     private Capabilities getCapabilities() throws IOException {
@@ -121,28 +182,12 @@ public class Requester {
 
         ca = certs[0];
     }
-    
-    private Transport getTransport() throws IOException {
-    	if (getCapabilities().supportsPost()) {
-    		return Transport.createTransport("POST", url, proxy);
-    	} else {
-    		return Transport.createTransport("GET", url, proxy);
-    	}
-    }
-    
-    public Transaction getCurrentTransaction() {
-    	return transaction;
-    }
-    
-    private Transaction getTransaction(X509Certificate cert, KeyPair keyPair) throws IOException {
-    	return TransactionFactory.createTransaction(getTransport(), cert, keyPair);
-    }
 
     public X509CRL getCrl() throws IOException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
-        CertStore store = getTransaction(ca, keyPair).performOperation(req);
+        CertStore store = createTransaction().performOperation(req);
         
         List<X509CRL> crls = getCRLs(store.getCRLs(null));
         if (crls.size() > 0) {
@@ -152,23 +197,11 @@ public class Requester {
         }
     }
 
-    public X509Certificate enroll(X500Principal subject, char[] password) throws IOException, UnsupportedCallbackException, ScepException, GeneralSecurityException {
+    public X509Certificate enroll(char[] password) throws IOException, UnsupportedCallbackException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
-        PkiOperation req = new PkcsReq(keyPair, subject, password);
-        CertStore store = getTransaction(ca, keyPair).performOperation(req);
-
-        return getCertificates(store.getCertificates(null)).get(0);
-    }
-    
-    public X509Certificate renew(X509Certificate existing, char[] password) throws IOException, UnsupportedCallbackException, ScepException, GeneralSecurityException {
-    	if (getCapabilities().supportsRenewal() == false) {
-    		throw new ScepException("Renewal Not Supported");
-    	}
-        updateCertificates();
-        // PKI Operation
-        PkiOperation req = new PkcsReq(keyPair, existing.getSubjectX500Principal(), password);
-        CertStore store = getTransaction(ca, keyPair).performOperation(req);
+        PkiOperation req = new PkcsReq(keyPair, identity, password);
+        CertStore store = createTransaction().performOperation(req);
 
         return getCertificates(store.getCertificates(null)).get(0);
     }
@@ -177,7 +210,7 @@ public class Requester {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCertInitial(ca.getIssuerX500Principal(), subject);
-        CertStore store = getTransaction(ca, keyPair).performOperation(req);
+        CertStore store = createTransaction().performOperation(req);
 
         return getCertificates(store.getCertificates(null)).get(0);
     }
@@ -186,7 +219,7 @@ public class Requester {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCert(ca.getIssuerX500Principal(), serial);
-        CertStore store = getTransaction(ca, keyPair).performOperation(req);
+        CertStore store = createTransaction().performOperation(req);
 
         return getCertificates(store.getCertificates(null)).get(0);
     }
@@ -209,5 +242,52 @@ public class Requester {
         }
         
         return x509;
+    }
+    
+    public static class Builder {
+    	private URL url;
+    	private Proxy proxy;
+    	private String identifier;
+    	private KeyPair keyPair;
+    	private X509Certificate identity;
+    	private X500Principal subject;
+    	
+    	public Builder(URL url) {
+    		this.url = url;
+    	}
+    	
+    	public Builder proxy(Proxy proxy) {
+    		this.proxy = proxy;
+    		
+    		return this;
+    	}
+    	
+    	public Builder identifier(String identifier) {
+    		this.identifier = identifier;
+    		
+    		return this;
+    	}
+    	
+    	public Builder keyPair(KeyPair keyPair) {
+    		this.keyPair = keyPair;
+    		
+    		return this;
+    	}
+    	
+    	public Builder subject(X500Principal subject) {
+    		this.subject = subject;
+    		
+    		return this;
+    	}
+    	
+    	public Builder identity(X509Certificate identity) {
+    		this.identity = identity;
+    		
+    		return this;
+    	}
+    	
+    	public Requester build() throws IllegalStateException {
+    		return new Requester(this);
+    	}
     }
 }
