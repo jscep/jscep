@@ -27,8 +27,17 @@ import java.util.Set;
 
 public class Capabilities {
     public static enum Capability {
+    	/**
+    	 * GetNextCACert CA Capability
+    	 */
         GET_NEXT_CA_CERT("GetNextCACert"),
+        /**
+         * POSTPKIOperation CA Capability
+         */
         POST_PKI_OPERATION("POSTPKIOperation"),
+        /**
+         * Renewal CA Capability
+         */
         RENEWAL("Renewal"),
         SHA_512("SHA-512"),
         SHA_256("SHA-256"),
@@ -56,31 +65,66 @@ public class Capabilities {
         return capabilties.contains(capability);
     }
 
-    public boolean supportsNextCaCert() {
+    /**
+     * Returns <tt>true</tt> if the CA supports CA key rollover, <tt>false</tt> otherwise.
+     * 
+     * @return <tt>true</tt> if the CA supports CA key rollover, <tt>false</tt> otherwise.
+     */
+    public boolean supportsCaKeyRollover() {
         return supports(Capability.GET_NEXT_CA_CERT);
     }
 
+    /**
+     * Returns <tt>true</tt> if the CA supports HTTP POST requests, <tt>false</tt> otherwise.
+     * 
+     * @return <tt>true</tt> if the CA supports HTTP POST requests, <tt>false</tt> otherwise.
+     */
     public boolean supportsPost() {
         return supports(Capability.POST_PKI_OPERATION);
     }
 
+    /**
+     * Returns <tt>true</tt> if the CA supports certificate renewal, <tt>false</tt> otherwise.
+     * 
+     * @return <tt>true</tt> if the CA supports certificate renewal, <tt>false</tt> otherwise.
+     */
     public boolean supportsRenewal() {
         return supports(Capability.RENEWAL);
     }
 
-    public boolean supportsSha1() {
+    /**
+     * Returns <tt>true</tt> if the CA supports SHA-1, <tt>false</tt> otherwise.
+     * 
+     * @return <tt>true</tt> if the CA supports SHA-1, <tt>false</tt> otherwise.
+     */
+    public boolean supportsSHA1() {
         return supports(Capability.SHA_1);
     }
 
-    public boolean supportsSha256() {
+    /**
+     * Returns <tt>true</tt> if the CA supports SHA-256, <tt>false</tt> otherwise.
+     * 
+     * @return <tt>true</tt> if the CA supports SHA-256, <tt>false</tt> otherwise.
+     */
+    public boolean supportsSHA256() {
         return supports(Capability.SHA_256);
     }
 
-    public boolean supportsSha512() {
+    /**
+     * Returns <tt>true</tt> if the CA supports SHA-512, <tt>false</tt> otherwise.
+     * 
+     * @return <tt>true</tt> if the CA supports SHA-512, <tt>false</tt> otherwise.
+     */
+    public boolean supportsSHA512() {
         return supports(Capability.SHA_512);
     }
 
-    public boolean supportsTripleDes() {
+    /**
+     * Returns <tt>true</tt> if the CA supports TripleDES, <tt>false</tt> otherwise.
+     * 
+     * @return <tt>true</tt> if the CA supports TripleDES, <tt>false</tt> otherwise.
+     */
+    public boolean supportsTripleDES() {
         return supports(Capability.TRIPLE_DES);
     }
 

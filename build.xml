@@ -1,12 +1,25 @@
 <project name="jSCEP" default="main">
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml">
+		<classpath>
+			<fileset dir="lib">
+				<include name="svnant.jar"/>
+				<include name="svnClientAdapter.jar"/>
+			</fileset>
+		</classpath>
+	</typedef>
 	<property name="output" value="bin"/>
 	<property name="src" value="src/main"/>
+	<property name="docs" value="doc"/>
 	
-	<target name="main" depends="init, compile, compress">
+	<target name="main" depends="init, compile, compress, javadoc-archive">
 	</target>
 	
 	<target name="init">
 		<mkdir dir="${output}"/>
+		<mkdir dir="${docs}"/>
+		<svn javahl="false" svnkit="false">
+			<wcversion path="${basedir}" prefix="svn."/>
+		</svn>
 	</target>
 	
 	<target name="compile">
@@ -19,8 +32,21 @@
 			</classpath>
 		</javac>
 	</target>
+
+	<target name="javadoc">
+		<javadoc destdir="${docs}" access="public">
+			<fileset dir="${src}">
+				<include name="**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+	
+
+	<target name="javadoc-archive" depends="javadoc">
+		<jar destfile="${output}/jSCEP-docs-r${svn.revision.max}.jar" basedir="${docs}" includes="**/*"/>
+	</target>
 	
 	<target name="compress">
-		<jar destfile="${output}/jSCEP.jar" basedir="${output}" includes="**/*.class"/>
+		<jar destfile="${output}/jSCEP-r${svn.revision.max}.jar" basedir="${output}" includes="**/*.class"/>
 	</target>
 </project>

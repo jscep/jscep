@@ -26,10 +26,14 @@ import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.x509.X509Name;
 
 /**
+ * IssuerAndSubject ASN.1 Object
+ * 
+ * <pre>
  * IssuerAndSubject ::= SEQUENCE {
- * issuer Name,
- * subject Name,
+ *     issuer Name,
+ *     subject Name,
  * }
+ * </pre>
  */
 public class IssuerAndSubject implements DEREncodable {
     private final X509Name issuer;

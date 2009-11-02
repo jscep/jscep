@@ -24,6 +24,9 @@ package com.google.code.jscep.asn1;
 
 import org.bouncycastle.asn1.DERPrintableString;
 
+/**
+ * PkiStatus Attribute
+ */
 public interface PkiStatus {
     DERPrintableString SUCCESS = new DERPrintableString("0");
     DERPrintableString FAILURE = new DERPrintableString("2");

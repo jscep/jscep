@@ -31,6 +31,7 @@ import java.net.ContentHandler;
 import java.net.URLConnection;
 
 public class CaCapabilitiesResponseHandler extends ContentHandler {
+	@Override
     public Object getContent(URLConnection conn) throws IOException {
 
         Capabilities response = new Capabilities();

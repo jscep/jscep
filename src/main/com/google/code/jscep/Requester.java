@@ -59,6 +59,9 @@ import com.google.code.jscep.request.Request;
 import com.google.code.jscep.response.Capabilities;
 import com.google.code.jscep.transport.Transport;
 
+/**
+ * SCEP Client
+ */
 public class Requester {
     static {
         URLConnection.setContentHandlerFactory(new ScepContentHandlerFactory());
@@ -159,6 +162,11 @@ public class Requester {
     	}
     }
     
+    /**
+     * Retrieve the generated {@link KeyPair}.
+     * 
+     * @return
+     */
     public KeyPair getKeyPair() {
     	return keyPair;
     }
@@ -183,6 +191,14 @@ public class Requester {
         ca = certs[0];
     }
 
+    /**
+     * Retrieves the certificate revocation list for the current CA.
+     * 
+     * @return the certificate revocation list.
+     * @throws IOException if any I/O error occurs.
+     * @throws ScepException
+     * @throws GeneralSecurityException
+     */
     public X509CRL getCrl() throws IOException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
@@ -197,7 +213,16 @@ public class Requester {
         }
     }
 
-    public X509Certificate enroll(char[] password) throws IOException, UnsupportedCallbackException, ScepException, GeneralSecurityException {
+    /**
+     * Enrolls an identity into a PKI domain.
+     * 
+     * @param password the enrollment password.
+     * @return the enrolled certificate.
+     * @throws IOException if any I/O error occurs.
+     * @throws ScepException
+     * @throws GeneralSecurityException
+     */
+    public X509Certificate enroll(char[] password) throws IOException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new PkcsReq(keyPair, identity, password);
@@ -206,6 +231,15 @@ public class Requester {
         return getCertificates(store.getCertificates(null)).get(0);
     }
 
+    /**
+     * Retrieves the certificate corresponding to the given subject. 
+     * 
+     * @param subject the subject being enrolled.
+     * @return the enrolled certificate.
+     * @throws IOException if any I/O error occurs.
+     * @throws ScepException
+     * @throws GeneralSecurityException
+     */
     public X509Certificate getCertInitial(X500Principal subject) throws IOException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
@@ -215,6 +249,15 @@ public class Requester {
         return getCertificates(store.getCertificates(null)).get(0);
     }
 
+    /**
+     * Retrieves the certificate corresponding to the given serial number.
+     * 
+     * @param serial the serial number of the certificate.
+     * @return the certificate.
+     * @throws IOException if any I/O error occurs.
+     * @throws ScepException
+     * @throws GeneralSecurityException
+     */
     public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
@@ -244,6 +287,9 @@ public class Requester {
         return x509;
     }
     
+    /**
+     * Builder for obtaining an instance of {@link Requester}
+     */
     public static class Builder {
     	private URL url;
     	private Proxy proxy;

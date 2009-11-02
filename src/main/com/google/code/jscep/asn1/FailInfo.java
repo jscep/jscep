@@ -24,6 +24,9 @@ package com.google.code.jscep.asn1;
 
 import org.bouncycastle.asn1.DERPrintableString;
 
+/**
+ * FailInfo Attribute
+ */
 public interface FailInfo {
     DERPrintableString badAlg = new DERPrintableString("0");
     DERPrintableString badMessageCheck = new DERPrintableString("1");

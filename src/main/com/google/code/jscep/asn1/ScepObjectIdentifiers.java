@@ -24,6 +24,9 @@ package com.google.code.jscep.asn1;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
 
+/**
+ * SCEP OIDs
+ */
 public interface ScepObjectIdentifiers {
     DERObjectIdentifier messageType = new DERObjectIdentifier("2.16.840.1.113733.1.9.2");
     DERObjectIdentifier pkiStatus = new DERObjectIdentifier("2.16.840.1.113733.1.9.3");
