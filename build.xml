@@ -1,0 +1,26 @@
+<project name="jSCEP" default="main">
+	<property name="output" value="bin"/>
+	<property name="src" value="src/main"/>
+	
+	<target name="main" depends="init, compile, compress">
+	</target>
+	
+	<target name="init">
+		<mkdir dir="${output}"/>
+	</target>
+	
+	<target name="compile">
+		<javac srcdir="${src}" destdir="${output}">
+			<classpath>
+				<fileset dir="lib">
+    				<include name="bcmail-jdk16-144.jar"/>
+					<include name="bcprov-jdk16-144.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="compress">
+		<jar destfile="${output}/jSCEP.jar" basedir="${output}" includes="**/*.class"/>
+	</target>
+</project>
