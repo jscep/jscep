@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.asn1;
 
+import java.io.IOException;
+
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.x509.X509Name;
 
@@ -64,5 +66,9 @@ public class IssuerAndSubject implements DEREncodable {
 
     public X509Name getSubject() {
         return subject;
+    }
+    
+    public byte[] getEncoded() throws IOException {
+    	return getDERObject().getEncoded();
     }
 }

@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.transaction;
 
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
@@ -29,14 +29,6 @@ import com.google.code.jscep.transport.Transport;
 
 public final class TransactionFactory {
 	private TransactionFactory() {
-	}
-	
-	public static Transaction createTransaction(Transport transport) {
-		return createTransaction(transport, null, null, null);
-	}
-	
-	public static Transaction createTransaction(Transport transport, X509Certificate ca) {
-		return createTransaction(transport, ca, null, null);
 	}
 	
 	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair) {

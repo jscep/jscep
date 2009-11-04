@@ -30,16 +30,20 @@ import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CRL;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -57,6 +61,8 @@ import com.google.code.jscep.request.PkcsReq;
 import com.google.code.jscep.request.PkiOperation;
 import com.google.code.jscep.request.Request;
 import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.transaction.Transaction;
+import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
 
 /**
@@ -68,48 +74,67 @@ public class Requester {
     }
 
     private URL url;						// Required
+    private byte[] fingerprint;				// Required
+    private String fingerprintAlgorithm;	// Required
     private Proxy proxy;					// Optional
-    private String caIdentifier;			// Optional
+    private String identifier;				// Optional
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
+    private X500Principal subject;			// Optional
     
     private X509Certificate ca;
 
     private Requester(Builder builder) throws IllegalStateException {
+    	url = builder.url;
+    	proxy = builder.proxy;
+    	fingerprint = builder.fingerprint;
+    	identifier = builder.identifier;
+    	keyPair = builder.keyPair;
+    	identity = builder.identity;
+    	subject = builder.subject;
+    	fingerprintAlgorithm = builder.fingerprintAlgorithm;
+    	
+    	if (url == null) {
+    		throw new IllegalStateException("URL must not be null.");
+    	}
+    	// 2.1.2.1
+    	if (fingerprint == null) {
+    		throw new IllegalStateException("Digest must not be null.");
+    	}
     	// Must have only one way of obtaining an identity.
-    	if (builder.identity == null && builder.subject == null) {
+    	if (identity == null && subject == null) {
     		throw new IllegalStateException("Need Identity OR Subject");
     	}
-    	if (builder.identity != null && builder.subject != null) {
+    	if (identity != null && subject != null) {
     		throw new IllegalStateException("Need Identity OR Subject");
-    	}
-    	if (builder.identity != null && builder.keyPair == null) {
-    		throw new IllegalStateException("Missing Key Pair for Identity");
     	}
     	
-    	url = builder.url;
-    	if (builder.proxy == null) {
-    		proxy = Proxy.NO_PROXY;
-    	} else {
-    		proxy = builder.proxy;
+    	// Set Defaults
+    	if (fingerprintAlgorithm == null) {
+    		fingerprintAlgorithm = "MD5";
     	}
-    	if (builder.keyPair != null) {
-    		keyPair = builder.keyPair;
-    	} else {
+    	if (proxy == null) {
+    		proxy = Proxy.NO_PROXY;
+    	}
+    	if (keyPair == null) {
     		keyPair = createKeyPair();		
     	}
-    	
-    	if (identity != null) {
-    		identity = builder.identity;
-    		// If we're replacing a certificate, we must have the same key pair.
-    		if (identity.getPublicKey().equals(keyPair.getPublic()) == false) {
-    			throw new IllegalStateException();
-    		}
-    	} else if (builder.subject != null) {
-//    		identity = createCertificate(builder.subject);
+    	if (identity == null) {
+    		identity = createCertificate();
     	}
     	
-    	caIdentifier = builder.identifier;
+		// If we're replacing a certificate, we must have the same key pair.
+		if (identity.getPublicKey().equals(keyPair.getPublic()) == false) {
+			throw new IllegalStateException("Public Key Mismatch");
+		}
+		List<String> algorithms = new LinkedList<String>();
+		algorithms.add("MD5");
+		algorithms.add("SHA-1");
+		algorithms.add("SHA-256");
+		algorithms.add("SHA-512");
+		if (algorithms.contains(fingerprintAlgorithm) == false) {
+			throw new IllegalStateException(fingerprintAlgorithm + " is not a valid fingerprint algorithm");
+		}
     }
     
     private void debug(String msg) {
@@ -126,7 +151,7 @@ public class Requester {
 		}
     }
     
-    private X509Certificate createCertificate(X500Principal subject) {
+    private X509Certificate createCertificate() {
     	debug("Creating Self-Signed Certificate for " + subject);
     	
     	Calendar cal = Calendar.getInstance();
@@ -156,9 +181,9 @@ public class Requester {
     
     private Transport createTransport() throws IOException {
     	if (getCapabilities().supportsPost()) {
-    		return Transport.createTransport("POST", url, proxy);
+    		return Transport.createTransport(Transport.Method.POST, url, proxy);
     	} else {
-    		return Transport.createTransport("GET", url, proxy);
+    		return Transport.createTransport(Transport.Method.GET, url, proxy);
     	}
     }
     
@@ -172,23 +197,33 @@ public class Requester {
     }
 
     private Capabilities getCapabilities() throws IOException {
-        Request req = new GetCACaps(caIdentifier);
-        Transport trans = Transport.createTransport("GET", url, proxy);
+        Request req = new GetCACaps(identifier);
+        Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
         return (Capabilities) trans.sendMessage(req);
     }
 
     private X509Certificate[] getCaCertificate() throws IOException {
-        Request req = new GetCACert(caIdentifier);
-        Transport trans = Transport.createTransport("GET", url, proxy);
+        Request req = new GetCACert(identifier);
+        Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
         return (X509Certificate[]) trans.sendMessage(req);
     }
 
-    private void updateCertificates() throws IOException {
+    private void updateCertificates() throws IOException, CertificateException, ScepException {
         X509Certificate[] certs = getCaCertificate();
 
         ca = certs[0];
+        
+        MessageDigest md;
+		try {
+			md = MessageDigest.getInstance(fingerprintAlgorithm);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+        if (Arrays.equals(fingerprint, md.digest(ca.getEncoded())) == false) {
+        	throw new ScepException("CA Fingerprint Error");
+        }
     }
 
     /**
@@ -198,19 +233,15 @@ public class Requester {
      * @throws IOException if any I/O error occurs.
      * @throws ScepException
      * @throws GeneralSecurityException
+     * @throws UnsupportedCallbackException 
      */
-    public X509CRL getCrl() throws IOException, ScepException, GeneralSecurityException {
+    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
         CertStore store = createTransaction().performOperation(req);
         
-        List<X509CRL> crls = getCRLs(store.getCRLs(null));
-        if (crls.size() > 0) {
-        	return crls.get(0);
-        } else {
-        	return null;
-        }
+        return getCRLs(store.getCRLs(null));
     }
 
     /**
@@ -221,14 +252,15 @@ public class Requester {
      * @throws IOException if any I/O error occurs.
      * @throws ScepException
      * @throws GeneralSecurityException
+     * @throws UnsupportedCallbackException 
      */
-    public X509Certificate enroll(char[] password) throws IOException, ScepException, GeneralSecurityException {
+    public List<X509Certificate> enroll(char[] password) throws IOException, ScepException, GeneralSecurityException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new PkcsReq(keyPair, identity, password);
         CertStore store = createTransaction().performOperation(req);
 
-        return getCertificates(store.getCertificates(null)).get(0);
+        return getCertificates(store.getCertificates(null));
     }
 
     /**
@@ -239,8 +271,9 @@ public class Requester {
      * @throws IOException if any I/O error occurs.
      * @throws ScepException
      * @throws GeneralSecurityException
+     * @throws UnsupportedCallbackException 
      */
-    public X509Certificate getCertInitial(X500Principal subject) throws IOException, ScepException, GeneralSecurityException {
+    public X509Certificate getCertInitial(X500Principal subject) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCertInitial(ca.getIssuerX500Principal(), subject);
@@ -257,8 +290,9 @@ public class Requester {
      * @throws IOException if any I/O error occurs.
      * @throws ScepException
      * @throws GeneralSecurityException
+     * @throws UnsupportedCallbackException 
      */
-    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException {
+    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCert(ca.getIssuerX500Principal(), serial);
@@ -297,6 +331,8 @@ public class Requester {
     	private KeyPair keyPair;
     	private X509Certificate identity;
     	private X500Principal subject;
+    	private byte[] fingerprint;
+    	private String fingerprintAlgorithm;
     	
     	public Builder(URL url) {
     		this.url = url;
@@ -328,6 +364,30 @@ public class Requester {
     	
     	public Builder identity(X509Certificate identity) {
     		this.identity = identity;
+    		
+    		return this;
+    	}
+    	
+    	/**
+    	 * The message digest of the CA certificate.
+    	 * 
+    	 * @param fingerprint the digest.
+    	 * @return this builder.
+    	 */
+    	public Builder fingerprint(byte[] fingerprint) {
+    		this.fingerprint = fingerprint;
+    		
+    		return this;
+    	}
+    	
+    	/**
+    	 * One of MD5, SHA-1, SHA-256 or SHA-512.  Defaults to MD5.
+    	 * 
+    	 * @param fingerprintAlgorithm
+    	 * @return
+    	 */
+    	public Builder fingerprintAlgorithm(String fingerprintAlgorithm) {
+    		this.fingerprintAlgorithm = fingerprintAlgorithm;
     		
     		return this;
     	}

@@ -30,6 +30,10 @@ import java.net.URL;
 import com.google.code.jscep.request.Request;
 
 public abstract class Transport {
+	public enum Method {
+		GET,
+		POST
+	}
 	protected final URL url;
 	protected final Proxy proxy;
 	
@@ -40,8 +44,16 @@ public abstract class Transport {
 	
 	abstract public Object sendMessage(Request msg) throws IOException, MalformedURLException;
 	
-	public static Transport createTransport(String method, URL url, Proxy proxy) {
-		if (method.equals("GET")) {
+	/**
+	 * Factory Method
+	 * 
+	 * @param method the transport type.
+	 * @param url the url.
+	 * @param proxy the proxy.
+	 * @return a new Transport instance.
+	 */
+	public static Transport createTransport(Method method, URL url, Proxy proxy) {
+		if (method.equals(Method.GET)) {
 			return new HttpGetTransport(url, proxy);
 		} else {
 			return new HttpPostTransport(url, proxy);

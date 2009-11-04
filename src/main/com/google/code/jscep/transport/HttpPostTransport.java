@@ -28,20 +28,24 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.logging.Logger;
 
 import com.google.code.jscep.request.Request;
 
 /**
- * HTTP Post
+ * Transport representing the HTTP GET method
  */
 public class HttpPostTransport extends Transport {
+	private final static Logger LOGGER = Logger.getLogger(HttpPostTransport.class.getName());
+	
 	protected HttpPostTransport(URL url, Proxy proxy) {
 		super(url, proxy);
 	}
 	
 	@Override
 	public Object sendMessage(Request msg) throws IOException, MalformedURLException {
-		System.out.println("Sending " + msg + " by POST");
+		LOGGER.info("Sending " + msg + " by POST");
+		
 		byte[] body = (byte[]) msg.getMessage();
 		
         URL url = getUrl(msg.getOperation());

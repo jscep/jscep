@@ -127,6 +127,36 @@ public class Capabilities {
     public boolean supportsTripleDES() {
         return supports(Capability.TRIPLE_DES);
     }
+    
+    /**
+     * 
+     * @return
+     * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html#Cipher
+     */
+    public String getPreferredCipher() {
+    	if (supportsTripleDES()) {
+    		return "DESede";
+    	} else {
+    		return "DES";
+    	}
+    }
+    
+    /**
+     * 
+     * @return
+     * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html#MessageDigest
+     */
+    public String getPreferredMessageDigest() {
+    	if (supportsSHA512()) {
+    		return "SHA-512";
+    	} else if (supportsSHA256()) {
+    		return "SHA-256";
+    	} else if (supportsSHA1()) {
+    		return "SHA-1";
+    	} else {
+    		return "MD5";
+    	}
+    }
 
     @Override
     public String toString() {

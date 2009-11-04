@@ -25,10 +25,11 @@ package com.google.code.jscep.request;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import org.bouncycastle.asn1.DEREncodable;
+import javax.security.auth.callback.UnsupportedCallbackException;
+
 import org.bouncycastle.asn1.DERPrintableString;
 
 public interface PkiOperation {
     DERPrintableString getMessageType();
-    DEREncodable getMessageData() throws IOException, GeneralSecurityException;
+    byte[] getMessageData() throws IOException, GeneralSecurityException;
 }

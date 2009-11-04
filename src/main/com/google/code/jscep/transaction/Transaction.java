@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.transaction;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -39,16 +39,16 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.DEREncodable;
+import javax.security.auth.callback.UnsupportedCallbackException;
+
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.smime.SMIMECapability;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
@@ -57,10 +57,13 @@ import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.RecipientInformation;
+import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.util.encoders.Hex;
 
+import com.google.code.jscep.ScepException;
 import com.google.code.jscep.asn1.MessageType;
 import com.google.code.jscep.asn1.PkiStatus;
 import com.google.code.jscep.asn1.ScepObjectIdentifiers;
@@ -69,6 +72,7 @@ import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.transport.Transport;
 
 public class Transaction {
+	private final static Logger LOGGER = Logger.getLogger(Transaction.class.getName());
     private static final AtomicLong COUNTER = new AtomicLong();
     private static final Random RANDOM = new SecureRandom(); 
     private final DERPrintableString transId;
@@ -115,17 +119,18 @@ public class Transaction {
     	return reason;
     }
     
-    private CMSEnvelopedData envelope(DEREncodable data) throws GeneralSecurityException, CMSException {
+    private CMSEnvelopedData envelope(byte[] data) throws IOException, GeneralSecurityException, CMSException {
     	CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
     	gen.addKeyTransRecipient(ca);
     	
-    	ContentInfo contentInfo = new ContentInfo(PKCSObjectIdentifiers.data, data);
-    	CMSProcessable processableData = new CMSProcessableByteArray(contentInfo.getDEREncoded());
+    	CMSProcessable processableData = new CMSProcessableByteArray(data);
     	
-    	return gen.generate(processableData, getCipherId(), "BC");
+    	CMSEnvelopedData envelopedData =  gen.generate(processableData, getCipherId(), "BC");
+    	LOGGER.fine("EnvelopedData: " + new String(Hex.encode(envelopedData.getEncoded())));
+    	return envelopedData;
     }
     
-    private CMSSignedData sign(CMSProcessable data, AttributeTable table) throws GeneralSecurityException, CMSException {
+    private CMSSignedData sign(CMSProcessable data, AttributeTable table) throws IOException, GeneralSecurityException, CMSException {
     	CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
     	
     	List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
@@ -135,7 +140,9 @@ public class Transaction {
         gen.addCertificatesAndCRLs(certs);
         gen.addSigner(keyPair.getPrivate(), identity, getDigestId(), table, null);
         
-    	return gen.generate(data, true, "BC");
+    	CMSSignedData signedData = gen.generate(data, true, "BC");
+    	LOGGER.fine("SignedData: " + new String(Hex.encode(signedData.getEncoded())));
+    	return signedData;
     }
 
     public CertStore performOperation(PkiOperation operation) throws MalformedURLException, IOException, ScepException {
@@ -236,6 +243,7 @@ public class Transaction {
         	Attribute failInfoAttribute = signedAttrs.get(ScepObjectIdentifiers.failInfo);
         	DERPrintableString failInfo = (DERPrintableString) failInfoAttribute.getAttrValues().getObjectAt(0);
         	
+        	// Throw Exceptions Here
         	reason = Integer.parseInt(failInfo.toString());
         	return null;
         } else if (pkiStatus.equals(PkiStatus.PENDING)) {
@@ -243,7 +251,14 @@ public class Transaction {
         }
         
         try {
-			return signedData.getCertificatesAndCRLs("Collection", "BC");
+        	CMSProcessable signedContent = signedData.getSignedContent();
+        	CMSEnvelopedData envelopedData = new CMSEnvelopedData((byte[]) signedContent.getContent());
+        	RecipientInformationStore recipientStore = envelopedData.getRecipientInfos();
+        	RecipientInformation recipient = (RecipientInformation) recipientStore.getRecipients().iterator().next();
+        	byte[] content = recipient.getContent(keyPair.getPrivate(), "BC");
+        	CMSSignedData contentData = new CMSSignedData(content);
+        	
+			return contentData.getCertificatesAndCRLs("Collection", "BC");
 		} catch (CMSException e) {
 			throw new ScepException(e);
 		} catch (GeneralSecurityException e) {
