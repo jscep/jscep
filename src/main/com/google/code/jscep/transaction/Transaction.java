@@ -41,8 +41,6 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
-import javax.security.auth.callback.UnsupportedCallbackException;
-
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;

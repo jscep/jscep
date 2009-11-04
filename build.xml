@@ -38,6 +38,12 @@
 			<fileset dir="${src}">
 				<include name="**/*.java"/>
 			</fileset>
+			<classpath>
+				<fileset dir="lib">
+    				<include name="bcmail-jdk16-144.jar"/>
+					<include name="bcprov-jdk16-144.jar"/>
+				</fileset>
+			</classpath>
 		</javadoc>
 	</target>
 	

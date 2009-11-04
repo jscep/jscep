@@ -25,8 +25,6 @@ package com.google.code.jscep.request;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import javax.security.auth.callback.UnsupportedCallbackException;
-
 import org.bouncycastle.asn1.DERPrintableString;
 
 public interface PkiOperation {
