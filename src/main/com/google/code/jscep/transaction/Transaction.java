@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -66,7 +65,6 @@ import com.google.code.jscep.transport.Transport;
  * Please refactor me.  I have far too many responsibilities.
  */
 public class Transaction {
-	private final static Logger LOGGER = Logger.getLogger(Transaction.class.getName());
     private static final AtomicLong COUNTER = new AtomicLong();
     private final DERPrintableString transId;
     private DEROctetString senderNonce;

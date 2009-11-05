@@ -31,7 +31,7 @@ public class Enveloper {
     	CMSProcessable processableData = new CMSProcessableByteArray(op.getMessageData());
     	
     	CMSEnvelopedData envelopedData =  gen.generate(processableData, cipher, "BC");
-    	LOGGER.fine("EnvelopedData: " + new String(Hex.encode(envelopedData.getEncoded())));
+    	LOGGER.info("EnvelopedData: " + new String(Hex.encode(envelopedData.getEncoded())));
     	return envelopedData;
 	}
 }

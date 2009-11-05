@@ -40,7 +40,7 @@ public class Signer {
         gen.addSigner(keyPair.getPrivate(), identity, digest, table, null);
         
     	CMSSignedData signedData = gen.generate(data, true, "BC");
-    	LOGGER.fine("SignedData: " + new String(Hex.encode(signedData.getEncoded())));
+    	LOGGER.info("SignedData: " + new String(Hex.encode(signedData.getEncoded())));
     	
     	return signedData;
 	}
