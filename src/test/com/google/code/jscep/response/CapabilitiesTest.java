@@ -1,7 +1,5 @@
 package com.google.code.jscep.response;
 
-import static org.junit.Assert.fail;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

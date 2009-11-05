@@ -8,15 +8,18 @@
 		</classpath>
 	</typedef>
 	<property file="branch.properties"/>
-	<property name="output" value="bin"/>
+	<property name="src.output" value="bin/main"/>
+	<property name="test.output" value="bin/test"/>
 	<property name="src" value="src/main"/>
+	<property name="test" value="src/test"/>
 	<property name="docs" value="doc"/>
 	
-	<target name="main" depends="init, compile, compress, javadoc-archive, source-archive">
+	<target name="main" depends="init, compile, compress, test, javadoc-archive, source-archive">
 	</target>
 	
 	<target name="init">
-		<mkdir dir="${output}"/>
+		<mkdir dir="${src.output}"/>
+		<mkdir dir="${test.output}"/>
 		<mkdir dir="${docs}"/>
 		<svn javahl="false" svnkit="false">
 			<wcversion path="${basedir}" prefix="svn."/>
@@ -28,11 +31,48 @@
 	</target>
 	
 	<target name="compile">
-		<javac srcdir="${src}" destdir="${output}" source="5">
+		<javac srcdir="${src}" destdir="${src.output}" source="5">
 			<classpath>
 				<fileset dir="lib">
     				<include name="bcmail-jdk16-144.jar"/>
 					<include name="bcprov-jdk16-144.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="test" depends="test-compile">
+		<junit fork="true">
+			<formatter type="plain"/>
+			<classpath>
+				<path path="${test.output}"/>
+				<fileset dir="${src.output}">
+					<include name="jSCEP-${build.number}.jar"/>
+				</fileset>
+				<fileset dir="lib">
+    				<include name="bcmail-jdk16-144.jar"/>
+					<include name="bcprov-jdk16-144.jar"/>
+					<include name="junit-4.7.jar"/>
+				</fileset>
+			</classpath>
+			<batchtest>
+				<fileset dir="${test.output}">
+					<include name="**/*.class"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+	<target name="test-compile" depends="compile">
+		<javac srcdir="${test}" destdir="${test.output}" source="5">
+			<classpath>
+				<fileset dir="${src.output}">
+					<include name="jSCEP-${build.number}.jar"/>
+				</fileset>
+				<fileset dir="lib">
+    				<include name="bcmail-jdk16-144.jar"/>
+					<include name="bcprov-jdk16-144.jar"/>
+					<include name="junit-4.7.jar"/>
 				</fileset>
 			</classpath>
 		</javac>
@@ -53,7 +93,7 @@
 	</target>
 
 	<target name="source-archive">
-		<jar destfile="${output}/jSCEP-source-${build.number}.jar" basedir="${src}" includes="**/*.java">
+		<jar destfile="${src.output}/jSCEP-source-${build.number}.jar" basedir="${src}" includes="**/*.java">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-On" value="${TODAY}"/>
@@ -62,7 +102,7 @@
 	</target>	
 
 	<target name="javadoc-archive" depends="javadoc">
-		<jar destfile="${output}/jSCEP-docs-${build.number}.jar" basedir="${docs}" includes="**/*">
+		<jar destfile="${src.output}/jSCEP-docs-${build.number}.jar" basedir="${docs}" includes="**/*">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-On" value="${TODAY}"/>
@@ -71,8 +111,8 @@
 	</target>
 	
 	<target name="compress">
-		<jar destfile="${output}/jSCEP-${build.number}.jar">
-			<fileset dir="${output}">
+		<jar destfile="${src.output}/jSCEP-${build.number}.jar">
+			<fileset dir="${src.output}">
 				<include name="**/*.class"/>
 			</fileset>
 			<fileset dir="${basedir}">
