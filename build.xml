@@ -7,11 +7,12 @@
 			</fileset>
 		</classpath>
 	</typedef>
+	<property file="branch.properties"/>
 	<property name="output" value="bin"/>
 	<property name="src" value="src/main"/>
 	<property name="docs" value="doc"/>
 	
-	<target name="main" depends="init, compile, compress, javadoc-archive">
+	<target name="main" depends="init, compile, compress, javadoc-archive, source-archive">
 	</target>
 	
 	<target name="init">
@@ -20,6 +21,10 @@
 		<svn javahl="false" svnkit="false">
 			<wcversion path="${basedir}" prefix="svn."/>
 		</svn>
+		<property name="build.number" value="${major.version}.${minor.version}.${svn.revision.max}"/>
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd" locale="en,GB"/>
+		</tstamp>
 	</target>
 	
 	<target name="compile">
@@ -46,20 +51,43 @@
 			</classpath>
 		</javadoc>
 	</target>
-	
+
+	<target name="source-archive">
+		<jar destfile="${output}/jSCEP-source-${build.number}.jar" basedir="${src}" includes="**/*.java">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-On" value="${TODAY}"/>
+			</manifest>
+		</jar>
+	</target>	
 
 	<target name="javadoc-archive" depends="javadoc">
-		<jar destfile="${output}/jSCEP-docs-r${svn.revision.max}.jar" basedir="${docs}" includes="**/*"/>
+		<jar destfile="${output}/jSCEP-docs-${build.number}.jar" basedir="${docs}" includes="**/*">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-On" value="${TODAY}"/>
+			</manifest>
+		</jar>
 	</target>
 	
 	<target name="compress">
-		<jar destfile="${output}/jSCEP-r${svn.revision.max}.jar">
+		<jar destfile="${output}/jSCEP-${build.number}.jar">
 			<fileset dir="${output}">
 				<include name="**/*.class"/>
 			</fileset>
 			<fileset dir="${basedir}">
 				<include name="COPYRIGHT"/>
 			</fileset>
+			<manifest>
+				<attribute name="Specification-Title" value="SCEP"/>
+				<attribute name="Specification-Version" value="${scep.specification}"/>
+				<attribute name="Specification-Vendor" value="Cisco"/>
+				<attribute name="Implementation-Title" value="jSCEP"/>
+				<attribute name="Implementation-Version" value="${build.number}"/>
+				<attribute name="Implementation-Vendor" value="David Grant"/>
+				<attribute name="Implementation-Vendor-Id" value="com.google.code.jscep"/>
+				<attribute name="Implementation-URL" value="http://jscep.googlecode.com/"/>
+			</manifest>
 		</jar>
 	</target>
 </project>
