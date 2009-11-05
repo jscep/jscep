@@ -22,43 +22,39 @@
 
 package com.google.code.jscep.response;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Capabilities {
     public static enum Capability {
-    	/**
-    	 * GetNextCACert CA Capability
-    	 */
-        GET_NEXT_CA_CERT("GetNextCACert"),
-        /**
-         * POSTPKIOperation CA Capability
-         */
-        POST_PKI_OPERATION("POSTPKIOperation"),
-        /**
-         * Renewal CA Capability
-         */
-        RENEWAL("Renewal"),
-        SHA_512("SHA-512"),
-        SHA_256("SHA-256"),
-        SHA_1("SHA-1"),
-        TRIPLE_DES("DES3");
-
-        private final String name;
-
-        Capability(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
+        GET_NEXT_CA_CERT(),
+        POST_PKI_OPERATION(),
+        RENEWAL(),
+        SHA_512(),
+        SHA_256(),
+        SHA_1(),
+        TRIPLE_DES();
     }
-
+    
     private Set<Capability> capabilties = new HashSet<Capability>();
-
-    public void add(Capability capability) {
-        capabilties.add(capability);
+    private Map<String, Capability> map = new HashMap<String, Capability>();
+    {
+    	map.put("GetNextCACert", Capability.GET_NEXT_CA_CERT);
+    	map.put("POSTPKIOperation", Capability.POST_PKI_OPERATION);
+    	map.put("Renewal", Capability.RENEWAL);
+    	map.put("SHA-512", Capability.SHA_512);
+    	map.put("SHA-256", Capability.SHA_256);
+    	map.put("SHA-1", Capability.SHA_1);
+    	map.put("DES3", Capability.TRIPLE_DES);
+    }
+    
+    public Capabilities(List<String> capabilities) {
+    	for (String capability : capabilities) {
+    		this.capabilties.add(map.get(capability));
+    	}
     }
 
     private boolean supports(Capability capability) {
@@ -129,6 +125,7 @@ public class Capabilities {
     }
     
     /**
+     * DESede > DES
      * 
      * @return
      * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html#Cipher
@@ -142,6 +139,7 @@ public class Capabilities {
     }
     
     /**
+     * SHA-512 > SHA-256 > SHA-1 > MD5
      * 
      * @return
      * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html#MessageDigest

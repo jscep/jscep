@@ -22,33 +22,28 @@
 
 package com.google.code.jscep.content;
 
-import com.google.code.jscep.response.Capabilities;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ContentHandler;
 import java.net.URLConnection;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.google.code.jscep.response.Capabilities;
 
 public class CaCapabilitiesResponseHandler extends ContentHandler {
 	@Override
     public Object getContent(URLConnection conn) throws IOException {
-
-        Capabilities response = new Capabilities();
-
+        final List<String> capabilities = new LinkedList<String>();
+        
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String capability;
-
         while ((capability = reader.readLine()) != null) {
-            for (Capabilities.Capability capabilityEnum : Capabilities.Capability.values()) {
-                if (capabilityEnum.getName().equals(capability.trim())) {
-                    response.add(capabilityEnum);
-                }
-            }
+        	capabilities.add(capability);
         }
-
         reader.close();
 
-        return response;
+        return new Capabilities(capabilities);
     }
 }
