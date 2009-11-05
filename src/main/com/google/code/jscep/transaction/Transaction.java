@@ -28,16 +28,12 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.cert.CertStore;
-import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
@@ -47,14 +43,11 @@ import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.smime.SMIMECapability;
 import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.SignerInformation;
@@ -69,34 +62,33 @@ import com.google.code.jscep.request.PkiOperation;
 import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.transport.Transport;
 
+/**
+ * Please refactor me.  I have far too many responsibilities.
+ */
 public class Transaction {
 	private final static Logger LOGGER = Logger.getLogger(Transaction.class.getName());
     private static final AtomicLong COUNTER = new AtomicLong();
-    private static final Random RANDOM = new SecureRandom(); 
     private final DERPrintableString transId;
     private DEROctetString senderNonce;
     private int reason;
     private final KeyPair keyPair;
-    private final X509Certificate ca;
-    private final X509Certificate identity;
     private List<X509CRL> crls;
     private List<X509Certificate> certs;
     private final Transport transport;
+    private final Enveloper enveloper;
+    private final Signer signer;
     
-    protected Transaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair) {
+    protected Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer) {
     	this.transport = transport;
-    	this.ca = ca;
     	this.keyPair = keyPair;
-    	this.identity = identity;
         this.transId = generateTransactionId();
         this.senderNonce = generateSenderNonce();
+        this.enveloper = enveloper;
+        this.signer = signer;
     }
     
     private DEROctetString generateSenderNonce() {
-    	final byte[] nonce = new byte[16];
-    	RANDOM.nextBytes(nonce);
-    	
-    	return new DEROctetString(nonce);
+    	return new DEROctetString(NonceFactory.nextNonce().getBytes());
     }
     
     private DERPrintableString generateTransactionId() {
@@ -116,36 +108,10 @@ public class Transaction {
     public int getFailureReason() {
     	return reason;
     }
-    
-    private CMSEnvelopedData envelope(byte[] data) throws IOException, GeneralSecurityException, CMSException {
-    	CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
-    	gen.addKeyTransRecipient(ca);
-    	
-    	CMSProcessable processableData = new CMSProcessableByteArray(data);
-    	
-    	CMSEnvelopedData envelopedData =  gen.generate(processableData, getCipherId(), "BC");
-    	LOGGER.fine("EnvelopedData: " + new String(Hex.encode(envelopedData.getEncoded())));
-    	return envelopedData;
-    }
-    
-    private CMSSignedData sign(CMSProcessable data, AttributeTable table) throws IOException, GeneralSecurityException, CMSException {
-    	CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
-    	
-    	List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
-        certList.add(identity);
-        
-        CertStore certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
-        gen.addCertificatesAndCRLs(certs);
-        gen.addSigner(keyPair.getPrivate(), identity, getDigestId(), table, null);
-        
-    	CMSSignedData signedData = gen.generate(data, true, "BC");
-    	LOGGER.fine("SignedData: " + new String(Hex.encode(signedData.getEncoded())));
-    	return signedData;
-    }
 
     public CertStore performOperation(PkiOperation operation) throws MalformedURLException, IOException, ScepException {
     	try {
-    		CMSEnvelopedData enveloped = envelope(operation.getMessageData());
+    		CMSEnvelopedData enveloped = enveloper.envelope(operation);
     		CMSProcessable envelopedData = new CMSProcessableByteArray(enveloped.getEncoded());
 	
 	        Attribute msgType = getMessageTypeAttribute(operation);
@@ -158,7 +124,7 @@ public class Transaction {
 	        attributes.put(senderNonce.getAttrType(), senderNonce);
 	        AttributeTable table = new AttributeTable(attributes);
 	
-	        CMSSignedData signedData = sign(envelopedData, table);
+	        CMSSignedData signedData = signer.sign(envelopedData, table);
 	        PkiRequest request = new PkiRequest(signedData);
 	        CMSSignedData response = (CMSSignedData) transport.sendMessage(request);
     	
@@ -181,24 +147,6 @@ public class Transaction {
 
     private Attribute getSenderNonceAttribute() {
         return new Attribute(ScepObjectIdentifiers.senderNonce, new DERSet(senderNonce));
-    }
-
-    private String getCipherId() {
-        // DES
-         return SMIMECapability.dES_CBC.getId();
-        // Triple-DES
-//        return SMIMECapability.dES_EDE3_CBC.getId();
-    }
-
-    private String getDigestId() {
-        // MD5
-//        return CMSSignedDataGenerator.DIGEST_MD5;
-        // SHA-1
-         return CMSSignedDataGenerator.DIGEST_SHA1;
-        // SHA-256
-        // return CMSSignedDataGenerator.DIGEST_SHA256;
-        // SHA-512
-        // return CMSSignedDataGenerator.DIGEST_SHA512;
     }
     
     public CertStore handleResponse(CMSSignedData signedData) throws ScepException {

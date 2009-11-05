@@ -25,6 +25,9 @@ package com.google.code.jscep.transaction;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
+import org.bouncycastle.asn1.smime.SMIMECapability;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+
 import com.google.code.jscep.transport.Transport;
 
 public final class TransactionFactory {
@@ -32,6 +35,8 @@ public final class TransactionFactory {
 	}
 	
 	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair) {
-		return new Transaction(transport, ca, identity, keyPair);
+		Enveloper enveloper = new Enveloper(ca, SMIMECapability.dES_CBC.getId());
+		Signer signer = new Signer(identity, keyPair, CMSSignedDataGenerator.DIGEST_SHA1);
+		return new Transaction(transport, keyPair, enveloper, signer);
 	}
 }

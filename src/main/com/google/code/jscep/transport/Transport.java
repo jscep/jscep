@@ -42,6 +42,12 @@ public abstract class Transport {
 		this.proxy = proxy;
 	}
 	
+	public URL getURL() {
+		return url;
+	}
+	public Proxy getProxy() {
+		return proxy;
+	}
 	abstract public Object sendMessage(Request msg) throws IOException, MalformedURLException;
 	
 	/**
