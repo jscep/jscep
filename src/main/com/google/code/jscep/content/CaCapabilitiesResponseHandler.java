@@ -34,7 +34,7 @@ import com.google.code.jscep.response.Capabilities;
 
 public class CaCapabilitiesResponseHandler extends ContentHandler {
 	@Override
-    public Object getContent(URLConnection conn) throws IOException {
+    public Capabilities getContent(URLConnection conn) throws IOException {
         final List<String> capabilities = new LinkedList<String>();
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));

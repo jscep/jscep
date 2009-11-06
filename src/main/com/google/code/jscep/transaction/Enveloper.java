@@ -12,8 +12,9 @@ import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.util.encoders.Hex;
 
-import com.google.code.jscep.request.PkiOperation;
-
+/**
+ * Merge with Signer.
+ */
 public class Enveloper {
 	private final static Logger LOGGER = Logger.getLogger(Enveloper.class.getName());
 	private final String cipher;
@@ -24,14 +25,17 @@ public class Enveloper {
 		this.cipher = cipher;
 	}
 	
-	public CMSEnvelopedData envelope(PkiOperation op) throws CMSException, IOException, GeneralSecurityException {
+	public byte[] envelope(byte[] messageData) throws IOException, GeneralSecurityException, CmsException {
 		CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
     	gen.addKeyTransRecipient(ca);
-    	
-    	CMSProcessable processableData = new CMSProcessableByteArray(op.getMessageData());
-    	
-    	CMSEnvelopedData envelopedData =  gen.generate(processableData, cipher, "BC");
+    	CMSProcessable processableData = new CMSProcessableByteArray(messageData);
+    	CMSEnvelopedData envelopedData;
+		try {
+			envelopedData = gen.generate(processableData, cipher, "BC");
+		} catch (CMSException e) {
+			throw new CmsException(e);
+		}
     	LOGGER.info("EnvelopedData: " + new String(Hex.encode(envelopedData.getEncoded())));
-    	return envelopedData;
+    	return envelopedData.getEncoded();
 	}
 }

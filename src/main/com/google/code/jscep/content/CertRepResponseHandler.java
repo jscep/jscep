@@ -22,23 +22,23 @@
 
 package com.google.code.jscep.content;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ContentHandler;
-import java.net.HttpURLConnection;
 import java.net.URLConnection;
-
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
 
 public class CertRepResponseHandler extends ContentHandler {
     @Override
-    public Object getContent(URLConnection conn) throws IOException {
-    	HttpURLConnection httpConn = (HttpURLConnection) conn;
-    	System.out.println(httpConn.getResponseMessage());
-        try {
-            return new CMSSignedData(conn.getInputStream());
-        } catch (CMSException ce) {
-            throw new IOException(ce);
-        }
+    public byte[] getContent(URLConnection conn) throws IOException {
+		BufferedInputStream is = new BufferedInputStream(conn.getInputStream());
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		int b;
+		while ((b = is.read()) != -1) {
+			baos.write(b);
+		}
+		
+        return baos.toByteArray();
     }
 }

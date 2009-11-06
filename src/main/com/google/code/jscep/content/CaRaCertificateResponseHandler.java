@@ -31,10 +31,11 @@ import java.security.cert.X509Certificate;
 
 public class CaRaCertificateResponseHandler extends ContentHandler {
     @Override
-    public Object getContent(URLConnection conn) throws IOException {
+    public X509Certificate[] getContent(URLConnection conn) throws IOException {
         try {
             X509Certificate[] certs = new X509Certificate[2];
 
+            // This needs to be a little smarter.  This response isn't the same format.
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             X509Certificate ca = (X509Certificate) cf.generateCertificate(conn.getInputStream());
 

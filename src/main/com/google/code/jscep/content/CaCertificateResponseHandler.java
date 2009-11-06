@@ -31,13 +31,14 @@ import java.security.cert.X509Certificate;
 
 public class CaCertificateResponseHandler extends ContentHandler {
     @Override
-    public Object getContent(URLConnection conn) throws IOException {
+    public X509Certificate[] getContent(URLConnection conn) throws IOException {
         try {
             X509Certificate[] certs = new X509Certificate[1];
 
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             X509Certificate ca = (X509Certificate) cf.generateCertificate(conn.getInputStream());
 
+            // There should only ever be one certificate in this response.
             certs[0] = ca;
 
             return certs;
