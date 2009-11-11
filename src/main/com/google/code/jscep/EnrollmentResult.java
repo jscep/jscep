@@ -27,4 +27,8 @@ public class EnrollmentResult {
 	public boolean isPending() {
 		return certs == null; 
 	}
+	
+	public boolean isComplete() {
+		return task == null;
+	}
 }

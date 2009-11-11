@@ -43,7 +43,6 @@
 	
 	<target name="test" depends="test-compile">
 		<junit fork="true">
-			<formatter type="plain"/>
 			<classpath>
 				<path path="${test.output}"/>
 				<fileset dir="${src.output}">
