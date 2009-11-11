@@ -40,6 +40,7 @@ import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.util.encoders.Hex;
 
+import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 import com.google.code.jscep.request.PkiOperation;
 import com.google.code.jscep.request.PkiRequest;
@@ -52,8 +53,8 @@ import com.google.code.jscep.transport.Transport;
  */
 public class Transaction {
     private static final AtomicLong COUNTER = new AtomicLong();
-    private final DERPrintableString transId;
-    private DEROctetString senderNonce;
+    private final byte[] transId;
+    private final byte[] senderNonce;
     private int reason;
     private final KeyPair keyPair;
     private final Transport transport;
@@ -69,13 +70,13 @@ public class Transaction {
         this.signer = signer;
     }
     
-    private DEROctetString generateSenderNonce() {
-    	return new DEROctetString(NonceFactory.nextNonce().getBytes());
+    private byte[] generateSenderNonce() {
+    	return NonceFactory.nextNonce().getBytes();
     }
     
-    private DERPrintableString generateTransactionId() {
+    private byte[] generateTransactionId() {
     	if (keyPair == null) {
-    		return new DERPrintableString(Long.toHexString(COUNTER.getAndIncrement()).getBytes());
+    		return Long.toHexString(COUNTER.getAndIncrement()).getBytes();
     	} else {
 	    	MessageDigest digest = null;
 	        try {
@@ -83,7 +84,7 @@ public class Transaction {
 	        } catch (NoSuchAlgorithmException e) {
 	            throw new RuntimeException(e);
 	        }
-	        return new DERPrintableString(Hex.encode(digest.digest(keyPair.getPublic().getEncoded())));
+	        return Hex.encode(digest.digest(keyPair.getPublic().getEncoded()));
     	}
     }
     
@@ -91,7 +92,7 @@ public class Transaction {
     	return reason;
     }
 
-    public CertStore performOperation(PkiOperation operation) throws MalformedURLException, IOException, CmsException {
+    public CertStore performOperation(PkiOperation operation) throws MalformedURLException, IOException, CmsException, RequestPendingException {
     	try {
     		byte[] enveloped = enveloper.envelope(operation.getMessageData());
 	
@@ -116,19 +117,23 @@ public class Transaction {
     }
     
     private Attribute getMessageTypeAttribute(PkiOperation operation) {
-        return new Attribute(ScepObjectIdentifiers.messageType, new DERSet(operation.getMessageType()));
+    	DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType.getOid());
+    	DERPrintableString msgType = new DERPrintableString(Integer.toString(operation.getMessageType().getValue()));
+        return new Attribute(oid, new DERSet(msgType));
     }
     
 
     private Attribute getTransactionIdAttribute() {
-        return new Attribute(ScepObjectIdentifiers.transId, new DERSet(transId));
+    	DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId.getOid());
+        return new Attribute(oid, new DERSet(new DERPrintableString(transId)));
     }
 
     private Attribute getSenderNonceAttribute() {
-        return new Attribute(ScepObjectIdentifiers.senderNonce, new DERSet(senderNonce));
+    	DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.senderNonce.getOid());
+        return new Attribute(oid, new DERSet(new DEROctetString(senderNonce)));
     }
     
-    public CertStore handleResponse(byte[] bytes) throws CmsException {
+    public CertStore handleResponse(byte[] bytes) throws CmsException, RequestPendingException {
     	CmsResponseParser parser = new CmsResponseParser(transId, senderNonce, keyPair);
     	
     	return parser.handleResponse(bytes);

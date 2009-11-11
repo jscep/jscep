@@ -22,15 +22,23 @@
 
 package com.google.code.jscep.asn1;
 
-import org.bouncycastle.asn1.DERPrintableString;
-
 /**
  * FailInfo Attribute
  */
-public interface FailInfo {
-    DERPrintableString badAlg = new DERPrintableString("0");
-    DERPrintableString badMessageCheck = new DERPrintableString("1");
-    DERPrintableString badRequest = new DERPrintableString("2");
-    DERPrintableString badTime = new DERPrintableString("3");
-    DERPrintableString badCertId = new DERPrintableString("4");
+public enum FailInfo {
+    badAlg(0),
+    badMessageCheck(1),
+    badRequest(2),
+    badTime(3),
+    badCertId(4);
+    
+    private final int value;
+	
+	private FailInfo(int value) {
+    	this.value = value;
+    }
+	
+    public int getValue() {
+    	return value;
+    }
 }

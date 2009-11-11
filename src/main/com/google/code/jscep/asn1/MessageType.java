@@ -22,15 +22,23 @@
 
 package com.google.code.jscep.asn1;
 
-import org.bouncycastle.asn1.DERPrintableString;
-
 /**
  * MessageType Attribute
  */
-public interface MessageType {
-	DERPrintableString CertRep = new DERPrintableString("3");
-	DERPrintableString PKCSReq = new DERPrintableString("19");
-	DERPrintableString GetCertInitial= new DERPrintableString("20");
-	DERPrintableString GetCert = new DERPrintableString("21");
-	DERPrintableString GetCRL = new DERPrintableString("22");
+public enum MessageType {
+	CertRep(3),
+	PKCSReq(19),
+	GetCertInitial(20),
+	GetCert(21),
+	GetCRL(22);
+	
+	private final int value;
+	
+	private MessageType(int value) {
+    	this.value = value;
+    }
+	
+    public int getValue() {
+    	return value;
+    }
 }

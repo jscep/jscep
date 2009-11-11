@@ -22,17 +22,25 @@
 
 package com.google.code.jscep.asn1;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
-
 /**
  * SCEP OIDs
  */
-public interface ScepObjectIdentifiers {
-    DERObjectIdentifier messageType = new DERObjectIdentifier("2.16.840.1.113733.1.9.2");
-    DERObjectIdentifier pkiStatus = new DERObjectIdentifier("2.16.840.1.113733.1.9.3");
-    DERObjectIdentifier failInfo = new DERObjectIdentifier("2.16.840.1.113733.1.9.4");
-    DERObjectIdentifier senderNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.5");
-    DERObjectIdentifier recipientNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.6");
-    DERObjectIdentifier transId = new DERObjectIdentifier("2.16.840.1.113733.1.9.7");
-    DERObjectIdentifier extensionReq = new DERObjectIdentifier("2.16.840.1.113733.1.9.8");
+public enum ScepObjectIdentifiers {
+    messageType("2.16.840.1.113733.1.9.2"),
+    pkiStatus("2.16.840.1.113733.1.9.3"),
+    failInfo("2.16.840.1.113733.1.9.4"),
+    senderNonce("2.16.840.1.113733.1.9.5"),
+    recipientNonce("2.16.840.1.113733.1.9.6"),
+    transId("2.16.840.1.113733.1.9.7"),
+    extensionReq("2.16.840.1.113733.1.9.8");
+    
+    private final String oid;
+    
+    private ScepObjectIdentifiers(String oid) {
+    	this.oid = oid;
+    }
+    
+    public String getOid() {
+    	return oid;
+    }
 }

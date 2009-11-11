@@ -25,6 +25,10 @@ package com.google.code.jscep;
 import java.net.URL;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -62,7 +66,16 @@ public class RequesterTest {
         								.fingerprint(digest)
         								.fingerprintAlgorithm("MD5")
         								.build();
-        System.out.println(client.enroll("INBOUND_TLSzmcXc0IBDOoG".toCharArray()));
+        EnrollmentResult result = client.enroll("INBOUND_TLSzmcXc0IBDOoG".toCharArray());
+        if (result.isPending() == false) {
+        	System.out.println(result.getCertificates());
+        } else {
+        	ScheduledExecutorService exec = new ScheduledThreadPoolExecutor(1);
+        	ScheduledFuture<EnrollmentResult> future = exec.schedule(result.getTask(), 3, TimeUnit.HOURS);
+        	
+        	System.out.println(result.getTask());
+        }
+        
     }
     
     @Ignore

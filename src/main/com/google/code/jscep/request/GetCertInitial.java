@@ -26,7 +26,6 @@ import java.io.IOException;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
 
@@ -43,7 +42,7 @@ public class GetCertInitial implements PkiOperation {
     }
 
     @Override
-    public DERPrintableString getMessageType() {
+    public MessageType getMessageType() {
         return MessageType.GetCertInitial;
     }
 
@@ -56,6 +55,6 @@ public class GetCertInitial implements PkiOperation {
     }
     
     public String toString() {
-    	return getMessageType().getString();
+    	return getMessageType().toString();
     }
 }

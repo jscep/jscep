@@ -56,8 +56,6 @@ import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetCRL;
 import com.google.code.jscep.request.GetCert;
-import com.google.code.jscep.request.GetCertInitial;
-import com.google.code.jscep.request.PkcsReq;
 import com.google.code.jscep.request.PkiOperation;
 import com.google.code.jscep.request.Request;
 import com.google.code.jscep.response.Capabilities;
@@ -235,7 +233,7 @@ public class Requester {
      * @throws GeneralSecurityException
      * @throws UnsupportedCallbackException 
      */
-    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException {
+    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
@@ -254,13 +252,10 @@ public class Requester {
      * @throws GeneralSecurityException
      * @throws UnsupportedCallbackException 
      */
-    public List<X509Certificate> enroll(char[] password) throws IOException, ScepException, GeneralSecurityException {
+    public EnrollmentResult enroll(char[] password) throws Exception {
         updateCertificates();
-        // PKI Operation
-        PkiOperation req = new PkcsReq(keyPair, identity, password);
-        CertStore store = createTransaction().performOperation(req);
-
-        return getCertificates(store.getCertificates(null));
+        
+        return new InitialEnrollmentTask(createTransport(), ca, keyPair, identity, password).call();
     }
 
     /**
@@ -276,10 +271,9 @@ public class Requester {
     public X509Certificate getCertInitial(X500Principal subject) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException {
         updateCertificates();
         // PKI Operation
-        PkiOperation req = new GetCertInitial(ca.getIssuerX500Principal(), subject);
-        CertStore store = createTransaction().performOperation(req);
-
-        return getCertificates(store.getCertificates(null)).get(0);
+        
+    	
+    	return null;
     }
 
     /**
@@ -291,8 +285,9 @@ public class Requester {
      * @throws ScepException
      * @throws GeneralSecurityException
      * @throws UnsupportedCallbackException 
+     * @throws RequestPendingException 
      */
-    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException {
+    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCert(ca.getIssuerX500Principal(), serial);

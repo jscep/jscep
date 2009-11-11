@@ -34,7 +34,6 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERUTF8String;
@@ -58,7 +57,7 @@ public class PkcsReq implements PkiOperation {
     }
 
     @Override
-    public DERPrintableString getMessageType() {
+    public MessageType getMessageType() {
         return MessageType.PKCSReq;
     }
 
@@ -93,6 +92,6 @@ public class PkcsReq implements PkiOperation {
     }
     
     public String toString() {
-    	return getMessageType().getString();
+    	return getMessageType().toString();
     }
 }

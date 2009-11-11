@@ -25,9 +25,9 @@ package com.google.code.jscep.request;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import org.bouncycastle.asn1.DERPrintableString;
+import com.google.code.jscep.asn1.MessageType;
 
 public interface PkiOperation {
-    DERPrintableString getMessageType();
+	MessageType getMessageType();
     byte[] getMessageData() throws IOException, GeneralSecurityException;
 }
