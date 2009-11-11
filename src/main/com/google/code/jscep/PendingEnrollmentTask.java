@@ -5,8 +5,6 @@ import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Callable;
 
-import sun.security.util.PendingException;
-
 import com.google.code.jscep.request.GetCertInitial;
 import com.google.code.jscep.request.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
@@ -33,7 +31,7 @@ public class PendingEnrollmentTask extends AbstractEnrollmentTask {
 		try {
 			CertStore store = trans.performOperation(req);
 			return new EnrollmentResult(getCertificates(store.getCertificates(null)));
-		} catch (PendingException e) {
+		} catch (RequestPendingException e) {
 			Callable<EnrollmentResult> task = new PendingEnrollmentTask(transport, ca, keyPair, identity);
 			
 			return new EnrollmentResult(task);
