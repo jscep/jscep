@@ -67,6 +67,6 @@ public class Transaction {
     public CertStore handleResponse(byte[] bytes) throws CmsException, RequestPendingException, RequestFailureException {
     	CmsResponseParser parser = new CmsResponseParser(transId, senderNonce, keyPair);
     	
-    	return parser.handleResponse(bytes);
+    	return parser.parseResponse(bytes);
     }
 }

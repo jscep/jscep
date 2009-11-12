@@ -27,10 +27,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Logger;
 
 import org.bouncycastle.util.encoders.Hex;
 
 public final class TransactionId {
+	private final static Logger LOGGER = Logger.getLogger(TransactionId.class.getName());
 	private static final AtomicLong ID_SOURCE = new AtomicLong();
 	private final byte[] id;
 	
@@ -39,6 +41,7 @@ public final class TransactionId {
 	}
 	
 	private TransactionId(KeyPair keyPair) {
+		LOGGER.info("Generated new TransactionId from Key Pair");
     	MessageDigest digest = null;
         try {
         	// TODO: Always MD5?
@@ -50,6 +53,7 @@ public final class TransactionId {
 	}
 	
 	private TransactionId() {
+		LOGGER.info("Generated new TransactionId");
 		id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes();
 	}
 	

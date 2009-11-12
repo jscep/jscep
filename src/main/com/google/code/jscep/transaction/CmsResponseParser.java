@@ -22,7 +22,6 @@
 
 package com.google.code.jscep.transaction;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
@@ -56,7 +55,7 @@ public class CmsResponseParser {
 		this.keyPair = keyPair;
 	}
 	
-    public CertStore handleResponse(byte[] bytes) throws CmsException, RequestPendingException, RequestFailureException {
+    public CertStore parseResponse(byte[] bytes) throws CmsException, RequestPendingException, RequestFailureException {
     	CMSSignedData signedData;
 		try {
 			signedData = new CMSSignedData(bytes);
@@ -117,11 +116,7 @@ public class CmsResponseParser {
         Attribute transIdAttr = signedAttrs.get(oid);
         DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
         
-        try {
-			return new TransactionId(transId.getEncoded());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+        return new TransactionId(transId.getOctets());
 	}
 
 	private FailInfo extractFailInfo(AttributeTable signedAttrs) {
@@ -138,11 +133,7 @@ public class CmsResponseParser {
         Attribute recipientNonceAttribute = signedAttrs.get(oid);
         DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
         
-        try {
-			return new Nonce(attr.getEncoded());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+        return new Nonce(attr.getOctets());
 	}
 
 	private PkiStatus extractStatus(AttributeTable signedAttrs) {
