@@ -271,24 +271,6 @@ public class Requester {
     }
 
     /**
-     * Retrieves the certificate corresponding to the given subject. 
-     * 
-     * @param subject the subject being enrolled.
-     * @return the enrolled certificate.
-     * @throws IOException if any I/O error occurs.
-     * @throws ScepException
-     * @throws GeneralSecurityException
-     * @throws UnsupportedCallbackException 
-     */
-    public X509Certificate getCertInitial(X500Principal subject) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException {
-        updateCertificates();
-        // PKI Operation
-        
-    	
-    	return null;
-    }
-
-    /**
      * Retrieves the certificate corresponding to the given serial number.
      * 
      * @param serial the serial number of the certificate.
@@ -330,7 +312,7 @@ public class Requester {
     }
     
     /**
-     * Builder for obtaining an instance of {@link Requester}
+     * Builder for obtaining an instance of {@link Requester}.
      */
     public static class Builder {
     	private URL url;
