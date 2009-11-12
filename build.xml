@@ -12,9 +12,13 @@
 	<property name="test.output" value="bin/test"/>
 	<property name="src" value="src/main"/>
 	<property name="test" value="src/test"/>
-	<property name="docs" value="doc"/>
+	<property name="target" value="target"/>
+	<property name="docs" value="${target}/javadoc"/>
 	
 	<target name="main" depends="init, compile, compress, test, javadoc-archive, source-archive">
+	</target>
+
+	<target name="clean">
 	</target>
 	
 	<target name="init">
