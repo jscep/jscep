@@ -37,7 +37,7 @@ import com.google.code.jscep.request.Request;
 public class HttpGetTransport extends Transport {
 	private final static Logger LOGGER = Logger.getLogger(HttpGetTransport.class.getName());
 	
-	protected HttpGetTransport(URL url, Proxy proxy) {
+	HttpGetTransport(URL url, Proxy proxy) {
 		super(url, proxy);
 	}
 	

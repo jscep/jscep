@@ -26,10 +26,15 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
+import java.net.URLConnection;
 
+import com.google.code.jscep.content.ScepContentHandlerFactory;
 import com.google.code.jscep.request.Request;
 
 public abstract class Transport {
+    static {
+        URLConnection.setContentHandlerFactory(new ScepContentHandlerFactory());
+    }
 	public enum Method {
 		GET,
 		POST
@@ -37,7 +42,7 @@ public abstract class Transport {
 	protected final URL url;
 	protected final Proxy proxy;
 	
-	protected Transport(URL url, Proxy proxy) {
+	Transport(URL url, Proxy proxy) {
 		this.url = url;
 		this.proxy = proxy;
 	}

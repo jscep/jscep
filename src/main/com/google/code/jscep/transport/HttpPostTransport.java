@@ -40,7 +40,7 @@ import com.google.code.jscep.request.Request;
 public class HttpPostTransport extends Transport {
 	private final static Logger LOGGER = Logger.getLogger(HttpPostTransport.class.getName());
 	
-	protected HttpPostTransport(URL url, Proxy proxy) {
+	HttpPostTransport(URL url, Proxy proxy) {
 		super(url, proxy);
 	}
 	

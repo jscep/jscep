@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -51,7 +50,6 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 
-import com.google.code.jscep.content.ScepContentHandlerFactory;
 import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetCRL;
@@ -67,10 +65,6 @@ import com.google.code.jscep.transport.Transport;
  * SCEP Client
  */
 public class Requester {
-    static {
-        URLConnection.setContentHandlerFactory(new ScepContentHandlerFactory());
-    }
-
     private URL url;						// Required
     private byte[] fingerprint;				// Required
     private String fingerprintAlgorithm;	// Required
