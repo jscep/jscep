@@ -25,7 +25,7 @@ package com.google.code.jscep.request;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import com.google.code.jscep.asn1.MessageType;
+import com.google.code.jscep.transaction.MessageType;
 
 public interface PkiOperation {
 	MessageType getMessageType();

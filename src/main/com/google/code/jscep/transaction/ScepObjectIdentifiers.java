@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.asn1;
+package com.google.code.jscep.transaction;
 
 /**
  * SCEP OIDs

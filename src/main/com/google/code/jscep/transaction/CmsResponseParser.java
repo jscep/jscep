@@ -44,10 +44,6 @@ import org.bouncycastle.cms.SignerInformationStore;
 
 import com.google.code.jscep.RequestFailureException;
 import com.google.code.jscep.RequestPendingException;
-import com.google.code.jscep.asn1.FailInfo;
-import com.google.code.jscep.asn1.MessageType;
-import com.google.code.jscep.asn1.PkiStatus;
-import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 
 public class CmsResponseParser {
 	private final TransactionId transId;

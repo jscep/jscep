@@ -46,8 +46,6 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.util.encoders.Hex;
 
-import com.google.code.jscep.asn1.MessageType;
-import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 
 /**
  * Merge with Enveloper.

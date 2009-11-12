@@ -20,39 +20,32 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.asn1;
+package com.google.code.jscep.transaction;
 
 /**
- * FailInfo Attribute
+ * MessageType Attribute
  */
-public enum FailInfo {
-    badAlg(0, "Unrecognized or unsupported algorithm identifier"),
-    badMessageCheck(1, "Integrity check failed"),
-    badRequest(2, "Transaction not permitted or supported"),
-    badTime(3, "The signingTime attribute from the PKCS#7 SignedAttributes was not sufficiently close to the system time"),
-    badCertId(4, "No certificate could be identified matching the provided criteria");
-    
-    private final int value;
-    private final String desc;
+public enum MessageType {
+	CertRep(3),
+	PKCSReq(19),
+	GetCertInitial(20),
+	GetCert(21),
+	GetCRL(22);
 	
-	private FailInfo(int value, String desc) {
+	private final int value;
+	
+	private MessageType(int value) {
     	this.value = value;
-    	this.desc = desc;
     }
 	
     public int getValue() {
     	return value;
     }
     
-    @Override
-    public String toString() {
-    	return desc;
-    }
-    
-    public static FailInfo valueOf(int value) {
-    	for (FailInfo failInfo : FailInfo.values()) {
-    		if (failInfo.getValue() == value) {
-    			return failInfo;
+    public static MessageType valueOf(int value) {
+    	for (MessageType msgType : MessageType.values()) {
+    		if (msgType.getValue() == value) {
+    			return msgType;
     		}
     	}
     	throw new IllegalArgumentException();

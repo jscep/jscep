@@ -20,30 +20,39 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.asn1;
+package com.google.code.jscep.transaction;
 
 /**
- * PkiStatus Attribute
+ * FailInfo Attribute
  */
-public enum PkiStatus {
-    SUCCESS(0),
-    FAILURE(2),
-    PENDING(3);
+public enum FailInfo {
+    badAlg(0, "Unrecognized or unsupported algorithm identifier"),
+    badMessageCheck(1, "Integrity check failed"),
+    badRequest(2, "Transaction not permitted or supported"),
+    badTime(3, "The signingTime attribute from the PKCS#7 SignedAttributes was not sufficiently close to the system time"),
+    badCertId(4, "No certificate could be identified matching the provided criteria");
     
     private final int value;
-    
-    private PkiStatus(int value) {
+    private final String desc;
+	
+	private FailInfo(int value, String desc) {
     	this.value = value;
+    	this.desc = desc;
     }
-    
-    public int getValue() {
+	
+    private int getValue() {
     	return value;
     }
     
-    public static PkiStatus valueOf(int value) {
-    	for (PkiStatus status : PkiStatus.values()) {
-    		if (status.getValue() == value) {
-    			return status;
+    @Override
+    public String toString() {
+    	return desc;
+    }
+    
+    public static FailInfo valueOf(int value) {
+    	for (FailInfo failInfo : FailInfo.values()) {
+    		if (failInfo.getValue() == value) {
+    			return failInfo;
     		}
     	}
     	throw new IllegalArgumentException();

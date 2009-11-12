@@ -31,7 +31,7 @@ import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
 
-import com.google.code.jscep.asn1.MessageType;
+import com.google.code.jscep.transaction.MessageType;
 
 public class GetCert implements PkiOperation {
 	private final X500Principal issuer;

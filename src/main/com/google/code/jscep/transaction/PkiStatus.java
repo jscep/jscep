@@ -20,32 +20,30 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.asn1;
+package com.google.code.jscep.transaction;
 
 /**
- * MessageType Attribute
+ * PkiStatus Attribute
  */
-public enum MessageType {
-	CertRep(3),
-	PKCSReq(19),
-	GetCertInitial(20),
-	GetCert(21),
-	GetCRL(22);
-	
-	private final int value;
-	
-	private MessageType(int value) {
+public enum PkiStatus {
+    SUCCESS(0),
+    FAILURE(2),
+    PENDING(3);
+    
+    private final int value;
+    
+    private PkiStatus(int value) {
     	this.value = value;
     }
-	
+    
     public int getValue() {
     	return value;
     }
     
-    public static MessageType valueOf(int value) {
-    	for (MessageType msgType : MessageType.values()) {
-    		if (msgType.getValue() == value) {
-    			return msgType;
+    public static PkiStatus valueOf(int value) {
+    	for (PkiStatus status : PkiStatus.values()) {
+    		if (status.getValue() == value) {
+    			return status;
     		}
     	}
     	throw new IllegalArgumentException();

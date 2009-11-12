@@ -42,7 +42,7 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Hex;
 
-import com.google.code.jscep.asn1.MessageType;
+import com.google.code.jscep.transaction.MessageType;
 
 public class PkcsReq implements PkiOperation {
 	private final static Logger LOGGER = Logger.getLogger(PkcsReq.class.getName());
