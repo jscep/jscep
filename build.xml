@@ -92,6 +92,7 @@
 					<include name="bcprov-jdk16-144.jar"/>
 				</fileset>
 			</classpath>
+			<link href="http://java.sun.com/javase/6/docs/api/" offline="true" packagelistloc="resourses/javase-6-package-list.txt"/>
 		</javadoc>
 	</target>
 
