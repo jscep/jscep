@@ -33,6 +33,9 @@ import java.util.List;
 import com.google.code.jscep.response.Capabilities;
 
 public class CaCapabilitiesResponseHandler extends ContentHandler {
+	CaCapabilitiesResponseHandler() {		
+	}
+
 	@Override
     public Capabilities getContent(URLConnection conn) throws IOException {
         final List<String> capabilities = new LinkedList<String>();

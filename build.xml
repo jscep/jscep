@@ -93,6 +93,7 @@
 				</fileset>
 			</classpath>
 			<link href="http://java.sun.com/j2se/1.5.0/docs/api/" offline="true" packagelistloc="resources/javase6"/>
+			<link href="http://www.bouncycastle.org/docs/docs1.6/" offline="true" packagelistloc="resources/bc"/>
 		</javadoc>
 	</target>
 

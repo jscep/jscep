@@ -22,26 +22,32 @@
 
 package com.google.code.jscep.content;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ContentHandler;
 import java.net.URLConnection;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
-public class CertRepResponseHandler extends ContentHandler {
-	CertRepResponseHandler() {
+public class NextCaCertificateResponseHandler extends ContentHandler {
+	NextCaCertificateResponseHandler() {
+		
 	}
 	
     @Override
-    public byte[] getContent(URLConnection conn) throws IOException {
-		BufferedInputStream is = new BufferedInputStream(conn.getInputStream());
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		
-		int b;
-		while ((b = is.read()) != -1) {
-			baos.write(b);
-		}
-		
-        return baos.toByteArray();
+    public X509Certificate[] getContent(URLConnection conn) throws IOException {
+        try {
+            X509Certificate[] certs = new X509Certificate[1];
+
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            X509Certificate ca = (X509Certificate) cf.generateCertificate(conn.getInputStream());
+
+            // There should only ever be one certificate in this response.
+            certs[0] = ca;
+
+            return certs;
+        } catch (CertificateException ce) {
+            throw new IOException(ce);
+        }
     }
 }

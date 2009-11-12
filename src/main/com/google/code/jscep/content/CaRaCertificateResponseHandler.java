@@ -30,6 +30,9 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 public class CaRaCertificateResponseHandler extends ContentHandler {
+	CaRaCertificateResponseHandler() {
+	}
+	
     @Override
     public X509Certificate[] getContent(URLConnection conn) throws IOException {
         try {
