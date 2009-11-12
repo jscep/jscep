@@ -39,25 +39,27 @@ public class InitialEnrollmentTask extends AbstractEnrollmentTask {
 	private final KeyPair keyPair;
 	private final X509Certificate identity;
 	private final char[] password;
+	private final String fingerprintAlgorithm;
 	
-	public InitialEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, char[] password) {
+	public InitialEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, char[] password, String fingerprintAlgorithm) {
 		this.transport = transport;
 		this.ca = ca;
 		this.keyPair = keyPair;
 		this.identity = identity;
 		this.password = password;
+		this.fingerprintAlgorithm = fingerprintAlgorithm;
 	}
 	
 	@Override
 	public EnrollmentResult call() throws Exception {
-		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair);
+		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, fingerprintAlgorithm);
 		PkiOperation req = new PkcsReq(keyPair, identity, password);
 		try {
 			CertStore store = trans.performOperation(req);
 			
 			return new EnrollmentResult(getCertificates(store.getCertificates(null)));
 		} catch (RequestPendingException e) {
-			Callable<EnrollmentResult> task = new PendingEnrollmentTask(transport, ca, keyPair, identity);
+			Callable<EnrollmentResult> task = new PendingEnrollmentTask(transport, ca, keyPair, identity, fingerprintAlgorithm);
 			
 			return new EnrollmentResult(task);
 		}

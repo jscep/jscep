@@ -174,7 +174,7 @@ public class Requester {
     }
     
     private Transaction createTransaction() throws IOException {
-    	return TransactionFactory.createTransaction(createTransport(), ca, identity, keyPair);
+    	return TransactionFactory.createTransaction(createTransport(), ca, identity, keyPair, fingerprintAlgorithm);
     }
     
     private Transport createTransport() throws IOException {
@@ -236,11 +236,22 @@ public class Requester {
      */
     public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException, RequestFailureException {
         updateCertificates();
-        // PKI Operation
-        PkiOperation req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
-        CertStore store = createTransaction().performOperation(req);
-        
-        return getCRLs(store.getCRLs(null));
+        if (supportsDistributionPoints()) {
+        	return null;
+        } else {
+	        // PKI Operation
+	        PkiOperation req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
+	        CertStore store = createTransaction().performOperation(req);
+	        
+	        return getCRLs(store.getCRLs(null));
+        }
+    }
+    
+    /**
+     * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
+     */
+    private boolean supportsDistributionPoints() {
+    	return false;
     }
 
     /**
@@ -256,7 +267,7 @@ public class Requester {
     public EnrollmentResult enroll(char[] password) throws Exception {
         updateCertificates();
         
-        return new InitialEnrollmentTask(createTransport(), ca, keyPair, identity, password).call();
+        return new InitialEnrollmentTask(createTransport(), ca, keyPair, identity, password, fingerprintAlgorithm).call();
     }
 
     /**

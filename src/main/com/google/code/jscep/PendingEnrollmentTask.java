@@ -25,7 +25,6 @@ package com.google.code.jscep;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.Callable;
 
 import com.google.code.jscep.request.GetCertInitial;
 import com.google.code.jscep.request.PkiOperation;
@@ -38,25 +37,25 @@ public class PendingEnrollmentTask extends AbstractEnrollmentTask {
 	private final X509Certificate ca;
 	private final KeyPair keyPair;
 	private final X509Certificate identity;
+	private final String fingerprintAlgorithm;
 	
-	public PendingEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity) {
+	public PendingEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, String fingerprintAlgorithm) {
 		this.transport = transport;
 		this.ca = ca;
 		this.keyPair = keyPair;
 		this.identity = identity;
+		this.fingerprintAlgorithm = fingerprintAlgorithm;
 	}
 
 	@Override
 	public EnrollmentResult call() throws Exception {
-		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair);
+		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, fingerprintAlgorithm);
 		PkiOperation req = new GetCertInitial(ca.getIssuerX500Principal(), identity.getSubjectX500Principal());
 		try {
 			CertStore store = trans.performOperation(req);
 			return new EnrollmentResult(getCertificates(store.getCertificates(null)));
 		} catch (RequestPendingException e) {
-			Callable<EnrollmentResult> task = new PendingEnrollmentTask(transport, ca, keyPair, identity);
-			
-			return new EnrollmentResult(task);
+			return new EnrollmentResult(this);
 		}
 	}
 }

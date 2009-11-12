@@ -26,7 +26,6 @@ import java.net.URL;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +70,7 @@ public class RequesterTest {
         	System.out.println(result.getCertificates());
         } else {
         	ScheduledExecutorService exec = new ScheduledThreadPoolExecutor(1);
-        	ScheduledFuture<EnrollmentResult> future = exec.schedule(result.getTask(), 3, TimeUnit.HOURS);
+        	exec.schedule(result.getTask(), 3, TimeUnit.HOURS);
         	
         	System.out.println(result.getTask());
         }

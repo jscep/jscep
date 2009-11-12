@@ -20,23 +20,27 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.transaction;
+package com.google.code.jscep.response;
 
 import java.security.KeyPair;
-import java.security.cert.X509Certificate;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertStore;
 
-import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
+import com.google.code.jscep.transaction.CmsException;
+import com.google.code.jscep.transaction.FailInfo;
+import com.google.code.jscep.transaction.Nonce;
+import com.google.code.jscep.transaction.PkiStatus;
+import com.google.code.jscep.transaction.TransactionId;
 
-import com.google.code.jscep.transport.Transport;
-
-public final class TransactionFactory {
-	private TransactionFactory() {
-	}
+public abstract class PkiMessage {
+	public abstract FailInfo getFailInfo();
+	public abstract PkiStatus getStatus();	
+	public abstract Nonce getRecipientNonce();
+	public abstract TransactionId getTransactionId();
+	public abstract CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException;
 	
-	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String fingerprintAlgorithm) {
-		Enveloper enveloper = new Enveloper(ca, SMIMECapability.dES_CBC.getId());
-		Signer signer = new Signer(identity, keyPair, CMSSignedDataGenerator.DIGEST_SHA1);
-		return new Transaction(transport, keyPair, enveloper, signer, fingerprintAlgorithm);
+	public static PkiMessage getInstance(KeyPair keyPair, byte[] bytes) throws CmsException {
+		return new PkiMessageImpl(keyPair, bytes);
 	}
 }

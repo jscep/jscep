@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-2.3.1
  * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.1
  */
 public final class TransactionId {
@@ -43,12 +44,11 @@ public final class TransactionId {
 		this.id = id;
 	}
 	
-	private TransactionId(KeyPair keyPair) {
+	private TransactionId(KeyPair keyPair, String fingerprintAlgorithm) {
 		LOGGER.info("Generated new TransactionId from Key Pair");
     	MessageDigest digest = null;
         try {
-        	// TODO: Always MD5?
-            digest = MessageDigest.getInstance("MD5");
+            digest = MessageDigest.getInstance(fingerprintAlgorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -71,11 +71,11 @@ public final class TransactionId {
 		return Arrays.equals(transId.getBytes(), getBytes());
 	}
 	
-	public static TransactionId createTransactionId(KeyPair keyPair) {
+	public static TransactionId createTransactionId(KeyPair keyPair, String fingerprintAlgorithm) {
 		if (keyPair == null) {
 			return new TransactionId();
 		} else {
-			return new TransactionId(keyPair);
+			return new TransactionId(keyPair, fingerprintAlgorithm);
 		}
 	}
 	

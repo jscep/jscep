@@ -26,12 +26,15 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
 
 import com.google.code.jscep.RequestFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.request.PkiOperation;
 import com.google.code.jscep.request.PkiRequest;
+import com.google.code.jscep.response.PkiMessage;
 import com.google.code.jscep.transport.Transport;
 
 public class Transaction {
@@ -42,10 +45,10 @@ public class Transaction {
     private final Enveloper enveloper;
     private final Signer signer;
     
-    protected Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer) {
+    protected Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer, String fingerprintAlgorithm) {
     	this.transport = transport;
     	this.keyPair = keyPair;
-        this.transId = TransactionId.createTransactionId(keyPair);
+        this.transId = TransactionId.createTransactionId(keyPair, fingerprintAlgorithm);
         this.senderNonce = NonceFactory.nextNonce();
         this.enveloper = enveloper;
         this.signer = signer;
@@ -64,9 +67,23 @@ public class Transaction {
     	}
     }
     
-    public CertStore handleResponse(byte[] bytes) throws CmsException, RequestPendingException, RequestFailureException {
-    	CmsResponseParser parser = new CmsResponseParser(transId, senderNonce, keyPair);
-    	
-    	return parser.parseResponse(bytes);
+    public CertStore handleResponse(byte[] bytes) throws CmsException, RequestPendingException, RequestFailureException, NoSuchProviderException, NoSuchAlgorithmException {
+    	PkiMessage msg = PkiMessage.getInstance(keyPair, bytes);
+
+        if (msg.getTransactionId().equals(this.transId) == false) {
+            throw new CmsException("Transaction ID Mismatch: Sent [" + this.transId + "]; Received [" + msg.getTransactionId() + "]");
+        }
+        
+        if (msg.getRecipientNonce().equals(senderNonce) == false) {
+        	throw new CmsException("Sender Nonce Mismatch.  Sent [" + this.senderNonce + "]; Received [" + msg.getRecipientNonce() + "]");
+        }
+        
+        if (msg.getStatus().equals(PkiStatus.FAILURE)) {
+        	throw new RequestFailureException(msg.getFailInfo().toString());
+        } else if (msg.getStatus().equals(PkiStatus.PENDING)) {
+        	throw new RequestPendingException();
+        } else {
+        	return msg.getCertStore();
+        }
     }
 }

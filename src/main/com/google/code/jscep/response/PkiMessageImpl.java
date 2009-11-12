@@ -20,10 +20,11 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.transaction;
+package com.google.code.jscep.response;
 
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
 import java.util.Collection;
 
@@ -32,35 +33,33 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.RecipientInformation;
-import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 
-import com.google.code.jscep.RequestFailureException;
-import com.google.code.jscep.RequestPendingException;
+import com.google.code.jscep.transaction.CmsException;
+import com.google.code.jscep.transaction.FailInfo;
+import com.google.code.jscep.transaction.MessageType;
+import com.google.code.jscep.transaction.Nonce;
+import com.google.code.jscep.transaction.PkiStatus;
+import com.google.code.jscep.transaction.ScepObjectIdentifiers;
+import com.google.code.jscep.transaction.TransactionId;
 
-public class CmsResponseParser {
-	private final TransactionId transId;
-	private final Nonce senderNonce;
-    private final KeyPair keyPair;
+public class PkiMessageImpl extends PkiMessage {
+	private TransactionId transId;
+	private PkiStatus pkiStatus;
+	private Nonce recipientNonce;
+	private PkcsPkiEnvelope pkcsPkiEnvelope;
+	private FailInfo failInfo;
 	
-	public CmsResponseParser(TransactionId transId, Nonce senderNonce, KeyPair keyPair) {
-		this.transId = transId;
-		this.senderNonce = senderNonce;
-		this.keyPair = keyPair;
-	}
-	
-    public CertStore parseResponse(byte[] bytes) throws CmsException, RequestPendingException, RequestFailureException {
-    	CMSSignedData signedData;
+	public PkiMessageImpl(KeyPair keyPair, byte[] bytes) throws CmsException {
+		CMSSignedData signedData;
 		try {
 			signedData = new CMSSignedData(bytes);
 		} catch (CMSException e) {
-			throw new CmsException(e);
+			throw new CmsException();
 		}
     	SignerInformationStore store = signedData.getSignerInfos();
         Collection<?> signers = store.getSigners();
@@ -72,45 +71,46 @@ public class CmsResponseParser {
         SignerInformation signerInformation = (SignerInformation) signers.iterator().next();
         AttributeTable signedAttrs = signerInformation.getSignedAttributes();
 
-        TransactionId transId = extractTransactionId(signedAttrs);
-        MessageType msgType = extractMessageType(signedAttrs);
-        Nonce recipientNonce = extractRecipientNonce(signedAttrs);
-        PkiStatus pkiStatus = extractStatus(signedAttrs);
+        transId = extractTransactionId(signedAttrs);
+        recipientNonce = extractRecipientNonce(signedAttrs);
+        pkiStatus = extractStatus(signedAttrs);
         
-        if (transId.equals(this.transId) == false) {
-            throw new CmsException("Transaction ID Mismatch: Sent [" + this.transId + "]; Received [" + transId + "]");
-        }
+        
+        MessageType msgType = extractMessageType(signedAttrs);
         
         if (msgType.equals(MessageType.CertRep) == false) {
-        	throw new CmsException("Invalid Message Type: " + msgType);
-        }
-        
-        if (recipientNonce.equals(senderNonce) == false) {
-        	throw new CmsException("Sender Nonce Mismatch.  Sent [" + this.senderNonce + "]; Received [" + recipientNonce + "]");
+        	throw new RuntimeException("Invalid Message Type: " + msgType);
         }
         
         if (pkiStatus.equals(PkiStatus.FAILURE)) {
-        	throw new RequestFailureException(extractFailInfo(signedAttrs).toString());
-        } else if (pkiStatus.equals(PkiStatus.PENDING)) {
-        	throw new RequestPendingException();
+        	failInfo = extractFailInfo(signedAttrs);
         } else {
-	        try {
-	        	CMSProcessable signedContent = signedData.getSignedContent();
-	        	CMSEnvelopedData envelopedData = new CMSEnvelopedData((byte[]) signedContent.getContent());
-	        	RecipientInformationStore recipientStore = envelopedData.getRecipientInfos();
-	        	RecipientInformation recipient = (RecipientInformation) recipientStore.getRecipients().iterator().next();
-	        	byte[] content = recipient.getContent(keyPair.getPrivate(), "BC");
-	        	CMSSignedData contentData = new CMSSignedData(content);
-	        	
-				return contentData.getCertificatesAndCRLs("Collection", "BC");
-			} catch (CMSException e) {
-				throw new CmsException(e);
-			} catch (GeneralSecurityException e) {
-				throw new CmsException(e);
-			}
+	        CMSProcessable signedContent = signedData.getSignedContent();
+			byte[] ed = (byte[]) signedContent.getContent();
+			pkcsPkiEnvelope = PkcsPkiEnvelope.getInstance(keyPair, ed);
         }
-    }
-
+	}
+	
+	public FailInfo getFailInfo() {
+		return failInfo;
+	}
+	
+	public PkiStatus getStatus() {
+		return pkiStatus;
+	}
+	
+	public Nonce getRecipientNonce() {
+		return recipientNonce;
+	}
+	
+	public TransactionId getTransactionId() {
+		return transId;
+	}
+	
+	public CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException {
+		return pkcsPkiEnvelope.getCertStore();
+	}
+	
 	private TransactionId extractTransactionId(AttributeTable signedAttrs) {
 		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId.getOid());
         Attribute transIdAttr = signedAttrs.get(oid);
@@ -150,6 +150,5 @@ public class CmsResponseParser {
         DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);
         
         return MessageType.valueOf(Integer.parseInt(msgType.getString()));
-		
 	}
 }
