@@ -39,4 +39,13 @@ public enum PkiStatus {
     public int getValue() {
     	return value;
     }
+    
+    public static PkiStatus valueOf(int value) {
+    	for (PkiStatus status : PkiStatus.values()) {
+    		if (status.getValue() == value) {
+    			return status;
+    		}
+    	}
+    	throw new IllegalArgumentException();
+    }
 }

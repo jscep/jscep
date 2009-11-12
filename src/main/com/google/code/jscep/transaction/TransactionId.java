@@ -20,11 +20,12 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.transaction;
 
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.bouncycastle.util.encoders.Hex;
@@ -32,6 +33,10 @@ import org.bouncycastle.util.encoders.Hex;
 public final class TransactionId {
 	private static final AtomicLong ID_SOURCE = new AtomicLong();
 	private final byte[] id;
+	
+	public TransactionId(byte[] id) {
+		this.id = id;
+	}
 	
 	private TransactionId(KeyPair keyPair) {
     	MessageDigest digest = null;
@@ -50,6 +55,13 @@ public final class TransactionId {
 	
 	public byte[] getBytes() {
 		return id;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		TransactionId transId = (TransactionId) o;
+		
+		return Arrays.equals(transId.getBytes(), getBytes());
 	}
 	
 	public static TransactionId createTransactionId(KeyPair keyPair) {

@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.transaction;
 
+import java.util.Arrays;
+
 public class Nonce {
 	private byte[] nonce;
 	
@@ -31,5 +33,12 @@ public class Nonce {
 	
 	public byte[] getBytes() {
 		return nonce;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		Nonce n = (Nonce) o;
+		
+		return Arrays.equals(n.getBytes(), getBytes());
 	}
 }

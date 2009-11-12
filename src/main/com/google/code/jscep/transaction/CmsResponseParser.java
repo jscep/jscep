@@ -22,6 +22,7 @@
 
 package com.google.code.jscep.transaction;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
@@ -43,7 +44,6 @@ import org.bouncycastle.cms.SignerInformationStore;
 
 import com.google.code.jscep.RequestFailureException;
 import com.google.code.jscep.RequestPendingException;
-import com.google.code.jscep.TransactionId;
 import com.google.code.jscep.asn1.FailInfo;
 import com.google.code.jscep.asn1.MessageType;
 import com.google.code.jscep.asn1.PkiStatus;
@@ -73,58 +73,29 @@ public class CmsResponseParser {
         if (signers.size() > 1) {
         	throw new CmsException("Too Many SignerInfos");
         }
+        
         SignerInformation signerInformation = (SignerInformation) signers.iterator().next();
         AttributeTable signedAttrs = signerInformation.getSignedAttributes();
 
-        DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId.getOid());
-        Attribute transIdAttr = signedAttrs.get(oid);
-        DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
-        if (transId.equals(new DERPrintableString(this.transId.getBytes())) == false) {
+        TransactionId transId = extractTransactionId(signedAttrs);
+        MessageType msgType = extractMessageType(signedAttrs);
+        Nonce recipientNonce = extractRecipientNonce(signedAttrs);
+        PkiStatus pkiStatus = extractStatus(signedAttrs);
+        
+        if (transId.equals(this.transId) == false) {
             throw new CmsException("Transaction ID Mismatch: Sent [" + this.transId + "]; Received [" + transId + "]");
         }
         
-        oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType.getOid());
-        Attribute msgTypeAttribute = signedAttrs.get(oid);
-        DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);
-        int msgTypeVal = Integer.parseInt(msgType.getString());
-        if (msgTypeVal != MessageType.CertRep.getValue()) {
+        if (msgType.equals(MessageType.CertRep) == false) {
         	throw new CmsException("Invalid Message Type: " + msgType);
         }
         
-//        Attribute senderNoneAttribute = signedAttrs.get(ScepObjectIdentifiers.senderNonce);
-//        DEROctetString senderNonce = (DEROctetString) senderNoneAttribute.getAttrValues().getObjectAt(0);
-        
-        oid = new DERObjectIdentifier(ScepObjectIdentifiers.recipientNonce.getOid());
-        Attribute recipientNonceAttribute = signedAttrs.get(oid);
-        DEROctetString recipientNonce = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
-        
-        if (recipientNonce.equals(new DEROctetString(this.senderNonce.getBytes())) == false) {
+        if (recipientNonce.equals(senderNonce) == false) {
         	throw new CmsException("Sender Nonce Mismatch.  Sent [" + this.senderNonce + "]; Received [" + recipientNonce + "]");
         }
         
-        oid = new DERObjectIdentifier(ScepObjectIdentifiers.pkiStatus.getOid());
-        Attribute pkiStatusAttribute = signedAttrs.get(oid);
-        DERPrintableString pkiStatus = (DERPrintableString) pkiStatusAttribute.getAttrValues().getObjectAt(0);
-        
         if (pkiStatus.equals(PkiStatus.FAILURE)) {
-        	oid = new DERObjectIdentifier(ScepObjectIdentifiers.failInfo.getOid());
-        	Attribute failInfoAttribute = signedAttrs.get(oid);
-        	DERPrintableString failInfo = (DERPrintableString) failInfoAttribute.getAttrValues().getObjectAt(0);
-        	int failInfoInt = Integer.parseInt(failInfo.getString());
-        	
-        	if (failInfoInt == FailInfo.badAlg.getValue()) {
-        		throw new RequestFailureException("Unrecognized or unsupported algorithm identifier");
-        	} else if (failInfoInt == FailInfo.badCertId.getValue()) {
-        		throw new RequestFailureException("No certificate could be identified matching the provided criteria");
-        	} else if (failInfoInt == FailInfo.badMessageCheck.getValue()) {
-        		throw new RequestFailureException("Integrity check failed");
-        	} else if (failInfoInt == FailInfo.badRequest.getValue()) {
-        		throw new RequestFailureException("Transaction not permitted or supported");
-        	} else if (failInfoInt == FailInfo.badTime.getValue()) {
-        		throw new RequestFailureException("The signingTime attribute from the PKCS#7 SignedAttributes was not sufficiently close to the system time");
-        	} else {
-        		throw new RequestFailureException();
-        	}
+        	throw new RequestFailureException(extractFailInfo(signedAttrs).toString());
         } else if (pkiStatus.equals(PkiStatus.PENDING)) {
         	throw new RequestPendingException();
         } else {
@@ -144,4 +115,54 @@ public class CmsResponseParser {
 			}
         }
     }
+
+	private TransactionId extractTransactionId(AttributeTable signedAttrs) {
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId.getOid());
+        Attribute transIdAttr = signedAttrs.get(oid);
+        DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
+        
+        try {
+			return new TransactionId(transId.getEncoded());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private FailInfo extractFailInfo(AttributeTable signedAttrs) {
+		DERObjectIdentifier oid;
+		oid = new DERObjectIdentifier(ScepObjectIdentifiers.failInfo.getOid());
+		Attribute failInfoAttribute = signedAttrs.get(oid);
+		DERPrintableString failInfo = (DERPrintableString) failInfoAttribute.getAttrValues().getObjectAt(0);
+		
+		return FailInfo.valueOf(Integer.parseInt(failInfo.getString()));
+	}
+
+	private Nonce extractRecipientNonce(AttributeTable signedAttrs) {
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.recipientNonce.getOid());
+        Attribute recipientNonceAttribute = signedAttrs.get(oid);
+        DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
+        
+        try {
+			return new Nonce(attr.getEncoded());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private PkiStatus extractStatus(AttributeTable signedAttrs) {
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.pkiStatus.getOid());
+        Attribute attr = signedAttrs.get(oid);
+        DERPrintableString pkiStatus = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
+
+        return PkiStatus.valueOf(Integer.parseInt(pkiStatus.toString()));
+	}
+	
+	private MessageType extractMessageType(AttributeTable signedAttrs) {
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType.getOid());
+        Attribute msgTypeAttribute = signedAttrs.get(oid);
+        DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);
+        
+        return MessageType.valueOf(Integer.parseInt(msgType.getString()));
+		
+	}
 }

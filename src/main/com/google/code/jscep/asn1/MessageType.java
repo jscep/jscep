@@ -41,4 +41,13 @@ public enum MessageType {
     public int getValue() {
     	return value;
     }
+    
+    public static MessageType valueOf(int value) {
+    	for (MessageType msgType : MessageType.values()) {
+    		if (msgType.getValue() == value) {
+    			return msgType;
+    		}
+    	}
+    	throw new IllegalArgumentException();
+    }
 }
