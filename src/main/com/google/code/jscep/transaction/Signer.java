@@ -29,9 +29,15 @@ import java.security.cert.CertStore;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
@@ -39,6 +45,10 @@ import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.util.encoders.Hex;
+
+import com.google.code.jscep.TransactionId;
+import com.google.code.jscep.asn1.MessageType;
+import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 
 /**
  * Merge with Enveloper.
@@ -55,7 +65,7 @@ public class Signer {
 		this.digest = digest;
 	}
 	
-	public byte[] sign(byte[] data, AttributeTable table) throws IOException, GeneralSecurityException, CmsException {
+	public byte[] sign(byte[] data, MessageType msgType, TransactionId transId, Nonce senderNonce) throws IOException, GeneralSecurityException, CmsException {
 		CMSProcessable envelopedData = new CMSProcessableByteArray(data);
 		CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
     	
@@ -68,6 +78,11 @@ public class Signer {
 		} catch (CMSException e) {
 			throw new CmsException(e);
 		}
+		Hashtable<DERObjectIdentifier, Attribute> attributes = new Hashtable<DERObjectIdentifier, Attribute>();
+		attributes.put(toAttribute(msgType).getAttrType(), toAttribute(msgType));
+        attributes.put(toAttribute(transId).getAttrType(), toAttribute(transId));
+        attributes.put(toAttribute(senderNonce).getAttrType(), toAttribute(senderNonce));
+		AttributeTable table = new AttributeTable(attributes);
         gen.addSigner(keyPair.getPrivate(), identity, digest, table, null);
         
     	CMSSignedData signedData;
@@ -80,4 +95,23 @@ public class Signer {
     	
     	return signedData.getEncoded();
 	}
+	
+	private Attribute toAttribute(MessageType msgType) {
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType.getOid());
+    	DERPrintableString attr = new DERPrintableString(Integer.toString(msgType.getValue()));
+    	
+        return new Attribute(oid, new DERSet(attr));
+	}
+	
+	private Attribute toAttribute(TransactionId transId) {
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId.getOid());
+		
+        return new Attribute(oid, new DERSet(new DERPrintableString(transId.getBytes())));
+	}
+	
+	 private Attribute toAttribute(Nonce senderNonce) {
+    	DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.senderNonce.getOid());
+    	
+        return new Attribute(oid, new DERSet(new DEROctetString(senderNonce.getBytes())));
+    }
 }

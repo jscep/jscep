@@ -163,7 +163,7 @@ public class Requester {
     	gen.setNotAfter(notAfter);
     	gen.setPublicKey(keyPair.getPublic());
     	gen.setSerialNumber(BigInteger.ONE);
-    	// TODO: Is this right?
+    	// TODO: Always SHA1withRSA?
     	gen.setSignatureAlgorithm("SHA1withRSA");
     	gen.setSubjectDN(subject);
     	try {
@@ -232,8 +232,9 @@ public class Requester {
      * @throws ScepException
      * @throws GeneralSecurityException
      * @throws UnsupportedCallbackException 
+     * @throws RequestFailureException 
      */
-    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException {
+    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException, RequestFailureException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
@@ -286,8 +287,9 @@ public class Requester {
      * @throws GeneralSecurityException
      * @throws UnsupportedCallbackException 
      * @throws RequestPendingException 
+     * @throws RequestFailureException 
      */
-    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException {
+    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException, RequestFailureException {
         updateCertificates();
         // PKI Operation
         PkiOperation req = new GetCert(ca.getIssuerX500Principal(), serial);

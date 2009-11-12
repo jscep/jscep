@@ -41,23 +41,26 @@ import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 
+import com.google.code.jscep.RequestFailureException;
 import com.google.code.jscep.RequestPendingException;
+import com.google.code.jscep.TransactionId;
+import com.google.code.jscep.asn1.FailInfo;
 import com.google.code.jscep.asn1.MessageType;
 import com.google.code.jscep.asn1.PkiStatus;
 import com.google.code.jscep.asn1.ScepObjectIdentifiers;
 
 public class CmsResponseParser {
-	private final byte[] transId;
-	private final byte[] senderNonce;
+	private final TransactionId transId;
+	private final Nonce senderNonce;
     private final KeyPair keyPair;
 	
-	public CmsResponseParser(byte[] transId, byte[] senderNonce, KeyPair keyPair) {
+	public CmsResponseParser(TransactionId transId, Nonce senderNonce, KeyPair keyPair) {
 		this.transId = transId;
 		this.senderNonce = senderNonce;
 		this.keyPair = keyPair;
 	}
 	
-    public CertStore handleResponse(byte[] bytes) throws CmsException, RequestPendingException {
+    public CertStore handleResponse(byte[] bytes) throws CmsException, RequestPendingException, RequestFailureException {
     	CMSSignedData signedData;
 		try {
 			signedData = new CMSSignedData(bytes);
@@ -76,7 +79,7 @@ public class CmsResponseParser {
         DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId.getOid());
         Attribute transIdAttr = signedAttrs.get(oid);
         DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
-        if (transId.equals(new DERPrintableString(this.transId)) == false) {
+        if (transId.equals(new DERPrintableString(this.transId.getBytes())) == false) {
             throw new CmsException("Transaction ID Mismatch: Sent [" + this.transId + "]; Received [" + transId + "]");
         }
         
@@ -95,7 +98,7 @@ public class CmsResponseParser {
         Attribute recipientNonceAttribute = signedAttrs.get(oid);
         DEROctetString recipientNonce = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
         
-        if (recipientNonce.equals(new DEROctetString(this.senderNonce)) == false) {
+        if (recipientNonce.equals(new DEROctetString(this.senderNonce.getBytes())) == false) {
         	throw new CmsException("Sender Nonce Mismatch.  Sent [" + this.senderNonce + "]; Received [" + recipientNonce + "]");
         }
         
@@ -104,29 +107,41 @@ public class CmsResponseParser {
         DERPrintableString pkiStatus = (DERPrintableString) pkiStatusAttribute.getAttrValues().getObjectAt(0);
         
         if (pkiStatus.equals(PkiStatus.FAILURE)) {
-//        	oid = new DERObjectIdentifier(ScepObjectIdentifiers.failInfo.getOid());
-//        	Attribute failInfoAttribute = signedAttrs.get(oid);
-//        	DERPrintableString failInfo = (DERPrintableString) failInfoAttribute.getAttrValues().getObjectAt(0);
+        	oid = new DERObjectIdentifier(ScepObjectIdentifiers.failInfo.getOid());
+        	Attribute failInfoAttribute = signedAttrs.get(oid);
+        	DERPrintableString failInfo = (DERPrintableString) failInfoAttribute.getAttrValues().getObjectAt(0);
+        	int failInfoInt = Integer.parseInt(failInfo.getString());
         	
-        	return null;
+        	if (failInfoInt == FailInfo.badAlg.getValue()) {
+        		throw new RequestFailureException("Unrecognized or unsupported algorithm identifier");
+        	} else if (failInfoInt == FailInfo.badCertId.getValue()) {
+        		throw new RequestFailureException("No certificate could be identified matching the provided criteria");
+        	} else if (failInfoInt == FailInfo.badMessageCheck.getValue()) {
+        		throw new RequestFailureException("Integrity check failed");
+        	} else if (failInfoInt == FailInfo.badRequest.getValue()) {
+        		throw new RequestFailureException("Transaction not permitted or supported");
+        	} else if (failInfoInt == FailInfo.badTime.getValue()) {
+        		throw new RequestFailureException("The signingTime attribute from the PKCS#7 SignedAttributes was not sufficiently close to the system time");
+        	} else {
+        		throw new RequestFailureException();
+        	}
         } else if (pkiStatus.equals(PkiStatus.PENDING)) {
-        	// TODO How can we handle pending results?
         	throw new RequestPendingException();
+        } else {
+	        try {
+	        	CMSProcessable signedContent = signedData.getSignedContent();
+	        	CMSEnvelopedData envelopedData = new CMSEnvelopedData((byte[]) signedContent.getContent());
+	        	RecipientInformationStore recipientStore = envelopedData.getRecipientInfos();
+	        	RecipientInformation recipient = (RecipientInformation) recipientStore.getRecipients().iterator().next();
+	        	byte[] content = recipient.getContent(keyPair.getPrivate(), "BC");
+	        	CMSSignedData contentData = new CMSSignedData(content);
+	        	
+				return contentData.getCertificatesAndCRLs("Collection", "BC");
+			} catch (CMSException e) {
+				throw new CmsException(e);
+			} catch (GeneralSecurityException e) {
+				throw new CmsException(e);
+			}
         }
-        
-        try {
-        	CMSProcessable signedContent = signedData.getSignedContent();
-        	CMSEnvelopedData envelopedData = new CMSEnvelopedData((byte[]) signedContent.getContent());
-        	RecipientInformationStore recipientStore = envelopedData.getRecipientInfos();
-        	RecipientInformation recipient = (RecipientInformation) recipientStore.getRecipients().iterator().next();
-        	byte[] content = recipient.getContent(keyPair.getPrivate(), "BC");
-        	CMSSignedData contentData = new CMSSignedData(content);
-        	
-			return contentData.getCertificatesAndCRLs("Collection", "BC");
-		} catch (CMSException e) {
-			throw new CmsException(e);
-		} catch (GeneralSecurityException e) {
-			throw new CmsException(e);
-		}
     }
 }
