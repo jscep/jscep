@@ -82,7 +82,7 @@
 	</target>
 
 	<target name="javadoc">
-		<javadoc destdir="${docs}" access="public">
+		<javadoc destdir="${docs}" access="public" windowtitle="jSCEP API (${scep.specification})">
 			<fileset dir="${src}">
 				<include name="**/*.java"/>
 			</fileset>
