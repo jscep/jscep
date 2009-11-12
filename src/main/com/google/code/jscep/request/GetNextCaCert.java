@@ -22,6 +22,9 @@
 
 package com.google.code.jscep.request;
 
+/**
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6
+ */
 public class GetNextCaCert implements Request {
     private static final String OPERATION = "GetNextCaCert";
     private String ca;

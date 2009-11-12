@@ -33,6 +33,9 @@ import org.bouncycastle.jce.X509Principal;
 
 import com.google.code.jscep.transaction.MessageType;
 
+/**
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.5
+ */
 public class GetCRL implements PkiOperation {
     private final X500Principal issuer;
     private final BigInteger serial;

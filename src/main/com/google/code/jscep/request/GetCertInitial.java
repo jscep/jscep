@@ -32,6 +32,9 @@ import org.bouncycastle.jce.X509Principal;
 import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.transaction.MessageType;
 
+/**
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.3
+ */
 public class GetCertInitial implements PkiOperation {
 	private final X500Principal issuer;
     private final X500Principal subject;

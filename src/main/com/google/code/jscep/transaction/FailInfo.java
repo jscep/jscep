@@ -23,7 +23,7 @@
 package com.google.code.jscep.transaction;
 
 /**
- * FailInfo Attribute
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.4
  */
 public enum FailInfo {
     badAlg(0, "Unrecognized or unsupported algorithm identifier"),

@@ -23,7 +23,7 @@
 package com.google.code.jscep.transaction;
 
 /**
- * PkiStatus Attribute
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.3
  */
 public enum PkiStatus {
     SUCCESS(0),

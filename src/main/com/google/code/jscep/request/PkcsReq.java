@@ -44,6 +44,9 @@ import org.bouncycastle.util.encoders.Hex;
 
 import com.google.code.jscep.transaction.MessageType;
 
+/**
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.2
+ */
 public class PkcsReq implements PkiOperation {
 	private final static Logger LOGGER = Logger.getLogger(PkcsReq.class.getName());
     private final X509Certificate identity;

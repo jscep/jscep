@@ -26,10 +26,25 @@ import java.net.ContentHandler;
 import java.net.ContentHandlerFactory;
 
 public class ScepContentHandlerFactory implements ContentHandlerFactory {
+	/**
+	 * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.2.1
+	 */
     private static final String PKI_MESSAGE = "application/x-pki-message";
+    /**
+     * @see http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.2
+     */
     private static final String TEXT_PLAIN = "text/plain";
+    /**
+     * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1.1.1
+     */
     private static final String X509_CA_CERT = "application/x-x509-ca-cert";
+    /**
+     * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1.1.2
+     */
     private static final String X509_CA_RA_CERT = "application/x-x509-ca-ra-cert";
+    /**
+     * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6.1
+     */
     private static final String X509_NEXT_CA_CERT = "application/x-x509-next-ca-cert";
 
     public ContentHandler createContentHandler(String mimeType) {

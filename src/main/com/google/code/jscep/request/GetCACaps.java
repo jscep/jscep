@@ -22,6 +22,9 @@
 
 package com.google.code.jscep.request;
 
+/**
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
+ */
 public class GetCACaps implements Request {
     private static final String OPERATION = "GetCACaps";
     private String ca;

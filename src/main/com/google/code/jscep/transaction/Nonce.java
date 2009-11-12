@@ -24,6 +24,9 @@ package com.google.code.jscep.transaction;
 
 import java.util.Arrays;
 
+/**
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.5
+ */
 public class Nonce {
 	private byte[] nonce;
 	

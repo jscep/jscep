@@ -370,6 +370,7 @@ public class Requester {
     	 * 
     	 * @param fingerprint the digest.
     	 * @return this builder.
+    	 * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
     	 */
     	public Builder fingerprint(byte[] fingerprint) {
     		this.fingerprint = fingerprint;
@@ -378,10 +379,11 @@ public class Requester {
     	}
     	
     	/**
-    	 * One of MD5, SHA-1, SHA-256 or SHA-512.  Defaults to MD5.
+    	 * One of <tt>MD5</tt>, <tt>SHA-1</tt>, <tt>SHA-256</tt> or <tt>SHA-512</tt>.  Defaults to MD5.
     	 * 
-    	 * @param fingerprintAlgorithm
-    	 * @return
+    	 * @param fingerprintAlgorithm the hash algorithm for encoding the certificate.
+    	 * @return this builder.
+    	 * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
     	 */
     	public Builder fingerprintAlgorithm(String fingerprintAlgorithm) {
     		this.fingerprintAlgorithm = fingerprintAlgorithm;

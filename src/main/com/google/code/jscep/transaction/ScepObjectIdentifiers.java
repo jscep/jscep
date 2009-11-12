@@ -23,7 +23,9 @@
 package com.google.code.jscep.transaction;
 
 /**
- * SCEP OIDs
+ * Object Identifiers used by SCEP
+ * 
+ * @see http://tools.ietf.org/html/draft-nourse-scep-19#appendix-B
  */
 public enum ScepObjectIdentifiers {
     messageType("2.16.840.1.113733.1.9.2"),
