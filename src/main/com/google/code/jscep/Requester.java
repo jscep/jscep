@@ -188,7 +188,7 @@ public class Requester {
     /**
      * Retrieve the generated {@link KeyPair}.
      * 
-     * @return
+     * @return the key pair.
      */
     public KeyPair getKeyPair() {
     	return keyPair;
@@ -248,7 +248,7 @@ public class Requester {
     }
     
     /**
-     * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
+     * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
      */
     private boolean supportsDistributionPoints() {
     	return false;
@@ -381,7 +381,7 @@ public class Requester {
     	 * 
     	 * @param fingerprint the digest.
     	 * @return this builder.
-    	 * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
+    	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
     	 */
     	public Builder fingerprint(byte[] fingerprint) {
     		this.fingerprint = fingerprint;
@@ -394,7 +394,7 @@ public class Requester {
     	 * 
     	 * @param fingerprintAlgorithm the hash algorithm for encoding the certificate.
     	 * @return this builder.
-    	 * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
+    	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
     	 */
     	public Builder fingerprintAlgorithm(String fingerprintAlgorithm) {
     		this.fingerprintAlgorithm = fingerprintAlgorithm;

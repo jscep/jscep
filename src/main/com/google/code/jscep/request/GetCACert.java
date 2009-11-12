@@ -23,7 +23,7 @@
 package com.google.code.jscep.request;
 
 /**
- * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
+ * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
  */
 public class GetCACert implements Request {
     private static final String OPERATION = "GetCACert";

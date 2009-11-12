@@ -32,8 +32,8 @@ import java.util.logging.Logger;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
- * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-2.3.1
- * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.1
+ * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.3.1
+ * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.1
  */
 public final class TransactionId {
 	private final static Logger LOGGER = Logger.getLogger(TransactionId.class.getName());

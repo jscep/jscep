@@ -127,7 +127,7 @@ public class Capabilities {
     /**
      * DESede > DES
      * 
-     * @return
+     * @return the preferred cipher.
      * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html#Cipher
      */
     public String getPreferredCipher() {
@@ -141,7 +141,7 @@ public class Capabilities {
     /**
      * SHA-512 > SHA-256 > SHA-1 > MD5
      * 
-     * @return
+     * @return the preferred message digest algorithm.
      * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html#MessageDigest
      */
     public String getPreferredMessageDigest() {

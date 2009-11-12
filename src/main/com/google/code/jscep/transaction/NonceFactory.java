@@ -27,7 +27,7 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 /**
- * @see http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.5
+ * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.5
  */
 public final class NonceFactory {
 	private final static Logger LOGGER = Logger.getLogger(NonceFactory.class.getName());

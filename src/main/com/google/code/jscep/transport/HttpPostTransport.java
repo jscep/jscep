@@ -35,7 +35,7 @@ import com.google.code.jscep.request.Request;
 /**
  * Transport representing the <tt>HTTP POST</tt> method
  * 
- * @see http://tools.ietf.org/html/draft-nourse-scep-19#appendix-F
+ * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-F
  */
 public class HttpPostTransport extends Transport {
 	private final static Logger LOGGER = Logger.getLogger(HttpPostTransport.class.getName());
