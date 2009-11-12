@@ -41,7 +41,7 @@ public class InitialEnrollmentTask extends AbstractEnrollmentTask {
 	private final char[] password;
 	private final String fingerprintAlgorithm;
 	
-	public InitialEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, char[] password, String fingerprintAlgorithm) {
+	InitialEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, char[] password, String fingerprintAlgorithm) {
 		this.transport = transport;
 		this.ca = ca;
 		this.keyPair = keyPair;

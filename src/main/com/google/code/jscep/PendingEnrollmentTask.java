@@ -39,7 +39,7 @@ public class PendingEnrollmentTask extends AbstractEnrollmentTask {
 	private final X509Certificate identity;
 	private final String fingerprintAlgorithm;
 	
-	public PendingEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, String fingerprintAlgorithm) {
+	PendingEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, String fingerprintAlgorithm) {
 		this.transport = transport;
 		this.ca = ca;
 		this.keyPair = keyPair;

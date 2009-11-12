@@ -30,11 +30,11 @@ public class EnrollmentResult {
 	private List<X509Certificate> certs;
 	private Callable<EnrollmentResult> task;
 	
-	public EnrollmentResult(List<X509Certificate> certs) {
+	EnrollmentResult(List<X509Certificate> certs) {
 		this.certs = certs;
 	}
 	
-	public EnrollmentResult(Callable<EnrollmentResult> task) {
+	EnrollmentResult(Callable<EnrollmentResult> task) {
 		this.task = task;
 	}
 	
