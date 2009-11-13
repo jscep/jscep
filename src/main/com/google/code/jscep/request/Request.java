@@ -23,8 +23,10 @@
 package com.google.code.jscep.request;
 
 import java.io.IOException;
+import java.net.ContentHandler;
 
 public interface Request {
     String getOperation();
     Object getMessage() throws IOException;
+    ContentHandler getContentHandler();
 }

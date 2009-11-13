@@ -37,6 +37,7 @@ public abstract class PkiMessage {
 	public abstract FailInfo getFailInfo();
 	public abstract PkiStatus getStatus();	
 	public abstract Nonce getRecipientNonce();
+	public abstract Nonce getSenderNonce();
 	public abstract TransactionId getTransactionId();
 	public abstract CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException;
 	

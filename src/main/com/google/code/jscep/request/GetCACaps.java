@@ -22,6 +22,10 @@
 
 package com.google.code.jscep.request;
 
+import java.net.ContentHandler;
+
+import com.google.code.jscep.content.CaCapabilitiesContentHandler;
+
 /**
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
  */
@@ -46,5 +50,9 @@ public class GetCACaps implements Request {
     
     public String toString() {
     	return OPERATION;
+    }
+    
+    public ContentHandler getContentHandler() {
+    	return new CaCapabilitiesContentHandler();
     }
 }

@@ -78,6 +78,11 @@ public class Transaction {
         	throw new CmsException("Sender Nonce Mismatch.  Sent [" + this.senderNonce + "]; Received [" + msg.getRecipientNonce() + "]");
         }
         
+        // TODO: Detect replay attacks.
+        // 
+        // http://tools.ietf.org/html/draft-nourse-scep-19#section-8.5
+        msg.getSenderNonce();
+        
         if (msg.getStatus().equals(PkiStatus.FAILURE)) {
         	throw new RequestFailureException(msg.getFailInfo().toString());
         } else if (msg.getStatus().equals(PkiStatus.PENDING)) {

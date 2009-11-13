@@ -54,6 +54,7 @@ import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetCRL;
 import com.google.code.jscep.request.GetCert;
+import com.google.code.jscep.request.GetNextCaCert;
 import com.google.code.jscep.request.PkiOperation;
 import com.google.code.jscep.request.Request;
 import com.google.code.jscep.response.Capabilities;
@@ -196,17 +197,24 @@ public class Requester {
         return (Capabilities) trans.sendMessage(req);
     }
 
-    private X509Certificate[] getCaCertificate() throws IOException {
+    private List<X509Certificate> getCaCertificate() throws IOException {
         Request req = new GetCACert(identifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
-        return (X509Certificate[]) trans.sendMessage(req);
+        return (List<X509Certificate>) trans.sendMessage(req);
+    }
+    
+    public List<X509Certificate> getNextCA() throws IOException {
+    	Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
+    	Request req = new GetNextCaCert(identifier);
+    	
+    	return (List<X509Certificate>) trans.sendMessage(req);
     }
 
     private void updateCertificates() throws IOException, CertificateException, ScepException {
-        X509Certificate[] certs = getCaCertificate();
+    	List<X509Certificate> certs = getCaCertificate();
 
-        ca = certs[0];
+        ca = certs.get(0);
         
         MessageDigest md;
 		try {

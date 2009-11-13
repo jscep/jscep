@@ -23,6 +23,9 @@
 package com.google.code.jscep.request;
 
 import java.io.IOException;
+import java.net.ContentHandler;
+
+import com.google.code.jscep.content.CertRepContentHandler;
 
 public class PkiRequest implements Request {
 	private static final String OPERATION = "PKIOperation";
@@ -44,5 +47,9 @@ public class PkiRequest implements Request {
 	
     public String toString() {
     	return OPERATION;
+    }
+    
+    public ContentHandler getContentHandler() {
+    	return new CertRepContentHandler();
     }
 }

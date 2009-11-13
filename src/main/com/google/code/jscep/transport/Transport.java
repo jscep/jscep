@@ -26,18 +26,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 
-import com.google.code.jscep.content.ScepContentHandlerFactory;
 import com.google.code.jscep.request.Request;
 
 /**
  * This class represents the transport for sending a message to the SCEP server.
  */
 public abstract class Transport {
-    static {
-        URLConnection.setContentHandlerFactory(new ScepContentHandlerFactory());
-    }
 	public enum Method {
 		GET,
 		POST

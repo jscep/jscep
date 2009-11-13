@@ -22,32 +22,33 @@
 
 package com.google.code.jscep.content;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.ContentHandler;
+import java.io.InputStreamReader;
 import java.net.URLConnection;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 
-public class NextCaCertificateResponseHandler extends ContentHandler {
-	NextCaCertificateResponseHandler() {
-		
-	}
+import com.google.code.jscep.response.Capabilities;
+
+public class CaCapabilitiesContentHandler extends ScepContentHandler {
+	private final static Logger LOGGER = Logger.getLogger(CaCapabilitiesContentHandler.class.getName());
 	
-    @Override
-    public X509Certificate[] getContent(URLConnection conn) throws IOException {
-        try {
-            X509Certificate[] certs = new X509Certificate[1];
-
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            X509Certificate ca = (X509Certificate) cf.generateCertificate(conn.getInputStream());
-
-            // There should only ever be one certificate in this response.
-            certs[0] = ca;
-
-            return certs;
-        } catch (CertificateException ce) {
-            throw new IOException(ce);
+	@Override
+    public Capabilities getContent(URLConnection conn) throws IOException {
+		if (isType(conn, TEXT_PLAIN) == false) {
+			LOGGER.info("CACapabilities response was of content-type " + conn.getContentType() + ".  Expected " + TEXT_PLAIN);
+		}
+        final List<String> capabilities = new LinkedList<String>();
+        
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String capability;
+        while ((capability = reader.readLine()) != null) {
+        	capabilities.add(capability);
         }
+        reader.close();
+
+        return new Capabilities(capabilities);
     }
 }

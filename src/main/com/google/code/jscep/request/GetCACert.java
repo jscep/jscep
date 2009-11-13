@@ -22,6 +22,10 @@
 
 package com.google.code.jscep.request;
 
+import java.net.ContentHandler;
+
+import com.google.code.jscep.content.CaCertificateContentHandler;
+
 /**
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
  */
@@ -46,5 +50,9 @@ public class GetCACert implements Request {
     
     public String toString() {
     	return OPERATION;
+    }
+    
+    public ContentHandler getContentHandler() {
+    	return new CaCertificateContentHandler();
     }
 }

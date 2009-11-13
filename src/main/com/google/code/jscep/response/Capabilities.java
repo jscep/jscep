@@ -74,7 +74,13 @@ public class Capabilities {
     
     public Capabilities(List<String> capabilities) {
     	for (String capability : capabilities) {
-    		this.capabilties.add(map.get(capability));
+    		// http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.2
+    		// 
+    		// A client MUST be able to accept and ignore any unknown keywords 
+    		// that might be sent back by a CA.
+    		if (map.containsKey(capability)) {
+    			this.capabilties.add(map.get(capability));
+    		}
     	}
     }
 

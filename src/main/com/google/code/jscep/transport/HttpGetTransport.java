@@ -50,7 +50,8 @@ public class HttpGetTransport extends Transport {
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
         	throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
         }
-        return conn.getContent();
+        
+        return msg.getContentHandler().getContent(conn);
 	}
 	
 	private URL getUrl(String op, Object message) throws MalformedURLException {

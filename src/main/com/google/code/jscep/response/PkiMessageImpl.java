@@ -54,8 +54,10 @@ public class PkiMessageImpl extends PkiMessage {
 	private TransactionId transId;
 	private PkiStatus pkiStatus;
 	private Nonce recipientNonce;
+	private Nonce senderNonce;
 	private PkcsPkiEnvelope pkcsPkiEnvelope;
 	private FailInfo failInfo;
+	private final AttributeTable signedAttrs;
 	
 	public PkiMessageImpl(KeyPair keyPair, byte[] bytes) throws CmsException {
 		CMSSignedData signedData;
@@ -72,21 +74,22 @@ public class PkiMessageImpl extends PkiMessage {
         }
         
         SignerInformation signerInformation = (SignerInformation) signers.iterator().next();
-        AttributeTable signedAttrs = signerInformation.getSignedAttributes();
+        signedAttrs = signerInformation.getSignedAttributes();
 
-        transId = extractTransactionId(signedAttrs);
-        recipientNonce = extractRecipientNonce(signedAttrs);
-        pkiStatus = extractStatus(signedAttrs);
+        transId = extractTransactionId();
+        recipientNonce = extractRecipientNonce();
+        senderNonce = extractSenderNonce();
+        pkiStatus = extractStatus();
         
         
-        MessageType msgType = extractMessageType(signedAttrs);
+        MessageType msgType = extractMessageType();
         
         if (msgType.equals(MessageType.CertRep) == false) {
         	throw new RuntimeException("Invalid Message Type: " + msgType);
         }
         
         if (pkiStatus.equals(PkiStatus.FAILURE)) {
-        	failInfo = extractFailInfo(signedAttrs);
+        	failInfo = extractFailInfo();
         } else {
 	        CMSProcessable signedContent = signedData.getSignedContent();
 			byte[] ed = (byte[]) signedContent.getContent();
@@ -106,6 +109,10 @@ public class PkiMessageImpl extends PkiMessage {
 		return recipientNonce;
 	}
 	
+	public Nonce getSenderNonce() {
+		return senderNonce;
+	}
+	
 	public TransactionId getTransactionId() {
 		return transId;
 	}
@@ -114,7 +121,7 @@ public class PkiMessageImpl extends PkiMessage {
 		return pkcsPkiEnvelope.getCertStore();
 	}
 	
-	private TransactionId extractTransactionId(AttributeTable signedAttrs) {
+	private TransactionId extractTransactionId() {
 		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId.getOid());
         Attribute transIdAttr = signedAttrs.get(oid);
         DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
@@ -122,7 +129,7 @@ public class PkiMessageImpl extends PkiMessage {
         return new TransactionId(transId.getOctets());
 	}
 
-	private FailInfo extractFailInfo(AttributeTable signedAttrs) {
+	private FailInfo extractFailInfo() {
 		DERObjectIdentifier oid;
 		oid = new DERObjectIdentifier(ScepObjectIdentifiers.failInfo.getOid());
 		Attribute failInfoAttribute = signedAttrs.get(oid);
@@ -131,15 +138,23 @@ public class PkiMessageImpl extends PkiMessage {
 		return FailInfo.valueOf(Integer.parseInt(failInfo.getString()));
 	}
 
-	private Nonce extractRecipientNonce(AttributeTable signedAttrs) {
+	private Nonce extractRecipientNonce() {
 		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.recipientNonce.getOid());
         Attribute recipientNonceAttribute = signedAttrs.get(oid);
         DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
         
         return new Nonce(attr.getOctets());
 	}
+	
+	private Nonce extractSenderNonce() {
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.senderNonce.getOid());
+        Attribute recipientNonceAttribute = signedAttrs.get(oid);
+        DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
+        
+        return new Nonce(attr.getOctets());
+	}
 
-	private PkiStatus extractStatus(AttributeTable signedAttrs) {
+	private PkiStatus extractStatus() {
 		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.pkiStatus.getOid());
         Attribute attr = signedAttrs.get(oid);
         DERPrintableString pkiStatus = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
@@ -147,7 +162,7 @@ public class PkiMessageImpl extends PkiMessage {
         return PkiStatus.valueOf(Integer.parseInt(pkiStatus.toString()));
 	}
 	
-	private MessageType extractMessageType(AttributeTable signedAttrs) {
+	private MessageType extractMessageType() {
 		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType.getOid());
         Attribute msgTypeAttribute = signedAttrs.get(oid);
         DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);

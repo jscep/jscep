@@ -22,31 +22,26 @@
 
 package com.google.code.jscep.content;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ContentHandler;
 import java.net.URLConnection;
-import java.util.LinkedList;
-import java.util.List;
 
-import com.google.code.jscep.response.Capabilities;
-
-public class CaCapabilitiesResponseHandler extends ContentHandler {
-	CaCapabilitiesResponseHandler() {		
-	}
-
-	@Override
-    public Capabilities getContent(URLConnection conn) throws IOException {
-        final List<String> capabilities = new LinkedList<String>();
-        
-        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String capability;
-        while ((capability = reader.readLine()) != null) {
-        	capabilities.add(capability);
-        }
-        reader.close();
-
-        return new Capabilities(capabilities);
+public class CertRepContentHandler extends ScepContentHandler {
+    @Override
+    public byte[] getContent(URLConnection conn) throws IOException {
+    	if (isType(conn, PKI_MESSAGE)) {
+    		BufferedInputStream is = new BufferedInputStream(conn.getInputStream());
+    		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    		
+    		int b;
+    		while ((b = is.read()) != -1) {
+    			baos.write(b);
+    		}
+    		
+            return baos.toByteArray();	
+    	} else {
+    		throw new IOException("Invalid Content Type");
+    	}
     }
 }
