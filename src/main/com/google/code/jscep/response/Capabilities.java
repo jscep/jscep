@@ -30,13 +30,34 @@ import java.util.Set;
 
 public class Capabilities {
     public static enum Capability {
-        GET_NEXT_CA_CERT(),
-        POST_PKI_OPERATION(),
-        RENEWAL(),
-        SHA_512(),
-        SHA_256(),
-        SHA_1(),
-        TRIPLE_DES();
+    	/**
+    	 * CA Supports the GetNextCACert message.
+    	 */
+        GET_NEXT_CA_CERT,
+        /**
+         * PKIOPeration messages may be sent via HTTP POST.
+         */
+        POST_PKI_OPERATION,
+        /**
+         * Clients may use current certificate and key to authenticate an enrollment request for a new certificate.
+         */
+        RENEWAL,
+        /**
+         * CA Supports the SHA-512 hashing algorithm in signatures and fingerprints.
+         */
+        SHA_512,
+        /**
+         * CA Supports the SHA-256 hashing algorithm in signatures and fingerprints.
+         */
+        SHA_256,
+        /**
+         * CA Supports the SHA-1 hashing algorithm in signatures and fingerprints.
+         */
+        SHA_1,
+        /**
+         * CA Supports triple-DES for encryption.
+         */
+        TRIPLE_DES;
     }
     
     private Set<Capability> capabilties = new HashSet<Capability>();
