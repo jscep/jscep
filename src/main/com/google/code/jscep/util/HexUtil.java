@@ -20,32 +20,26 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.transaction;
+package com.google.code.jscep.util;
 
-import java.security.KeyPair;
-import java.security.cert.X509Certificate;
-
-import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-
-import com.google.code.jscep.transport.Transport;
-
-/**
- * Factory for generating new Transactions.
- * 
- */
-public final class TransactionFactory {
-	private TransactionFactory() {
+public final class HexUtil {
+	private HexUtil() {		
 	}
-	
-	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String fingerprintAlgorithm) {
-		// TODO: Don't hardcode DES
-		// TODO: BC Dependency
-		Enveloper enveloper = new Enveloper(ca, SMIMECapability.dES_CBC.getId());
-		// TODO: Don't hardcode SHA-1
-		// TODO: BC Dependency
-		Signer signer = new Signer(identity, keyPair, CMSSignedDataGenerator.DIGEST_SHA1);
-		
-		return new Transaction(transport, keyPair, enveloper, signer, fingerprintAlgorithm);
+
+	public static String format(byte[] hex) {
+		StringBuilder sb = new StringBuilder();
+		String s = new String(hex).toUpperCase();
+		char[] c = s.toCharArray();
+		for (int i = 0; i < c.length; i++) {
+			if (i % 32 == 0) {
+				sb.append("\n\t");
+			}
+			sb.append(c[i]);
+			if (i % 2 == 1) {
+				sb.append(" ");
+			}
+		}
+		sb.append("\n");
+		return sb.toString();		
 	}
 }

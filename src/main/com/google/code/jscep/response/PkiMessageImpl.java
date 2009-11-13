@@ -47,6 +47,9 @@ import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.ScepObjectIdentifiers;
 import com.google.code.jscep.transaction.TransactionId;
 
+/**
+ * Implementation of {@see PkiMessage} that uses Bouncy Castle.
+ */
 public class PkiMessageImpl extends PkiMessage {
 	private TransactionId transId;
 	private PkiStatus pkiStatus;

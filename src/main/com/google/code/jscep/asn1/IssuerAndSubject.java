@@ -36,6 +36,8 @@ import org.bouncycastle.asn1.x509.X509Name;
  *     subject Name,
  * }
  * </pre>
+ * 
+ * TODO: BC Dependency
  */
 public class IssuerAndSubject implements DEREncodable {
     private final X509Name issuer;

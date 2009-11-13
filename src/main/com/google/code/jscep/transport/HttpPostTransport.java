@@ -46,11 +46,10 @@ public class HttpPostTransport extends Transport {
 	
 	@Override
 	public Object sendMessage(Request msg) throws IOException, MalformedURLException {
-		LOGGER.info("Sending " + msg + " by POST");
-		
 		byte[] body = (byte[]) msg.getMessage();
 		
         URL url = getUrl(msg.getOperation());
+        LOGGER.info("Sending Request: " + url);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);

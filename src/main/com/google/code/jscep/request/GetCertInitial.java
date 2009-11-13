@@ -51,6 +51,7 @@ public class GetCertInitial implements PkiOperation {
 
     @Override
 	public byte[] getMessageData() throws IOException {
+    	// TODO: BC Dependency
         X509Name issuerName = new X509Principal(issuer.getEncoded());
         X509Name subjectName = new X509Principal(subject.getEncoded());
 

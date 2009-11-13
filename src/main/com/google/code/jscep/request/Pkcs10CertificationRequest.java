@@ -20,32 +20,21 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.transaction;
+package com.google.code.jscep.request;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 
-import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-
-import com.google.code.jscep.transport.Transport;
-
-/**
- * Factory for generating new Transactions.
- * 
- */
-public final class TransactionFactory {
-	private TransactionFactory() {
-	}
+public abstract class Pkcs10CertificationRequest {
+	public abstract byte[] createRequest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, IOException;
+	public abstract void addAttribute(String oid, Object attr);
 	
-	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String fingerprintAlgorithm) {
-		// TODO: Don't hardcode DES
-		// TODO: BC Dependency
-		Enveloper enveloper = new Enveloper(ca, SMIMECapability.dES_CBC.getId());
-		// TODO: Don't hardcode SHA-1
-		// TODO: BC Dependency
-		Signer signer = new Signer(identity, keyPair, CMSSignedDataGenerator.DIGEST_SHA1);
-		
-		return new Transaction(transport, keyPair, enveloper, signer, fingerprintAlgorithm);
+	public static Pkcs10CertificationRequest getInstance(KeyPair keyPair, X509Certificate identity) {
+		return new Pkcs10CertificationRequestImpl(keyPair, identity);
 	}
 }

@@ -26,6 +26,8 @@ import java.security.SecureRandom;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.bouncycastle.util.encoders.Hex;
+
 /**
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.5
  */
@@ -41,6 +43,9 @@ public final class NonceFactory {
 		
 		byte[] bytes = new byte[16];
 		RND.nextBytes(bytes);
+		
+		// TODO: BC Dependency
+		LOGGER.info("Nonce: " + new String(Hex.encode(bytes)));
 		
 		return new Nonce(bytes);
 	}

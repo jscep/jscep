@@ -32,6 +32,8 @@ import java.util.logging.Logger;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
+ * This class represents a transaction ID.
+ * 
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.3.1
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.1
  */
@@ -45,19 +47,22 @@ public final class TransactionId {
 	}
 	
 	private TransactionId(KeyPair keyPair, String fingerprintAlgorithm) {
-		LOGGER.info("Generated new TransactionId from Key Pair");
+		LOGGER.info("Generating new TransactionId from Key Pair");
     	MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance(fingerprintAlgorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+        // TODO: BC Dependency
         id = Hex.encode(digest.digest(keyPair.getPublic().getEncoded()));
+        LOGGER.info("Transaction Id: " + new String(id));
 	}
 	
 	private TransactionId() {
-		LOGGER.info("Generated new TransactionId");
+		LOGGER.info("Generating new TransactionId");
 		id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes();
+		LOGGER.info("Transaction Id: " + new String(id));
 	}
 	
 	public byte[] getBytes() {

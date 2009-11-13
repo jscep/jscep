@@ -34,6 +34,8 @@ import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.util.encoders.Hex;
 
+import com.google.code.jscep.util.HexUtil;
+
 /**
  * Merge with Signer.
  */
@@ -48,6 +50,7 @@ public class Enveloper {
 	}
 	
 	public byte[] envelope(byte[] messageData) throws IOException, GeneralSecurityException, CmsException {
+		// TODO: BC Dependency
 		CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
     	gen.addKeyTransRecipient(ca);
     	CMSProcessable processableData = new CMSProcessableByteArray(messageData);
@@ -57,7 +60,7 @@ public class Enveloper {
 		} catch (CMSException e) {
 			throw new CmsException(e);
 		}
-    	LOGGER.info("EnvelopedData: " + new String(Hex.encode(envelopedData.getEncoded())));
+    	LOGGER.info("EnvelopedData:\n" + HexUtil.format(Hex.encode(envelopedData.getEncoded())));
     	return envelopedData.getEncoded();
 	}
 }

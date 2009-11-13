@@ -24,7 +24,6 @@ package com.google.code.jscep.request;
 
 import java.io.IOException;
 
-
 public interface Request {
     String getOperation();
     Object getMessage() throws IOException;

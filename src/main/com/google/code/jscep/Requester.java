@@ -146,6 +146,7 @@ public class Requester {
     private X509Certificate createCertificate() {
     	debug("Creating Self-Signed Certificate for " + subject);
     	
+    	// TODO: BC Dependency
     	Calendar cal = Calendar.getInstance();
     	cal.add(Calendar.DATE, -1);
     	Date notBefore = cal.getTime();
@@ -157,7 +158,7 @@ public class Requester {
     	gen.setNotAfter(notAfter);
     	gen.setPublicKey(keyPair.getPublic());
     	gen.setSerialNumber(BigInteger.ONE);
-    	// TODO: Always SHA1withRSA?
+    	// TODO: Don't hardcode SHA1withRSA
     	gen.setSignatureAlgorithm("SHA1withRSA");
     	gen.setSubjectDN(subject);
     	try {

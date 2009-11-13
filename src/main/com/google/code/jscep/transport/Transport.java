@@ -31,6 +31,9 @@ import java.net.URLConnection;
 import com.google.code.jscep.content.ScepContentHandlerFactory;
 import com.google.code.jscep.request.Request;
 
+/**
+ * This class represents the transport for sending a message to the SCEP server.
+ */
 public abstract class Transport {
     static {
         URLConnection.setContentHandlerFactory(new ScepContentHandlerFactory());
@@ -56,7 +59,7 @@ public abstract class Transport {
 	abstract public Object sendMessage(Request msg) throws IOException, MalformedURLException;
 	
 	/**
-	 * Factory Method
+	 * Create a new transport of type <tt>method</tt>.
 	 * 
 	 * @param method the transport type.
 	 * @param url the url.

@@ -25,22 +25,7 @@ package com.google.code.jscep.request;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.X509Certificate;
-import java.util.logging.Logger;
-
-import javax.security.auth.x500.X500Principal;
-
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.DERUTF8String;
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Hex;
 
 import com.google.code.jscep.transaction.MessageType;
 
@@ -48,7 +33,6 @@ import com.google.code.jscep.transaction.MessageType;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.2
  */
 public class PkcsReq implements PkiOperation {
-	private final static Logger LOGGER = Logger.getLogger(PkcsReq.class.getName());
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;
@@ -66,34 +50,12 @@ public class PkcsReq implements PkiOperation {
 
     @Override
     public byte[] getMessageData() throws IOException, GeneralSecurityException {
-    	PrivateKey priv = keyPair.getPrivate();
-    	PublicKey pub = keyPair.getPublic();
-    	X500Principal subject = identity.getSubjectX500Principal();
+    	Pkcs10CertificationRequest certReq = Pkcs10CertificationRequest.getInstance(keyPair, identity);
+    	certReq.addAttribute("1.2.840.113549.1.9.7", new String(password));
     	
-    	CertificationRequest request = new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv);
-    	
-    	LOGGER.info("PKCS#10 Request: " + new String(Hex.encode(request.getDEREncoded())));
-    	return request.getEncoded();
+    	return certReq.createRequest();
     }
 
-	private DERSet getAttributes() throws IOException {
-		ASN1EncodableVector attributes = new ASN1EncodableVector();
-        attributes.add(getPassword());
-        
-        return new DERSet(attributes);
-	}
-
-    private DERSequence getPassword() throws IOException {
-        ASN1Encodable attrType = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
-        ASN1EncodableVector attrValues = new ASN1EncodableVector();
-        attrValues.add(new DERUTF8String(new String(password)));
-        ASN1EncodableVector attrVector = new ASN1EncodableVector();
-        attrVector.add(attrType);
-        attrVector.add(new DERSet(attrValues));
-
-        return new DERSequence(attrVector);
-    }
-    
     public String toString() {
     	return getMessageType().toString();
     }

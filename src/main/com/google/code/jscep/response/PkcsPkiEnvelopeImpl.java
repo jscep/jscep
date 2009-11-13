@@ -35,6 +35,9 @@ import org.bouncycastle.cms.RecipientInformationStore;
 
 import com.google.code.jscep.transaction.CmsException;
 
+/**
+ * Implementation of {@see PkcsPkiEnvelope} that uses Bouncy Castle.
+ */
 public class PkcsPkiEnvelopeImpl extends PkcsPkiEnvelope {
 	public KeyPair keyPair;
 	public byte[] envelopedData;
@@ -46,6 +49,7 @@ public class PkcsPkiEnvelopeImpl extends PkcsPkiEnvelope {
 	
 	public CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException {
 		try {
+			// TODO: Try to break BC Mail dependency.
 			CMSEnvelopedData ed = new CMSEnvelopedData(envelopedData);
 			RecipientInformationStore recipientStore = ed.getRecipientInfos();
 	    	RecipientInformation recipient = (RecipientInformation) recipientStore.getRecipients().iterator().next();

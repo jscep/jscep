@@ -46,6 +46,8 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.util.encoders.Hex;
 
+import com.google.code.jscep.util.HexUtil;
+
 
 /**
  * Merge with Enveloper.
@@ -63,6 +65,7 @@ public class Signer {
 	}
 	
 	public byte[] sign(byte[] data, MessageType msgType, TransactionId transId, Nonce senderNonce) throws IOException, GeneralSecurityException, CmsException {
+		// TODO: BC Dependency
 		CMSProcessable envelopedData = new CMSProcessableByteArray(data);
 		CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
     	
@@ -88,7 +91,7 @@ public class Signer {
 		} catch (CMSException e) {
 			throw new CmsException(e);
 		}
-    	LOGGER.info("SignedData: " + new String(Hex.encode(signedData.getEncoded())));
+    	LOGGER.info("SignedData:\n" + HexUtil.format(Hex.encode(signedData.getEncoded())));
     	
     	return signedData.getEncoded();
 	}
