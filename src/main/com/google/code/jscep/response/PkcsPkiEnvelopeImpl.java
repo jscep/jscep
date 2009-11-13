@@ -36,7 +36,7 @@ import org.bouncycastle.cms.RecipientInformationStore;
 import com.google.code.jscep.transaction.CmsException;
 
 /**
- * Implementation of {@see PkcsPkiEnvelope} that uses Bouncy Castle.
+ * Implementation of {@link PkcsPkiEnvelope} that uses Bouncy Castle.
  */
 public class PkcsPkiEnvelopeImpl extends PkcsPkiEnvelope {
 	public KeyPair keyPair;

@@ -50,7 +50,7 @@ import org.bouncycastle.util.encoders.Hex;
 import com.google.code.jscep.util.HexUtil;
 
 /**
- * Implementation of {@see Pkcs10CertificationRequest} that uses Bouncy Castle.
+ * Implementation of {@link Pkcs10CertificationRequest} that uses Bouncy Castle.
  */
 public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
 	private final static Logger LOGGER = Logger.getLogger(Pkcs10CertificationRequestImpl.class.getName());
