@@ -33,10 +33,9 @@ import java.util.List;
 public class CaCertificateContentHandler extends ScepContentHandler {
     @Override
     public List<X509Certificate> getContent(URLConnection conn) throws IOException {
+    	List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
     	if (isType(conn, X509_CA_CERT)) {
 	        try {
-	        	List<X509Certificate> certs = new ArrayList<X509Certificate>(1);
-	
 	            CertificateFactory cf = CertificateFactory.getInstance("X.509");
 	            X509Certificate ca = (X509Certificate) cf.generateCertificate(conn.getInputStream());
 	
@@ -48,6 +47,8 @@ public class CaCertificateContentHandler extends ScepContentHandler {
 	            throw new IOException(ce);
 	        }
     	} else if (isType(conn, X509_CA_RA_CERT)) {
+    		// TODO: MISSING: CA and RA Certificates Response
+    		
     		return null;
     	} else {
     		throw new IOException("Invalid Content Type");
