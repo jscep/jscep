@@ -5,3 +5,4 @@ com.google.code.jscep.request
 com.google.code.jscep.response
 com.google.code.jscep.transaction
 com.google.code.jscep.transport
+com.google.code.jscep.util
