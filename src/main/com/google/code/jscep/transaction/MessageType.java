@@ -26,10 +26,25 @@ package com.google.code.jscep.transaction;
  * MessageType Attribute
  */
 public enum MessageType {
+	/**
+	 * Response to certificate or CRL request
+	 */
 	CertRep(3),
+	/**
+	 * PKCS #10 certificate request
+	 */
 	PKCSReq(19),
+	/**
+	 * Certificate polling in manual enrollment
+	 */
 	GetCertInitial(20),
+	/**
+	 * Retrieve a certificate
+	 */
 	GetCert(21),
+	/**
+	 * Retrieve a CRL
+	 */
 	GetCRL(22);
 	
 	private final int value;

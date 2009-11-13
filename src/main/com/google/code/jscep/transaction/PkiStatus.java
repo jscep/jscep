@@ -26,8 +26,17 @@ package com.google.code.jscep.transaction;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.3
  */
 public enum PkiStatus {
+	/**
+	 * Request granted
+	 */
     SUCCESS(0),
+    /**
+     * Request rejected
+     */
     FAILURE(2),
+    /**
+     * Request pending for manual approval
+     */
     PENDING(3);
     
     private final int value;
