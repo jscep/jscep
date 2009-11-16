@@ -26,6 +26,7 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
+import java.util.logging.Logger;
 
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSException;
@@ -34,15 +35,18 @@ import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.RecipientInformationStore;
 
 import com.google.code.jscep.transaction.CmsException;
+import com.google.code.jscep.util.HexUtil;
 
 /**
  * Implementation of {@link PkcsPkiEnvelope} that uses Bouncy Castle.
  */
 public class PkcsPkiEnvelopeImpl extends PkcsPkiEnvelope {
+	private final static Logger LOGGER = Logger.getLogger(PkcsPkiEnvelopeImpl.class.getName());
 	public KeyPair keyPair;
 	public byte[] envelopedData;
 
 	public PkcsPkiEnvelopeImpl(KeyPair keyPair, byte[] envelopedData) {
+		LOGGER.info("INCOMING EnvelopedData:\n" + HexUtil.format(envelopedData));
 		this.keyPair = keyPair;
 		this.envelopedData = envelopedData;
 	}

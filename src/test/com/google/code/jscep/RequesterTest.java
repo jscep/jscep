@@ -67,12 +67,12 @@ public class RequesterTest {
         								.build();
         EnrollmentResult result = client.enroll("INBOUND_TLSzmcXc0IBDOoG".toCharArray());
         if (result.isPending() == false) {
-        	System.out.println(result.getCertificates());
+        	result.getCertificates();
         } else {
         	ScheduledExecutorService exec = new ScheduledThreadPoolExecutor(1);
         	exec.schedule(result.getTask(), 3, TimeUnit.HOURS);
         	
-        	System.out.println(result.getTask());
+        	result.getTask();
         }
         
     }

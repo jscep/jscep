@@ -91,7 +91,7 @@ public class Signer {
 		} catch (CMSException e) {
 			throw new CmsException(e);
 		}
-    	LOGGER.info("SignedData:\n" + HexUtil.format(Hex.encode(signedData.getEncoded())));
+    	LOGGER.info("OUTGOING SignedData:\n" + HexUtil.formatHex(Hex.encode(signedData.getEncoded())));
     	
     	return signedData.getEncoded();
 	}

@@ -37,16 +37,15 @@ public class CaCapabilitiesContentHandler extends ScepContentHandler {
 	
 	@Override
     public Capabilities getContent(URLConnection conn) throws IOException {
-		if (isType(conn, TEXT_PLAIN) == false) {
+		if (isType(conn, TEXT_PLAIN) == false)
 			LOGGER.info("CACapabilities response was of content-type " + conn.getContentType() + ".  Expected " + TEXT_PLAIN);
-		}
+		
         final List<String> capabilities = new LinkedList<String>();
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String capability;
-        while ((capability = reader.readLine()) != null) {
+        while ((capability = reader.readLine()) != null)
         	capabilities.add(capability);
-        }
         reader.close();
 
         return new Capabilities(capabilities);

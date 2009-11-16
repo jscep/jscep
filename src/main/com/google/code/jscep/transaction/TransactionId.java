@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
-import org.bouncycastle.util.encoders.Hex;
+import com.google.code.jscep.util.HexUtil;
 
 /**
  * This class represents a transaction ID.
@@ -54,15 +54,14 @@ public final class TransactionId {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        // TODO: BC Dependency
-        id = Hex.encode(digest.digest(keyPair.getPublic().getEncoded()));
-        LOGGER.info("Transaction Id: " + new String(id));
+        id = HexUtil.toHex(digest.digest(keyPair.getPublic().getEncoded()));
+        LOGGER.info("Transaction Id:\n" + HexUtil.formatHex(id));
 	}
 	
 	private TransactionId() {
 		LOGGER.info("Generating new TransactionId");
 		id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes();
-		LOGGER.info("Transaction Id: " + new String(id));
+		LOGGER.info("Transaction Id:\n" + HexUtil.formatHex(id));
 	}
 	
 	public byte[] getBytes() {
@@ -76,6 +75,13 @@ public final class TransactionId {
 		return Arrays.equals(transId.getBytes(), getBytes());
 	}
 	
+	/**
+	 * Creates a new Transaction Id
+	 * <p>
+	 * Each call to this method will return the same transaction ID for the same parameters.
+	 * 
+	 * @return the new Transaction Id
+	 */
 	public static TransactionId createTransactionId(KeyPair keyPair, String fingerprintAlgorithm) {
 		if (keyPair == null) {
 			return new TransactionId();
@@ -84,6 +90,13 @@ public final class TransactionId {
 		}
 	}
 	
+	/**
+	 * Creates a new Transaction Id
+	 * <p>
+	 * Each call to this method will return a different transaction ID.
+	 * 
+	 * @return the new Transaction Id
+	 */
 	public static TransactionId createTransactionId() {
 		return new TransactionId();
 	}

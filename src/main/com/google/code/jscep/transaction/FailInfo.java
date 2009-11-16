@@ -55,7 +55,7 @@ public enum FailInfo {
     	this.desc = desc;
     }
 	
-    private int getValue() {
+    public int getValue() {
     	return value;
     }
     

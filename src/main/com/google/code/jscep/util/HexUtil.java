@@ -23,10 +23,34 @@
 package com.google.code.jscep.util;
 
 public final class HexUtil {
+	static final byte[] HEX_CHAR_TABLE = {
+	    (byte)'0', (byte)'1', (byte)'2', (byte)'3',
+	    (byte)'4', (byte)'5', (byte)'6', (byte)'7',
+	    (byte)'8', (byte)'9', (byte)'A', (byte)'B',
+	    (byte)'C', (byte)'D', (byte)'E', (byte)'F'
+	  };   
+	
 	private HexUtil() {		
 	}
+	
+	public static byte[] toHex(byte[] bytes) {
+		byte[] hex = new byte[2 * bytes.length];
+		int index = 0;
+		
+		for (byte b : bytes) {
+			int v = b & 0xFF;
+			hex[index++] = HEX_CHAR_TABLE[v >>> 4];
+			hex[index++] = HEX_CHAR_TABLE[v & 0xF];
+		}
+		
+		return hex;
+	}
+	
+	public static String format(byte[] bytes) {
+		return formatHex(toHex(bytes));
+	}
 
-	public static String format(byte[] hex) {
+	public static String formatHex(byte[] hex) {
 		StringBuilder sb = new StringBuilder();
 		String s = new String(hex).toUpperCase();
 		char[] c = s.toCharArray();

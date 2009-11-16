@@ -60,7 +60,7 @@ public class Enveloper {
 		} catch (CMSException e) {
 			throw new CmsException(e);
 		}
-    	LOGGER.info("EnvelopedData:\n" + HexUtil.format(Hex.encode(envelopedData.getEncoded())));
+    	LOGGER.info("OUTGOING EnvelopedData:\n" + HexUtil.formatHex(Hex.encode(envelopedData.getEncoded())));
     	return envelopedData.getEncoded();
 	}
 }

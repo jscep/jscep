@@ -27,6 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -46,11 +47,13 @@ import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.ScepObjectIdentifiers;
 import com.google.code.jscep.transaction.TransactionId;
+import com.google.code.jscep.util.HexUtil;
 
 /**
  * Implementation of {@link PkiMessage} that uses Bouncy Castle.
  */
 public class PkiMessageImpl extends PkiMessage {
+	private final static Logger LOGGER = Logger.getLogger(PkiMessageImpl.class.getName());
 	private TransactionId transId;
 	private PkiStatus pkiStatus;
 	private Nonce recipientNonce;
@@ -60,6 +63,7 @@ public class PkiMessageImpl extends PkiMessage {
 	private final AttributeTable signedAttrs;
 	
 	public PkiMessageImpl(KeyPair keyPair, byte[] bytes) throws CmsException {
+		LOGGER.info("INCOMING SignedData:\n" + HexUtil.format(bytes));
 		CMSSignedData signedData;
 		try {
 			signedData = new CMSSignedData(bytes);

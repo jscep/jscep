@@ -35,11 +35,10 @@ public class CertRepContentHandler extends ScepContentHandler {
     		ByteArrayOutputStream baos = new ByteArrayOutputStream();
     		
     		int b;
-    		while ((b = is.read()) != -1) {
+    		while ((b = is.read()) != -1)
     			baos.write(b);
-    		}
     		
-            return baos.toByteArray();	
+            return baos.toByteArray();
     	} else {
     		throw new IOException("Invalid Content Type");
     	}
