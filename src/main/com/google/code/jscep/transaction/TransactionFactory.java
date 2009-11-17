@@ -26,7 +26,6 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
 
 import com.google.code.jscep.transport.Transport;
 
@@ -44,7 +43,7 @@ public final class TransactionFactory {
 		Enveloper enveloper = new Enveloper(ca, SMIMECapability.dES_CBC.getId());
 		// TODO: Don't hardcode SHA-1
 		// TODO: BC Dependency
-		Signer signer = new Signer(identity, keyPair, CMSSignedDataGenerator.DIGEST_SHA1);
+		Signer signer = new Signer(identity, keyPair, "1.3.14.3.2.26");
 		
 		return new Transaction(transport, keyPair, enveloper, signer, fingerprintAlgorithm);
 	}

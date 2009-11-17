@@ -62,8 +62,8 @@ public class RequesterTest {
         URL url = new URL("https://engtest81-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
         Requester client = new Requester.Builder(url)
         								.subject(subject)
-        								.fingerprint(digest)
-        								.fingerprintAlgorithm("MD5")
+        								.caDigest(digest)
+        								.digestAlgorithm("MD5")
         								.build();
         EnrollmentResult result = client.enroll("INBOUND_TLSzmcXc0IBDOoG".toCharArray());
         if (result.isPending() == false) {

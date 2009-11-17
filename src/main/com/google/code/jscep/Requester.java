@@ -31,10 +31,12 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.CRL;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -67,32 +69,42 @@ import com.google.code.jscep.transport.Transport;
  */
 public class Requester {
     private URL url;						// Required
-    private byte[] fingerprint;				// Required
-    private String fingerprintAlgorithm;	// Required
+    private byte[] caDigest;				// Required
+    private String digestAlgorithm;			// Optional
     private Proxy proxy;					// Optional
-    private String identifier;				// Optional
+    private String caId;					// Optional
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
     private X500Principal subject;			// Optional
-    
-    private X509Certificate ca;
+    private X509Certificate ca;				// Optional
 
-    private Requester(Builder builder) throws IllegalStateException {
+    // Requester(URL url, byte[] caDigest, X500Principal subject);
+    // Requester(URL url, byte[] caDigest, X509Certificate identity, KeyPair keyPair);    
+    private Requester(Builder builder) throws IllegalStateException, NoSuchAlgorithmException, CertificateEncodingException {
     	url = builder.url;
     	proxy = builder.proxy;
-    	fingerprint = builder.fingerprint;
-    	identifier = builder.identifier;
+    	ca = builder.ca;
+    	caDigest = builder.caDigest;
+    	caId = builder.caId;
     	keyPair = builder.keyPair;
     	identity = builder.identity;
     	subject = builder.subject;
-    	fingerprintAlgorithm = builder.fingerprintAlgorithm;
+    	digestAlgorithm = builder.digestAlgorithm;
     	
+    	// TODO: Check for "pkiclient.exe"
+    	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-5.1
     	if (url == null) {
     		throw new IllegalStateException("URL must not be null.");
     	}
-    	// 2.1.2.1
-    	if (fingerprint == null) {
-    		throw new IllegalStateException("Digest must not be null.");
+    	if (isValid(url) == false) {
+    		throw new IllegalStateException("Invalid URL");
+    	}
+    	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
+    	if (ca == null && caDigest == null) {
+    		throw new IllegalStateException("Need CA OR CA Digest.");
+    	}
+    	if (ca != null && caDigest != null) {
+    		throw new IllegalStateException("Need CA OR CA Digest.");
     	}
     	// Must have only one way of obtaining an identity.
     	if (identity == null && subject == null) {
@@ -103,14 +115,17 @@ public class Requester {
     	}
     	
     	// Set Defaults
-    	if (fingerprintAlgorithm == null) {
-    		fingerprintAlgorithm = "MD5";
+    	if (digestAlgorithm == null) {
+    		digestAlgorithm = "MD5";
     	}
     	if (proxy == null) {
     		proxy = Proxy.NO_PROXY;
     	}
     	if (keyPair == null) {
     		keyPair = createKeyPair();		
+    	}
+    	if (isValid(keyPair) == false) {
+    		throw new IllegalStateException("Invalid KeyPair");
     	}
     	if (identity == null) {
     		identity = createCertificate();
@@ -125,9 +140,37 @@ public class Requester {
 		algorithms.add("SHA-1");
 		algorithms.add("SHA-256");
 		algorithms.add("SHA-512");
-		if (algorithms.contains(fingerprintAlgorithm) == false) {
-			throw new IllegalStateException(fingerprintAlgorithm + " is not a valid fingerprint algorithm");
+		if (algorithms.contains(digestAlgorithm) == false) {
+			throw new IllegalStateException(digestAlgorithm + " is not a valid digest algorithm");
 		}
+		
+		if (ca != null) {
+			MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
+			caDigest = digest.digest(ca.getTBSCertificate());
+		}
+    }
+    
+    private boolean isValid(KeyPair keyPair) {
+    	PrivateKey pri = keyPair.getPrivate();
+    	PublicKey pub = keyPair.getPublic();
+    	
+    	return pri.getAlgorithm().equals("RSA") && pub.getAlgorithm().equals("RSA");
+    }
+    
+    private boolean isValid(URL url) {
+    	if (url.getProtocol().matches("^https?$") == false) {
+    		return false;
+    	}
+    	if (url.getPath().endsWith("pkiclient.exe") == false) {
+    		return false;
+    	}
+    	if (url.getRef() != null) {
+    		return false;
+    	}
+    	if (url.getQuery() != null) {
+    		return false;
+    	}
+    	return true;
     }
     
     private void debug(String msg) {
@@ -170,7 +213,7 @@ public class Requester {
     }
     
     private Transaction createTransaction() throws IOException {
-    	return TransactionFactory.createTransaction(createTransport(), ca, identity, keyPair, fingerprintAlgorithm);
+    	return TransactionFactory.createTransaction(createTransport(), ca, identity, keyPair, digestAlgorithm);
     }
     
     private Transport createTransport() throws IOException {
@@ -191,14 +234,14 @@ public class Requester {
     }
 
     private Capabilities getCapabilities() throws IOException {
-        Request req = new GetCACaps(identifier);
+        Request req = new GetCACaps(caId);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
         return (Capabilities) trans.sendMessage(req);
     }
 
     private List<X509Certificate> getCaCertificate() throws IOException {
-        Request req = new GetCACert(identifier);
+        Request req = new GetCACert(caId);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
         return (List<X509Certificate>) trans.sendMessage(req);
@@ -206,23 +249,18 @@ public class Requester {
     
     public List<X509Certificate> getNextCA() throws IOException {
     	Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-    	Request req = new GetNextCaCert(identifier);
+    	Request req = new GetNextCaCert(caId);
     	
     	return (List<X509Certificate>) trans.sendMessage(req);
     }
 
-    private void updateCertificates() throws IOException, CertificateException, ScepException {
+    private void updateCertificates() throws IOException, ScepException, NoSuchAlgorithmException, CertificateEncodingException {
     	List<X509Certificate> certs = getCaCertificate();
 
         ca = certs.get(0);
         
-        MessageDigest md;
-		try {
-			md = MessageDigest.getInstance(fingerprintAlgorithm);
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
-        if (Arrays.equals(fingerprint, md.digest(ca.getEncoded())) == false) {
+        MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
+        if (Arrays.equals(caDigest, md.digest(ca.getEncoded())) == false) {
         	throw new ScepException("CA Fingerprint Error");
         }
     }
@@ -254,6 +292,7 @@ public class Requester {
      * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
      */
     private boolean supportsDistributionPoints() {
+    	// TODO Implement CDP
     	return false;
     }
 
@@ -270,7 +309,7 @@ public class Requester {
     public EnrollmentResult enroll(char[] password) throws Exception {
         updateCertificates();
         
-        return new InitialEnrollmentTask(createTransport(), ca, keyPair, identity, password, fingerprintAlgorithm).call();
+        return new InitialEnrollmentTask(createTransport(), ca, keyPair, identity, password, digestAlgorithm).call();
     }
 
     /**
@@ -320,12 +359,13 @@ public class Requester {
     public static class Builder {
     	private URL url;
     	private Proxy proxy;
-    	private String identifier;
+    	private String caId;
     	private KeyPair keyPair;
     	private X509Certificate identity;
+    	private X509Certificate ca;
     	private X500Principal subject;
-    	private byte[] fingerprint;
-    	private String fingerprintAlgorithm;
+    	private byte[] caDigest;
+    	private String digestAlgorithm;
     	
     	public Builder(URL url) {
     		this.url = url;
@@ -337,8 +377,8 @@ public class Requester {
     		return this;
     	}
     	
-    	public Builder identifier(String identifier) {
-    		this.identifier = identifier;
+    	public Builder caId(String caId) {
+    		this.caId = caId;
     		
     		return this;
     	}
@@ -364,12 +404,18 @@ public class Requester {
     	/**
     	 * The message digest of the CA certificate.
     	 * 
-    	 * @param fingerprint the digest.
+    	 * @param caDigest the digest.
     	 * @return this builder.
     	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
     	 */
-    	public Builder fingerprint(byte[] fingerprint) {
-    		this.fingerprint = fingerprint;
+    	public Builder caDigest(byte[] caDigest) {
+    		this.caDigest = caDigest;
+    		
+    		return this;
+    	}
+    	
+    	public Builder caCertificate(X509Certificate ca) {
+    		this.ca = ca;
     		
     		return this;
     	}
@@ -377,17 +423,17 @@ public class Requester {
     	/**
     	 * One of <tt>MD5</tt>, <tt>SHA-1</tt>, <tt>SHA-256</tt> or <tt>SHA-512</tt>.  Defaults to MD5.
     	 * 
-    	 * @param fingerprintAlgorithm the hash algorithm for encoding the certificate.
+    	 * @param digestAlgorithm the hash algorithm for encoding the certificate.
     	 * @return this builder.
     	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
     	 */
-    	public Builder fingerprintAlgorithm(String fingerprintAlgorithm) {
-    		this.fingerprintAlgorithm = fingerprintAlgorithm;
+    	public Builder digestAlgorithm(String digestAlgorithm) {
+    		this.digestAlgorithm = digestAlgorithm;
     		
     		return this;
     	}
     	
-    	public Requester build() throws IllegalStateException {
+    	public Requester build() throws IllegalStateException, CertificateEncodingException, NoSuchAlgorithmException {
     		return new Requester(this);
     	}
     }
