@@ -46,11 +46,12 @@ public final class TransactionId {
 		this.id = id;
 	}
 	
-	private TransactionId(KeyPair keyPair, String fingerprintAlgorithm) {
+	private TransactionId(KeyPair keyPair) {
 		LOGGER.info("Generating new TransactionId from Key Pair");
     	MessageDigest digest = null;
         try {
-            digest = MessageDigest.getInstance(fingerprintAlgorithm);
+        	// Always MD5
+            digest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -82,11 +83,11 @@ public final class TransactionId {
 	 * 
 	 * @return the new Transaction Id
 	 */
-	public static TransactionId createTransactionId(KeyPair keyPair, String fingerprintAlgorithm) {
+	public static TransactionId createTransactionId(KeyPair keyPair) {
 		if (keyPair == null) {
 			return new TransactionId();
 		} else {
-			return new TransactionId(keyPair, fingerprintAlgorithm);
+			return new TransactionId(keyPair);
 		}
 	}
 	

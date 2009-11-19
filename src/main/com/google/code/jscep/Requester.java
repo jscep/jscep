@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
@@ -68,6 +69,7 @@ import com.google.code.jscep.transport.Transport;
  * SCEP Client
  */
 public class Requester {
+	private final static Logger LOGGER = Logger.getLogger(Requester.class.getName());
     private URL url;						// Required
     private byte[] caDigest;				// Required
     private String digestAlgorithm;			// Optional
@@ -76,26 +78,22 @@ public class Requester {
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
     private X500Principal subject;			// Optional
-    private X509Certificate ca;				// Optional
 
     // Requester(URL url, byte[] caDigest, X500Principal subject);
     // Requester(URL url, byte[] caDigest, X509Certificate identity, KeyPair keyPair);    
-    private Requester(Builder builder) throws IllegalStateException, NoSuchAlgorithmException, CertificateEncodingException {
+    private Requester(Builder builder) throws IllegalStateException, NoSuchAlgorithmException, CertificateEncodingException, IOException, ScepException {
     	url = builder.url;
     	proxy = builder.proxy;
-    	ca = builder.ca;
     	caDigest = builder.caDigest;
     	caId = builder.caId;
     	keyPair = builder.keyPair;
     	identity = builder.identity;
-    	subject = builder.subject;
     	digestAlgorithm = builder.digestAlgorithm;
+
+    	X500Principal subject = builder.subject;
+    	X509Certificate ca = builder.ca;
     	
-    	// TODO: Check for "pkiclient.exe"
     	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-5.1
-    	if (url == null) {
-    		throw new IllegalStateException("URL must not be null.");
-    	}
     	if (isValid(url) == false) {
     		throw new IllegalStateException("Invalid URL");
     	}
@@ -128,7 +126,7 @@ public class Requester {
     		throw new IllegalStateException("Invalid KeyPair");
     	}
     	if (identity == null) {
-    		identity = createCertificate();
+    		identity = createCertificate(subject);
     	}
     	
 		// If we're replacing a certificate, we must have the same key pair.
@@ -147,7 +145,34 @@ public class Requester {
 		if (ca != null) {
 			MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
 			caDigest = digest.digest(ca.getTBSCertificate());
+		} else {
+			ca = retrieveCA();
 		}
+		
+		// Check renewal
+		if (subject == null) {
+			if (isSelfSigned(identity) == false) {
+				if (identity.getIssuerX500Principal().equals(ca.getSubjectX500Principal())) {
+					LOGGER.info("Certificate is signed by CA, so this is a renewal.");
+				} else {
+					LOGGER.info("Certificate is signed by another CA, bit this is still a renewal.");
+				}
+				try {
+					LOGGER.info("Checking if the CA supports certificate renewal...");
+					if (getCapabilities().supportsRenewal() == false) {
+						throw new IllegalStateException("Your CA does not support renewal");
+					}
+				} catch (IOException e) {
+					throw new IllegalStateException("Your CA does not support renewal");
+				}
+			} else {
+				LOGGER.info("Certificate is self-signed.  This is not a renewal.");
+			}
+		}
+    }
+    
+    private boolean isSelfSigned(X509Certificate cert) {
+    	return cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal());
     }
     
     private boolean isValid(KeyPair keyPair) {
@@ -158,6 +183,9 @@ public class Requester {
     }
     
     private boolean isValid(URL url) {
+    	if (url == null) {
+    		return false;
+    	}
     	if (url.getProtocol().matches("^https?$") == false) {
     		return false;
     	}
@@ -187,7 +215,7 @@ public class Requester {
 		}
     }
     
-    private X509Certificate createCertificate() {
+    private X509Certificate createCertificate(X500Principal subject) {
     	debug("Creating Self-Signed Certificate for " + subject);
     	
     	// TODO: BC Dependency
@@ -212,8 +240,8 @@ public class Requester {
 		}
     }
     
-    private Transaction createTransaction() throws IOException {
-    	return TransactionFactory.createTransaction(createTransport(), ca, identity, keyPair, digestAlgorithm);
+    private Transaction createTransaction() throws IOException, CertificateEncodingException, NoSuchAlgorithmException, ScepException {
+    	return TransactionFactory.createTransaction(createTransport(), retrieveSigningCertificate(), identity, keyPair, getCapabilities().getPreferredMessageDigest());
     }
     
     private Transport createTransport() throws IOException {
@@ -253,18 +281,37 @@ public class Requester {
     	
     	return (List<X509Certificate>) trans.sendMessage(req);
     }
-
-    private void updateCertificates() throws IOException, ScepException, NoSuchAlgorithmException, CertificateEncodingException {
-    	List<X509Certificate> certs = getCaCertificate();
-
-        ca = certs.get(0);
-        
-        MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
-        if (Arrays.equals(caDigest, md.digest(ca.getEncoded())) == false) {
+    
+    private X509Certificate retrieveCA() throws IOException, NoSuchAlgorithmException, CertificateEncodingException, ScepException {
+    	final List<X509Certificate> certs = getCaCertificate();
+    	
+    	// Validate
+    	final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
+        if (Arrays.equals(caDigest, md.digest(certs.get(0).getEncoded())) == false) {
         	throw new ScepException("CA Fingerprint Error");
         }
+    	
+    	return certs.get(0);
     }
-
+    
+    private X509Certificate retrieveSigningCertificate() throws IOException, NoSuchAlgorithmException, CertificateEncodingException, ScepException {
+    	List<X509Certificate> certs = getCaCertificate();
+    	
+    	// Validate
+    	MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
+        if (Arrays.equals(caDigest, md.digest(certs.get(0).getEncoded())) == false) {
+        	throw new ScepException("CA Fingerprint Error");
+        }
+    	
+    	if (certs.size() > 1) {
+    		// RA
+    		return certs.get(1);
+    	} else {
+    		// CA
+    		return certs.get(0);
+    	}
+    }
+    
     /**
      * Retrieves the certificate revocation list for the current CA.
      * 
@@ -276,7 +323,8 @@ public class Requester {
      * @throws RequestFailureException 
      */
     public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException, RequestFailureException {
-        updateCertificates();
+        X509Certificate ca = retrieveCA();
+        
         if (supportsDistributionPoints()) {
         	return null;
         } else {
@@ -307,9 +355,9 @@ public class Requester {
      * @throws UnsupportedCallbackException 
      */
     public EnrollmentResult enroll(char[] password) throws Exception {
-        updateCertificates();
+        final X509Certificate signer = retrieveSigningCertificate();
         
-        return new InitialEnrollmentTask(createTransport(), ca, keyPair, identity, password, digestAlgorithm).call();
+        return new InitialEnrollmentTask(createTransport(), signer, keyPair, identity, password, getCapabilities().getPreferredMessageDigest()).call();
     }
 
     /**
@@ -325,7 +373,7 @@ public class Requester {
      * @throws RequestFailureException 
      */
     public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException, RequestFailureException {
-        updateCertificates();
+    	final X509Certificate ca = retrieveCA();
         // PKI Operation
         PkiOperation req = new GetCert(ca.getIssuerX500Principal(), serial);
         CertStore store = createTransaction().performOperation(req);
@@ -433,7 +481,7 @@ public class Requester {
     		return this;
     	}
     	
-    	public Requester build() throws IllegalStateException, CertificateEncodingException, NoSuchAlgorithmException {
+    	public Requester build() throws IllegalStateException, CertificateEncodingException, NoSuchAlgorithmException, IOException, ScepException {
     		return new Requester(this);
     	}
     }

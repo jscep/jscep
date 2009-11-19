@@ -45,10 +45,10 @@ public class Transaction {
     private final Enveloper enveloper;
     private final Signer signer;
     
-    protected Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer, String fingerprintAlgorithm) {
+    protected Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer) {
     	this.transport = transport;
     	this.keyPair = keyPair;
-        this.transId = TransactionId.createTransactionId(keyPair, fingerprintAlgorithm);
+        this.transId = TransactionId.createTransactionId(keyPair);
         this.senderNonce = NonceFactory.nextNonce();
         this.enveloper = enveloper;
         this.signer = signer;

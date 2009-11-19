@@ -93,7 +93,7 @@ public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
 		CertificationRequest request = new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv);
 		byte[] requestBytes = request.getEncoded();
 		
-		LOGGER.info("Generated PKCS #10 Request:\n" + HexUtil.formatHex(Hex.encode(requestBytes)));
+		LOGGER.info("Generated PKCS #10 Request:\n" + HexUtil.formatHex(HexUtil.toHex(requestBytes)));
 		
 		return requestBytes;
 	}

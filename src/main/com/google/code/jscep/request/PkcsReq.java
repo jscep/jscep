@@ -25,21 +25,28 @@ package com.google.code.jscep.request;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.logging.Logger;
 
 import com.google.code.jscep.transaction.MessageType;
+import com.google.code.jscep.util.HexUtil;
 
 /**
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.2
  */
 public class PkcsReq implements PkiOperation {
+	private final static Logger LOGGER = Logger.getLogger(PkcsReq.class.getName());
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;
+    private final String digestAlgorithm;
 
-    public PkcsReq(KeyPair keyPair, X509Certificate identity, char[] password) {
+    public PkcsReq(KeyPair keyPair, X509Certificate identity, String digestAlgorithm, char[] password) {
         this.keyPair = keyPair;
         this.identity = identity;
+        this.digestAlgorithm = digestAlgorithm;
         this.password = password;
     }
 
@@ -53,10 +60,21 @@ public class PkcsReq implements PkiOperation {
     	Pkcs10CertificationRequest certReq = Pkcs10CertificationRequest.getInstance(keyPair, identity);
     	certReq.addAttribute("1.2.840.113549.1.9.7", new String(password));
     	
-    	return certReq.createRequest();
+    	byte[] pkcs10 = certReq.createRequest();
+    	byte[] digest = calculateDigest(pkcs10);
+    	
+    	LOGGER.info("PKCS #10 Digest (" + digestAlgorithm + "):\n" + HexUtil.formatHex(HexUtil.toHex(digest)));
+    	
+    	return pkcs10;
     }
 
     public String toString() {
     	return getMessageType().toString();
+    }
+    
+    private byte[] calculateDigest(byte[] pkcs10) throws NoSuchAlgorithmException {
+    	MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
+    	
+    	return digest.digest(pkcs10);
     }
 }

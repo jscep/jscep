@@ -26,16 +26,27 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.google.code.jscep.transaction.PkiStatus;
+
 public class EnrollmentResult {
 	private List<X509Certificate> certs;
 	private Callable<EnrollmentResult> task;
+	private String message;
+	private PkiStatus status;
 	
 	EnrollmentResult(List<X509Certificate> certs) {
 		this.certs = certs;
+		this.status = PkiStatus.SUCCESS;
 	}
 	
 	EnrollmentResult(Callable<EnrollmentResult> task) {
 		this.task = task;
+		this.status = PkiStatus.PENDING;
+	}
+	
+	EnrollmentResult(String message) {
+		this.message = message;
+		this.status = PkiStatus.FAILURE;
 	}
 	
 	public List<X509Certificate> getCertificates() {
@@ -46,7 +57,11 @@ public class EnrollmentResult {
 		return task;
 	}
 	
-	public boolean isPending() {
-		return certs == null; 
+	public String getMessage() {
+		return message;
+	}
+	
+	public PkiStatus getStatus() {
+		return status; 
 	}
 }

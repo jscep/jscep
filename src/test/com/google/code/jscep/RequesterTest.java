@@ -25,6 +25,7 @@ package com.google.code.jscep;
 import java.net.URL;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +43,8 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.google.code.jscep.transaction.PkiStatus;
 
 public class RequesterTest {
     @BeforeClass
@@ -66,9 +69,15 @@ public class RequesterTest {
         								.digestAlgorithm("MD5")
         								.build();
         EnrollmentResult result = client.enroll("INBOUND_TLSzmcXc0IBDOoG".toCharArray());
-        if (result.isPending() == false) {
-        	result.getCertificates();
-        } else {
+        if (result.getStatus() == PkiStatus.SUCCESS) {
+        	List<X509Certificate> certs = result.getCertificates();
+        	Requester renewalClient = new Requester.Builder(url)
+        										   .identity(certs.get(0))
+        										   .keyPair(client.getKeyPair())
+        										   .caDigest(digest)
+        										   .build();
+        	EnrollmentResult renewalResult = renewalClient.enroll("INBOUND_TLSzmcXc0IBDOoG".toCharArray());
+        } else if (result.getStatus() == PkiStatus.PENDING){
         	ScheduledExecutorService exec = new ScheduledThreadPoolExecutor(1);
         	exec.schedule(result.getTask(), 3, TimeUnit.HOURS);
         	

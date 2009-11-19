@@ -45,6 +45,6 @@ public final class TransactionFactory {
 		// TODO: BC Dependency
 		Signer signer = new Signer(identity, keyPair, "1.3.14.3.2.26");
 		
-		return new Transaction(transport, keyPair, enveloper, signer, fingerprintAlgorithm);
+		return new Transaction(transport, keyPair, enveloper, signer);
 	}
 }
