@@ -22,14 +22,13 @@
 
 package com.google.code.jscep.request;
 
-import java.net.ContentHandler;
-
 import com.google.code.jscep.content.CaCapabilitiesContentHandler;
+import com.google.code.jscep.response.Capabilities;
 
 /**
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
  */
-public class GetCACaps implements Request {
+public class GetCACaps implements Request<String, Capabilities> {
     private static final String OPERATION = "GetCACaps";
     private String ca;
 
@@ -44,7 +43,7 @@ public class GetCACaps implements Request {
         return OPERATION;
     }
 
-    public Object getMessage() {
+    public String getMessage() {
         return ca;
     }
     
@@ -52,7 +51,7 @@ public class GetCACaps implements Request {
     	return OPERATION;
     }
     
-    public ContentHandler getContentHandler() {
+    public CaCapabilitiesContentHandler getContentHandler() {
     	return new CaCapabilitiesContentHandler();
     }
 }

@@ -32,7 +32,7 @@ import java.security.cert.CertStore;
 
 import com.google.code.jscep.RequestFailureException;
 import com.google.code.jscep.RequestPendingException;
-import com.google.code.jscep.request.PkiOperation;
+import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.response.PkiMessage;
 import com.google.code.jscep.transport.Transport;

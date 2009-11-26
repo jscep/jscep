@@ -27,7 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLConnection;
 
-public class CertRepContentHandler extends ScepContentHandler {
+public class CertRepContentHandler extends ScepContentHandler<byte[]> {
     @Override
     public byte[] getContent(URLConnection conn) throws IOException {
     	if (isType(conn, PKI_MESSAGE)) {

@@ -13,8 +13,8 @@ public class TransactionIdTest {
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 		KeyPair keyPair = generator.generateKeyPair();
 		
-		TransactionId transA = TransactionId.createTransactionId(keyPair, "MD5");
-		TransactionId transB = TransactionId.createTransactionId(keyPair, "MD5");
+		TransactionId transA = TransactionId.createTransactionId(keyPair);
+		TransactionId transB = TransactionId.createTransactionId(keyPair);
 		
 		Assert.assertEquals(transA, transB);
 	}

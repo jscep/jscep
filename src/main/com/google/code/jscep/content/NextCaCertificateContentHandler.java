@@ -27,9 +27,9 @@ import java.net.URLConnection;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-public class NextCaCertificateContentHandler extends ScepContentHandler {
+public class NextCaCertificateContentHandler extends ScepContentHandler<List<X509Certificate>> {
     @Override
-    public List<X509Certificate[]> getContent(URLConnection conn) throws IOException {
+    public List<X509Certificate> getContent(URLConnection conn) throws IOException {
     	if (isType(conn, X509_NEXT_CA_CERT)) {
     		// TODO: MISSING: GetNextCACert Response
     		

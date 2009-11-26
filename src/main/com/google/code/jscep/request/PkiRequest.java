@@ -23,11 +23,10 @@
 package com.google.code.jscep.request;
 
 import java.io.IOException;
-import java.net.ContentHandler;
 
 import com.google.code.jscep.content.CertRepContentHandler;
 
-public class PkiRequest implements Request {
+public class PkiRequest implements Request<byte[], byte[]> {
 	private static final String OPERATION = "PKIOperation";
 	private final byte[] signedData;
 	
@@ -49,7 +48,7 @@ public class PkiRequest implements Request {
     	return OPERATION;
     }
     
-    public ContentHandler getContentHandler() {
+    public CertRepContentHandler getContentHandler() {
     	return new CertRepContentHandler();
     }
 }

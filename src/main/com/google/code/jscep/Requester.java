@@ -53,13 +53,12 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 
+import com.google.code.jscep.operations.GetCRL;
+import com.google.code.jscep.operations.GetCert;
+import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
-import com.google.code.jscep.request.GetCRL;
-import com.google.code.jscep.request.GetCert;
 import com.google.code.jscep.request.GetNextCaCert;
-import com.google.code.jscep.request.PkiOperation;
-import com.google.code.jscep.request.Request;
 import com.google.code.jscep.response.Capabilities;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
@@ -77,7 +76,6 @@ public class Requester {
     private String caId;					// Optional
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
-    private X500Principal subject;			// Optional
 
     // Requester(URL url, byte[] caDigest, X500Principal subject);
     // Requester(URL url, byte[] caDigest, X509Certificate identity, KeyPair keyPair);    
@@ -262,24 +260,24 @@ public class Requester {
     }
 
     private Capabilities getCapabilities() throws IOException {
-        Request req = new GetCACaps(caId);
+    	GetCACaps req = new GetCACaps(caId);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
-        return (Capabilities) trans.sendMessage(req);
+        return trans.sendMessage(req);
     }
 
     private List<X509Certificate> getCaCertificate() throws IOException {
-        Request req = new GetCACert(caId);
+    	GetCACert req = new GetCACert(caId);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
-        return (List<X509Certificate>) trans.sendMessage(req);
+        return trans.sendMessage(req);
     }
     
     public List<X509Certificate> getNextCA() throws IOException {
     	Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-    	Request req = new GetNextCaCert(caId);
+    	GetNextCaCert req = new GetNextCaCert(caId);
     	
-    	return (List<X509Certificate>) trans.sendMessage(req);
+    	return trans.sendMessage(req);
     }
     
     private X509Certificate retrieveCA() throws IOException, NoSuchAlgorithmException, CertificateEncodingException, ScepException {

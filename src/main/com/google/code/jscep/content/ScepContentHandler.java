@@ -1,9 +1,9 @@
 package com.google.code.jscep.content;
 
-import java.net.ContentHandler;
+import java.io.IOException;
 import java.net.URLConnection;
 
-public abstract class ScepContentHandler extends ContentHandler {
+public abstract class ScepContentHandler<T> {
 	/**
 	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.2.1
 	 */
@@ -28,4 +28,6 @@ public abstract class ScepContentHandler extends ContentHandler {
 	public boolean isType(URLConnection conn, String mimeType) {
 		return conn.getContentType().equals(mimeType);
 	}
+	
+	abstract public T getContent(URLConnection connection) throws IOException;
 }

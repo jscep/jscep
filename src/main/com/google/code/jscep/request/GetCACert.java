@@ -22,14 +22,15 @@
 
 package com.google.code.jscep.request;
 
-import java.net.ContentHandler;
+import java.security.cert.X509Certificate;
+import java.util.List;
 
 import com.google.code.jscep.content.CaCertificateContentHandler;
 
 /**
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
  */
-public class GetCACert implements Request {
+public class GetCACert implements Request<String, List<X509Certificate>> {
     private static final String OPERATION = "GetCACert";
     private String ca;
 
@@ -44,7 +45,7 @@ public class GetCACert implements Request {
         return OPERATION;
     }
 
-    public Object getMessage() {
+    public String getMessage() {
         return ca;
     }
     
@@ -52,7 +53,7 @@ public class GetCACert implements Request {
     	return OPERATION;
     }
     
-    public ContentHandler getContentHandler() {
+    public CaCertificateContentHandler getContentHandler() {
     	return new CaCertificateContentHandler();
     }
 }

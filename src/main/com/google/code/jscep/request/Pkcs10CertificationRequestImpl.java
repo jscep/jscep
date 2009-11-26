@@ -45,7 +45,6 @@ import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Hex;
 
 import com.google.code.jscep.util.HexUtil;
 
@@ -90,7 +89,7 @@ public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
 		PublicKey pub = keyPair.getPublic();
 		PrivateKey priv = keyPair.getPrivate();
 		
-		CertificationRequest request = new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv);
+		CertificationRequest request = new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv, "SunRsaSign");
 		byte[] requestBytes = request.getEncoded();
 		
 		LOGGER.info("Generated PKCS #10 Request:\n" + HexUtil.formatHex(HexUtil.toHex(requestBytes)));

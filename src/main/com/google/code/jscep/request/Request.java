@@ -23,10 +23,32 @@
 package com.google.code.jscep.request;
 
 import java.io.IOException;
-import java.net.ContentHandler;
 
-public interface Request {
+import com.google.code.jscep.content.ScepContentHandler;
+
+/**
+ * 
+ * @param <M> the message type associated with this request.
+ * @param <R> the response type associated with this request
+ */
+public interface Request<M, R> {
+	/**
+	 * Returns the name of this operation.
+	 * 
+	 * @return the name of this operation.
+	 */
     String getOperation();
-    Object getMessage() throws IOException;
-    ContentHandler getContentHandler();
+    /**
+     * Returns the message for this request.
+     * 
+     * @return the message.
+     * @throws IOException
+     */
+    M getMessage() throws IOException;
+    /**
+     * Returns the ScepContentHandler for the given response type.
+     * 
+     * @return the content handler.
+     */
+    ScepContentHandler<R> getContentHandler();
 }

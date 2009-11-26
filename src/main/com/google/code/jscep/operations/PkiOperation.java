@@ -20,45 +20,14 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep.operations;
 
 import java.io.IOException;
-import java.math.BigInteger;
-
-import javax.security.auth.x500.X500Principal;
-
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.X509Principal;
+import java.security.GeneralSecurityException;
 
 import com.google.code.jscep.transaction.MessageType;
 
-/**
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.5
- */
-public class GetCRL implements PkiOperation {
-    private final X500Principal issuer;
-    private final BigInteger serial;
-
-    public GetCRL(X500Principal issuer, BigInteger serial) {
-        this.issuer = issuer;
-        this.serial = serial;
-    }
-
-    @Override
-    public MessageType getMessageType() {
-        return MessageType.GetCRL;
-    }
-
-    @Override
-	public byte[] getMessageData() throws IOException {
-    	// TODO: BC Dependency
-        X509Name issuerName = new X509Principal(issuer.getEncoded());
-
-        return new IssuerAndSerialNumber(issuerName, serial).getEncoded();
-    }
-    
-    public String toString() {
-    	return getMessageType().toString();
-    }
+public interface PkiOperation {
+	MessageType getMessageType();
+    byte[] getMessageData() throws IOException, GeneralSecurityException;
 }

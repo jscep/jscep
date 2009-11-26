@@ -27,8 +27,8 @@ import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Callable;
 
-import com.google.code.jscep.request.PkcsReq;
-import com.google.code.jscep.request.PkiOperation;
+import com.google.code.jscep.operations.PkcsReq;
+import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;

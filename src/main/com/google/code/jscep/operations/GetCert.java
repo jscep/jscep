@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep.operations;
 
 import java.io.IOException;
 import java.math.BigInteger;

@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep.operations;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -30,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.request.Pkcs10CertificationRequest;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.util.HexUtil;
 

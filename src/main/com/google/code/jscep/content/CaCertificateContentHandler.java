@@ -30,7 +30,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CaCertificateContentHandler extends ScepContentHandler {
+public class CaCertificateContentHandler extends ScepContentHandler<List<X509Certificate>> {
     @Override
     public List<X509Certificate> getContent(URLConnection conn) throws IOException {
     	List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
