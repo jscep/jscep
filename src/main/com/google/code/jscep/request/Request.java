@@ -28,10 +28,9 @@ import com.google.code.jscep.content.ScepContentHandler;
 
 /**
  * 
- * @param <M> the message type associated with this request.
- * @param <R> the response type associated with this request
+ * @param <T> the response type associated with this request
  */
-public interface Request<M, R> {
+public interface Request<T> {
 	/**
 	 * Returns the name of this operation.
 	 * 
@@ -44,11 +43,11 @@ public interface Request<M, R> {
      * @return the message.
      * @throws IOException
      */
-    M getMessage() throws IOException;
+    Object getMessage() throws IOException;
     /**
      * Returns the ScepContentHandler for the given response type.
      * 
      * @return the content handler.
      */
-    ScepContentHandler<R> getContentHandler();
+    ScepContentHandler<T> getContentHandler();
 }

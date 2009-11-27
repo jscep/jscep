@@ -30,7 +30,7 @@ import com.google.code.jscep.content.NextCaCertificateContentHandler;
 /**
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6
  */
-public class GetNextCaCert implements Request<String, List<X509Certificate>> {
+public class GetNextCaCert implements Request<List<X509Certificate>> {
     private static final String OPERATION = "GetNextCaCert";
     private String ca;
 

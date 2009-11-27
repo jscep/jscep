@@ -42,7 +42,7 @@ public class HttpGetTransport extends Transport {
 	}
 	
 	@Override
-	public <M, R> R sendMessage(Request<M, R> msg) throws IOException, MalformedURLException {
+	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException {
 		URL url = getUrl(msg.getOperation(), msg.getMessage());
 		LOGGER.info("Sending Request: " + url);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
@@ -51,7 +51,7 @@ public class HttpGetTransport extends Transport {
         	throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
         }
         
-        return msg.getContentHandler().getContent(conn);
+        return msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
 	}
 	
 	private <M> URL getUrl(String op, M message) throws MalformedURLException {

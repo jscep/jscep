@@ -25,13 +25,13 @@ package com.google.code.jscep.content;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URLConnection;
+import java.io.InputStream;
 
-public class CertRepContentHandler extends ScepContentHandler<byte[]> {
+public class CertRepContentHandler implements ScepContentHandler<byte[]> {
     @Override
-    public byte[] getContent(URLConnection conn) throws IOException {
-    	if (isType(conn, PKI_MESSAGE)) {
-    		BufferedInputStream is = new BufferedInputStream(conn.getInputStream());
+    public byte[] getContent(InputStream in, String mimeType) throws IOException {
+    	if (mimeType.equals(PKI_MESSAGE)) {
+    		BufferedInputStream is = new BufferedInputStream(in);
     		ByteArrayOutputStream baos = new ByteArrayOutputStream();
     		
     		int b;

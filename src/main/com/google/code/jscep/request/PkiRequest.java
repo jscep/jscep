@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import com.google.code.jscep.content.CertRepContentHandler;
 
-public class PkiRequest implements Request<byte[], byte[]> {
+public class PkiRequest implements Request<byte[]> {
 	private static final String OPERATION = "PKIOperation";
 	private final byte[] signedData;
 	

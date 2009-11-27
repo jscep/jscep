@@ -23,14 +23,14 @@
 package com.google.code.jscep.content;
 
 import java.io.IOException;
-import java.net.URLConnection;
+import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-public class NextCaCertificateContentHandler extends ScepContentHandler<List<X509Certificate>> {
+public class NextCaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
     @Override
-    public List<X509Certificate> getContent(URLConnection conn) throws IOException {
-    	if (isType(conn, X509_NEXT_CA_CERT)) {
+    public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
+    	if (mimeType.equals(X509_NEXT_CA_CERT)) {
     		// TODO: MISSING: GetNextCACert Response
     		
             return null;	

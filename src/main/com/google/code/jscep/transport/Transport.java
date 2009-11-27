@@ -51,7 +51,7 @@ public abstract class Transport {
 	public Proxy getProxy() {
 		return proxy;
 	}
-	abstract public <M, R> R sendMessage(Request<M, R> msg) throws IOException, MalformedURLException;
+	abstract public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException;
 	
 	/**
 	 * Create a new transport of type <tt>method</tt>.

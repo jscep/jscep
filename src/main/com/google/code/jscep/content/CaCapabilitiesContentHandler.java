@@ -24,26 +24,26 @@ package com.google.code.jscep.content;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URLConnection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.response.Capabilities;
 
-public class CaCapabilitiesContentHandler extends ScepContentHandler<Capabilities> {
+public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
 	private final static Logger LOGGER = Logger.getLogger(CaCapabilitiesContentHandler.class.getName());
 	
 	@Override
-    public Capabilities getContent(URLConnection conn) throws IOException {
-		if (isType(conn, TEXT_PLAIN) == false) {
-			LOGGER.info("CACapabilities response was of content-type " + conn.getContentType() + ".  Expected " + TEXT_PLAIN);
+    public Capabilities getContent(InputStream in, String mimeType) throws IOException {
+		if (mimeType.equals(TEXT_PLAIN) == false) {
+			LOGGER.info("CACapabilities response was of content-type " + mimeType + ".  Expected " + TEXT_PLAIN);
 		}
 		
         final List<String> capabilities = new LinkedList<String>();
         
-        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String capability;
         while ((capability = reader.readLine()) != null) {
         	capabilities.add(capability);

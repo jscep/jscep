@@ -28,7 +28,7 @@ import com.google.code.jscep.response.Capabilities;
 /**
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
  */
-public class GetCACaps implements Request<String, Capabilities> {
+public class GetCACaps implements Request<Capabilities> {
     private static final String OPERATION = "GetCACaps";
     private String ca;
 

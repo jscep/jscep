@@ -45,7 +45,7 @@ public class HttpPostTransport extends Transport {
 	}
 	
 	@Override
-	public <M, R> R sendMessage(Request<M, R> msg) throws IOException, MalformedURLException {
+	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException {
 		byte[] body = (byte[]) msg.getMessage();
 		
         URL url = getUrl(msg.getOperation());
@@ -63,6 +63,6 @@ public class HttpPostTransport extends Transport {
         	throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
         }
         
-        return msg.getContentHandler().getContent(conn);
+        return msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
 	}
 }
