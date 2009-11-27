@@ -51,12 +51,16 @@ public class PkcsReq implements PkiOperation {
         this.password = password;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public MessageType getMessageType() {
         return MessageType.PKCSReq;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public byte[] getMessageData() throws IOException, GeneralSecurityException {
     	Pkcs10CertificationRequest certReq = Pkcs10CertificationRequest.getInstance(keyPair, identity);
     	certReq.addAttribute("1.2.840.113549.1.9.7", new String(password));
@@ -69,6 +73,10 @@ public class PkcsReq implements PkiOperation {
     	return pkcs10;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
     	return getMessageType().toString();
     }

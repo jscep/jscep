@@ -30,8 +30,13 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Content handler for GetCACert requests. 
+ */
 public class CaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
     public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
     	List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
     	if (mimeType.equals(X509_CA_CERT)) {

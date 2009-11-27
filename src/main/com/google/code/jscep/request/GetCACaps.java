@@ -47,6 +47,10 @@ public class GetCACaps implements Request<Capabilities> {
         return ca;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
     	return OPERATION;
     }

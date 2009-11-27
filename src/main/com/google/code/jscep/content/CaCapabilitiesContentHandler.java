@@ -32,10 +32,15 @@ import java.util.logging.Logger;
 
 import com.google.code.jscep.response.Capabilities;
 
+/**
+ * Content handler for GetCACaps requests. 
+ */
 public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
 	private final static Logger LOGGER = Logger.getLogger(CaCapabilitiesContentHandler.class.getName());
 	
-	@Override
+	/**
+	 * {@inheritDoc}
+	 */
     public Capabilities getContent(InputStream in, String mimeType) throws IOException {
 		if (mimeType.equals(TEXT_PLAIN) == false) {
 			LOGGER.info("CACapabilities response was of content-type " + mimeType + ".  Expected " + TEXT_PLAIN);

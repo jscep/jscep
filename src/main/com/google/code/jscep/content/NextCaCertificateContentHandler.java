@@ -27,8 +27,13 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+/**
+ * Content handler for GetNextCA requests. 
+ */
 public class NextCaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
     public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
     	if (mimeType.equals(X509_NEXT_CA_CERT)) {
     		// TODO: MISSING: GetNextCACert Response

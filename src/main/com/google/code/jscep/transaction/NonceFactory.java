@@ -38,6 +38,15 @@ public final class NonceFactory {
 	private NonceFactory() {
 	}
 	
+	/**
+	 * Generates a new random Nonce.
+	 * <p>
+	 * This method does not guarantee that multiple invocations will produce a different
+	 * nonce, as the byte generation is provided by a SecureRandom instance.
+	 * 
+	 * @return the generated nonce.
+	 * @see java.security.SecureRandom
+	 */
 	public static Nonce nextNonce() {
 		LOGGER.info("Generating New Nonce");
 		

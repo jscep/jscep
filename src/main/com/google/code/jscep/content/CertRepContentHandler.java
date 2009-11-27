@@ -27,8 +27,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+// TODO: Should this return a CertRep instead?
+/**
+ * Content handler for PKIOperation requests. 
+ */
 public class CertRepContentHandler implements ScepContentHandler<byte[]> {
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
     public byte[] getContent(InputStream in, String mimeType) throws IOException {
     	if (mimeType.equals(PKI_MESSAGE)) {
     		BufferedInputStream is = new BufferedInputStream(in);

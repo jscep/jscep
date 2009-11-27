@@ -44,6 +44,10 @@ public class PkiRequest implements Request<byte[]> {
 		return OPERATION;
 	}
 	
+	/**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
     	return OPERATION;
     }

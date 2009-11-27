@@ -27,7 +27,22 @@ import java.security.GeneralSecurityException;
 
 import com.google.code.jscep.transaction.MessageType;
 
+/**
+ * PKI Operation
+ */
 public interface PkiOperation {
+	/**
+	 * Returns the message type for this operation.
+	 * 
+	 * @return the message type.
+	 */
 	MessageType getMessageType();
+	/**
+	 * Returns the message data for this operation.
+	 * 
+	 * @return the message data.
+	 * @throws IOException if any I/O error occurs.
+	 * @throws GeneralSecurityException if any security error occurs.
+	 */
     byte[] getMessageData() throws IOException, GeneralSecurityException;
 }

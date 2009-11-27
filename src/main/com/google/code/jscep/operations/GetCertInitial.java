@@ -44,12 +44,16 @@ public class GetCertInitial implements PkiOperation {
         this.subject = subject;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public MessageType getMessageType() {
         return MessageType.GetCertInitial;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
 	public byte[] getMessageData() throws IOException {
     	// TODO: BC Dependency
         X509Name issuerName = new X509Principal(issuer.getEncoded());
@@ -58,6 +62,10 @@ public class GetCertInitial implements PkiOperation {
         return new IssuerAndSubject(issuerName, subjectName).getEncoded();
     }
     
+	/**
+     * {@inheritDoc}
+     */
+	@Override
     public String toString() {
     	return getMessageType().toString();
     }

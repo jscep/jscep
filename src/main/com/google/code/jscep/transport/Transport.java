@@ -51,6 +51,17 @@ public abstract class Transport {
 	public Proxy getProxy() {
 		return proxy;
 	}
+	
+	/**
+	 * This method sends the given request to the URL provided in the constructor and
+	 * uses the request's content handler to parse the response.  
+	 * 
+	 * @param <T> the response type.
+	 * @param msg the message to send.
+	 * @return the response of type T.
+	 * @throws IOException if any I/O error occurs.
+	 * @throws MalformedURLException if the URL is not well-formed.
+	 */
 	abstract public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException;
 	
 	/**
@@ -69,7 +80,7 @@ public abstract class Transport {
 		}
 	}
 	
-	protected URL getUrl(String op) throws MalformedURLException {
+	URL getUrl(String op) throws MalformedURLException {
         return new URL(url.toExternalForm() + "?operation=" + op);
     }
 }

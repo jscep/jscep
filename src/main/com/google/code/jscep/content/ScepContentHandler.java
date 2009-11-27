@@ -25,6 +25,11 @@ package com.google.code.jscep.content;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * This interface represents a mechanism for handling specific SCEP content.
+ * 
+ * @param <T> the content that is handled by the implementation of this interface.
+ */
 public interface ScepContentHandler<T> {
 	/**
 	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.2.1
@@ -47,5 +52,13 @@ public interface ScepContentHandler<T> {
      */
     String X509_NEXT_CA_CERT = "application/x-x509-next-ca-cert";
 	
+    /**
+     * Read and interpret the content from the input stream.
+     * 
+     * @param in the input stream containing the content.
+     * @param mimeType the type of the input stream.
+     * @return the content in a usage form.
+     * @throws IOException if any I/O error occurs.
+     */
 	T getContent(InputStream in, String mimeType) throws IOException;
 }

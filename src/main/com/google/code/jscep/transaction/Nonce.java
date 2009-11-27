@@ -30,14 +30,27 @@ import java.util.Arrays;
 public class Nonce {
 	private byte[] nonce;
 	
+	/**
+	 * Creates a new nonce with the given byte array.
+	 * 
+	 * @param nonce the byte array.
+	 */
 	public Nonce(byte[] nonce) {
 		this.nonce = nonce;
 	}
 	
+	/**
+	 * Returns the nonce byte array.
+	 * 
+	 * @return the byte array.
+	 */
 	public byte[] getBytes() {
 		return nonce;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object o) {
 		Nonce n = (Nonce) o;

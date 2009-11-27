@@ -45,12 +45,16 @@ public class GetCRL implements PkiOperation {
         this.serial = serial;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public MessageType getMessageType() {
         return MessageType.GetCRL;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
 	public byte[] getMessageData() throws IOException {
     	// TODO: BC Dependency
         X509Name issuerName = new X509Principal(issuer.getEncoded());
@@ -58,6 +62,10 @@ public class GetCRL implements PkiOperation {
         return new IssuerAndSerialNumber(issuerName, serial).getEncoded();
     }
     
+	/**
+     * {@inheritDoc}
+     */
+	@Override
     public String toString() {
     	return getMessageType().toString();
     }

@@ -41,7 +41,7 @@ public interface Request<T> {
      * Returns the message for this request.
      * 
      * @return the message.
-     * @throws IOException
+     * @throws IOException if ny I/O error occurs.
      */
     Object getMessage() throws IOException;
     /**

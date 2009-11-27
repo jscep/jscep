@@ -45,19 +45,22 @@ public class GetCert implements PkiOperation {
         this.serial = serial;
     }
 
-    @Override
     public MessageType getMessageType() {
         return MessageType.GetCert;
     }
 
-    @Override
+
 	public byte[] getMessageData() throws IOException {
     	// TODO: BC Dependency
         X509Name issuerName = new X509Principal(issuer.getEncoded());
         
         return new IssuerAndSerialNumber(issuerName, serial).getEncoded();
     }
-    
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
     public String toString() {
     	return getMessageType().toString();
     }
