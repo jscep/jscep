@@ -11,4 +11,8 @@ public class MessageTypeTest {
 		}
 	}
 
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalid() {
+		MessageType.valueOf(-1);
+	}
 }

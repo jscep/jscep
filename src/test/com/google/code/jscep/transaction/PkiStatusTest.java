@@ -10,5 +10,9 @@ public class PkiStatusTest {
 			Assert.assertSame(status, PkiStatus.valueOf(status.getValue()));
 		}
 	}
-
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalid() {
+		PkiStatus.valueOf(-1);
+	}
 }

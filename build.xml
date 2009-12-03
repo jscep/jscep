@@ -1,4 +1,4 @@
-<project name="jSCEP" default="main">
+<project name="jSCEP" default="build">
 	<property file="branch.properties"/>
 	<property name="instrumented.output" value="bin/instrumented"/>
 	<property name="src.output" value="bin/main"/>
@@ -31,7 +31,20 @@
 		</classpath>
 	</taskdef>
 	
-	<target name="main" depends="clean, init, compile, compress, test, javadoc-archive, source-archive, coverage-report">
+	<target name="build" depends="clean, init" description="Compiles source and run JUnit tests">
+		<antcall target="compile"/>
+		<antcall target="test"/>
+	</target>
+	
+	<target name="release" depends="build" description="Builds release artifacts">
+		<antcall target="release-archive"/>
+		<antcall target="javadoc-archive"/>
+		<antcall target="source-archive"/>
+	</target>
+	
+	<target name="reports" depends="clean, init, compile" description="Generates reports">
+		<antcall target="test-instrumented"/>
+		<antcall target="coverage-report"/>
 	</target>
 
 	<target name="clean">
@@ -79,11 +92,30 @@
 		</javac>
 	</target>
 	
-	<target name="test" depends="test-compile, instrument">
+	<target name="test-instrumented" depends="test-compile, instrument">
 		<junit fork="true">
+			<formatter type="plain" usefile="false"/>
 			<classpath>
 				<path path="${test.output}"/>
 				<pathelement path="${instrumented.output}"/>
+				<fileset dir="${lib}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<batchtest>
+				<fileset dir="${test.output}">
+					<include name="**/*.class"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+	<target name="test" depends="test-compile">
+		<junit fork="true">
+			<formatter type="plain" usefile="false"/>
+			<classpath>
+				<path path="${test.output}"/>
+				<pathelement path="${src.output}"/>
 				<fileset dir="${lib}">
 					<include name="*.jar"/>
 				</fileset>
@@ -143,7 +175,7 @@
 		</jar>
 	</target>
 	
-	<target name="compress">
+	<target name="release-archive">
 		<jar destfile="${release}/jSCEP-${build.number}.jar">
 			<fileset dir="${src.output}">
 				<include name="**/*.class"/>

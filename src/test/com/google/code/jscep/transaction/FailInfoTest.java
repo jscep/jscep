@@ -12,4 +12,8 @@ public class FailInfoTest {
 		}
 	}
 
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalid() {
+		FailInfo.valueOf(-1);
+	}
 }

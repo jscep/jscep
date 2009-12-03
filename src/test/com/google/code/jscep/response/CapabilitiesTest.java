@@ -124,4 +124,9 @@ public class CapabilitiesTest {
 	public void testGetPreferredMessageDigestSHA512() {
 		Assert.assertEquals("SHA-512", createCapabilities("SHA-1", "SHA-256", "SHA-512").getPreferredMessageDigest());
 	}
+	
+	@Test
+	public void testIgnoresUnknownCapability() {
+		createCapabilities("BOGUS");
+	}
 }

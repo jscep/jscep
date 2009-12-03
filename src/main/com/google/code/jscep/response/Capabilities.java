@@ -27,8 +27,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class Capabilities {
+	private static final Logger LOGGER = Logger.getLogger(Capabilities.class.getName());
     public static enum Capability {
     	/**
     	 * CA Supports the GetNextCACert message.
@@ -72,6 +74,12 @@ public class Capabilities {
     	map.put("DES3", Capability.TRIPLE_DES);
     }
     
+    /**
+     * Creates a new Capabilities instance from the given list of
+     * capabilities.
+     * 
+     * @param capabilities the list of capabilities.
+     */
     public Capabilities(List<String> capabilities) {
     	for (String capability : capabilities) {
     		// http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.2
@@ -80,6 +88,8 @@ public class Capabilities {
     		// that might be sent back by a CA.
     		if (map.containsKey(capability)) {
     			this.capabilties.add(map.get(capability));
+    		} else {
+    			LOGGER.info("Unrecognised Capability: \"" + capability + "\" (IGNORED)");
     		}
     	}
     }
