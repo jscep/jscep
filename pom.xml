@@ -1,100 +1,100 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.googlecode</groupId>
+	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
 	<name>jSCEP</name>
 	<url>http://code.google.com/p/jscep</url>
 	<dependencies>
-    	<dependency>
-      		<groupId>junit</groupId>
-      		<artifactId>junit</artifactId>
-      		<version>4.1</version>
-      		<scope>test</scope>
-    	</dependency>
-    	<dependency>
-    		<groupId>bouncycastle</groupId> 
-			<artifactId>bcprov-jdk16</artifactId> 
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
 			<version>140</version>
-    	</dependency>
-    	<dependency>
-    		<groupId>bouncycastle</groupId> 
-			<artifactId>bcmail-jdk16</artifactId> 
-			<version>140</version> 
-    	</dependency>
+		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcmail-jdk16</artifactId>
+			<version>140</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-      			<artifactId>maven-compiler-plugin</artifactId>
-      			<configuration>
-        			<source>1.5</source>
-        			<target>1.5</target>
-      			</configuration>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
 			</plugin>
 			<plugin>
-        		<groupId>org.codehaus.mojo</groupId>
-        		<artifactId>cobertura-maven-plugin</artifactId>
-        		<executions>
-          			<execution>
-            			<goals>
-              				<goal>clean</goal>
-            			</goals>
-          			</execution>
-        		</executions>
-      		</plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<reporting>
-	    <plugins>
-      		<plugin>
-        		<groupId>org.codehaus.mojo</groupId>
-        		<artifactId>cobertura-maven-plugin</artifactId>
-      		</plugin>
-      		<plugin>
-        		<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-javadoc-plugin</artifactId>
-        		<version>2.6.1</version>
-        		<configuration>
-        			<detectLinks/>
-        		</configuration>
-      		</plugin>
-    	</plugins>
-  	</reporting>
-  	<licenses>
-  		<license>
-  			<name>MIT License</name>
-  			<url>http://jscep.googlecode.com/svn/trunk/LICENCE.txt</url>
-  			<distribution>repo</distribution>
-  		</license>
-  	</licenses>
-  	<issueManagement>
-  		<system>Google Code</system>
-  		<url>http://code.google.com/p/jscep/issues/list</url>
-  	</issueManagement>
-  	<scm>
-  		<connection>scm:svn:http://jscep.googlecode.com/svn/trunk/</connection>
-  		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/trunk/</developerConnection>
-  		<tag>HEAD</tag>
-  		<url>http://code.google.com/p/jscep/source/browse/</url>
-  	</scm>
-  	<mailingLists>
-  		<mailingList>
-  			<name>jscep-announce</name>
-  			<post>jscep-announce@googlegroups.com</post>
-  			<archive>http://groups.google.com/group/jscep-announce</archive>
-  		</mailingList>
-  		<mailingList>
-  			<name>jscep-discuss</name>
-  			<post>jscep-discuss@googlegroups.com</post>
-  			<archive>http://groups.google.com/group/jscep-discuss</archive>
-  		</mailingList>
-  		<mailingList>
-  			<name>jscep-support</name>
-  			<post>jscep-support@googlegroups.com</post>
-  			<archive>http://groups.google.com/group/jscep-support</archive>
-  		</mailingList>
-  	</mailingLists>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.6.1</version>
+				<configuration>
+					<detectLinks />
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://jscep.googlecode.com/svn/trunk/LICENCE.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/jscep/issues/list</url>
+	</issueManagement>
+	<scm>
+		<connection>scm:svn:http://jscep.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/trunk/</developerConnection>
+		<tag>HEAD</tag>
+		<url>http://code.google.com/p/jscep/source/browse/</url>
+	</scm>
+	<mailingLists>
+		<mailingList>
+			<name>jscep-announce</name>
+			<post>jscep-announce@googlegroups.com</post>
+			<archive>http://groups.google.com/group/jscep-announce</archive>
+		</mailingList>
+		<mailingList>
+			<name>jscep-discuss</name>
+			<post>jscep-discuss@googlegroups.com</post>
+			<archive>http://groups.google.com/group/jscep-discuss</archive>
+		</mailingList>
+		<mailingList>
+			<name>jscep-support</name>
+			<post>jscep-support@googlegroups.com</post>
+			<archive>http://groups.google.com/group/jscep-support</archive>
+		</mailingList>
+	</mailingLists>
 </project>
