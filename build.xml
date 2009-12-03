@@ -1,8 +1,8 @@
 <project name="jSCEP" default="build">
 	<property file="branch.properties"/>
 	<property name="instrumented.output" value="bin/instrumented"/>
-	<property name="src.output" value="bin/main"/>
-	<property name="test.output" value="bin/test"/>
+	<property name="src.output" value="bin/main/java"/>
+	<property name="test.output" value="bin/test/java"/>
 	<property name="src" value="src/main"/>
 	<property name="test" value="src/test"/>
 	<property name="lib" value="lib"/>
