@@ -1,30 +1,64 @@
 <project name="jSCEP" default="main">
+	<property file="branch.properties"/>
+	<property name="instrumented.output" value="bin/instrumented"/>
+	<property name="src.output" value="bin/main"/>
+	<property name="test.output" value="bin/test"/>
+	<property name="src" value="src/main"/>
+	<property name="test" value="src/test"/>
+	<property name="lib" value="lib"/>
+	<property name="target" value="target"/>
+	<property name="docs" value="${target}/javadoc"/>
+	<property name="release" value="${target}/release"/>
+	<property name="coverage" value="${target}/coverage"/>
+
 	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml">
 		<classpath>
-			<fileset dir="lib">
+			<fileset dir="${lib}">
 				<include name="svnant.jar"/>
 				<include name="svnClientAdapter.jar"/>
 			</fileset>
 		</classpath>
 	</typedef>
-	<property file="branch.properties"/>
-	<property name="src.output" value="bin/main"/>
-	<property name="test.output" value="bin/test"/>
-	<property name="src" value="src/main"/>
-	<property name="test" value="src/test"/>
-	<property name="target" value="target"/>
-	<property name="docs" value="${target}/javadoc"/>
+	<taskdef resource="tasks.properties">
+		<classpath>
+			<fileset dir="${lib}">
+				<include name="cobertura.jar" />
+				<include name="asm-3.0.jar" />
+				<include name="asm-tree-3.0.jar" />
+				<include name="jakarta-oro-2.0.8.jar" />
+				<include name="log4j-1.2.9.jar" />
+			</fileset>
+		</classpath>
+	</taskdef>
 	
-	<target name="main" depends="init, compile, compress, test, javadoc-archive, source-archive">
+	<target name="main" depends="clean, init, compile, compress, test, javadoc-archive, source-archive, coverage-report">
 	</target>
 
 	<target name="clean">
+		<delete dir="bin"/>
+		<delete dir="${release}"/>
+		<delete dir="${coverage}"/>
+	</target>
+
+	<target name="instrument">
+		<delete file="cobertura.ser"/>
+		<cobertura-instrument todir="${instrumented.output}">
+			<fileset dir="${src.output}">
+				<include name="**/*.class" />
+			</fileset>
+		</cobertura-instrument>
+	</target>
+	
+	<target name="coverage-report">
+		<cobertura-report  format="html" destdir="${coverage}" srcdir="${src}"/>
 	</target>
 	
 	<target name="init">
 		<mkdir dir="${src.output}"/>
 		<mkdir dir="${test.output}"/>
+		<mkdir dir="${instrumented.output}"/>
 		<mkdir dir="${docs}"/>
+		<mkdir dir="${release}"/>
 		<svn javahl="false" svnkit="false">
 			<wcversion path="${basedir}" prefix="svn."/>
 		</svn>
@@ -35,7 +69,7 @@
 	</target>
 	
 	<target name="compile">
-		<javac srcdir="${src}" destdir="${src.output}" source="5">
+		<javac srcdir="${src}" destdir="${src.output}" source="5" debug="true">
 			<classpath>
 				<fileset dir="lib">
     				<include name="bcmail-jdk16-144.jar"/>
@@ -45,17 +79,13 @@
 		</javac>
 	</target>
 	
-	<target name="test" depends="test-compile">
+	<target name="test" depends="test-compile, instrument">
 		<junit fork="true">
 			<classpath>
 				<path path="${test.output}"/>
-				<fileset dir="${src.output}">
-					<include name="jSCEP-${build.number}.jar"/>
-				</fileset>
-				<fileset dir="lib">
-    				<include name="bcmail-jdk16-144.jar"/>
-					<include name="bcprov-jdk16-144.jar"/>
-					<include name="junit-4.7.jar"/>
+				<pathelement path="${instrumented.output}"/>
+				<fileset dir="${lib}">
+					<include name="*.jar"/>
 				</fileset>
 			</classpath>
 			<batchtest>
@@ -69,10 +99,8 @@
 	<target name="test-compile" depends="compile">
 		<javac srcdir="${test}" destdir="${test.output}" source="5">
 			<classpath>
-				<fileset dir="${src.output}">
-					<include name="jSCEP-${build.number}.jar"/>
-				</fileset>
-				<fileset dir="lib">
+				<pathelement path="${src.output}"/>
+				<fileset dir="${lib}">
     				<include name="bcmail-jdk16-144.jar"/>
 					<include name="bcprov-jdk16-144.jar"/>
 					<include name="junit-4.7.jar"/>
@@ -98,7 +126,7 @@
 	</target>
 
 	<target name="source-archive">
-		<jar destfile="${src.output}/jSCEP-source-${build.number}.jar" basedir="${src}" includes="**/*.java">
+		<jar destfile="${release}/jSCEP-source-${build.number}.jar" basedir="${src}" includes="**/*.java">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-On" value="${TODAY}"/>
@@ -107,7 +135,7 @@
 	</target>	
 
 	<target name="javadoc-archive" depends="javadoc">
-		<jar destfile="${src.output}/jSCEP-docs-${build.number}.jar" basedir="${docs}" includes="**/*">
+		<jar destfile="${release}/jSCEP-docs-${build.number}.jar" basedir="${docs}" includes="**/*">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-On" value="${TODAY}"/>
@@ -116,7 +144,7 @@
 	</target>
 	
 	<target name="compress">
-		<jar destfile="${src.output}/jSCEP-${build.number}.jar">
+		<jar destfile="${release}/jSCEP-${build.number}.jar">
 			<fileset dir="${src.output}">
 				<include name="**/*.class"/>
 			</fileset>
