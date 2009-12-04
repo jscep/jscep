@@ -1,9 +1,0 @@
-com.google.code.jscep
-com.google.code.jscep.asn1
-com.google.code.jscep.content
-com.google.code.jscep.operations
-com.google.code.jscep.request
-com.google.code.jscep.response
-com.google.code.jscep.transaction
-com.google.code.jscep.transport
-com.google.code.jscep.util
