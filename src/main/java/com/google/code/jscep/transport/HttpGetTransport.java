@@ -29,6 +29,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.request.Request;
 
 /**
@@ -54,7 +55,7 @@ public class HttpGetTransport extends Transport {
         return msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
 	}
 	
-	private <M> URL getUrl(String op, M message) throws MalformedURLException {
+	private <M> URL getUrl(Operation op, M message) throws MalformedURLException {
         if (message == null) {
             return new URL(getUrl(op).toExternalForm() + "&message=");
         } else {

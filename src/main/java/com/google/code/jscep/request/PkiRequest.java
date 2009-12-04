@@ -27,7 +27,6 @@ import java.io.IOException;
 import com.google.code.jscep.content.CertRepContentHandler;
 
 public class PkiRequest implements Request<byte[]> {
-	private static final String OPERATION = "PKIOperation";
 	private final byte[] signedData;
 	
 	public PkiRequest(byte[] signedData) {
@@ -38,17 +37,9 @@ public class PkiRequest implements Request<byte[]> {
 		return signedData;
 	}
 
-	public String getOperation() {
-		return OPERATION;
+	public Operation getOperation() {
+		return Operation.PKIOperation;
 	}
-	
-	/**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-    	return OPERATION;
-    }
     
     public CertRepContentHandler getContentHandler() {
     	return new CertRepContentHandler();

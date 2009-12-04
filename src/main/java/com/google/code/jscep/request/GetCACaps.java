@@ -29,7 +29,6 @@ import com.google.code.jscep.response.Capabilities;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
  */
 public class GetCACaps implements Request<Capabilities> {
-    private static final String OPERATION = "GetCACaps";
     private String ca;
 
     public GetCACaps() {
@@ -39,20 +38,12 @@ public class GetCACaps implements Request<Capabilities> {
         this.ca = ca;
     }
 
-    public String getOperation() {
-        return OPERATION;
+    public Operation getOperation() {
+        return Operation.GetCACaps;
     }
 
     public String getMessage() {
         return ca;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-    	return OPERATION;
     }
     
     public CaCapabilitiesContentHandler getContentHandler() {

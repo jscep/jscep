@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 
+import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.request.Request;
 
 /**
@@ -80,7 +81,7 @@ public abstract class Transport {
 		}
 	}
 	
-	URL getUrl(String op) throws MalformedURLException {
+	URL getUrl(Operation op) throws MalformedURLException {
         return new URL(url.toExternalForm() + "?operation=" + op);
     }
 }

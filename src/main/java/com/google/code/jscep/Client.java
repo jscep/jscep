@@ -58,7 +58,7 @@ import com.google.code.jscep.operations.GetCert;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
-import com.google.code.jscep.request.GetNextCaCert;
+import com.google.code.jscep.request.GetNextCACert;
 import com.google.code.jscep.response.Capabilities;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
@@ -275,7 +275,7 @@ public class Client {
     
     public List<X509Certificate> getNextCA() throws IOException {
     	Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-    	GetNextCaCert req = new GetNextCaCert(caId);
+    	GetNextCACert req = new GetNextCACert(caId);
     	
     	return trans.sendMessage(req);
     }

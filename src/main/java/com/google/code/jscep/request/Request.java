@@ -36,7 +36,7 @@ public interface Request<T> {
 	 * 
 	 * @return the name of this operation.
 	 */
-    String getOperation();
+    Operation getOperation();
     /**
      * Returns the message for this request.
      * 

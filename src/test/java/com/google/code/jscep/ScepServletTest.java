@@ -7,6 +7,8 @@ import org.eclipse.jetty.testing.ServletTester;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.code.jscep.request.Operation;
+
 
 public class ScepServletTest {
 	private ServletTester tester;
@@ -21,13 +23,16 @@ public class ScepServletTest {
 	
 	@Test
 	public void testFoo() throws IOException, Exception {
-		HttpTester req = new HttpTester();
-		HttpTester res = new HttpTester();
+		final HttpTester req = new HttpTester();
+		final HttpTester res = new HttpTester();
 		
 		req.setMethod("GET");
-		req.setURI("/scep/pkiclient.exe");
+		req.setURI("/scep/pkiclient.exe?operation=" + Operation.PKIOperation);
 		req.setVersion("HTTP/1.0");
 		
-		res.parse(tester.getResponses(req.generate()));
+		String request = req.generate();
+		System.out.println(request);
+		System.out.println(tester.getResponses(request));
+//		System.out.println(res.parse(tester.getResponses(req.generate())));
 	}
 }

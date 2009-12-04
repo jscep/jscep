@@ -30,33 +30,24 @@ import com.google.code.jscep.content.NextCaCertificateContentHandler;
 /**
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6
  */
-public class GetNextCaCert implements Request<List<X509Certificate>> {
-    private static final String OPERATION = "GetNextCaCert";
+public class GetNextCACert implements Request<List<X509Certificate>> {
     private String ca;
 
-    public GetNextCaCert() {
+    public GetNextCACert() {
     }
 
-    public GetNextCaCert(String ca) {
+    public GetNextCACert(String ca) {
         this.ca = ca;
     }
 
-    public String getOperation() {
-        return OPERATION;
+    public Operation getOperation() {
+        return Operation.GetNextCACert;
     }
 
     public String getMessage() {
         return ca;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-    	return OPERATION;
-    }
-    
+     
     public NextCaCertificateContentHandler getContentHandler() {
     	return new NextCaCertificateContentHandler();
     }
