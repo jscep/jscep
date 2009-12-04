@@ -28,6 +28,13 @@ public class CaCapabilitiesContentHandlerTest {
 		Assert.assertTrue(caps.supportsTripleDES());
 	}
 	
+	@Test
+	public void testCorrectContentType() throws IOException {
+		final InputStream is = getStreamForCapabilities("DES3");
+		final Capabilities caps = fixture.getContent(is, "text/plain");
+		Assert.assertTrue(caps.supportsTripleDES());
+	}
+	
 	private InputStream getStreamForCapabilities(String... capabilities) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
