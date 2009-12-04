@@ -23,25 +23,38 @@
 package com.google.code.jscep.request;
 
 import java.io.IOException;
+import java.security.KeyPair;
 
 import com.google.code.jscep.content.CertRepContentHandler;
+import com.google.code.jscep.response.CertRep;
 
-public class PkiRequest implements Request<byte[]> {
+public class PkiRequest implements Request<CertRep> {
 	private final byte[] signedData;
-	
-	public PkiRequest(byte[] signedData) {
+	private final KeyPair keyPair;
+
+	public PkiRequest(byte[] signedData, KeyPair keyPair) {
 		this.signedData = signedData;
+		this.keyPair = keyPair;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public byte[] getMessage() throws IOException {
 		return signedData;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Operation getOperation() {
 		return Operation.PKIOperation;
 	}
-    
-    public CertRepContentHandler getContentHandler() {
-    	return new CertRepContentHandler();
-    }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public CertRepContentHandler getContentHandler() {
+		return new CertRepContentHandler(keyPair);
+	}
 }

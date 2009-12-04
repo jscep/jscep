@@ -27,7 +27,7 @@ import java.math.BigInteger;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.pkcs.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
 

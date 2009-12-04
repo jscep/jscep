@@ -26,27 +26,42 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyPair;
 
-// TODO: Should this return a CertRep instead?
+import com.google.code.jscep.response.CertRep;
+import com.google.code.jscep.transaction.CmsException;
+
 /**
- * Content handler for PKIOperation requests. 
+ * Content handler for PKIOperation requests.
  */
-public class CertRepContentHandler implements ScepContentHandler<byte[]> {
+public class CertRepContentHandler implements ScepContentHandler<CertRep> {
+	private final KeyPair keyPair;
+	
+	public CertRepContentHandler(KeyPair keyPair) {
+		this.keyPair = keyPair;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
-    public byte[] getContent(InputStream in, String mimeType) throws IOException {
-    	if (mimeType.equals(PKI_MESSAGE)) {
-    		BufferedInputStream is = new BufferedInputStream(in);
-    		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    		
-    		int b;
-    		while ((b = is.read()) != -1)
-    			baos.write(b);
-    		
-            return baos.toByteArray();
-    	} else {
-    		throw new IOException("Invalid Content Type");
-    	}
-    }
+	public CertRep getContent(InputStream in, String mimeType)
+			throws IOException {
+		if (mimeType.equals(PKI_MESSAGE)) {
+			BufferedInputStream is = new BufferedInputStream(in);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+			int b;
+			while ((b = is.read()) != -1) {
+				baos.write(b);
+			}
+
+			try {
+				return CertRep.getInstance(keyPair, baos.toByteArray());
+			} catch (CmsException e) {
+				throw new IOException(e);
+			}
+		} else {
+			throw new IOException("Invalid Content Type");
+		}
+	}
 }

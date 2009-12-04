@@ -31,24 +31,33 @@ import com.google.code.jscep.content.CaCertificateContentHandler;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
  */
 public class GetCACert implements Request<List<X509Certificate>> {
-    private String ca;
+	private String ca;
 
-    public GetCACert() {
-    }
+	public GetCACert() {
+	}
 
-    public GetCACert(String ca) {
-        this.ca = ca;
-    }
+	public GetCACert(String ca) {
+		this.ca = ca;
+	}
 
-    public Operation getOperation() {
-        return Operation.GetCACert;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public Operation getOperation() {
+		return Operation.GetCACert;
+	}
 
-    public String getMessage() {
-        return ca;
-    }
-    
-    public CaCertificateContentHandler getContentHandler() {
-    	return new CaCertificateContentHandler();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getMessage() {
+		return ca;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public CaCertificateContentHandler getContentHandler() {
+		return new CaCertificateContentHandler();
+	}
 }

@@ -24,39 +24,60 @@ package com.google.code.jscep.content;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Content handler for GetCACert requests. 
+ * Content handler for GetCACert requests.
  */
-public class CaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
+public class CaCertificateContentHandler implements
+		ScepContentHandler<List<X509Certificate>> {
 	/**
 	 * {@inheritDoc}
 	 */
-    public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
-    	List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
-    	if (mimeType.equals(X509_CA_CERT)) {
-	        try {
-	            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-	            X509Certificate ca = (X509Certificate) cf.generateCertificate(in);
-	
-	            // There should only ever be one certificate in this response.
-	            certs.add(ca);
-	
-	            return certs;
-	        } catch (CertificateException ce) {
-	            throw new IOException(ce);
-	        }
-    	} else if (mimeType.equals(X509_CA_RA_CERT)) {
-    		// TODO: MISSING: CA and RA Certificates Response
-    		
-    		return null;
-    	} else {
-    		throw new IOException("Invalid Content Type");
-    	}
-    }
+	public List<X509Certificate> getContent(InputStream in, String mimeType)
+			throws IOException {
+		final List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
+		final CertificateFactory cf;
+		try {
+			cf = CertificateFactory.getInstance("X.509");
+		} catch (CertificateException e) {
+			throw new IOException(e);
+		}
+
+		if (mimeType.equals(X509_CA_CERT)) {
+			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.1
+			try {
+
+				X509Certificate ca = (X509Certificate) cf
+						.generateCertificate(in);
+
+				// There should only ever be one certificate in this response.
+				certs.add(ca);
+			} catch (CertificateException ce) {
+				throw new IOException(ce);
+			}
+		} else if (mimeType.equals(X509_CA_RA_CERT)) {
+			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.2
+			try {
+				Collection<? extends Certificate> collection = cf
+						.generateCertificates(in);
+
+				for (Certificate cert : collection) {
+					certs.add((X509Certificate) cert);
+				}
+			} catch (CertificateException e) {
+				throw new IOException(e);
+			}
+		} else {
+			throw new IOException("Invalid Content Type");
+		}
+
+		return certs;
+	}
 }

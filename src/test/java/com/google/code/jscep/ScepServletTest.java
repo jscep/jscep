@@ -24,7 +24,7 @@ public class ScepServletTest {
 	@Test
 	public void testFoo() throws IOException, Exception {
 		final HttpTester req = new HttpTester();
-		final HttpTester res = new HttpTester();
+//		final HttpTester res = new HttpTester();
 		
 		req.setMethod("GET");
 		req.setURI("/scep/pkiclient.exe?operation=" + Operation.PKIOperation);

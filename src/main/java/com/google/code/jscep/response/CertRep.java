@@ -33,7 +33,7 @@ import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.TransactionId;
 
-public abstract class PkiMessage {
+public abstract class CertRep {
 	public abstract FailInfo getFailInfo();
 	public abstract PkiStatus getStatus();	
 	public abstract Nonce getRecipientNonce();
@@ -41,7 +41,7 @@ public abstract class PkiMessage {
 	public abstract TransactionId getTransactionId();
 	public abstract CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException;
 	
-	public static PkiMessage getInstance(KeyPair keyPair, byte[] bytes) throws CmsException {
-		return new PkiMessageImpl(keyPair, bytes);
+	public static CertRep getInstance(KeyPair keyPair, byte[] bytes) throws CmsException {
+		return new CertRepImpl(keyPair, bytes);
 	}
 }

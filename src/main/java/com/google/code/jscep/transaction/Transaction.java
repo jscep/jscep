@@ -34,61 +34,66 @@ import com.google.code.jscep.RequestFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.request.PkiRequest;
-import com.google.code.jscep.response.PkiMessage;
+import com.google.code.jscep.response.CertRep;
 import com.google.code.jscep.transport.Transport;
 
 public class Transaction {
-    private final TransactionId transId;
-    private final Nonce senderNonce;
-    private final KeyPair keyPair;
-    private final Transport transport;
-    private final Enveloper enveloper;
-    private final Signer signer;
-    
-    protected Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer) {
-    	this.transport = transport;
-    	this.keyPair = keyPair;
-        this.transId = TransactionId.createTransactionId(keyPair);
-        this.senderNonce = NonceFactory.nextNonce();
-        this.enveloper = enveloper;
-        this.signer = signer;
-    }
+	private final TransactionId transId;
+	private final Nonce senderNonce;
+	private final KeyPair keyPair;
+	private final Transport transport;
+	private final Enveloper enveloper;
+	private final Signer signer;
 
-    public CertStore performOperation(PkiOperation operation) throws MalformedURLException, IOException, CmsException, RequestPendingException, RequestFailureException {
-    	try {
-    		byte[] enveloped = enveloper.envelope(operation.getMessageData());
-	        byte[] signedData = signer.sign(enveloped, operation.getMessageType(), this.transId, this.senderNonce);
-	        PkiRequest request = new PkiRequest(signedData);
-	        byte[] response = (byte[]) transport.sendMessage(request);
-    	
-	        return handleResponse(response);
-    	} catch (GeneralSecurityException e) {
-    		throw new CmsException(e);
-    	}
-    }
-    
-    public CertStore handleResponse(byte[] bytes) throws CmsException, RequestPendingException, RequestFailureException, NoSuchProviderException, NoSuchAlgorithmException {
-    	PkiMessage msg = PkiMessage.getInstance(keyPair, bytes);
+	protected Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer) {
+		this.transport = transport;
+		this.keyPair = keyPair;
+		this.transId = TransactionId.createTransactionId(keyPair);
+		this.senderNonce = NonceFactory.nextNonce();
+		this.enveloper = enveloper;
+		this.signer = signer;
+	}
 
-        if (msg.getTransactionId().equals(this.transId) == false) {
-            throw new CmsException("Transaction ID Mismatch: Sent [" + this.transId + "]; Received [" + msg.getTransactionId() + "]");
-        }
-        
-        if (msg.getRecipientNonce().equals(senderNonce) == false) {
-        	throw new CmsException("Sender Nonce Mismatch.  Sent [" + this.senderNonce + "]; Received [" + msg.getRecipientNonce() + "]");
-        }
-        
-        // TODO: Detect replay attacks.
-        // 
-        // http://tools.ietf.org/html/draft-nourse-scep-19#section-8.5
-        msg.getSenderNonce();
-        
-        if (msg.getStatus().equals(PkiStatus.FAILURE)) {
-        	throw new RequestFailureException(msg.getFailInfo().toString());
-        } else if (msg.getStatus().equals(PkiStatus.PENDING)) {
-        	throw new RequestPendingException();
-        } else {
-        	return msg.getCertStore();
-        }
-    }
+	public CertStore performOperation(PkiOperation op) throws MalformedURLException, IOException, CmsException, RequestPendingException, RequestFailureException {
+		try {
+			byte[] enveloped = enveloper.envelope(op.getMessageData());
+			byte[] signedData = signer.sign(enveloped, op.getMessageType(), this.transId, this.senderNonce);
+			PkiRequest request = new PkiRequest(signedData, keyPair);
+			CertRep response = transport.sendMessage(request);
+
+			return handleResponse(response);
+		} catch (GeneralSecurityException e) {
+			throw new CmsException(e);
+		}
+	}
+
+	public CertStore handleResponse(CertRep msg) throws CmsException,
+			RequestPendingException, RequestFailureException,
+			NoSuchProviderException, NoSuchAlgorithmException {
+		
+		if (msg.getTransactionId().equals(this.transId) == false) {
+			throw new CmsException("Transaction ID Mismatch: Sent ["
+					+ this.transId + "]; Received [" + msg.getTransactionId()
+					+ "]");
+		}
+
+		if (msg.getRecipientNonce().equals(senderNonce) == false) {
+			throw new CmsException("Sender Nonce Mismatch.  Sent ["
+					+ this.senderNonce + "]; Received ["
+					+ msg.getRecipientNonce() + "]");
+		}
+
+		// TODO: Detect replay attacks.
+		// 
+		// http://tools.ietf.org/html/draft-nourse-scep-19#section-8.5
+		msg.getSenderNonce();
+
+		if (msg.getStatus().equals(PkiStatus.FAILURE)) {
+			throw new RequestFailureException(msg.getFailInfo().toString());
+		} else if (msg.getStatus().equals(PkiStatus.PENDING)) {
+			throw new RequestPendingException();
+		} else {
+			return msg.getCertStore();
+		}
+	}
 }

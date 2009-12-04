@@ -27,20 +27,28 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+import org.bouncycastle.asn1.cms.SignedData;
+
 /**
- * Content handler for GetNextCA requests. 
+ * Content handler for GetNextCA requests.
  */
-public class NextCaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
+public class NextCaCertificateContentHandler implements
+		ScepContentHandler<List<X509Certificate>> {
 	/**
 	 * {@inheritDoc}
 	 */
-    public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
-    	if (mimeType.equals(X509_NEXT_CA_CERT)) {
-    		// TODO: MISSING: GetNextCACert Response
-    		
-            return null;	
-    	} else {
-    		throw new IOException("Invalid Content Type");
-    	}
-    }
+	public List<X509Certificate> getContent(InputStream in, String mimeType)
+			throws IOException {
+		if (mimeType.equals(X509_NEXT_CA_CERT)) {
+			// TODO: MISSING: GetNextCACert Response
+			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
+			
+			// The response consists of a SignedData PKCS#7 [RFC2315], 
+			// signed by the current CA (or RA) signing key.
+//			SignedData sd = new SignedData(null);
+			return null;
+		} else {
+			throw new IOException("Invalid Content Type");
+		}
+	}
 }
