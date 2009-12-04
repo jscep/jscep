@@ -20,37 +20,14 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
 
-import com.google.code.jscep.content.CertRepContentHandler;
-
-public class PkiRequest implements Request<byte[]> {
-	private static final String OPERATION = "PKIOperation";
-	private final byte[] signedData;
-	
-	public PkiRequest(byte[] signedData) {
-		this.signedData = signedData;
+public final class ClientFactory {
+	public static Client createClient(ClientConfiguration config) throws CertificateEncodingException, NoSuchAlgorithmException, IOException, ScepException {
+		return new Client(config);
 	}
-
-	public byte[] getMessage() throws IOException {
-		return signedData;
-	}
-
-	public String getOperation() {
-		return OPERATION;
-	}
-	
-	/**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-    	return OPERATION;
-    }
-    
-    public CertRepContentHandler getContentHandler() {
-    	return new CertRepContentHandler();
-    }
 }

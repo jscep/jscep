@@ -67,8 +67,8 @@ import com.google.code.jscep.transport.Transport;
 /**
  * SCEP Client
  */
-public class Requester {
-	private final static Logger LOGGER = Logger.getLogger(Requester.class.getName());
+public class Client {
+	private final static Logger LOGGER = Logger.getLogger(Client.class.getName());
     private URL url;						// Required
     private byte[] caDigest;				// Required
     private String digestAlgorithm;			// Optional
@@ -79,17 +79,17 @@ public class Requester {
 
     // Requester(URL url, byte[] caDigest, X500Principal subject);
     // Requester(URL url, byte[] caDigest, X509Certificate identity, KeyPair keyPair);    
-    private Requester(Builder builder) throws IllegalStateException, NoSuchAlgorithmException, CertificateEncodingException, IOException, ScepException {
-    	url = builder.url;
-    	proxy = builder.proxy;
-    	caDigest = builder.caDigest;
-    	caId = builder.caId;
-    	keyPair = builder.keyPair;
-    	identity = builder.identity;
-    	digestAlgorithm = builder.digestAlgorithm;
+    protected Client(ClientConfiguration config) throws IllegalStateException, NoSuchAlgorithmException, CertificateEncodingException, IOException, ScepException {
+    	url = config.getUrl();
+    	proxy = config.getProxy();
+    	caDigest = config.getCaDigest();
+    	caId = config.getCaId();
+    	keyPair = config.getKeyPair();
+    	identity = config.getIdentity();
+    	digestAlgorithm = config.getDigestAlgorithm();
 
-    	X500Principal subject = builder.subject;
-    	X509Certificate ca = builder.ca;
+    	X500Principal subject = config.getSubject();
+    	X509Certificate ca = config.getCaCertificate();
     	
     	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-5.1
     	if (isValid(url) == false) {
@@ -397,90 +397,5 @@ public class Requester {
         }
         
         return x509;
-    }
-    
-    /**
-     * Builder for obtaining an instance of {@link Requester}.
-     */
-    public static class Builder {
-    	private URL url;
-    	private Proxy proxy;
-    	private String caId;
-    	private KeyPair keyPair;
-    	private X509Certificate identity;
-    	private X509Certificate ca;
-    	private X500Principal subject;
-    	private byte[] caDigest;
-    	private String digestAlgorithm;
-    	
-    	public Builder(URL url) {
-    		this.url = url;
-    	}
-    	
-    	public Builder proxy(Proxy proxy) {
-    		this.proxy = proxy;
-    		
-    		return this;
-    	}
-    	
-    	public Builder caId(String caId) {
-    		this.caId = caId;
-    		
-    		return this;
-    	}
-    	
-    	public Builder keyPair(KeyPair keyPair) {
-    		this.keyPair = keyPair;
-    		
-    		return this;
-    	}
-    	
-    	public Builder subject(X500Principal subject) {
-    		this.subject = subject;
-    		
-    		return this;
-    	}
-    	
-    	public Builder identity(X509Certificate identity) {
-    		this.identity = identity;
-    		
-    		return this;
-    	}
-    	
-    	/**
-    	 * The message digest of the CA certificate.
-    	 * 
-    	 * @param caDigest the digest.
-    	 * @return this builder.
-    	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
-    	 */
-    	public Builder caDigest(byte[] caDigest) {
-    		this.caDigest = caDigest;
-    		
-    		return this;
-    	}
-    	
-    	public Builder caCertificate(X509Certificate ca) {
-    		this.ca = ca;
-    		
-    		return this;
-    	}
-    	
-    	/**
-    	 * One of <tt>MD5</tt>, <tt>SHA-1</tt>, <tt>SHA-256</tt> or <tt>SHA-512</tt>.  Defaults to MD5.
-    	 * 
-    	 * @param digestAlgorithm the hash algorithm for encoding the certificate.
-    	 * @return this builder.
-    	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
-    	 */
-    	public Builder digestAlgorithm(String digestAlgorithm) {
-    		this.digestAlgorithm = digestAlgorithm;
-    		
-    		return this;
-    	}
-    	
-    	public Requester build() throws IllegalStateException, CertificateEncodingException, NoSuchAlgorithmException, IOException, ScepException {
-    		return new Requester(this);
-    	}
     }
 }
