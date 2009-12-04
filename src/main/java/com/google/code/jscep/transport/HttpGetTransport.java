@@ -36,31 +36,47 @@ import com.google.code.jscep.request.Request;
  * Transport representing the HTTP GET method
  */
 public class HttpGetTransport extends Transport {
-	private final static Logger LOGGER = Logger.getLogger(HttpGetTransport.class.getName());
-	
+	private final static Logger LOGGER = Logger
+			.getLogger(HttpGetTransport.class.getName());
+
 	HttpGetTransport(URL url, Proxy proxy) {
 		super(url, proxy);
 	}
-	
+
 	@Override
-	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException {
+	public <T> T sendMessage(Request<T> msg) throws IOException,
+			MalformedURLException {
 		URL url = getUrl(msg.getOperation(), msg.getMessage());
 		LOGGER.info("Sending Request: " + url);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 
-        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-        	throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
-        }
-        
-        return msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
+		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+			throw new IOException(conn.getResponseCode() + " "
+					+ conn.getResponseMessage());
+		}
+
+		return msg.getContentHandler().getContent(conn.getInputStream(),
+				conn.getContentType());
+	}
+
+	private URL getUrl(Operation op, Object message)
+			throws MalformedURLException {
+		if (message == null) {
+			return new URL(getUrl(op).toExternalForm() + "&message=");
+		} else {
+			// TODO: Does this encode bytes?
+			return new URL(getUrl(op).toExternalForm() + "&message=" + message);
+		}
 	}
 	
-	private <M> URL getUrl(Operation op, M message) throws MalformedURLException {
-        if (message == null) {
-            return new URL(getUrl(op).toExternalForm() + "&message=");
-        } else {
-            return new URL(getUrl(op).toExternalForm() + "&message=" + message);
-        }
-    }
+	private URL getUrl(Operation op, byte[] message)
+	throws MalformedURLException {
+		if (message == null) {
+			return new URL(getUrl(op).toExternalForm() + "&message=");
+		} else {
+			// TODO: Does this encode bytes?
+			return new URL(getUrl(op).toExternalForm() + "&message=" + message);
+		}
+}
 
 }
