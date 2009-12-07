@@ -56,11 +56,11 @@ public class ClientConfiguration {
 		return proxy;
 	}
 	
-	public void setCaId(String caId) {
+	public void setCaIdentifier(String caId) {
 		this.caId = caId;
 	}
 	
-	public String getCaId() {
+	public String getCaIdentifier() {
 		return caId;
 	}
 	

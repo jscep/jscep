@@ -31,13 +31,12 @@ import com.google.code.jscep.content.NextCaCertificateContentHandler;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6
  */
 public class GetNextCACert implements Request<List<X509Certificate>> {
-    private String ca;
+    private String caIdentifier;
+    private final X509Certificate issuer;
 
-    public GetNextCACert() {
-    }
-
-    public GetNextCACert(String ca) {
-        this.ca = ca;
+    public GetNextCACert(X509Certificate issuer, String ca) {
+    	this.issuer = issuer;
+        this.caIdentifier = ca;
     }
 
     public Operation getOperation() {
@@ -45,10 +44,10 @@ public class GetNextCACert implements Request<List<X509Certificate>> {
     }
 
     public String getMessage() {
-        return ca;
+        return caIdentifier;
     }
      
     public NextCaCertificateContentHandler getContentHandler() {
-    	return new NextCaCertificateContentHandler();
+    	return new NextCaCertificateContentHandler(issuer);
     }
 }

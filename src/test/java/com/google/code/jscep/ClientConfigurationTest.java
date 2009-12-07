@@ -40,8 +40,8 @@ public class ClientConfigurationTest {
 	@Test
 	public void testGetCaId() {
 		String id = "ID";
-		fixture.setCaId(id);
-		Assert.assertEquals(id, fixture.getCaId());
+		fixture.setCaIdentifier(id);
+		Assert.assertEquals(id, fixture.getCaIdentifier());
 	}
 
 	@Test

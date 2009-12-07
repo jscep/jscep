@@ -73,7 +73,7 @@ public class Client {
     private byte[] caDigest;				// Required
     private String digestAlgorithm;			// Optional
     private Proxy proxy;					// Optional
-    private String caId;					// Optional
+    private String caIdentifier;					// Optional
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
 
@@ -83,7 +83,7 @@ public class Client {
     	url = config.getUrl();
     	proxy = config.getProxy();
     	caDigest = config.getCaDigest();
-    	caId = config.getCaId();
+    	caIdentifier = config.getCaIdentifier();
     	keyPair = config.getKeyPair();
     	identity = config.getIdentity();
     	digestAlgorithm = config.getDigestAlgorithm();
@@ -260,22 +260,24 @@ public class Client {
     }
 
     private Capabilities getCapabilities() throws IOException {
-    	GetCACaps req = new GetCACaps(caId);
+    	GetCACaps req = new GetCACaps(caIdentifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
         return trans.sendMessage(req);
     }
 
     private List<X509Certificate> getCaCertificate() throws IOException {
-    	GetCACert req = new GetCACert(caId);
+    	GetCACert req = new GetCACert(caIdentifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
         return trans.sendMessage(req);
     }
     
-    public List<X509Certificate> getNextCA() throws IOException {
+    public List<X509Certificate> getNextCA() throws IOException, CertificateEncodingException, NoSuchAlgorithmException, ScepException {
+    	X509Certificate ca = retrieveCA();
+    	
     	Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-    	GetNextCACert req = new GetNextCACert(caId);
+    	GetNextCACert req = new GetNextCACert(ca, caIdentifier);
     	
     	return trans.sendMessage(req);
     }

@@ -31,13 +31,13 @@ import com.google.code.jscep.content.CaCertificateContentHandler;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
  */
 public class GetCACert implements Request<List<X509Certificate>> {
-	private String ca;
+	private String caIdentifier;
 
 	public GetCACert() {
 	}
 
-	public GetCACert(String ca) {
-		this.ca = ca;
+	public GetCACert(String caIdentifier) {
+		this.caIdentifier = caIdentifier;
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class GetCACert implements Request<List<X509Certificate>> {
 	 * {@inheritDoc}
 	 */
 	public String getMessage() {
-		return ca;
+		return caIdentifier;
 	}
 
 	/**

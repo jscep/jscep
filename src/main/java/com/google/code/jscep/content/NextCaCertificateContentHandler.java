@@ -24,29 +24,54 @@ package com.google.code.jscep.content;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
-import org.bouncycastle.asn1.cms.SignedData;
 
 /**
  * Content handler for GetNextCA requests.
  */
 public class NextCaCertificateContentHandler implements
 		ScepContentHandler<List<X509Certificate>> {
+	private final X509Certificate ca;
+	
+	public NextCaCertificateContentHandler(X509Certificate ca) {
+		this.ca = ca;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
 	public List<X509Certificate> getContent(InputStream in, String mimeType)
 			throws IOException {
 		if (mimeType.equals(X509_NEXT_CA_CERT)) {
-			// TODO: MISSING: GetNextCACert Response
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
-			
+
+			// TODO: This must be signed by the current CA.
 			// The response consists of a SignedData PKCS#7 [RFC2315], 
 			// signed by the current CA (or RA) signing key.
-//			SignedData sd = new SignedData(null);
-			return null;
+			final List<X509Certificate> certs = new ArrayList<X509Certificate>();
+			CertificateFactory cf;
+			try {
+				cf = CertificateFactory.getInstance("X.509");
+			} catch (CertificateException e) {
+				throw new IOException(e);
+			}
+			Collection<? extends Certificate> collection;
+			try {
+				collection = cf.generateCertificates(in);
+			} catch (CertificateException e) {
+				throw new IOException(e);
+			}
+			for (Certificate cert : collection) {
+				certs.add((X509Certificate) cert);
+			}
+
+			return certs;
 		} else {
 			throw new IOException("Invalid Content Type");
 		}
