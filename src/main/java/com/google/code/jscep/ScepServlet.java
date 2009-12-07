@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.bouncycastle.asn1.pkcs.SignedData;
 
 import com.google.code.jscep.request.Operation;
 
@@ -68,6 +71,17 @@ public class ScepServlet extends HttpServlet {
 		}
 		
 		LOGGER.info("Method " + reqMethod + " Allowed for Operation: " + op);
+		
+		if (op == Operation.GetCACaps) {
+			
+		} else if (op == Operation.GetCACert) {
+			
+		} else if (op == Operation.GetNextCACert) {
+			
+		} else {
+			final ServletInputStream is = req.getInputStream();
+//			SignedData sd = new SignedData();
+		}
 	}
 	
 	private Operation getOperation(HttpServletRequest req) {
