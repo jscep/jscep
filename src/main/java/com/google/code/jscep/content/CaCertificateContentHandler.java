@@ -33,10 +33,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Content handler for GetCACert requests.
+ * This class handles responses to <tt>GetCACert</tt> requests.
  */
-public class CaCertificateContentHandler implements
-		ScepContentHandler<List<X509Certificate>> {
+public class CaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
 	/**
 	 * {@inheritDoc}
 	 */
@@ -50,7 +49,7 @@ public class CaCertificateContentHandler implements
 			throw new IOException(e);
 		}
 
-		if (mimeType.equals(X509_CA_CERT)) {
+		if (mimeType.equals("application/x-x509-ca-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.1
 			try {
 
@@ -62,7 +61,7 @@ public class CaCertificateContentHandler implements
 			} catch (CertificateException ce) {
 				throw new IOException(ce);
 			}
-		} else if (mimeType.equals(X509_CA_RA_CERT)) {
+		} else if (mimeType.equals("application/x-x509-ca-ra-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.2
 			try {
 				Collection<? extends Certificate> collection = cf

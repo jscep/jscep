@@ -24,12 +24,17 @@ package com.google.code.jscep.asn1;
 
 import java.io.IOException;
 
-import org.bouncycastle.asn1.*;
+import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.X509Name;
 
 /**
- * IssuerAndSubject ASN.1 Object
- * 
+ * <tt>IssuerAndSubject</tt> <tt>ASN.1</tt> Object
+ * <p>
+ * The <tt>IssuerAndSubject</tt> object is defined in the <tt>SCEP</tt> Internet-Draft
+ * by the following notation:
  * <pre>
  * IssuerAndSubject ::= SEQUENCE {
  *     issuer Name,
@@ -37,41 +42,32 @@ import org.bouncycastle.asn1.x509.X509Name;
  * }
  * </pre>
  * 
- * TODO: BC Dependency
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.3.1">SCEP Internet-Draft Reference</a>
  */
-public class IssuerAndSubject implements DEREncodable {
-	private final X509Name issuer;
-	private final X509Name subject;
+public class IssuerAndSubject {
+	private final X500Principal issuer;
+	private final X500Principal subject;
 
-	public IssuerAndSubject(ASN1Sequence seq) {
-		this.issuer = (X509Name) seq.getObjectAt(0);
-		this.subject = (X509Name) seq.getObjectAt(1);
-	}
-
-	public IssuerAndSubject(X509Name issuer, X509Name subject) {
+	public IssuerAndSubject(X500Principal issuer, X500Principal subject) {
 		this.issuer = issuer;
 		this.subject = subject;
 	}
 
-	public DERObject getDERObject() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
-
-		v.add(issuer);
-		v.add(subject);
-
-		return new DERSequence(v);
-	}
-
-	public X509Name getIssuer() {
+	public X500Principal getIssuer() {
 		return issuer;
 	}
 
-	public X509Name getSubject() {
+	public X500Principal getSubject() {
 		return subject;
 	}
 
-	public byte[] getEncoded() throws IOException {
-		return getDERObject().getEncoded();
+	public byte[] getDEREncoded() throws IOException {
+		ASN1EncodableVector v = new ASN1EncodableVector();
+
+		v.add(new X509Name(issuer.getName()));
+		v.add(new X509Name(subject.getName()));
+
+		return new DERSequence(v).getDEREncoded();
 	}
 
 	@Override

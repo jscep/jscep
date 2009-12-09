@@ -23,7 +23,9 @@
 package com.google.code.jscep.transaction;
 
 /**
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.3
+ * This class represents the <tt>SCEP</tt> <tt>pkiStatus</tt> attribute.
+ * 
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.1.3">SCEP Internet-Draft Reference</a>
  */
 public enum PkiStatus {
 	/**

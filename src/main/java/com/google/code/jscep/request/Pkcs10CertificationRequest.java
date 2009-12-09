@@ -31,7 +31,7 @@ import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 
 public abstract class Pkcs10CertificationRequest {
-	public abstract byte[] createRequest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, IOException;
+	public abstract byte[] getEncoded() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, IOException;
 	public abstract void addAttribute(String oid, Object attr);
 	
 	public static Pkcs10CertificationRequest getInstance(KeyPair keyPair, X509Certificate identity) {

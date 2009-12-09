@@ -28,7 +28,7 @@ import java.util.List;
 import com.google.code.jscep.content.NextCaCertificateContentHandler;
 
 /**
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6">SCEP Internet-Draft Reference</a>
  */
 public class GetNextCACert implements Request<List<X509Certificate>> {
     private String caIdentifier;

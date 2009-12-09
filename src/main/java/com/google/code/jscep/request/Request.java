@@ -27,6 +27,7 @@ import java.io.IOException;
 import com.google.code.jscep.content.ScepContentHandler;
 
 /**
+ * This interface represents a <tt>SCEP</tt> request.
  * 
  * @param <T> the response type associated with this request
  */

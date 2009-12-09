@@ -29,6 +29,11 @@ import java.security.cert.CertStore;
 
 import com.google.code.jscep.transaction.CmsException;
 
+/**
+ * This class represents the <tt>SCEP</tt> <tt>pkcsPKIEnvelope</tt> object.
+ * 
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.2">SCEP Internet-Draft Reference</a>
+ */
 public abstract class PkcsPkiEnvelope {
 	abstract public CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException;
 	

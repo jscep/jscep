@@ -92,7 +92,6 @@ public class ClientConfiguration {
 	 * The message digest of the CA certificate.
 	 * 
 	 * @param caDigest the digest.
-	 * @return this builder.
 	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
 	 */
 	public void setCaDigest(byte[] caDigest) {
@@ -115,7 +114,6 @@ public class ClientConfiguration {
 	 * One of <tt>MD5</tt>, <tt>SHA-1</tt>, <tt>SHA-256</tt> or <tt>SHA-512</tt>.  Defaults to MD5.
 	 * 
 	 * @param digestAlgorithm the hash algorithm for encoding the certificate.
-	 * @return this builder.
 	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
 	 */
 	public void setDigestAlgorithm(String digestAlgorithm) {

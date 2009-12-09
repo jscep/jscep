@@ -27,6 +27,10 @@ package com.google.code.jscep;
  */
 public final class ClientFactory {
 	/**
+	 * Private constructor to prevent instantiation.
+	 */
+	private ClientFactory() {}
+	/**
 	 * Creates a new SCEP client from the given configuration. 
 	 * 
 	 * @param config the client configuration.

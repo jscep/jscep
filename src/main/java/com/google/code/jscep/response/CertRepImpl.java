@@ -126,7 +126,7 @@ public class CertRepImpl extends CertRep {
 	}
 	
 	private TransactionId extractTransactionId() {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId.getOid());
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId);
         Attribute transIdAttr = signedAttrs.get(oid);
         DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
         
@@ -135,7 +135,7 @@ public class CertRepImpl extends CertRep {
 
 	private FailInfo extractFailInfo() {
 		DERObjectIdentifier oid;
-		oid = new DERObjectIdentifier(ScepObjectIdentifiers.failInfo.getOid());
+		oid = new DERObjectIdentifier(ScepObjectIdentifiers.failInfo);
 		Attribute failInfoAttribute = signedAttrs.get(oid);
 		DERPrintableString failInfo = (DERPrintableString) failInfoAttribute.getAttrValues().getObjectAt(0);
 		
@@ -143,7 +143,7 @@ public class CertRepImpl extends CertRep {
 	}
 
 	private Nonce extractRecipientNonce() {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.recipientNonce.getOid());
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.recipientNonce);
         Attribute recipientNonceAttribute = signedAttrs.get(oid);
         DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
         
@@ -151,7 +151,7 @@ public class CertRepImpl extends CertRep {
 	}
 	
 	private Nonce extractSenderNonce() {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.senderNonce.getOid());
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.senderNonce);
         Attribute recipientNonceAttribute = signedAttrs.get(oid);
         DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
         
@@ -159,7 +159,7 @@ public class CertRepImpl extends CertRep {
 	}
 
 	private PkiStatus extractStatus() {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.pkiStatus.getOid());
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.pkiStatus);
         Attribute attr = signedAttrs.get(oid);
         DERPrintableString pkiStatus = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
 
@@ -167,7 +167,7 @@ public class CertRepImpl extends CertRep {
 	}
 	
 	private MessageType extractMessageType() {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType.getOid());
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType);
         Attribute msgTypeAttribute = signedAttrs.get(oid);
         DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);
         

@@ -33,14 +33,14 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Content handler for GetNextCA requests.
+ * This class handles responses to <tt>GetNextCACert</tt> requests.
  */
 public class NextCaCertificateContentHandler implements
 		ScepContentHandler<List<X509Certificate>> {
-	private final X509Certificate ca;
+//	private final X509Certificate ca;
 	
 	public NextCaCertificateContentHandler(X509Certificate ca) {
-		this.ca = ca;
+//		this.ca = ca;
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class NextCaCertificateContentHandler implements
 	 */
 	public List<X509Certificate> getContent(InputStream in, String mimeType)
 			throws IOException {
-		if (mimeType.equals(X509_NEXT_CA_CERT)) {
+		if (mimeType.equals("application/x-x509-next-ca-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 
 			// TODO: This must be signed by the current CA.

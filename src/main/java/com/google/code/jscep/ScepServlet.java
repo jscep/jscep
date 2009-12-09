@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,7 +79,7 @@ public class ScepServlet extends HttpServlet {
 		} else if (op == Operation.GetNextCACert) {
 			
 		} else {
-			final ServletInputStream is = req.getInputStream();
+//			final ServletInputStream is = req.getInputStream();
 //			SignedData sd = new SignedData();
 		}
 	}

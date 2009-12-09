@@ -28,9 +28,11 @@ import java.security.GeneralSecurityException;
 import com.google.code.jscep.transaction.MessageType;
 
 /**
- * PKI Operation
+ * This interface defines the common structure of a <tt>SCEP</tt> <tt>pkiMessage</tt>
+ * 
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
  */
-public interface PkiOperation {
+public interface PkiMessage {
 	/**
 	 * Returns the message type for this operation.
 	 * 

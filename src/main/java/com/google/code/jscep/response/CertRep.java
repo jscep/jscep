@@ -33,6 +33,11 @@ import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.TransactionId;
 
+/**
+ * This class represents the <tt>SCEP</tt> <tt>pkiMessage</tt>.
+ *
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
+ */
 public abstract class CertRep {
 	public abstract FailInfo getFailInfo();
 	public abstract PkiStatus getStatus();	

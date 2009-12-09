@@ -32,10 +32,9 @@ import java.util.logging.Logger;
 import com.google.code.jscep.util.HexUtil;
 
 /**
- * This class represents a transaction ID.
+ * This class represents the <tt>SCEP</tt> <tt>transactionID</tt> attribute.
  * 
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.3.1
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.1
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.1.1">SCEP Internet-Draft Reference</a>
  */
 public final class TransactionId {
 	private final static Logger LOGGER = Logger.getLogger(TransactionId.class.getName());

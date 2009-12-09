@@ -83,7 +83,7 @@ public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
         return new DERSet(attributes);
 	}
 	
-	public byte[] createRequest() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, IOException {
+	public byte[] getEncoded() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, IOException {
 		X500Principal subject = identity.getSubjectX500Principal();
 		LOGGER.info("Generating PKCS #10 Request for " + subject);
 		PublicKey pub = keyPair.getPublic();

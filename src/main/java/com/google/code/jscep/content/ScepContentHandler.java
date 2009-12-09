@@ -28,37 +28,20 @@ import java.io.InputStream;
 /**
  * This interface represents a mechanism for handling specific SCEP content.
  * 
- * @param <T> the content that is handled by the implementation of this interface.
+ * @param <T>
+ *            the content handled by the handler implementation
  */
 public interface ScepContentHandler<T> {
 	/**
-	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.2.1
+	 * Read and interpret the content from the input stream.
+	 * 
+	 * @param in
+	 *            the input stream containing the content.
+	 * @param mimeType
+	 *            the type of the input stream.
+	 * @return the content in a usage form.
+	 * @throws IOException
+	 *             if any I/O error occurs.
 	 */
-	String PKI_MESSAGE = "application/x-pki-message";
-    /**
-     * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.2
-     */
-	String TEXT_PLAIN = "text/plain";
-    /**
-     * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1.1.1
-     */
-    String X509_CA_CERT = "application/x-x509-ca-cert";
-    /**
-     * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1.1.2
-     */
-    String X509_CA_RA_CERT = "application/x-x509-ca-ra-cert";
-    /**
-     * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6.1
-     */
-    String X509_NEXT_CA_CERT = "application/x-x509-next-ca-cert";
-	
-    /**
-     * Read and interpret the content from the input stream.
-     * 
-     * @param in the input stream containing the content.
-     * @param mimeType the type of the input stream.
-     * @return the content in a usage form.
-     * @throws IOException if any I/O error occurs.
-     */
 	T getContent(InputStream in, String mimeType) throws IOException;
 }

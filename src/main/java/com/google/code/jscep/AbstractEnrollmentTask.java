@@ -30,6 +30,10 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 abstract public class AbstractEnrollmentTask implements Callable<EnrollmentResult> {
+	AbstractEnrollmentTask()
+	{
+	}
+	
 	abstract public EnrollmentResult call() throws Exception;
 	
 	protected List<X509Certificate> getCertificates(Collection<? extends Certificate> certs) {

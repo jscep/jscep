@@ -29,12 +29,15 @@ import java.util.logging.Logger;
 import com.google.code.jscep.util.HexUtil;
 
 /**
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.5
+ * This class is used for generating nonces.
  */
 public final class NonceFactory {
 	private final static Logger LOGGER = Logger.getLogger(NonceFactory.class.getName());
 	private static final Random RND = new SecureRandom();
 	
+	/**
+	 * Prevent instantiation.
+	 */
 	private NonceFactory() {
 	}
 	

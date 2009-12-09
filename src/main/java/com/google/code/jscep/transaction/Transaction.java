@@ -32,7 +32,7 @@ import java.security.cert.CertStore;
 
 import com.google.code.jscep.RequestFailureException;
 import com.google.code.jscep.RequestPendingException;
-import com.google.code.jscep.operations.PkiOperation;
+import com.google.code.jscep.operations.PkiMessage;
 import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.response.CertRep;
 import com.google.code.jscep.transport.Transport;
@@ -54,7 +54,7 @@ public class Transaction {
 		this.signer = signer;
 	}
 
-	public CertStore performOperation(PkiOperation op) throws MalformedURLException, IOException, CmsException, RequestPendingException, RequestFailureException {
+	public CertStore performOperation(PkiMessage op) throws MalformedURLException, IOException, CmsException, RequestPendingException, RequestFailureException {
 		try {
 			byte[] enveloped = enveloper.envelope(op.getMessageData());
 			byte[] signedData = signer.sign(enveloped, op.getMessageType(), this.transId, this.senderNonce);

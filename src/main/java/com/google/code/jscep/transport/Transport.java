@@ -34,21 +34,41 @@ import com.google.code.jscep.request.Request;
  * This class represents the transport for sending a message to the SCEP server.
  */
 public abstract class Transport {
+	/**
+	 * Represents the <tt>HTTP</tt> method to be used for transport. 
+	 */
 	public enum Method {
+		/**
+		 * The <tt>HTTP</tt> <tt>GET</tt> method.
+		 */
 		GET,
+		/**
+		 * The <tt>HTTP</tt> <tt>POST</tt> method.
+		 */
 		POST
 	}
-	protected final URL url;
-	protected final Proxy proxy;
+	final URL url;
+	final Proxy proxy;
 	
 	Transport(URL url, Proxy proxy) {
 		this.url = url;
 		this.proxy = proxy;
 	}
 	
+	/**
+	 * Returns the URL configured for use by this transport.
+	 * 
+	 * @return the URL.
+	 */
 	public URL getURL() {
 		return url;
 	}
+	
+	/**
+	 * Returns the proxy configured for use by this transport.
+	 * 
+	 * @return the proxy.
+	 */
 	public Proxy getProxy() {
 		return proxy;
 	}
@@ -82,6 +102,6 @@ public abstract class Transport {
 	}
 	
 	URL getUrl(Operation op) throws MalformedURLException {
-        return new URL(url.toExternalForm() + "?operation=" + op);
-    }
+		return new URL(url.toExternalForm() + "?operation=" + op);
+	}
 }

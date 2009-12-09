@@ -34,9 +34,11 @@ import org.bouncycastle.jce.X509Principal;
 import com.google.code.jscep.transaction.MessageType;
 
 /**
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.4
+ * This class represents the <tt>SCEP</tt> <tt>GetCert</tt> <tt>pkiMessage</tt> type.
+ * 
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.4">SCEP Internet-Draft Reference</a>
  */
-public class GetCert implements PkiOperation {
+public class GetCert implements PkiMessage {
 	private final X500Principal issuer;
     private final BigInteger serial;
 
@@ -45,16 +47,24 @@ public class GetCert implements PkiOperation {
         this.serial = serial;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public MessageType getMessageType() {
         return MessageType.GetCert;
     }
 
-
+    /**
+     * {@inheritDoc}
+     * 
+     * @return a DER-encoded IssuerAndSerial
+     * @see <a href="http://tools.ietf.org/html/rfc2315#section-6.7">SCEP Internet-Draft Reference</a>
+     */
 	public byte[] getMessageData() throws IOException {
     	// TODO: BC Dependency
         X509Name issuerName = new X509Principal(issuer.getEncoded());
         
-        return new IssuerAndSerialNumber(issuerName, serial).getEncoded();
+        return new IssuerAndSerialNumber(issuerName, serial).getDEREncoded();
     }
 
 	/**

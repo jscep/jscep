@@ -27,18 +27,34 @@ import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 
 import com.google.code.jscep.operations.GetCertInitial;
-import com.google.code.jscep.operations.PkiOperation;
+import com.google.code.jscep.operations.PkiMessage;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
 
-public class PendingEnrollmentTask extends AbstractEnrollmentTask {
+/**
+ * This class represents a subsequent attempt to enrol a certificate in a PKI.
+ * <p>
+ * This class is usually created after the client has attempted an initial enrollment.
+ * 
+ * @see InitialEnrollmentTask
+ */
+public final class PendingEnrollmentTask extends AbstractEnrollmentTask {
 	private final Transport transport;
 	private final X509Certificate ca;
 	private final KeyPair keyPair;
 	private final X509Certificate identity;
 	private final String fingerprintAlgorithm;
 	
+	/**
+	 * Creates a new instance of this class.
+	 * 
+	 * @param transport the transport to send enrolment requests over.
+	 * @param ca the CA to sign our request.
+	 * @param keyPair the key pair used for creating a CSR.
+	 * @param identity the identity of the certificate to enrol.
+	 * @param digestAlgorithm the message digest algorithm to use.
+	 */
 	PendingEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, String fingerprintAlgorithm) {
 		this.transport = transport;
 		this.ca = ca;
@@ -47,10 +63,13 @@ public class PendingEnrollmentTask extends AbstractEnrollmentTask {
 		this.fingerprintAlgorithm = fingerprintAlgorithm;
 	}
 
+	/**
+	 * Attempts to complete a previous enrolment.
+	 */
 	@Override
 	public EnrollmentResult call() throws Exception {
 		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, fingerprintAlgorithm);
-		PkiOperation req = new GetCertInitial(ca.getIssuerX500Principal(), identity.getSubjectX500Principal());
+		PkiMessage req = new GetCertInitial(ca.getIssuerX500Principal(), identity.getSubjectX500Principal());
 		try {
 			CertStore store = trans.performOperation(req);
 			return new EnrollmentResult(getCertificates(store.getCertificates(null)));

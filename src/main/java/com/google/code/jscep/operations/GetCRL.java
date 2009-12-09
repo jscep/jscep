@@ -34,9 +34,11 @@ import org.bouncycastle.jce.X509Principal;
 import com.google.code.jscep.transaction.MessageType;
 
 /**
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.5
+ * This class represents the <tt>SCEP</tt> <tt>GetCRL</tt> <tt>pkiMessage</tt> type.
+ * 
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.5">SCEP Internet-Draft Reference</a>
  */
-public class GetCRL implements PkiOperation {
+public class GetCRL implements PkiMessage {
     private final X500Principal issuer;
     private final BigInteger serial;
 
@@ -54,12 +56,15 @@ public class GetCRL implements PkiOperation {
 
     /**
      * {@inheritDoc}
+	 *
+     * @return a DER-encoded IssuerAndSerial.
+     * @see <a href="http://tools.ietf.org/html/rfc2315#section-6.7">SCEP Internet-Draft Reference</a>
      */
 	public byte[] getMessageData() throws IOException {
     	// TODO: BC Dependency
         X509Name issuerName = new X509Principal(issuer.getEncoded());
 
-        return new IssuerAndSerialNumber(issuerName, serial).getEncoded();
+        return new IssuerAndSerialNumber(issuerName, serial).getDEREncoded();
     }
     
 	/**

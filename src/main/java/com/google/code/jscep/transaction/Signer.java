@@ -97,20 +97,20 @@ public class Signer {
 	}
 	
 	private Attribute toAttribute(MessageType msgType) {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType.getOid());
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType);
     	DERPrintableString attr = new DERPrintableString(Integer.toString(msgType.getValue()));
     	
         return new Attribute(oid, new DERSet(attr));
 	}
 	
 	private Attribute toAttribute(TransactionId transId) {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId.getOid());
+		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId);
 		
         return new Attribute(oid, new DERSet(new DERPrintableString(transId.getBytes())));
 	}
 	
 	 private Attribute toAttribute(Nonce senderNonce) {
-    	DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.senderNonce.getOid());
+    	DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.senderNonce);
     	
         return new Attribute(oid, new DERSet(new DEROctetString(senderNonce.getBytes())));
     }

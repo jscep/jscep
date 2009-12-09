@@ -28,19 +28,32 @@ import java.security.cert.X509Certificate;
 import java.util.concurrent.Callable;
 
 import com.google.code.jscep.operations.PkcsReq;
-import com.google.code.jscep.operations.PkiOperation;
+import com.google.code.jscep.operations.PkiMessage;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
 
-public class InitialEnrollmentTask extends AbstractEnrollmentTask {
+/**
+ * This class represents the initial attempt at enrolling a certificate in a PKI.
+ */
+public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 	private final Transport transport;
 	private final X509Certificate ca;
 	private final KeyPair keyPair;
 	private final X509Certificate identity;
 	private final char[] password;
 	private final String digestAlgorithm;
-	
+
+	/**
+	 * Creates a new instance of this class.
+	 * 
+	 * @param transport the transport to send enrolment requests over.
+	 * @param ca the CA to sign our request.
+	 * @param keyPair the key pair used for creating a CSR.
+	 * @param identity the identity of the certificate to enrol.
+	 * @param password the password to authorise our request.
+	 * @param digestAlgorithm the message digest algorithm to use.
+	 */
 	InitialEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, char[] password, String digestAlgorithm) {
 		this.transport = transport;
 		this.ca = ca;
@@ -50,10 +63,13 @@ public class InitialEnrollmentTask extends AbstractEnrollmentTask {
 		this.digestAlgorithm = digestAlgorithm;
 	}
 	
+	/**
+	 * Attempts an enrolment.
+	 */
 	@Override
 	public EnrollmentResult call() throws Exception {
 		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, digestAlgorithm);
-		PkiOperation req = new PkcsReq(keyPair, identity, digestAlgorithm, password);
+		PkiMessage req = new PkcsReq(keyPair, identity, digestAlgorithm, password);
 		try {
 			CertStore store = trans.performOperation(req);
 			

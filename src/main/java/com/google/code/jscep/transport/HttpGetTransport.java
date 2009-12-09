@@ -33,7 +33,7 @@ import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.request.Request;
 
 /**
- * Transport representing the HTTP GET method
+ * Transport representing the <tt>HTTP GET</tt> method
  */
 public class HttpGetTransport extends Transport {
 	private final static Logger LOGGER = Logger
@@ -68,15 +68,4 @@ public class HttpGetTransport extends Transport {
 			return new URL(getUrl(op).toExternalForm() + "&message=" + message);
 		}
 	}
-	
-	private URL getUrl(Operation op, byte[] message)
-	throws MalformedURLException {
-		if (message == null) {
-			return new URL(getUrl(op).toExternalForm() + "&message=");
-		} else {
-			// TODO: Does this encode bytes?
-			return new URL(getUrl(op).toExternalForm() + "&message=" + message);
-		}
-}
-
 }

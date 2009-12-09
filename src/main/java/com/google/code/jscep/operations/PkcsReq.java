@@ -35,9 +35,11 @@ import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.util.HexUtil;
 
 /**
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.2
+ * This class represents the <tt>SCEP</tt> <tt>PKCSReq</tt> <tt>pkiMessage</tt> type.
+ * 
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.1">SCEP Internet-Draft Reference</a>
  */
-public class PkcsReq implements PkiOperation {
+public class PkcsReq implements PkiMessage {
 	private final static Logger LOGGER = Logger.getLogger(PkcsReq.class.getName());
     private final X509Certificate identity;
     private final char[] password;
@@ -60,12 +62,15 @@ public class PkcsReq implements PkiOperation {
 
     /**
      * {@inheritDoc}
+     * 
+     * @return a DER-encoded PKCS#10 Certification Request
+     * @see <a href="http://tools.ietf.org/html/rfc2986">RFC 2986</a>
      */
     public byte[] getMessageData() throws IOException, GeneralSecurityException {
     	Pkcs10CertificationRequest certReq = Pkcs10CertificationRequest.getInstance(keyPair, identity);
     	certReq.addAttribute("1.2.840.113549.1.9.7", new String(password));
     	
-    	byte[] pkcs10 = certReq.createRequest();
+    	byte[] pkcs10 = certReq.getEncoded();
     	byte[] digest = calculateDigest(pkcs10);
     	
     	LOGGER.info("PKCS #10 Digest (" + digestAlgorithm + "):\n" + HexUtil.formatHex(HexUtil.toHex(digest)));

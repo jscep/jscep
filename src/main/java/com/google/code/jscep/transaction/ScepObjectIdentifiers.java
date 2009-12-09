@@ -25,51 +25,35 @@ package com.google.code.jscep.transaction;
 /**
  * Object Identifiers used by SCEP
  * 
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-B
- * @link http://www.oid-info.com/get/2.16.840.1.113733.1.9
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#appendix-A">SCEP Internet-Draft Reference</a>
  */
-public enum ScepObjectIdentifiers {
+public interface ScepObjectIdentifiers {
 	/**
 	 * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) messageType(2)
 	 */
-    messageType("2.16.840.1.113733.1.9.2"),
+    String messageType = "2.16.840.1.113733.1.9.2";
     /**
 	 * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) pkiStatus(3)
 	 */
-    pkiStatus("2.16.840.1.113733.1.9.3"),
+    String pkiStatus = "2.16.840.1.113733.1.9.3";
     /**
      * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) failInfo(4)
      */
-    failInfo("2.16.840.1.113733.1.9.4"),
+    String failInfo = "2.16.840.1.113733.1.9.4";
     /**
      * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) senderNonce(5)
      */
-    senderNonce("2.16.840.1.113733.1.9.5"),
+    String senderNonce = "2.16.840.1.113733.1.9.5";
     /**
      * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) recipientNonce(6)
      */
-    recipientNonce("2.16.840.1.113733.1.9.6"),
+    String recipientNonce = "2.16.840.1.113733.1.9.6";
     /**
      * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) transId(7)
      */
-    transId("2.16.840.1.113733.1.9.7"),
+    String transId = "2.16.840.1.113733.1.9.7";
     /**
      * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) pkiStatus(8)
      */
-    extensionReq("2.16.840.1.113733.1.9.8");
-    
-    private final String oid;
-    
-    private ScepObjectIdentifiers(String oid) {
-    	this.oid = oid;
-    }
-    
-    /**
-     * Returns the String representation of this OID.
-     * 
-     * @return the String representation of this OID.
-     */
-    public String getOid() {
-    	return oid;
-    }
+    String extensionReq = ("2.16.840.1.113733.1.9.8");
 }

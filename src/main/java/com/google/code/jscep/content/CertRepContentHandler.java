@@ -32,7 +32,7 @@ import com.google.code.jscep.response.CertRep;
 import com.google.code.jscep.transaction.CmsException;
 
 /**
- * Content handler for PKIOperation requests.
+ * This class handles responses to <tt>PKIRequest</tt> requests.
  */
 public class CertRepContentHandler implements ScepContentHandler<CertRep> {
 	private final KeyPair keyPair;
@@ -46,7 +46,7 @@ public class CertRepContentHandler implements ScepContentHandler<CertRep> {
 	 */
 	public CertRep getContent(InputStream in, String mimeType)
 			throws IOException {
-		if (mimeType.equals(PKI_MESSAGE)) {
+		if (mimeType.equals("application/x-pki-message")) {
 			BufferedInputStream is = new BufferedInputStream(in);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

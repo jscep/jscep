@@ -25,7 +25,9 @@ package com.google.code.jscep.transaction;
 import java.util.Arrays;
 
 /**
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-3.1.1.5
+ * This class represents the senderNonce and recipientNonce types.
+ * 
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.1.5">SCEP Internet-Draft Reference</a>
  */
 public class Nonce {
 	private byte[] nonce;

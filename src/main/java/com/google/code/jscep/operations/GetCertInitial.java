@@ -26,16 +26,15 @@ import java.io.IOException;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.X509Principal;
-
 import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.transaction.MessageType;
 
 /**
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.3
+ * This class represents the <tt>SCEP</tt> <tt>GetCertInitial</tt> <tt>pkiMessage</tt> type.
+ * 
+ * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.3">SCEP Internet-Draft Reference</a>
  */
-public class GetCertInitial implements PkiOperation {
+public class GetCertInitial implements PkiMessage {
 	private final X500Principal issuer;
     private final X500Principal subject;
 
@@ -53,20 +52,18 @@ public class GetCertInitial implements PkiOperation {
 
     /**
      * {@inheritDoc}
+     * 
+     * @return a DER-encoded IssuerAndSubject.
      */
 	public byte[] getMessageData() throws IOException {
-    	// TODO: BC Dependency
-        X509Name issuerName = new X509Principal(issuer.getEncoded());
-        X509Name subjectName = new X509Principal(subject.getEncoded());
+		return new IssuerAndSubject(issuer, subject).getDEREncoded();
+	}
 
-        return new IssuerAndSubject(issuerName, subjectName).getEncoded();
-    }
-    
 	/**
-     * {@inheritDoc}
-     */
+	 * {@inheritDoc}
+	 */
 	@Override
-    public String toString() {
-    	return getMessageType().toString();
-    }
+	public String toString() {
+		return getMessageType().toString();
+	}
 }
