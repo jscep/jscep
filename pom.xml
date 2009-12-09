@@ -122,4 +122,11 @@
 			<archive>http://groups.google.com/group/jscep-support</archive>
 		</mailingList>
 	</mailingLists>
+	<developers>
+		<developer>
+			<id>dave</id>
+			<email>david@grant.org.uk</email>
+			<name>Dave Grant</name>
+		</developer>
+	</developers>
 </project>
