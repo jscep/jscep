@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.bouncycastle.asn1.pkcs.SignedData;
-
 import com.google.code.jscep.request.Operation;
 
 public class ScepServlet extends HttpServlet {
@@ -20,6 +18,9 @@ public class ScepServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		final Operation op;

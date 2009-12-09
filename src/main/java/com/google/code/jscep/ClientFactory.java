@@ -22,12 +22,18 @@
 
 package com.google.code.jscep;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateEncodingException;
-
+/**
+ * This class is a factory for creating SCEP clients.
+ */
 public final class ClientFactory {
-	public static Client createClient(ClientConfiguration config) throws CertificateEncodingException, NoSuchAlgorithmException, IOException, ScepException {
+	/**
+	 * Creates a new SCEP client from the given configuration. 
+	 * 
+	 * @param config the client configuration.
+	 * @return a new client.
+	 * @throws Exception if any error occurs.
+	 */
+	public static Client createClient(ClientConfiguration config) throws Exception {
 		return new Client(config);
 	}
 }
