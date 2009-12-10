@@ -27,6 +27,8 @@ import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.smime.SMIMECapability;
 
+import com.google.code.jscep.pkcs7.Enveloper;
+import com.google.code.jscep.pkcs7.Signer;
 import com.google.code.jscep.transport.Transport;
 
 /**
@@ -34,9 +36,22 @@ import com.google.code.jscep.transport.Transport;
  * 
  */
 public final class TransactionFactory {
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
 	private TransactionFactory() {
 	}
 	
+	/**
+	 * Create a new SCEP transaction.
+	 * 
+	 * @param transport the transport to use.
+	 * @param ca the CA certificate.
+	 * @param identity the certificate to enroll.
+	 * @param keyPair the key pair to use.
+	 * @param fingerprintAlgorithm the finger print algorithm.
+	 * @return thge new transaction.
+	 */
 	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String fingerprintAlgorithm) {
 		// TODO: Don't hardcode DES
 		// TODO: BC Dependency

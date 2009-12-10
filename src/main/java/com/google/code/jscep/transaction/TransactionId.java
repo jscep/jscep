@@ -46,7 +46,7 @@ public final class TransactionId {
 	}
 	
 	private TransactionId(KeyPair keyPair) {
-		LOGGER.info("Generating new TransactionId from Key Pair");
+		LOGGER.fine("Generating new TransactionId from Key Pair");
     	MessageDigest digest = null;
         try {
         	// Always MD5
@@ -55,13 +55,13 @@ public final class TransactionId {
             throw new RuntimeException(e);
         }
         id = HexUtil.toHex(digest.digest(keyPair.getPublic().getEncoded()));
-        LOGGER.info("Transaction Id:\n" + HexUtil.formatHex(id));
+        LOGGER.fine("Transaction Id:\n" + HexUtil.formatHex(id));
 	}
 	
 	private TransactionId() {
-		LOGGER.info("Generating new TransactionId");
+		LOGGER.fine("Generating new TransactionId");
 		id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes();
-		LOGGER.info("Transaction Id:\n" + HexUtil.formatHex(id));
+		LOGGER.fine("Transaction Id:\n" + HexUtil.formatHex(id));
 	}
 	
 	public byte[] getBytes() {

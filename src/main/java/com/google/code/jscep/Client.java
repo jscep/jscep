@@ -73,13 +73,11 @@ public class Client {
     private byte[] caDigest;				// Required
     private String digestAlgorithm;			// Optional
     private Proxy proxy;					// Optional
-    private String caIdentifier;					// Optional
+    private String caIdentifier;			// Optional
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
-
-    // Requester(URL url, byte[] caDigest, X500Principal subject);
-    // Requester(URL url, byte[] caDigest, X509Certificate identity, KeyPair keyPair);    
-    protected Client(ClientConfiguration config) throws IllegalStateException, NoSuchAlgorithmException, CertificateEncodingException, IOException, ScepException {
+    
+    public Client(ClientConfiguration config) throws IllegalStateException, NoSuchAlgorithmException, CertificateEncodingException, IOException, ScepException {
     	url = config.getUrl();
     	proxy = config.getProxy();
     	caDigest = config.getCaDigest();
@@ -151,12 +149,12 @@ public class Client {
 		if (subject == null) {
 			if (isSelfSigned(identity) == false) {
 				if (identity.getIssuerX500Principal().equals(ca.getSubjectX500Principal())) {
-					LOGGER.info("Certificate is signed by CA, so this is a renewal.");
+					LOGGER.fine("Certificate is signed by CA, so this is a renewal.");
 				} else {
-					LOGGER.info("Certificate is signed by another CA, bit this is still a renewal.");
+					LOGGER.fine("Certificate is signed by another CA, bit this is still a renewal.");
 				}
 				try {
-					LOGGER.info("Checking if the CA supports certificate renewal...");
+					LOGGER.fine("Checking if the CA supports certificate renewal...");
 					if (getCapabilities().supportsRenewal() == false) {
 						throw new IllegalStateException("Your CA does not support renewal");
 					}
@@ -164,7 +162,7 @@ public class Client {
 					throw new IllegalStateException("Your CA does not support renewal");
 				}
 			} else {
-				LOGGER.info("Certificate is self-signed.  This is not a renewal.");
+				LOGGER.fine("Certificate is self-signed.  This is not a renewal.");
 			}
 		}
     }
@@ -199,12 +197,8 @@ public class Client {
     	return true;
     }
     
-    private void debug(String msg) {
-    	System.out.println(msg);
-    }
-    
     private KeyPair createKeyPair() {
-    	debug("Creating RSA Key Pair");
+    	LOGGER.fine("Creating RSA Key Pair");
     	
     	try {
 			return KeyPairGenerator.getInstance("RSA").genKeyPair();
@@ -214,7 +208,7 @@ public class Client {
     }
     
     private X509Certificate createCertificate(X500Principal subject) {
-    	debug("Creating Self-Signed Certificate for " + subject);
+    	LOGGER.fine("Creating Self-Signed Certificate for " + subject);
     	
     	// TODO: BC Dependency
     	Calendar cal = Calendar.getInstance();

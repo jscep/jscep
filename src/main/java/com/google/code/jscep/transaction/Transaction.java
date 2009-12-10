@@ -33,10 +33,16 @@ import java.security.cert.CertStore;
 import com.google.code.jscep.RequestFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.operations.PkiMessage;
+import com.google.code.jscep.pkcs7.Enveloper;
+import com.google.code.jscep.pkcs7.Signer;
 import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.response.CertRep;
 import com.google.code.jscep.transport.Transport;
 
+/**
+ * This class represents a SCEP transaction, and provides a framework for 
+ * performing operations.
+ */
 public class Transaction {
 	private final TransactionId transId;
 	private final Nonce senderNonce;
@@ -45,7 +51,7 @@ public class Transaction {
 	private final Enveloper enveloper;
 	private final Signer signer;
 
-	protected Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer) {
+	Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer) {
 		this.transport = transport;
 		this.keyPair = keyPair;
 		this.transId = TransactionId.createTransactionId(keyPair);
@@ -54,6 +60,17 @@ public class Transaction {
 		this.signer = signer;
 	}
 
+	/**
+	 * Performs the given operation inside this transaction.
+	 * 
+	 * @param op the operation to perform.
+	 * @return a certificate store, containing either certificates or CRLs.
+	 * @throws MalformedURLException if the SCEP URL is invalid.
+	 * @throws IOException if any I/O error occurs.
+	 * @throws CmsException if any PKCS#7 error occurs.
+	 * @throws RequestPendingException if manual intervention is required.
+	 * @throws RequestFailureException if the request could not be serviced.
+	 */
 	public CertStore performOperation(PkiMessage op) throws MalformedURLException, IOException, CmsException, RequestPendingException, RequestFailureException {
 		try {
 			byte[] enveloped = enveloper.envelope(op.getMessageData());
@@ -67,7 +84,7 @@ public class Transaction {
 		}
 	}
 
-	public CertStore handleResponse(CertRep msg) throws CmsException,
+	private CertStore handleResponse(CertRep msg) throws CmsException,
 			RequestPendingException, RequestFailureException,
 			NoSuchProviderException, NoSuchAlgorithmException {
 		

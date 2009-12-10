@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep.pkcs10;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

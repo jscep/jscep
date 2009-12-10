@@ -28,7 +28,7 @@ import java.util.List;
 import com.google.code.jscep.content.CaCertificateContentHandler;
 
 /**
- * This class represents a GetCACert request.
+ * This class represents a <tt>GetCACert</tt> request.
  * 
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
  */

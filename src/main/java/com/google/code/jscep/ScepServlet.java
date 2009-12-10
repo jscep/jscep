@@ -68,7 +68,7 @@ public class ScepServlet extends HttpServlet {
 			return;
 		}
 		
-		LOGGER.info("Incoming Operation: " + op);
+		LOGGER.fine("Incoming Operation: " + op);
 		
 		final String reqMethod = req.getMethod();
 			
@@ -92,7 +92,7 @@ public class ScepServlet extends HttpServlet {
 			}
 		}
 		
-		LOGGER.info("Method " + reqMethod + " Allowed for Operation: " + op);
+		LOGGER.fine("Method " + reqMethod + " Allowed for Operation: " + op);
 		
 		if (op == Operation.GetCACaps) {
 			

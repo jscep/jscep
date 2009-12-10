@@ -36,6 +36,12 @@ public class ClientConfigurationTest {
 	public void testGetProxy() {
 		Assert.assertEquals(proxy, fixture.getProxy());
 	}
+	
+	@Test
+	public void testNoProxy() {
+		ClientConfiguration config = new ClientConfiguration(url);
+		Assert.assertSame(Proxy.NO_PROXY, config.getProxy());
+	}
 
 	@Test
 	public void testGetCaId() {

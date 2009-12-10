@@ -43,7 +43,7 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
 	 */
     public Capabilities getContent(InputStream in, String mimeType) throws IOException {
 		if (mimeType.equals("text/plain") == false) {
-			LOGGER.info("CACapabilities response was of content-type " + mimeType + ".  Expected text/plain");
+			LOGGER.fine("CACapabilities response was of content-type " + mimeType + ".  Expected text/plain");
 		}
 		
         final List<String> capabilities = new LinkedList<String>();

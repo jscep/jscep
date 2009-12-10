@@ -28,7 +28,7 @@ import java.util.List;
 import com.google.code.jscep.content.NextCaCertificateContentHandler;
 
 /**
- * This class represents a GetNextCACert request.
+ * This class represents a <tt>GetNextCACert</tt> request.
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6">SCEP Internet-Draft Reference</a>
  */

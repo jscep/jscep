@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.transaction;
+package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -46,6 +46,11 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.util.encoders.Hex;
 
+import com.google.code.jscep.transaction.CmsException;
+import com.google.code.jscep.transaction.MessageType;
+import com.google.code.jscep.transaction.Nonce;
+import com.google.code.jscep.transaction.ScepObjectIdentifiers;
+import com.google.code.jscep.transaction.TransactionId;
 import com.google.code.jscep.util.HexUtil;
 
 

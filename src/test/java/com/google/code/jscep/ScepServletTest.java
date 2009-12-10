@@ -30,9 +30,6 @@ public class ScepServletTest {
 		req.setURI("/scep/pkiclient.exe?operation=" + Operation.PKIOperation);
 		req.setVersion("HTTP/1.0");
 		
-		String request = req.generate();
-		System.out.println(request);
-		System.out.println(tester.getResponses(request));
-//		System.out.println(res.parse(tester.getResponses(req.generate())));
+//		String request = req.generate();
 	}
 }

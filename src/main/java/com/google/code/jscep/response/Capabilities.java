@@ -29,8 +29,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+/**
+ * This class represents the list of capabilities supported by a particular
+ * SCEP server.
+ */
 public class Capabilities {
 	private static final Logger LOGGER = Logger.getLogger(Capabilities.class.getName());
+	/**
+	 * This class represents a single SCEP server capability.
+	 */
     public static enum Capability {
     	/**
     	 * CA Supports the GetNextCACert message.
@@ -89,7 +96,7 @@ public class Capabilities {
     		if (map.containsKey(capability)) {
     			this.capabilties.add(map.get(capability));
     		} else {
-    			LOGGER.info("Unrecognised Capability: \"" + capability + "\" (IGNORED)");
+    			LOGGER.fine("Unrecognised Capability: \"" + capability + "\" (IGNORED)");
     		}
     	}
     }

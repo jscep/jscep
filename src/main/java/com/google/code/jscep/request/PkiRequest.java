@@ -29,7 +29,7 @@ import com.google.code.jscep.content.CertRepContentHandler;
 import com.google.code.jscep.response.CertRep;
 
 /**
- * This class represents a PkiRequest request.
+ * This class represents a <tt>PkiRequest</tt> request.
  */
 public class PkiRequest implements Request<CertRep> {
 	private final byte[] signedData;
