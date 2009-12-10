@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 /**
@@ -169,7 +170,10 @@ public class Capabilities {
     }
     
     /**
-     * DESede > DES
+     * Returns the best cipher algorithm available.
+     * <p>
+     * In the case of this method, "best" is defined as most secure, so Triple DES
+     * is preferred to DES.
      * 
      * @return the preferred cipher.
      * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html#Cipher
@@ -183,7 +187,16 @@ public class Capabilities {
     }
     
     /**
-     * SHA-512 > SHA-256 > SHA-1 > MD5
+     * Returns the best message digest algorithm available.
+     * <p>
+     * In the case of this method, "best" is defined as most secure, so the order
+     * of preference is as follows:
+     * <ol>
+     *     <li>SHA-512
+     *     <li>SHA-256
+     *     <li>SHA-1
+     *     <li>MD5
+     * </ol>
      * 
      * @return the preferred message digest algorithm.
      * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html#MessageDigest
@@ -202,6 +215,17 @@ public class Capabilities {
 
     @Override
     public String toString() {
-        return capabilties.toString();
+    	StringBuffer sb = new StringBuffer();
+    	sb.append(String.format("%-20s%s%n%n", "Capability", "Supported"));
+    	for (Entry<String, Capability> entry : map.entrySet()) {
+    		boolean supported;
+    		if (capabilties.contains(entry.getValue())) {
+    			supported = true;
+    		} else {
+    			supported = false;
+    		}
+    		sb.append(String.format("%-20s%s%n", entry.getKey(), supported));
+    	}
+    	return sb.toString();
     }
 }

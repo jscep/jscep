@@ -129,4 +129,9 @@ public class CapabilitiesTest {
 	public void testIgnoresUnknownCapability() {
 		createCapabilities("BOGUS");
 	}
+	
+	@Test
+	public void testToString() {
+		System.out.println(createCapabilities("SHA-512", "SHA-1").toString());
+	}
 }
