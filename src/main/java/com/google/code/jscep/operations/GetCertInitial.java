@@ -51,19 +51,11 @@ public class GetCertInitial implements PkiMessage {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a DER-encoded IssuerAndSubject
      * 
-     * @return a DER-encoded IssuerAndSubject.
+     * @return the IssuerAndSubject.
      */
 	public byte[] getMessageData() throws IOException {
 		return new IssuerAndSubject(issuer, subject).getDEREncoded();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		return getMessageType().toString();
 	}
 }

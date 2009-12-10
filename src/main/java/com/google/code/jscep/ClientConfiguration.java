@@ -29,9 +29,13 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
+/**
+ * This class represents the various configuration options that can be used to 
+ * alter the behaviour of the client.
+ */
 public class ClientConfiguration {
-	private URL url;
-	private Proxy proxy;
+	private final URL url;
+	private final Proxy proxy;
 	private String caId;
 	private KeyPair keyPair;
 	private X509Certificate identity;
@@ -40,86 +44,175 @@ public class ClientConfiguration {
 	private byte[] caDigest;
 	private String digestAlgorithm;
 	
-	public void setUrl(URL url) {
+	/**
+	 * Creates a new instance of this class with the given SCEP URL.
+	 * 
+	 * @param url the URL of the SCEP server.
+	 */
+	public ClientConfiguration(URL url) {
 		this.url = url;
+		this.proxy = Proxy.NO_PROXY;
 	}
 	
+	/**
+	 * Creates a new instance of this class with the given SCEP URL, and the proxy
+	 * needed to access that URL.
+	 * 
+	 * @param url the URL of the SCEP server.
+	 * @param proxy the proxy to use to access the SCEP server.
+	 */
+	public ClientConfiguration(URL url, Proxy proxy) {
+		this.url = url;
+		this.proxy = proxy;
+	}
+	
+	/**
+	 * Returns the URL of the SCEP server.
+	 * 
+	 * @return the URL of the SCEP server.
+	 */
 	public URL getUrl() {
 		return url;
 	}
 	
-	public void setProxy(Proxy proxy) {
-		this.proxy = proxy;
-	}
-	
+	/**
+	 * Returns the proxy to use to access the SCEP server.
+	 * 
+	 * @return the proxy.
+	 */
 	public Proxy getProxy() {
 		return proxy;
 	}
 	
-	public void setCaIdentifier(String caId) {
-		this.caId = caId;
+	/**
+	 * Sets the CA identification string.
+	 * 
+	 * @param caIdentifier the CA identification string.
+	 */
+	public void setCaIdentifier(String caIdentifier) {
+		this.caId = caIdentifier;
 	}
 	
+	/**
+	 * Returns the CA identification string.
+	 * 
+	 * @return the CA identification string.
+	 */
 	public String getCaIdentifier() {
 		return caId;
 	}
 	
+	/**
+	 * Sets the key pair to use for certification.
+	 * 
+	 * @param keyPair the key pair.
+	 */
 	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
 	}
 	
+	/**
+	 * Returns the key pair to use for certification.
+	 * 
+	 * @return the key pair.
+	 */
 	public KeyPair getKeyPair() {
 		return keyPair;
 	}
 	
+	/**
+	 * Sets the certification subject.
+	 * 
+	 * @param subject the certification subject.
+	 */
 	public void setSubject(X500Principal subject) {
 		this.subject = subject;
 	}
 	
+	/**
+	 * Returns the certification subject.
+	 * 
+	 * @return the certification subject.
+	 */
 	public X500Principal getSubject() {
 		return subject;
 	}
 	
+	/**
+	 * Sets the certification identity.
+	 * 
+	 * @param identity the certification identity.
+	 */
 	public void setIdentity(X509Certificate identity) {
 		this.identity = identity;
 	}
 	
+	/**
+	 * Returns the certification identity.
+	 * 
+	 * @return the certification identity.
+	 */
 	public X509Certificate getIdentity() {
 		return identity;
 	}
 	
 	/**
-	 * The message digest of the CA certificate.
+	 * Set the message digest of the CA certificate.
+	 * <p>
+	 * The digestAlgorithm must be one of <tt>MD5</tt>, <tt>SHA-1</tt>, 
+	 * <tt>SHA-256</tt> or <tt>SHA-512</tt>
 	 * 
 	 * @param caDigest the digest.
+	 * @param digestAlgorithm the digest algorithm.
 	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
+	 */
+	public void setCaDigest(byte[] caDigest, String digestAlgorithm) {
+		this.caDigest = caDigest;
+		this.digestAlgorithm = digestAlgorithm;
+	}
+	
+	/**
+	 * Set the MD5 message digest of the CA certificate.
+	 * 
+	 * @param caDigest the digest.
 	 */
 	public void setCaDigest(byte[] caDigest) {
 		this.caDigest = caDigest;
+		this.digestAlgorithm = "MD5";
 	}
 	
+	/**
+	 * Returns the CA message digest.
+	 * 
+	 * @return the CA message digest.
+	 */
 	public byte[] getCaDigest() {
 		return caDigest;
 	}
 	
+	/**
+	 * Sets the CA certificate.
+	 * 
+	 * @param ca the CA certificate.
+	 */
 	public void setCaCertificate(X509Certificate ca) {
 		this.ca = ca;
 	}
 	
+	/**
+	 * Returns the CA certificate.
+	 * 
+	 * @return the CA certificate.
+	 */
 	public X509Certificate getCaCertificate() {
 		return ca;
 	}
-	
+
 	/**
-	 * One of <tt>MD5</tt>, <tt>SHA-1</tt>, <tt>SHA-256</tt> or <tt>SHA-512</tt>.  Defaults to MD5.
+	 * Returns the digest algorithm.
 	 * 
-	 * @param digestAlgorithm the hash algorithm for encoding the certificate.
-	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
+	 * @return the digest algorithm.
 	 */
-	public void setDigestAlgorithm(String digestAlgorithm) {
-		this.digestAlgorithm = digestAlgorithm;
-	}
-	
 	public String getDigestAlgorithm() {
 		return digestAlgorithm;
 	}

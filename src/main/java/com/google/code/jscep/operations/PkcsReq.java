@@ -61,9 +61,9 @@ public class PkcsReq implements PkiMessage {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a DER-encoded PKCS#10 Certificate Request.
      * 
-     * @return a DER-encoded PKCS#10 Certification Request
+     * @return the Certification Request
      * @see <a href="http://tools.ietf.org/html/rfc2986">RFC 2986</a>
      */
     public byte[] getMessageData() throws IOException, GeneralSecurityException {
@@ -76,14 +76,6 @@ public class PkcsReq implements PkiMessage {
     	LOGGER.info("PKCS #10 Digest (" + digestAlgorithm + "):\n" + HexUtil.formatHex(HexUtil.toHex(digest)));
     	
     	return pkcs10;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-    	return getMessageType().toString();
     }
     
     private byte[] calculateDigest(byte[] pkcs10) throws NoSuchAlgorithmException {

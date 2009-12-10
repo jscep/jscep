@@ -57,11 +57,14 @@ public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
 	private final X509Certificate identity;
 	private final Set<DEREncodable> attrs = new HashSet<DEREncodable>();
 	
-	public Pkcs10CertificationRequestImpl(KeyPair keyPair, X509Certificate identity) {
+	Pkcs10CertificationRequestImpl(KeyPair keyPair, X509Certificate identity) {
 		this.keyPair = keyPair;
 		this.identity = identity;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addAttribute(String oid, Object attr) {
 		DERObjectIdentifier objectId = new DERObjectIdentifier(oid);
@@ -82,7 +85,11 @@ public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
         
         return new DERSet(attributes);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public byte[] getEncoded() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, IOException {
 		X500Principal subject = identity.getSubjectX500Principal();
 		LOGGER.info("Generating PKCS #10 Request for " + subject);
@@ -90,7 +97,7 @@ public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
 		PrivateKey priv = keyPair.getPrivate();
 		
 		CertificationRequest request = new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv, "SunRsaSign");
-		byte[] requestBytes = request.getEncoded();
+		byte[] requestBytes = request.getDEREncoded();
 		
 		LOGGER.info("Generated PKCS #10 Request:\n" + HexUtil.formatHex(HexUtil.toHex(requestBytes)));
 		

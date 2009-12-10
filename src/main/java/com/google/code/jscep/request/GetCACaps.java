@@ -26,6 +26,8 @@ import com.google.code.jscep.content.CaCapabilitiesContentHandler;
 import com.google.code.jscep.response.Capabilities;
 
 /**
+ * This class represents a GetCACaps request.
+ * 
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
  */
 public class GetCACaps implements Request<Capabilities> {

@@ -17,23 +17,23 @@ import org.junit.Test;
 
 public class ClientConfigurationTest {
 	private ClientConfiguration fixture;
+	private URL url;
+	private Proxy proxy;
 	
 	@Before
-	public void setUp() {
-		fixture = new ClientConfiguration();
+	public void setUp() throws MalformedURLException {
+		url = new URL("http://www.example.org/");
+		proxy = Proxy.NO_PROXY;
+		fixture = new ClientConfiguration(url, proxy);
 	}
 	
 	@Test
 	public void testGetUrl() throws MalformedURLException {
-		URL url = new URL("http://www.example.org/");
-		fixture.setUrl(url);
 		Assert.assertEquals(url, fixture.getUrl());
 	}
 
 	@Test
 	public void testGetProxy() {
-		Proxy proxy = Proxy.NO_PROXY;
-		fixture.setProxy(proxy);
 		Assert.assertEquals(proxy, fixture.getProxy());
 	}
 
@@ -82,7 +82,7 @@ public class ClientConfigurationTest {
 	@Test
 	public void testGetDigestAlgorithm() {
 		String alg = "MD5";
-		fixture.setDigestAlgorithm(alg);
+		fixture.setCaDigest(new byte[0], alg);
 		Assert.assertEquals(alg, fixture.getDigestAlgorithm());
 	}
 

@@ -28,25 +28,52 @@ import java.util.List;
 import com.google.code.jscep.content.NextCaCertificateContentHandler;
 
 /**
+ * This class represents a GetNextCACert request.
+ * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6">SCEP Internet-Draft Reference</a>
  */
 public class GetNextCACert implements Request<List<X509Certificate>> {
-    private String caIdentifier;
+    private final String caIdentifier;
     private final X509Certificate issuer;
-
-    public GetNextCACert(X509Certificate issuer, String ca) {
+    
+    /**
+     * Creates a new GetNextCACert request without a CA identification string.
+     * 
+     * @param issuer the existing CA certificate.
+     */
+    public GetNextCACert(X509Certificate issuer) {
     	this.issuer = issuer;
-        this.caIdentifier = ca;
+    	this.caIdentifier = null;
     }
 
+    /**
+     * Creates a new GetNextCACert request with the given CA identification string.
+     * 
+     * @param issuer the existing CA certificate.
+     * @param caIdentifier the CA identification string.
+     */
+    public GetNextCACert(X509Certificate issuer, String caIdentifier) {
+    	this.issuer = issuer;
+        this.caIdentifier = caIdentifier;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Operation getOperation() {
         return Operation.GetNextCACert;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getMessage() {
         return caIdentifier;
     }
      
+    /**
+     * {@inheritDoc}
+     */
     public NextCaCertificateContentHandler getContentHandler() {
     	return new NextCaCertificateContentHandler(issuer);
     }

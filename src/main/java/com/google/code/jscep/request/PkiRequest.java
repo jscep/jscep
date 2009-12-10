@@ -28,6 +28,9 @@ import java.security.KeyPair;
 import com.google.code.jscep.content.CertRepContentHandler;
 import com.google.code.jscep.response.CertRep;
 
+/**
+ * This class represents a PkiRequest request.
+ */
 public class PkiRequest implements Request<CertRep> {
 	private final byte[] signedData;
 	private final KeyPair keyPair;

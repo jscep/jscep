@@ -55,9 +55,9 @@ public class GetCRL implements PkiMessage {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a DER-encoded IssuerAndSerialNumber
 	 *
-     * @return a DER-encoded IssuerAndSerial.
+     * @return the IssuerAndSerialNumber.
      * @see <a href="http://tools.ietf.org/html/rfc2315#section-6.7">SCEP Internet-Draft Reference</a>
      */
 	public byte[] getMessageData() throws IOException {
@@ -65,13 +65,5 @@ public class GetCRL implements PkiMessage {
         X509Name issuerName = new X509Principal(issuer.getEncoded());
 
         return new IssuerAndSerialNumber(issuerName, serial).getDEREncoded();
-    }
-    
-	/**
-     * {@inheritDoc}
-     */
-	@Override
-    public String toString() {
-    	return getMessageType().toString();
     }
 }

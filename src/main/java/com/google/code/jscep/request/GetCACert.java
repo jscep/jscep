@@ -28,14 +28,24 @@ import java.util.List;
 import com.google.code.jscep.content.CaCertificateContentHandler;
 
 /**
+ * This class represents a GetCACert request.
+ * 
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
  */
 public class GetCACert implements Request<List<X509Certificate>> {
 	private String caIdentifier;
 
+	/**
+	 * Creates a new GetCACert request with no CA identification string.
+	 */
 	public GetCACert() {
 	}
 
+	/**
+	 * Creates a new GetCACert request with the given CA identification string.
+	 * 
+	 * @param caIdentifier the CA identification string.
+	 */
 	public GetCACert(String caIdentifier) {
 		this.caIdentifier = caIdentifier;
 	}
