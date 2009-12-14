@@ -26,12 +26,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
 
-import com.google.code.jscep.RequestFailureException;
+import com.google.code.jscep.EnrollmentFailureException;
 import com.google.code.jscep.RequestPendingException;
+import com.google.code.jscep.ScepException;
 import com.google.code.jscep.operations.PkiMessage;
 import com.google.code.jscep.pkcs7.Enveloper;
 import com.google.code.jscep.pkcs7.Signer;
@@ -67,50 +66,43 @@ public class Transaction {
 	 * @return a certificate store, containing either certificates or CRLs.
 	 * @throws MalformedURLException if the SCEP URL is invalid.
 	 * @throws IOException if any I/O error occurs.
-	 * @throws CmsException if any PKCS#7 error occurs.
 	 * @throws RequestPendingException if manual intervention is required.
-	 * @throws RequestFailureException if the request could not be serviced.
+	 * @throws EnrollmentFailureException if the request could not be serviced.
+	 * @throws GeneralSecurityException if any security error occurs.
+	 * @throws ScepException 
 	 */
-	public CertStore performOperation(PkiMessage op) throws MalformedURLException, IOException, CmsException, RequestPendingException, RequestFailureException {
-		try {
-			byte[] enveloped = enveloper.envelope(op.getMessageData());
-			byte[] signedData = signer.sign(enveloped, op.getMessageType(), this.transId, this.senderNonce);
-			PkiRequest request = new PkiRequest(signedData, keyPair);
-			CertRep response = transport.sendMessage(request);
-
-			return handleResponse(response);
-		} catch (GeneralSecurityException e) {
-			throw new CmsException(e);
-		}
-	}
-
-	private CertStore handleResponse(CertRep msg) throws CmsException,
-			RequestPendingException, RequestFailureException,
-			NoSuchProviderException, NoSuchAlgorithmException {
+	public CertStore performOperation(PkiMessage op) throws MalformedURLException, IOException, RequestPendingException, EnrollmentFailureException, GeneralSecurityException, ScepException {
+		final byte[] msgData = op.getMessageData();
+		final MessageType msgType = op.getMessageType();
 		
-		if (msg.getTransactionId().equals(this.transId) == false) {
-			throw new CmsException("Transaction ID Mismatch: Sent ["
-					+ this.transId + "]; Received [" + msg.getTransactionId()
+		byte[] enveloped = enveloper.envelope(msgData);
+		byte[] signedData = signer.sign(enveloped, msgType, transId, senderNonce);
+		PkiRequest request = new PkiRequest(signedData, keyPair);
+		CertRep response = transport.sendMessage(request);
+
+		if (response.getTransactionId().equals(this.transId) == false) {
+			throw new ScepException("Transaction ID Mismatch: Sent ["
+					+ this.transId + "]; Received [" + response.getTransactionId()
 					+ "]");
 		}
 
-		if (msg.getRecipientNonce().equals(senderNonce) == false) {
-			throw new CmsException("Sender Nonce Mismatch.  Sent ["
+		if (response.getRecipientNonce().equals(senderNonce) == false) {
+			throw new ScepException("Sender Nonce Mismatch.  Sent ["
 					+ this.senderNonce + "]; Received ["
-					+ msg.getRecipientNonce() + "]");
+					+ response.getRecipientNonce() + "]");
 		}
 
 		// TODO: Detect replay attacks.
 		// 
-		// http://tools.ietf.org/html/draft-nourse-scep-19#section-8.5
-		msg.getSenderNonce();
+		// http://tools.ietf.org/html/draft-nourse-scep-20#section-8.5
+		response.getSenderNonce();
 
-		if (msg.getStatus().equals(PkiStatus.FAILURE)) {
-			throw new RequestFailureException(msg.getFailInfo().toString());
-		} else if (msg.getStatus().equals(PkiStatus.PENDING)) {
+		if (response.getStatus().equals(PkiStatus.FAILURE)) {
+			throw new EnrollmentFailureException(response.getFailInfo().toString());
+		} else if (response.getStatus().equals(PkiStatus.PENDING)) {
 			throw new RequestPendingException();
 		} else {
-			return msg.getCertStore();
+			return response.getCertStore();
 		}
 	}
 }

@@ -57,6 +57,7 @@ public class Enveloper {
     	CMSProcessable processableData = new CMSProcessableByteArray(messageData);
     	CMSEnvelopedData envelopedData;
 		try {
+			// Need BC Provider Here.
 			envelopedData = gen.generate(processableData, cipher, "BC");
 		} catch (CMSException e) {
 			throw new CmsException(e);

@@ -281,6 +281,7 @@ public class Client {
     	
     	// Validate
     	final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
+    	System.out.println(Arrays.toString(md.digest(certs.get(0).getEncoded())));
         if (Arrays.equals(caDigest, md.digest(certs.get(0).getEncoded())) == false) {
         	throw new ScepException("CA Fingerprint Error");
         }
@@ -311,12 +312,10 @@ public class Client {
      * 
      * @return the certificate revocation list.
      * @throws IOException if any I/O error occurs.
-     * @throws ScepException
-     * @throws GeneralSecurityException
-     * @throws UnsupportedCallbackException 
-     * @throws RequestFailureException 
+     * @throws ScepException if any SCEP error occurs.
+     * @throws GeneralSecurityException if any security error occurs.
      */
-    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException, RequestFailureException {
+    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException {
         X509Certificate ca = retrieveCA();
         
         if (supportsDistributionPoints()) {
@@ -324,7 +323,14 @@ public class Client {
         } else {
 	        // PKI Operation
 	        PkiMessage req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
-	        CertStore store = createTransaction().performOperation(req);
+	        CertStore store;
+			try {
+				store = createTransaction().performOperation(req);
+			} catch (RequestPendingException e) {
+				throw new RuntimeException(e);
+			} catch (EnrollmentFailureException e) {
+				throw new RuntimeException(e);
+			}
 	        
 	        return getCRLs(store.getCRLs(null));
         }
@@ -362,15 +368,24 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      * @throws ScepException
      * @throws GeneralSecurityException
+     * @throws EnrollmentFailureException 
+     * @throws RequestPendingException 
      * @throws UnsupportedCallbackException 
      * @throws RequestPendingException 
-     * @throws RequestFailureException 
+     * @throws EnrollmentFailureException 
      */
-    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException, UnsupportedCallbackException, RequestPendingException, RequestFailureException {
+    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException {
     	final X509Certificate ca = retrieveCA();
         // PKI Operation
         PkiMessage req = new GetCert(ca.getIssuerX500Principal(), serial);
-        CertStore store = createTransaction().performOperation(req);
+        CertStore store;
+		try {
+			store = createTransaction().performOperation(req);
+		} catch (RequestPendingException e) {
+			throw new RuntimeException(e);
+		} catch (EnrollmentFailureException e) {
+			throw new RuntimeException(e);
+		}
 
         return getCertificates(store.getCertificates(null)).get(0);
     }

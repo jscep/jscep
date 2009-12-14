@@ -78,7 +78,7 @@ public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 			Callable<EnrollmentResult> task = new PendingEnrollmentTask(transport, ca, keyPair, identity, digestAlgorithm);
 			
 			return new EnrollmentResult(task);
-		} catch (RequestFailureException e) {
+		} catch (EnrollmentFailureException e) {
 			return new EnrollmentResult(e.getMessage());
 		}
 	}

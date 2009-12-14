@@ -22,24 +22,24 @@
 
 package com.google.code.jscep;
 
-public class RequestFailureException extends Exception {
+public class EnrollmentFailureException extends Exception {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 747055232323410404L;
 
-	public RequestFailureException() {
+	public EnrollmentFailureException() {
 	}
 	
-	public RequestFailureException(String message) {
+	public EnrollmentFailureException(String message) {
 		super(message);
 	}
 	
-	public RequestFailureException(String message, Throwable cause) {
+	public EnrollmentFailureException(String message, Throwable cause) {
 		super(message, cause);
 	}
 	
-	public RequestFailureException(Throwable cause) {
+	public EnrollmentFailureException(Throwable cause) {
 		super(cause);
 	}
 }
