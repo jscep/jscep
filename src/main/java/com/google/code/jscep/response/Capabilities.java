@@ -22,8 +22,8 @@
 
 package com.google.code.jscep.response;
 
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,7 +70,7 @@ public class Capabilities {
         TRIPLE_DES;
     }
     
-    private Set<Capability> capabilties = new HashSet<Capability>();
+    private Set<Capability> capabilities;
     private Map<String, Capability> map = new HashMap<String, Capability>();
     {
     	map.put("GetNextCACert", Capability.GET_NEXT_CA_CERT);
@@ -89,13 +89,15 @@ public class Capabilities {
      * @param capabilities the list of capabilities.
      */
     public Capabilities(List<String> capabilities) {
+    	this.capabilities = EnumSet.noneOf(Capability.class);
+    	
     	for (String capability : capabilities) {
     		// http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.2
     		// 
     		// A client MUST be able to accept and ignore any unknown keywords 
     		// that might be sent back by a CA.
     		if (map.containsKey(capability)) {
-    			this.capabilties.add(map.get(capability));
+    			this.capabilities.add(map.get(capability));
     		} else {
     			LOGGER.fine("Unrecognised Capability: \"" + capability + "\" (IGNORED)");
     		}
@@ -103,7 +105,7 @@ public class Capabilities {
     }
 
     private boolean supports(Capability capability) {
-        return capabilties.contains(capability);
+        return capabilities.contains(capability);
     }
 
     /**
@@ -219,7 +221,7 @@ public class Capabilities {
     	sb.append(String.format("%-20s%s%n%n", "Capability", "Supported"));
     	for (Entry<String, Capability> entry : map.entrySet()) {
     		boolean supported;
-    		if (capabilties.contains(entry.getValue())) {
+    		if (capabilities.contains(entry.getValue())) {
     			supported = true;
     		} else {
     			supported = false;
