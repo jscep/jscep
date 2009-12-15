@@ -32,7 +32,7 @@ import com.google.code.jscep.transaction.MessageType;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
  */
-public interface PkiMessage {
+public interface PkiOperation {
 	/**
 	 * Returns the message type for this operation.
 	 * 

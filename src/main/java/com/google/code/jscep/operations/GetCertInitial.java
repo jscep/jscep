@@ -34,7 +34,7 @@ import com.google.code.jscep.transaction.MessageType;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.3">SCEP Internet-Draft Reference</a>
  */
-public class GetCertInitial implements PkiMessage {
+public class GetCertInitial implements PkiOperation {
 	private final X500Principal issuer;
     private final X500Principal subject;
 

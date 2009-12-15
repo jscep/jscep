@@ -26,14 +26,15 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.RecipientInformationStore;
 
+import com.google.code.jscep.pkcs7.CertRep;
 import com.google.code.jscep.transaction.CmsException;
 import com.google.code.jscep.util.HexUtil;
 
@@ -54,15 +55,20 @@ public class PkcsPkiEnvelopeImpl extends PkcsPkiEnvelope {
 	public CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException {
 		try {
 			// TODO: Try to break BC Mail dependency.
-			CMSEnvelopedData ed = new CMSEnvelopedData(envelopedData);
-			RecipientInformationStore recipientStore = ed.getRecipientInfos();
-	    	RecipientInformation recipient = (RecipientInformation) recipientStore.getRecipients().iterator().next();
-	    	byte[] content = recipient.getContent(keyPair.getPrivate(), "BC");
-	    	CMSSignedData contentData = new CMSSignedData(content);
+			final CMSEnvelopedData ed = new CMSEnvelopedData(envelopedData);
+			final RecipientInformationStore recipientStore = ed.getRecipientInfos();
+			final Collection<RecipientInformation> recipientInfos = recipientStore.getRecipients();
+	    	final RecipientInformation recipient = (RecipientInformation) recipientInfos.iterator().next();
+	    	// The pkcsPKIEnvelope of a CertRep (if present), MUST be encrypted with 
+	    	// the same certificate used to sign the PKCSReq this message is a reply
+	    	// to.
+	    	final byte[] content = recipient.getContent(keyPair.getPrivate(), "BC");
 	    	
-	    	return contentData.getCertificatesAndCRLs("Collection", "BC");
+	    	CertRep certRep = CertRep.getInstance(content);
+	    	
+	    	return certRep.getCertStore();
 		} catch (CMSException e) {
-			throw new CmsException(e);
+			throw new RuntimeException(e);
 		}
 	}
 }

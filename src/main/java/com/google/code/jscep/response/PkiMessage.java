@@ -38,15 +38,45 @@ import com.google.code.jscep.transaction.TransactionId;
  *
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
  */
-public abstract class CertRep {
+public abstract class PkiMessage {
 	public abstract FailInfo getFailInfo();
-	public abstract PkiStatus getStatus();	
+	public abstract PkiStatus getStatus();
+	/**
+	 * Returns the recipient nonce for this response.
+	 * 
+	 * @return the recipient nonce.
+	 */
 	public abstract Nonce getRecipientNonce();
+	/**
+	 * Returns the sender nonce for this response.
+	 * 
+	 * @return the sender nonce.
+	 */
 	public abstract Nonce getSenderNonce();
+	/**
+	 * Returns the transaction ID for this response.
+	 * 
+	 * @return the transaction ID.
+	 */
 	public abstract TransactionId getTransactionId();
+	/**
+	 * Returns the certificate store for this response.
+	 * 
+	 * @return the certificate store.
+	 * @throws NoSuchProviderException
+	 * @throws NoSuchAlgorithmException
+	 * @throws CmsException
+	 */
 	public abstract CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException;
 	
-	public static CertRep getInstance(KeyPair keyPair, byte[] bytes) throws CmsException {
-		return new CertRepImpl(keyPair, bytes);
+	/**
+	 * 
+	 * @param keyPair
+	 * @param bytes DER-encoded degenerate certificates-only signedData
+	 * @return
+	 * @throws CmsException
+	 */
+	public static PkiMessage getInstance(KeyPair keyPair, byte[] bytes) throws CmsException {
+		return new PkiMessageImpl(keyPair, bytes);
 	}
 }

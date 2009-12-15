@@ -50,10 +50,10 @@ import com.google.code.jscep.transaction.TransactionId;
 import com.google.code.jscep.util.HexUtil;
 
 /**
- * Implementation of {@link CertRep} that uses Bouncy Castle.
+ * Implementation of {@link PkiMessage} that uses Bouncy Castle.
  */
-public class CertRepImpl extends CertRep {
-	private final static Logger LOGGER = Logger.getLogger(CertRepImpl.class.getName());
+public class PkiMessageImpl extends PkiMessage {
+	private final static Logger LOGGER = Logger.getLogger(PkiMessageImpl.class.getName());
 	private TransactionId transId;
 	private PkiStatus pkiStatus;
 	private Nonce recipientNonce;
@@ -62,7 +62,13 @@ public class CertRepImpl extends CertRep {
 	private FailInfo failInfo;
 	private final AttributeTable signedAttrs;
 	
-	public CertRepImpl(KeyPair keyPair, byte[] bytes) throws CmsException {
+	/**
+	 * 
+	 * @param keyPair
+	 * @param bytes DER-encoded degenerate certificates-only signedData
+	 * @throws CmsException
+	 */
+	public PkiMessageImpl(KeyPair keyPair, byte[] bytes) throws CmsException {
 		LOGGER.info("INCOMING SignedData:\n" + HexUtil.format(bytes));
 		CMSSignedData signedData;
 		try {
@@ -96,8 +102,8 @@ public class CertRepImpl extends CertRep {
         	failInfo = extractFailInfo();
         } else {
 	        CMSProcessable signedContent = signedData.getSignedContent();
-			byte[] ed = (byte[]) signedContent.getContent();
-			pkcsPkiEnvelope = PkcsPkiEnvelope.getInstance(keyPair, ed);
+			byte[] envelopedData = (byte[]) signedContent.getContent();
+			pkcsPkiEnvelope = PkcsPkiEnvelope.getInstance(keyPair, envelopedData);
         }
 	}
 	

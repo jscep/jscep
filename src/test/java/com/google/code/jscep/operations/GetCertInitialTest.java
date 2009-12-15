@@ -13,7 +13,7 @@ import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.transaction.MessageType;
 
 public class GetCertInitialTest {
-	private PkiMessage fixture;
+	private PkiOperation fixture;
 	private X500Principal issuer;
 	private X500Principal subject;
 	

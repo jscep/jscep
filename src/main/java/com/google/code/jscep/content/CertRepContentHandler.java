@@ -28,13 +28,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyPair;
 
-import com.google.code.jscep.response.CertRep;
+import com.google.code.jscep.response.PkiMessage;
 import com.google.code.jscep.transaction.CmsException;
 
 /**
  * This class handles responses to <tt>PKIRequest</tt> requests.
  */
-public class CertRepContentHandler implements ScepContentHandler<CertRep> {
+public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	private final KeyPair keyPair;
 	
 	public CertRepContentHandler(KeyPair keyPair) {
@@ -44,7 +44,7 @@ public class CertRepContentHandler implements ScepContentHandler<CertRep> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public CertRep getContent(InputStream in, String mimeType)
+	public PkiMessage getContent(InputStream in, String mimeType)
 			throws IOException {
 		if (mimeType.equals("application/x-pki-message")) {
 			BufferedInputStream is = new BufferedInputStream(in);
@@ -56,7 +56,12 @@ public class CertRepContentHandler implements ScepContentHandler<CertRep> {
 			}
 
 			try {
-				return CertRep.getInstance(keyPair, baos.toByteArray());
+				// This is actually a pkiMessage here, not a CertRep
+				// 
+				// pkiMessage [SignedData]
+				//     pkcsPKIEnvelope [EnvelopedData]
+				//         CertRep [signedData]
+				return PkiMessage.getInstance(keyPair, baos.toByteArray());
 			} catch (CmsException e) {
 				throw new IOException(e);
 			}

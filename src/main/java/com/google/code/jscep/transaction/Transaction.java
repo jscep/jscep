@@ -31,11 +31,11 @@ import java.security.cert.CertStore;
 import com.google.code.jscep.EnrollmentFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.ScepException;
-import com.google.code.jscep.operations.PkiMessage;
+import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.pkcs7.Enveloper;
 import com.google.code.jscep.pkcs7.Signer;
 import com.google.code.jscep.request.PkiRequest;
-import com.google.code.jscep.response.CertRep;
+import com.google.code.jscep.response.PkiMessage;
 import com.google.code.jscep.transport.Transport;
 
 /**
@@ -71,14 +71,14 @@ public class Transaction {
 	 * @throws GeneralSecurityException if any security error occurs.
 	 * @throws ScepException 
 	 */
-	public CertStore performOperation(PkiMessage op) throws MalformedURLException, IOException, RequestPendingException, EnrollmentFailureException, GeneralSecurityException, ScepException {
+	public CertStore performOperation(PkiOperation op) throws MalformedURLException, IOException, RequestPendingException, EnrollmentFailureException, GeneralSecurityException, ScepException {
 		final byte[] msgData = op.getMessageData();
 		final MessageType msgType = op.getMessageType();
 		
 		byte[] enveloped = enveloper.envelope(msgData);
 		byte[] signedData = signer.sign(enveloped, msgType, transId, senderNonce);
 		PkiRequest request = new PkiRequest(signedData, keyPair);
-		CertRep response = transport.sendMessage(request);
+		PkiMessage response = transport.sendMessage(request);
 
 		if (response.getTransactionId().equals(this.transId) == false) {
 			throw new ScepException("Transaction ID Mismatch: Sent ["

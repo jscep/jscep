@@ -26,12 +26,12 @@ import java.io.IOException;
 import java.security.KeyPair;
 
 import com.google.code.jscep.content.CertRepContentHandler;
-import com.google.code.jscep.response.CertRep;
+import com.google.code.jscep.response.PkiMessage;
 
 /**
  * This class represents a <tt>PkiRequest</tt> request.
  */
-public class PkiRequest implements Request<CertRep> {
+public class PkiRequest implements Request<PkiMessage> {
 	private final byte[] signedData;
 	private final KeyPair keyPair;
 

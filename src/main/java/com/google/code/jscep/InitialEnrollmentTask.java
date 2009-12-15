@@ -28,7 +28,7 @@ import java.security.cert.X509Certificate;
 import java.util.concurrent.Callable;
 
 import com.google.code.jscep.operations.PkcsReq;
-import com.google.code.jscep.operations.PkiMessage;
+import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
@@ -69,7 +69,7 @@ public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 	@Override
 	public EnrollmentResult call() throws Exception {
 		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, digestAlgorithm);
-		PkiMessage req = new PkcsReq(keyPair, identity, digestAlgorithm, password);
+		PkiOperation req = new PkcsReq(keyPair, identity, digestAlgorithm, password);
 		try {
 			CertStore store = trans.performOperation(req);
 			

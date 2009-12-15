@@ -16,7 +16,7 @@ import org.junit.Test;
 import com.google.code.jscep.transaction.MessageType;
 
 public class GetCRLTest {
-	private PkiMessage fixture;
+	private PkiOperation fixture;
 	private X500Principal issuer;
 	private BigInteger serial;
 	

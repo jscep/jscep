@@ -27,7 +27,7 @@ import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 
 import com.google.code.jscep.operations.GetCertInitial;
-import com.google.code.jscep.operations.PkiMessage;
+import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
@@ -69,7 +69,7 @@ public final class PendingEnrollmentTask extends AbstractEnrollmentTask {
 	@Override
 	public EnrollmentResult call() throws Exception {
 		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, fingerprintAlgorithm);
-		PkiMessage req = new GetCertInitial(ca.getIssuerX500Principal(), identity.getSubjectX500Principal());
+		PkiOperation req = new GetCertInitial(ca.getIssuerX500Principal(), identity.getSubjectX500Principal());
 		try {
 			CertStore store = trans.performOperation(req);
 			return new EnrollmentResult(getCertificates(store.getCertificates(null)));

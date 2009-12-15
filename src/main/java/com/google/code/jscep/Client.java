@@ -55,7 +55,7 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
-import com.google.code.jscep.operations.PkiMessage;
+import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetNextCACert;
@@ -322,7 +322,7 @@ public class Client {
         	return null;
         } else {
 	        // PKI Operation
-	        PkiMessage req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
+	        PkiOperation req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
 	        CertStore store;
 			try {
 				store = createTransaction().performOperation(req);
@@ -377,7 +377,7 @@ public class Client {
     public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException {
     	final X509Certificate ca = retrieveCA();
         // PKI Operation
-        PkiMessage req = new GetCert(ca.getIssuerX500Principal(), serial);
+        PkiOperation req = new GetCert(ca.getIssuerX500Principal(), serial);
         CertStore store;
 		try {
 			store = createTransaction().performOperation(req);
