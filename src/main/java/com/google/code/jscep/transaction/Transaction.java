@@ -28,14 +28,18 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
 
+import org.bouncycastle.cms.CMSException;
+
 import com.google.code.jscep.EnrollmentFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.ScepException;
 import com.google.code.jscep.operations.PkiOperation;
-import com.google.code.jscep.pkcs7.Enveloper;
-import com.google.code.jscep.pkcs7.Signer;
+import com.google.code.jscep.pkcs7.CertRep;
+import com.google.code.jscep.pkcs7.PkcsPkiEnvelope;
+import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
+import com.google.code.jscep.pkcs7.PkiMessage;
+import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.request.PkiRequest;
-import com.google.code.jscep.response.PkiMessage;
 import com.google.code.jscep.transport.Transport;
 
 /**
@@ -47,16 +51,16 @@ public class Transaction {
 	private final Nonce senderNonce;
 	private final KeyPair keyPair;
 	private final Transport transport;
-	private final Enveloper enveloper;
-	private final Signer signer;
+	private final PkcsPkiEnvelopeGenerator envGenerator;
+	private final PkiMessageGenerator msgGenerator;
 
-	Transaction(Transport transport, KeyPair keyPair, Enveloper enveloper, Signer signer) {
+	Transaction(Transport transport, KeyPair keyPair, PkcsPkiEnvelopeGenerator envGenerator, PkiMessageGenerator msgGenerator) {
 		this.transport = transport;
 		this.keyPair = keyPair;
 		this.transId = TransactionId.createTransactionId(keyPair);
 		this.senderNonce = NonceFactory.nextNonce();
-		this.enveloper = enveloper;
-		this.signer = signer;
+		this.envGenerator = envGenerator;
+		this.msgGenerator = msgGenerator;
 	}
 
 	/**
@@ -70,14 +74,16 @@ public class Transaction {
 	 * @throws EnrollmentFailureException if the request could not be serviced.
 	 * @throws GeneralSecurityException if any security error occurs.
 	 * @throws ScepException 
+	 * @throws CMSException 
 	 */
-	public CertStore performOperation(PkiOperation op) throws MalformedURLException, IOException, RequestPendingException, EnrollmentFailureException, GeneralSecurityException, ScepException {
-		final byte[] msgData = op.getMessageData();
-		final MessageType msgType = op.getMessageType();
+	public CertStore performOperation(PkiOperation op) throws MalformedURLException, IOException, RequestPendingException, EnrollmentFailureException, GeneralSecurityException, ScepException, CMSException {
+		msgGenerator.setMessageType(op.getMessageType());
+		msgGenerator.setSenderNonce(senderNonce);
+		msgGenerator.setTransactionId(transId);
 		
-		byte[] enveloped = enveloper.envelope(msgData);
-		byte[] signedData = signer.sign(enveloped, msgType, transId, senderNonce);
-		PkiRequest request = new PkiRequest(signedData, keyPair);
+		PkcsPkiEnvelope envelope = envGenerator.generate(op.getMessageData());
+		PkiMessage msg = msgGenerator.generate(envelope);
+		PkiRequest request = new PkiRequest(msg, keyPair);
 		PkiMessage response = transport.sendMessage(request);
 
 		if (response.getTransactionId().equals(this.transId) == false) {
@@ -102,7 +108,10 @@ public class Transaction {
 		} else if (response.getStatus().equals(PkiStatus.PENDING)) {
 			throw new RequestPendingException();
 		} else {
-			return response.getCertStore();
+			final byte[] repMsgData = response.getPkcsPkiEnvelope().getMessageData();
+			final CertRep certRep = CertRep.getInstance(repMsgData);
+			
+			return certRep.getCertStore();
 		}
 	}
 }

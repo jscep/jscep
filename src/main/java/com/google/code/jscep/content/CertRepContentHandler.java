@@ -26,9 +26,13 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 
-import com.google.code.jscep.response.PkiMessage;
+import org.bouncycastle.cms.CMSException;
+
+import com.google.code.jscep.pkcs7.PkiMessage;
+import com.google.code.jscep.pkcs7.PkiMessageParser;
 import com.google.code.jscep.transaction.CmsException;
 
 /**
@@ -43,9 +47,11 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	
 	/**
 	 * {@inheritDoc}
+	 * @throws GeneralSecurityException 
+	 * @throws CMSException 
 	 */
 	public PkiMessage getContent(InputStream in, String mimeType)
-			throws IOException {
+			throws IOException, CMSException, GeneralSecurityException {
 		if (mimeType.equals("application/x-pki-message")) {
 			BufferedInputStream is = new BufferedInputStream(in);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -61,7 +67,8 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 				// pkiMessage [SignedData]
 				//     pkcsPKIEnvelope [EnvelopedData]
 				//         CertRep [signedData]
-				return PkiMessage.getInstance(keyPair, baos.toByteArray());
+				final PkiMessageParser parser = new PkiMessageParser(keyPair);
+				return parser.parse(baos.toByteArray());
 			} catch (CmsException e) {
 				throw new IOException(e);
 			}

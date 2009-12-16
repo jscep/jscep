@@ -1,31 +1,7 @@
-/*
- * Copyright (c) 2009 David Grant
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+package com.google.code.jscep.pkcs7;
 
-package com.google.code.jscep.response;
-
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.cert.CertStore;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -49,30 +25,27 @@ import com.google.code.jscep.transaction.ScepObjectIdentifiers;
 import com.google.code.jscep.transaction.TransactionId;
 import com.google.code.jscep.util.HexUtil;
 
-/**
- * Implementation of {@link PkiMessage} that uses Bouncy Castle.
- */
-public class PkiMessageImpl extends PkiMessage {
-	private final static Logger LOGGER = Logger.getLogger(PkiMessageImpl.class.getName());
-	private TransactionId transId;
-	private PkiStatus pkiStatus;
-	private Nonce recipientNonce;
-	private Nonce senderNonce;
-	private PkcsPkiEnvelope pkcsPkiEnvelope;
-	private FailInfo failInfo;
-	private final AttributeTable signedAttrs;
+public class PkiMessageParser {
+	private final static Logger LOGGER = Logger.getLogger(PkiMessageParser.class.getName());
+	private AttributeTable signedAttrs;
+	private final KeyPair keyPair;
+	
+	public PkiMessageParser(KeyPair keyPair) {
+		this.keyPair = keyPair;
+	}
 	
 	/**
-	 * 
-	 * @param keyPair
-	 * @param bytes DER-encoded degenerate certificates-only signedData
+	 * @param msgBytes DER-encoded degenerate certificates-only signedData
+	 * @return a new instance of PkiMessage
 	 * @throws CmsException
+	 * @throws GeneralSecurityException 
+	 * @throws CMSException 
 	 */
-	public PkiMessageImpl(KeyPair keyPair, byte[] bytes) throws CmsException {
-		LOGGER.info("INCOMING SignedData:\n" + HexUtil.format(bytes));
+	public PkiMessage parse(byte[] msgBytes) throws CmsException, CMSException, GeneralSecurityException {
+		LOGGER.info("Incoming SignedData:\n" + HexUtil.format(msgBytes));
 		CMSSignedData signedData;
 		try {
-			signedData = new CMSSignedData(bytes);
+			signedData = new CMSSignedData(msgBytes);
 		} catch (CMSException e) {
 			throw new CmsException();
 		}
@@ -86,49 +59,26 @@ public class PkiMessageImpl extends PkiMessage {
         SignerInformation signerInformation = (SignerInformation) signers.iterator().next();
         signedAttrs = signerInformation.getSignedAttributes();
 
-        transId = extractTransactionId();
-        recipientNonce = extractRecipientNonce();
-        senderNonce = extractSenderNonce();
-        pkiStatus = extractStatus();
+        final CMSProcessable signedContent = signedData.getSignedContent();
+		byte[] envelopedData = (byte[]) signedContent.getContent();
+		
+		final PkcsPkiEnvelopeParser parser = new PkcsPkiEnvelopeParser(keyPair);
+		PkcsPkiEnvelope envelope = parser.parse(envelopedData);
+
+		final PkiMessageImpl msg = new PkiMessageImpl();
         
-        
-        MessageType msgType = extractMessageType();
-        
-        if (msgType.equals(MessageType.CertRep) == false) {
-        	throw new RuntimeException("Invalid Message Type: " + msgType);
-        }
-        
-        if (pkiStatus.equals(PkiStatus.FAILURE)) {
-        	failInfo = extractFailInfo();
-        } else {
-	        CMSProcessable signedContent = signedData.getSignedContent();
-			byte[] envelopedData = (byte[]) signedContent.getContent();
-			pkcsPkiEnvelope = PkcsPkiEnvelope.getInstance(keyPair, envelopedData);
-        }
-	}
-	
-	public FailInfo getFailInfo() {
-		return failInfo;
-	}
-	
-	public PkiStatus getStatus() {
-		return pkiStatus;
-	}
-	
-	public Nonce getRecipientNonce() {
-		return recipientNonce;
-	}
-	
-	public Nonce getSenderNonce() {
-		return senderNonce;
-	}
-	
-	public TransactionId getTransactionId() {
-		return transId;
-	}
-	
-	public CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException {
-		return pkcsPkiEnvelope.getCertStore();
+        msg.setTransactionId(extractTransactionId());
+        msg.setRecipientNonce(extractRecipientNonce());
+        msg.setSenderNonce(extractSenderNonce());
+        msg.setStatus(extractStatus());
+        msg.setMessageType(extractMessageType());
+		msg.setPkcsPkiEnvelope(envelope);
+		
+		if (msg.getStatus() == PkiStatus.FAILURE) {
+			msg.setFailInfo(extractFailInfo());
+		}
+		
+		return msg; 
 	}
 	
 	private TransactionId extractTransactionId() {

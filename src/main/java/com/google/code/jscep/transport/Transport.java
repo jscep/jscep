@@ -26,6 +26,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
+import java.security.GeneralSecurityException;
+
+import org.bouncycastle.cms.CMSException;
 
 import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.request.Request;
@@ -82,8 +85,10 @@ public abstract class Transport {
 	 * @return the response of type T.
 	 * @throws IOException if any I/O error occurs.
 	 * @throws MalformedURLException if the URL is not well-formed.
+	 * @throws GeneralSecurityException 
+	 * @throws CMSException 
 	 */
-	abstract public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException;
+	abstract public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException, CMSException, GeneralSecurityException;
 	
 	/**
 	 * Create a new transport of type <tt>method</tt>.

@@ -28,7 +28,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.logging.Logger;
+
+import org.bouncycastle.cms.CMSException;
 
 import com.google.code.jscep.request.Request;
 
@@ -45,7 +48,7 @@ public class HttpPostTransport extends Transport {
 	}
 	
 	@Override
-	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException {
+	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException, CMSException, GeneralSecurityException {
 		byte[] body = (byte[]) msg.getMessage();
 		
         URL url = getUrl(msg.getOperation());

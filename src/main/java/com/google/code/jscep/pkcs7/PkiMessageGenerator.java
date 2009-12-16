@@ -1,25 +1,3 @@
-/*
- * Copyright (c) 2009 David Grant
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
@@ -53,28 +31,46 @@ import com.google.code.jscep.transaction.ScepObjectIdentifiers;
 import com.google.code.jscep.transaction.TransactionId;
 import com.google.code.jscep.util.HexUtil;
 
-
-/**
- * Merge with Enveloper.
- */
-public class Signer {
-	private final static Logger LOGGER = Logger.getLogger(Signer.class.getName());
-	private final String digest;
-	private final X509Certificate identity;
-	private final KeyPair keyPair;
+public class PkiMessageGenerator {
+	private final static Logger LOGGER = Logger.getLogger(PkiMessageGenerator.class.getName());
 	
-	public Signer(X509Certificate identity, KeyPair keyPair, String digest) {
-		this.identity = identity;
+	private MessageType msgType;
+	private TransactionId transId;
+	private Nonce senderNonce;
+	private KeyPair keyPair;
+	private X509Certificate identity;
+	private String digest;
+	
+	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
+	}
+	
+	public void setIdentity(X509Certificate identity) {
+		this.identity = identity;
+	}
+	
+	public void setDigest(String digest) {
 		this.digest = digest;
 	}
 	
-	public byte[] sign(byte[] data, MessageType msgType, TransactionId transId, Nonce senderNonce) throws IOException, GeneralSecurityException, CmsException {
-		// TODO: BC Dependency
-		CMSProcessable envelopedData = new CMSProcessableByteArray(data);
+	public void setSenderNonce(Nonce nonce) {
+		this.senderNonce = nonce;
+	}
+	
+	public void setMessageType(MessageType msgType) {
+		this.msgType = msgType;
+	}
+	
+	public void setTransactionId(TransactionId transId) {
+		this.transId = transId;
+	}
+	
+	public PkiMessage generate(PkcsPkiEnvelope envelope) throws GeneralSecurityException, CmsException, IOException {
+		// envelope is the data to wrap.
+		CMSProcessable envelopedData = new CMSProcessableByteArray(envelope.getEncoded());
 		CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
     	
-    	List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
+    	final List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
         certList.add(identity);
         
         CertStore certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
@@ -98,7 +94,14 @@ public class Signer {
 		}
     	LOGGER.info("OUTGOING SignedData:\n" + HexUtil.formatHex(Hex.encode(signedData.getEncoded())));
     	
-    	return signedData.getEncoded();
+		final PkiMessageImpl msg = new PkiMessageImpl();
+		msg.setTransactionId(transId);
+		msg.setMessageType(msgType);
+		msg.setSenderNonce(senderNonce);
+		msg.setPkcsPkiEnvelope(envelope);
+		msg.setEncoded(signedData.getEncoded());
+		
+		return msg;
 	}
 	
 	private Attribute toAttribute(MessageType msgType) {

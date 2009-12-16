@@ -20,12 +20,10 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.response;
+package com.google.code.jscep.pkcs7;
 
-import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.cert.CertStore;
 
 import com.google.code.jscep.transaction.CmsException;
 
@@ -34,10 +32,15 @@ import com.google.code.jscep.transaction.CmsException;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.2">SCEP Internet-Draft Reference</a>
  */
-public abstract class PkcsPkiEnvelope {
-	abstract public CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException;
-	
-	public static PkcsPkiEnvelope getInstance(KeyPair keyPair, byte[] envelopedData) {
-		return new PkcsPkiEnvelopeImpl(keyPair, envelopedData);
-	}
+public interface PkcsPkiEnvelope {
+	/**
+	 * Returns the certificate store.
+	 * 
+	 * @return the certificate store.
+	 * @throws NoSuchProviderException
+	 * @throws NoSuchAlgorithmException
+	 * @throws CmsException
+	 */
+	byte[] getMessageData() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException;
+	byte[] getEncoded();
 }

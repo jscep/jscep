@@ -36,14 +36,11 @@ import java.security.PublicKey;
 import java.security.cert.CRL;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -51,7 +48,7 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.bouncycastle.cms.CMSException;
 
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
@@ -77,7 +74,7 @@ public class Client {
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
     
-    public Client(ClientConfiguration config) throws IllegalStateException, NoSuchAlgorithmException, CertificateEncodingException, IOException, ScepException {
+    public Client(ClientConfiguration config) throws IllegalStateException, IOException, ScepException, CMSException, GeneralSecurityException {
     	url = config.getUrl();
     	proxy = config.getProxy();
     	caDigest = config.getCaDigest();
@@ -210,33 +207,18 @@ public class Client {
     private X509Certificate createCertificate(X500Principal subject) {
     	LOGGER.fine("Creating Self-Signed Certificate for " + subject);
     	
-    	// TODO: BC Dependency
-    	Calendar cal = Calendar.getInstance();
-    	cal.add(Calendar.DATE, -1);
-    	Date notBefore = cal.getTime();
-    	cal.add(Calendar.DATE, 2);
-    	Date notAfter = cal.getTime();
-    	X509V3CertificateGenerator gen = new X509V3CertificateGenerator();
-    	gen.setIssuerDN(subject);
-    	gen.setNotBefore(notBefore);
-    	gen.setNotAfter(notAfter);
-    	gen.setPublicKey(keyPair.getPublic());
-    	gen.setSerialNumber(BigInteger.ONE);
-    	// TODO: Don't hardcode SHA1withRSA
-    	gen.setSignatureAlgorithm("SHA1withRSA");
-    	gen.setSubjectDN(subject);
     	try {
-			return gen.generate(keyPair.getPrivate());
+    		return X509CertificateFactory.createCertificate(subject, keyPair);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
     }
     
-    private Transaction createTransaction() throws IOException, CertificateEncodingException, NoSuchAlgorithmException, ScepException {
+    private Transaction createTransaction() throws IOException, ScepException, CMSException, GeneralSecurityException {
     	return TransactionFactory.createTransaction(createTransport(), retrieveSigningCertificate(), identity, keyPair, getCapabilities().getPreferredMessageDigest());
     }
     
-    private Transport createTransport() throws IOException {
+    private Transport createTransport() throws IOException, CMSException, GeneralSecurityException {
     	if (getCapabilities().supportsPost()) {
     		return Transport.createTransport(Transport.Method.POST, url, proxy);
     	} else {
@@ -253,21 +235,21 @@ public class Client {
     	return keyPair;
     }
 
-    private Capabilities getCapabilities() throws IOException {
+    private Capabilities getCapabilities() throws IOException, CMSException, GeneralSecurityException {
     	GetCACaps req = new GetCACaps(caIdentifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
         return trans.sendMessage(req);
     }
 
-    private List<X509Certificate> getCaCertificate() throws IOException {
+    private List<X509Certificate> getCaCertificate() throws IOException, CMSException, GeneralSecurityException {
     	GetCACert req = new GetCACert(caIdentifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
         return trans.sendMessage(req);
     }
     
-    public List<X509Certificate> getNextCA() throws IOException, CertificateEncodingException, NoSuchAlgorithmException, ScepException {
+    public List<X509Certificate> getNextCA() throws IOException, ScepException, CMSException, GeneralSecurityException {
     	X509Certificate ca = retrieveCA();
     	
     	Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
@@ -276,12 +258,11 @@ public class Client {
     	return trans.sendMessage(req);
     }
     
-    private X509Certificate retrieveCA() throws IOException, NoSuchAlgorithmException, CertificateEncodingException, ScepException {
+    private X509Certificate retrieveCA() throws IOException, ScepException, CMSException, GeneralSecurityException {
     	final List<X509Certificate> certs = getCaCertificate();
     	
     	// Validate
     	final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
-    	System.out.println(Arrays.toString(md.digest(certs.get(0).getEncoded())));
         if (Arrays.equals(caDigest, md.digest(certs.get(0).getEncoded())) == false) {
         	throw new ScepException("CA Fingerprint Error");
         }
@@ -289,7 +270,7 @@ public class Client {
     	return certs.get(0);
     }
     
-    private X509Certificate retrieveSigningCertificate() throws IOException, NoSuchAlgorithmException, CertificateEncodingException, ScepException {
+    private X509Certificate retrieveSigningCertificate() throws IOException, ScepException, CMSException, GeneralSecurityException {
     	List<X509Certificate> certs = getCaCertificate();
     	
     	// Validate
@@ -314,8 +295,9 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      * @throws ScepException if any SCEP error occurs.
      * @throws GeneralSecurityException if any security error occurs.
+     * @throws CMSException 
      */
-    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException {
+    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, CMSException {
         X509Certificate ca = retrieveCA();
         
         if (supportsDistributionPoints()) {
@@ -368,13 +350,9 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      * @throws ScepException
      * @throws GeneralSecurityException
-     * @throws EnrollmentFailureException 
-     * @throws RequestPendingException 
-     * @throws UnsupportedCallbackException 
-     * @throws RequestPendingException 
-     * @throws EnrollmentFailureException 
+     * @throws CMSException 
      */
-    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException {
+    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException, CMSException {
     	final X509Certificate ca = retrieveCA();
         // PKI Operation
         PkiOperation req = new GetCert(ca.getIssuerX500Principal(), serial);

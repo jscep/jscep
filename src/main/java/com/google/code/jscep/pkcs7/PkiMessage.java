@@ -20,63 +20,60 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.response;
+package com.google.code.jscep.pkcs7;
 
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.cert.CertStore;
+import java.security.GeneralSecurityException;
 
-import com.google.code.jscep.transaction.CmsException;
+import org.bouncycastle.cms.CMSException;
+
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.TransactionId;
 
 /**
- * This class represents the <tt>SCEP</tt> <tt>pkiMessage</tt>.
+ * This interface represents the <tt>SCEP</tt> <tt>pkiMessage</tt>.
  *
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
  */
-public abstract class PkiMessage {
-	public abstract FailInfo getFailInfo();
-	public abstract PkiStatus getStatus();
+public interface PkiMessage {
+	/**
+	 * Returns the failInfo of this response.
+	 * 
+	 * @return the failInfo.
+	 */
+	FailInfo getFailInfo();
+	/**
+	 * Returns the status of this response.
+	 * 
+	 * @return the status.
+	 */
+	PkiStatus getStatus();
 	/**
 	 * Returns the recipient nonce for this response.
 	 * 
 	 * @return the recipient nonce.
 	 */
-	public abstract Nonce getRecipientNonce();
+	Nonce getRecipientNonce();
 	/**
 	 * Returns the sender nonce for this response.
 	 * 
 	 * @return the sender nonce.
 	 */
-	public abstract Nonce getSenderNonce();
+	Nonce getSenderNonce();
 	/**
 	 * Returns the transaction ID for this response.
 	 * 
 	 * @return the transaction ID.
 	 */
-	public abstract TransactionId getTransactionId();
+	TransactionId getTransactionId();
 	/**
-	 * Returns the certificate store for this response.
+	 * Returns the enveloped data.
 	 * 
-	 * @return the certificate store.
-	 * @throws NoSuchProviderException
-	 * @throws NoSuchAlgorithmException
-	 * @throws CmsException
+	 * @return the enveloped data.
+	 * @throws GeneralSecurityException 
+	 * @throws CMSException 
 	 */
-	public abstract CertStore getCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException;
-	
-	/**
-	 * 
-	 * @param keyPair
-	 * @param bytes DER-encoded degenerate certificates-only signedData
-	 * @return
-	 * @throws CmsException
-	 */
-	public static PkiMessage getInstance(KeyPair keyPair, byte[] bytes) throws CmsException {
-		return new PkiMessageImpl(keyPair, bytes);
-	}
+	PkcsPkiEnvelope getPkcsPkiEnvelope() throws CMSException, GeneralSecurityException;
+	byte[] getEncoded();
 }

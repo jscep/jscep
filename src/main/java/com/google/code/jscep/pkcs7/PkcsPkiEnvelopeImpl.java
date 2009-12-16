@@ -20,44 +20,38 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.request;
+package com.google.code.jscep.pkcs7;
 
-import java.io.IOException;
-import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 
-import com.google.code.jscep.content.CertRepContentHandler;
-import com.google.code.jscep.pkcs7.PkiMessage;
+import com.google.code.jscep.transaction.CmsException;
+import com.google.code.jscep.util.HexUtil;
 
 /**
- * This class represents a <tt>PkiRequest</tt> request.
+ * Implementation of {@link PkcsPkiEnvelope} that uses Bouncy Castle.
  */
-public class PkiRequest implements Request<PkiMessage> {
-	private final PkiMessage signedData;
-	private final KeyPair keyPair;
-
-	public PkiRequest(PkiMessage msgData, KeyPair keyPair) {
-		this.signedData = msgData;
-		this.keyPair = keyPair;
+class PkcsPkiEnvelopeImpl implements PkcsPkiEnvelope {
+	private byte[] msgData;
+	private byte[] encoded;
+	
+	void setMessageData(byte[] msgData) {
+		this.msgData = msgData;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public byte[] getMessage() throws IOException {
-		return signedData.getEncoded();
+	
+	public byte[] getMessageData() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException {
+		return msgData;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Operation getOperation() {
-		return Operation.PKIOperation;
+	
+	public byte[] getEncoded() {
+		return encoded;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public CertRepContentHandler getContentHandler() {
-		return new CertRepContentHandler(keyPair);
+	
+	void setEncoded(byte[] encoded) {
+		this.encoded = encoded;
+	}
+	
+	public String toString() {
+		return HexUtil.format(encoded);
 	}
 }
