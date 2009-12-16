@@ -12,8 +12,10 @@ import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class ClientTest {
 
 	@Test
@@ -40,7 +42,7 @@ public class ClientTest {
 		config.setSubject(new X500Principal("CN=example.org"));
 		Client client = new Client(config);
 		EnrollmentResult result = client.enroll("INBOUND_TLSuscl99".toCharArray());
-//		System.out.println(result.getCertificates());
+		System.out.println(result.getCertificates());
 	}
 
 }

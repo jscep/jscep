@@ -1,6 +1,5 @@
 package com.google.code.jscep.pkcs7;
 
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.util.Collection;
 import java.util.logging.Logger;
@@ -38,10 +37,8 @@ public class PkiMessageParser {
 	 * @param msgBytes DER-encoded degenerate certificates-only signedData
 	 * @return a new instance of PkiMessage
 	 * @throws CmsException
-	 * @throws GeneralSecurityException 
-	 * @throws CMSException 
 	 */
-	public PkiMessage parse(byte[] msgBytes) throws CmsException, CMSException, GeneralSecurityException {
+	public PkiMessage parse(byte[] msgBytes) throws CmsException {
 		LOGGER.info("Incoming SignedData:\n" + HexUtil.format(msgBytes));
 		CMSSignedData signedData;
 		try {

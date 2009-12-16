@@ -74,6 +74,6 @@ public interface PkiMessage {
 	 * @throws GeneralSecurityException 
 	 * @throws CMSException 
 	 */
-	PkcsPkiEnvelope getPkcsPkiEnvelope() throws CMSException, GeneralSecurityException;
+	PkcsPkiEnvelope getPkcsPkiEnvelope();
 	byte[] getEncoded();
 }

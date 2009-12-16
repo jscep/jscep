@@ -50,8 +50,7 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	 * @throws GeneralSecurityException 
 	 * @throws CMSException 
 	 */
-	public PkiMessage getContent(InputStream in, String mimeType)
-			throws IOException, CMSException, GeneralSecurityException {
+	public PkiMessage getContent(InputStream in, String mimeType) throws IOException {
 		if (mimeType.equals("application/x-pki-message")) {
 			BufferedInputStream is = new BufferedInputStream(in);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();

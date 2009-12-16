@@ -22,15 +22,22 @@
 
 package com.google.code.jscep.content;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.Certificate;
+import java.security.cert.CertSelector;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import com.google.code.jscep.pkcs7.DegenerateSignedData;
+import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 
 /**
  * This class handles responses to <tt>GetCACert</tt> requests.
@@ -63,14 +70,24 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			}
 		} else if (mimeType.equals("application/x-x509-ca-ra-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.2
-			try {
-				Collection<? extends Certificate> collection = cf
-						.generateCertificates(in);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-				for (Certificate cert : collection) {
-					certs.add((X509Certificate) cert);
+			int b;
+			while ((b = in.read()) != -1) {
+				baos.write(b);
+			}
+			
+			DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
+			DegenerateSignedData dsd = parser.parse(baos.toByteArray());
+			
+			CertStore store = dsd.getCertStore();
+			CertSelector selector = new X509CertSelector();
+			try {
+				Collection<X509Certificate> certsCollection = (Collection<X509Certificate>) store.getCertificates(selector);
+				for (X509Certificate cert : certsCollection) {
+					certs.add(cert);
 				}
-			} catch (CertificateException e) {
+			} catch (CertStoreException e) {
 				throw new IOException(e);
 			}
 		} else {

@@ -88,7 +88,7 @@ public abstract class Transport {
 	 * @throws GeneralSecurityException 
 	 * @throws CMSException 
 	 */
-	abstract public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException, CMSException, GeneralSecurityException;
+	abstract public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException;
 	
 	/**
 	 * Create a new transport of type <tt>method</tt>.

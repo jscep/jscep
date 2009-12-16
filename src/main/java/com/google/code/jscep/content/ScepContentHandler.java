@@ -24,9 +24,6 @@ package com.google.code.jscep.content;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.GeneralSecurityException;
-
-import org.bouncycastle.cms.CMSException;
 
 /**
  * This interface represents a mechanism for handling specific SCEP content.
@@ -45,8 +42,6 @@ public interface ScepContentHandler<T> {
 	 * @return the content in a usage form.
 	 * @throws IOException
 	 *             if any I/O error occurs.
-	 * @throws GeneralSecurityException 
-	 * @throws CMSException 
 	 */
-	T getContent(InputStream in, String mimeType) throws IOException, CMSException, GeneralSecurityException;
+	T getContent(InputStream in, String mimeType) throws IOException;
 }

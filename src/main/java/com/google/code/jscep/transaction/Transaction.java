@@ -34,7 +34,8 @@ import com.google.code.jscep.EnrollmentFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.ScepException;
 import com.google.code.jscep.operations.PkiOperation;
-import com.google.code.jscep.pkcs7.CertRep;
+import com.google.code.jscep.pkcs7.DegenerateSignedData;
+import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelope;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
 import com.google.code.jscep.pkcs7.PkiMessage;
@@ -76,7 +77,7 @@ public class Transaction {
 	 * @throws ScepException 
 	 * @throws CMSException 
 	 */
-	public CertStore performOperation(PkiOperation op) throws MalformedURLException, IOException, RequestPendingException, EnrollmentFailureException, GeneralSecurityException, ScepException, CMSException {
+	public CertStore performOperation(PkiOperation op) throws MalformedURLException, IOException, RequestPendingException, EnrollmentFailureException, GeneralSecurityException, ScepException {
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(senderNonce);
 		msgGenerator.setTransactionId(transId);
@@ -109,7 +110,8 @@ public class Transaction {
 			throw new RequestPendingException();
 		} else {
 			final byte[] repMsgData = response.getPkcsPkiEnvelope().getMessageData();
-			final CertRep certRep = CertRep.getInstance(repMsgData);
+			final DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
+			final DegenerateSignedData certRep = parser.parse(repMsgData);
 			
 			return certRep.getCertStore();
 		}

@@ -22,10 +22,6 @@
 
 package com.google.code.jscep.pkcs7;
 
-import java.security.GeneralSecurityException;
-
-import org.bouncycastle.cms.CMSException;
-
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
@@ -53,7 +49,7 @@ class PkiMessageImpl implements PkiMessage {
 		this.pkcsPkiEnvelope = envelope;
 	}
 	
-	public PkcsPkiEnvelope getPkcsPkiEnvelope() throws CMSException, GeneralSecurityException {
+	public PkcsPkiEnvelope getPkcsPkiEnvelope() {
 		return pkcsPkiEnvelope;
 	}
 	

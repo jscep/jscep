@@ -22,10 +22,6 @@
 
 package com.google.code.jscep.pkcs7;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-
-import com.google.code.jscep.transaction.CmsException;
 
 /**
  * This class represents the <tt>SCEP</tt> <tt>pkcsPKIEnvelope</tt> object.
@@ -33,14 +29,6 @@ import com.google.code.jscep.transaction.CmsException;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.2">SCEP Internet-Draft Reference</a>
  */
 public interface PkcsPkiEnvelope {
-	/**
-	 * Returns the certificate store.
-	 * 
-	 * @return the certificate store.
-	 * @throws NoSuchProviderException
-	 * @throws NoSuchAlgorithmException
-	 * @throws CmsException
-	 */
-	byte[] getMessageData() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException;
+	byte[] getMessageData();
 	byte[] getEncoded();
 }

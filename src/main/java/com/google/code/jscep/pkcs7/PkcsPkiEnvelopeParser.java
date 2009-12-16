@@ -1,6 +1,5 @@
 package com.google.code.jscep.pkcs7;
 
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.util.Collection;
 import java.util.logging.Logger;
@@ -10,6 +9,7 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.RecipientInformationStore;
 
+import com.google.code.jscep.transaction.CmsException;
 import com.google.code.jscep.util.HexUtil;
 
 public class PkcsPkiEnvelopeParser {
@@ -20,13 +20,27 @@ public class PkcsPkiEnvelopeParser {
 		this.keyPair = keyPair;
 	}
 	
-	public PkcsPkiEnvelope parse(byte[] envelopeBytes) throws CMSException, GeneralSecurityException {
+	@SuppressWarnings("unchecked")
+	public PkcsPkiEnvelope parse(byte[] envelopeBytes) throws CmsException {
 		LOGGER.info("Incoming EnvelopedData:\n" + HexUtil.format(envelopeBytes));
-		final CMSEnvelopedData ed = new CMSEnvelopedData(envelopeBytes);
+		
+		CMSEnvelopedData ed;
+		try {
+			ed = new CMSEnvelopedData(envelopeBytes);
+		} catch (CMSException e) {
+			throw new CmsException(e);
+		}
+		
 		final RecipientInformationStore recipientStore = ed.getRecipientInfos();
 		final Collection<RecipientInformation> recipientInfos = recipientStore.getRecipients();
     	final RecipientInformation recipient = recipientInfos.iterator().next();
-    	final byte[] msgData = recipient.getContent(keyPair.getPrivate(), "BC");
+    	
+    	byte[] msgData;
+		try {
+			msgData = recipient.getContent(keyPair.getPrivate(), "BC");
+		} catch (Exception e) {
+			throw new CmsException(e);
+		}
 
     	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl();
     	envelope.setMessageData(msgData);

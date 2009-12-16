@@ -22,12 +22,6 @@
 
 package com.google.code.jscep.pkcs7;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-
-import com.google.code.jscep.transaction.CmsException;
-import com.google.code.jscep.util.HexUtil;
-
 /**
  * Implementation of {@link PkcsPkiEnvelope} that uses Bouncy Castle.
  */
@@ -39,7 +33,7 @@ class PkcsPkiEnvelopeImpl implements PkcsPkiEnvelope {
 		this.msgData = msgData;
 	}
 	
-	public byte[] getMessageData() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException {
+	public byte[] getMessageData() {
 		return msgData;
 	}
 	
@@ -49,9 +43,5 @@ class PkcsPkiEnvelopeImpl implements PkcsPkiEnvelope {
 	
 	void setEncoded(byte[] encoded) {
 		this.encoded = encoded;
-	}
-	
-	public String toString() {
-		return HexUtil.format(encoded);
 	}
 }
