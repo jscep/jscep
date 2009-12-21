@@ -24,15 +24,21 @@ package com.google.code.jscep;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigInteger;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.logging.Logger;
 
+import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.code.jscep.request.Operation;
+import com.google.code.jscep.response.Capabilities;
 
-public class ScepServlet extends HttpServlet {
+public abstract class ScepServlet extends HttpServlet {
 	private static final Logger LOGGER = Logger.getLogger(ScepServlet.class.getName());
 	/**
 	 * Serialization ID
@@ -95,16 +101,24 @@ public class ScepServlet extends HttpServlet {
 		LOGGER.fine("Method " + reqMethod + " Allowed for Operation: " + op);
 		
 		if (op == Operation.GetCACaps) {
-			
+			getCapabilities(req.getParameter("message"));
 		} else if (op == Operation.GetCACert) {
-			
+			getCACertificate(req.getParameter("message"));
 		} else if (op == Operation.GetNextCACert) {
-			
+			getNextCACertificate(req.getParameter("message"));
 		} else {
 //			final ServletInputStream is = req.getInputStream();
 //			SignedData sd = new SignedData();
 		}
 	}
+	
+	abstract protected Capabilities getCapabilities(String identifier);
+	abstract protected List<X509Certificate> getCACertificate(String identifier);
+	abstract protected List<X509Certificate> getNextCACertificate(String identifier);
+	abstract protected X509Certificate getCertificate(X500Principal issuer, BigInteger serial);
+	abstract protected X509Certificate getCertificate(X500Principal issuer, X500Principal subject);
+	abstract protected List<X509CRL> getCRL(X500Principal issuer, BigInteger serial);
+	abstract protected List<X509Certificate> enrollCertificate(byte[] certificationRequest);
 	
 	private Operation getOperation(HttpServletRequest req) {
 		String op = req.getParameter("operation");

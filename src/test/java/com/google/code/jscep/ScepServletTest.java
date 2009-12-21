@@ -1,6 +1,7 @@
 package com.google.code.jscep;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.eclipse.jetty.testing.HttpTester;
 import org.eclipse.jetty.testing.ServletTester;

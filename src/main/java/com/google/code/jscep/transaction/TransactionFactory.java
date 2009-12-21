@@ -25,8 +25,6 @@ package com.google.code.jscep.transaction;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
-import org.bouncycastle.asn1.smime.SMIMECapability;
-
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.transport.Transport;
@@ -50,17 +48,15 @@ public final class TransactionFactory {
 	 * @param identity the certificate to enroll.
 	 * @param keyPair the key pair to use.
 	 * @param fingerprintAlgorithm the finger print algorithm.
-	 * @return thge new transaction.
+	 * @return the new transaction.
 	 */
 	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String fingerprintAlgorithm) {
 		// TODO: Don't hardcode DES
-		// TODO: BC Dependency
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
-		envGenerator.setCipher(SMIMECapability.dES_CBC.getId());
+		envGenerator.setCipher("1.3.14.3.2.7");
 		envGenerator.setRecipient(ca);
 
 		// TODO: Don't hardcode SHA-1
-		// TODO: BC Dependency
 		final PkiMessageGenerator msgGenerator = new PkiMessageGenerator();
 		msgGenerator.setDigest("1.3.14.3.2.26");
 		msgGenerator.setIdentity(identity);
