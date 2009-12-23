@@ -1,8 +1,8 @@
 package com.google.code.jscep.response;
 
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -10,19 +10,19 @@ import org.junit.Test;
 
 public class CapabilitiesTest {
 	private Capabilities createCapabilities() {
-		return new Capabilities(new LinkedList<String>());
+		return new Capabilities(new HashSet<String>());
 	}
 	
 	private Capabilities createCapabilities(String capability) {
-		return new Capabilities(Collections.singletonList(capability));
+		return new Capabilities(Collections.singleton(capability));
 	}
 	
 	private Capabilities createCapabilities(String... capabilities) {
-		List<String> list = new LinkedList<String>();
+		Set<String> set = new HashSet<String>();
 		for (String capability : capabilities) {
-			list.add(capability);
+			set.add(capability);
 		}
-		return new Capabilities(list);
+		return new Capabilities(set);
 	}
 	
 	@Test

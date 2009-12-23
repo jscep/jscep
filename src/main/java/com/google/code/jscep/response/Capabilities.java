@@ -23,8 +23,10 @@
 package com.google.code.jscep.response;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.util.LoggingUtil;
@@ -87,7 +89,8 @@ public class Capabilities {
      * 
      * @param capabilities the list of capabilities.
      */
-    public Capabilities(List<String> capabilities) {
+    public Capabilities(Set<String> capabilities) {
+    	Set<String> copySet = new HashSet<String>(capabilities);
     	set = EnumSet.noneOf(Capability.class);
     	
     	// http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.2
@@ -95,9 +98,13 @@ public class Capabilities {
 		// A client MUST be able to accept and ignore any unknown keywords 
 		// that might be sent back by a CA.
     	for (Capability enumCap : Capability.values()) {
-    		if (capabilities.contains(enumCap.toString())) {
+    		if (copySet.contains(enumCap.toString())) {
     			set.add(enumCap);
+    			copySet.remove(enumCap.toString());
     		}
+    	}
+    	for (String cap : copySet) {
+    		LOGGER.log(Level.WARNING, "unrecognized.capability", cap);
     	}
     }
 

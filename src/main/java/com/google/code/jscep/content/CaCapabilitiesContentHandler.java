@@ -26,8 +26,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.response.Capabilities;
@@ -44,10 +45,10 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
 	 */
     public Capabilities getContent(InputStream in, String mimeType) throws IOException {
 		if (mimeType.equals("text/plain") == false) {
-			LOGGER.fine("CACapabilities response was of content-type " + mimeType + ".  Expected text/plain");
+			LOGGER.log(Level.WARNING, "capabilities.mime.warning", mimeType);
 		}
 		
-        final List<String> capabilities = new LinkedList<String>();
+        final Set<String> capabilities = new HashSet<String>();
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String capability;

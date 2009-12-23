@@ -27,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.request.Operation;
@@ -44,26 +45,22 @@ public class HttpGetTransport extends Transport {
 	}
 
 	@Override
-	public <T> T sendMessage(Request<T> msg) throws IOException,
-			MalformedURLException {
+	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException {
 		LOGGER.entering(getClass().getName(), "sendMessage");
 		
-		URL url = getUrl(msg.getOperation(), msg.getMessage());
-		LOGGER.info("Sending Request: " + url);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+		final URL url = getUrl(msg.getOperation(), msg.getMessage());
+		final HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 			IOException ioe = new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
 			
 			LOGGER.throwing(getClass().getName(), "sendMessage", ioe);
-			
 			throw ioe;
 		}
 
 		final T response = msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
 		
 		LOGGER.exiting(getClass().getName(), "sendMessage", response);
-		
 		return response;
 	}
 
