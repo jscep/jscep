@@ -1,4 +1,4 @@
-package com.google.code.jscep.response;
+package com.google.code.jscep.pkcs7;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

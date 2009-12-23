@@ -44,6 +44,8 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
 	 * {@inheritDoc}
 	 */
     public Capabilities getContent(InputStream in, String mimeType) throws IOException {
+    	LOGGER.entering(getClass().getName(), "getContent");
+    	
 		if (mimeType.equals("text/plain") == false) {
 			LOGGER.log(Level.WARNING, "capabilities.mime.warning", mimeType);
 		}
@@ -57,6 +59,9 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
         }
         reader.close();
 
-        return new Capabilities(capabilities);
+        Capabilities caps = new Capabilities(capabilities);
+        
+        LOGGER.exiting(getClass().getName(), "getContent", caps);
+        return caps;
     }
 }

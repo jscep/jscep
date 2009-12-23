@@ -24,7 +24,6 @@ package com.google.code.jscep.response;
 
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -223,16 +222,16 @@ public class Capabilities {
     public String toString() {
     	final StringBuffer sb = new StringBuffer();
     	
-    	sb.append(String.format("%-20s%s%n%n", "Capability", "Supported"));
-    	for (Capability capability : Capability.values()) {
-    		boolean supported;
-    		if (set.contains(capability)) {
-    			supported = true;
-    		} else {
-    			supported = false;
+    	sb.append("Capabilities [");
+    	Capability[] values = Capability.values();
+    	for (int i = 0; i < values.length; i++) {
+    		final Capability capability = values[i];
+    		sb.append(capability + ": " + set.contains(capability));
+    		if (i < values.length - 1) {
+    			sb.append("; ");
     		}
-    		sb.append(String.format("%-20s%s%n", capability, supported));
     	}
+    	sb.append("]");
     	
     	return sb.toString();
     }

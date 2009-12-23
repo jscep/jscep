@@ -46,17 +46,22 @@ import com.google.code.jscep.util.LoggingUtil;
  */
 public class CaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
+	
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<X509Certificate> getContent(InputStream in, String mimeType)
-			throws IOException {
+	public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
+		LOGGER.entering(getClass().getName(), "getContent");
+		
 		final List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
 		final CertificateFactory cf;
 		try {
 			cf = CertificateFactory.getInstance("X.509");
 		} catch (CertificateException e) {
-			throw new IOException(e);
+			IOException ioe = new IOException(e);
+			
+			LOGGER.throwing(getClass().getName(), "getContent", ioe);
+			throw ioe;
 		}
 
 		if (mimeType.equals("application/x-x509-ca-cert")) {
@@ -69,7 +74,10 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 				// There should only ever be one certificate in this response.
 				certs.add(ca);
 			} catch (CertificateException ce) {
-				throw new IOException(ce);
+				IOException ioe = new IOException(ce);
+				
+				LOGGER.throwing(getClass().getName(), "getContent", ioe);
+				throw ioe;
 			}
 		} else if (mimeType.equals("application/x-x509-ca-ra-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.2
@@ -91,12 +99,19 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 					certs.add(cert);
 				}
 			} catch (CertStoreException e) {
-				throw new IOException(e);
+				IOException ioe = new IOException(e);
+				
+				LOGGER.throwing(getClass().getName(), "getContent", ioe);
+				throw ioe;
 			}
 		} else {
-			throw new IOException("Invalid Content Type");
+			IOException ioe = new IOException("Invalid Content Type");
+			
+			LOGGER.throwing(getClass().getName(), "getContent", ioe);
+			throw ioe;
 		}
 
+		LOGGER.exiting(getClass().getName(), "getContent", certs);
 		return certs;
 	}
 }

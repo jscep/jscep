@@ -38,8 +38,7 @@ import com.google.code.jscep.util.LoggingUtil;
 /**
  * This class handles responses to <tt>GetNextCACert</tt> requests.
  */
-public class NextCaCertificateContentHandler implements
-		ScepContentHandler<List<X509Certificate>> {
+public class NextCaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
 	
 	public NextCaCertificateContentHandler(X509Certificate ca) {
@@ -49,8 +48,9 @@ public class NextCaCertificateContentHandler implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<X509Certificate> getContent(InputStream in, String mimeType)
-			throws IOException {
+	public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
+		LOGGER.entering(getClass().getName(), "getContent");
+		
 		if (mimeType.equals("application/x-x509-next-ca-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 
@@ -58,25 +58,29 @@ public class NextCaCertificateContentHandler implements
 			// The response consists of a SignedData PKCS#7 [RFC2315], 
 			// signed by the current CA (or RA) signing key.
 			final List<X509Certificate> certs = new ArrayList<X509Certificate>();
-			CertificateFactory cf;
-			try {
-				cf = CertificateFactory.getInstance("X.509");
-			} catch (CertificateException e) {
-				throw new IOException(e);
-			}
+			
 			Collection<? extends Certificate> collection;
 			try {
+				CertificateFactory cf = CertificateFactory.getInstance("X.509");
 				collection = cf.generateCertificates(in);
 			} catch (CertificateException e) {
-				throw new IOException(e);
+				IOException ioe = new IOException(e);
+				
+				LOGGER.throwing(getClass().getName(), "getContent", ioe);
+				throw ioe;
 			}
+			
 			for (Certificate cert : collection) {
 				certs.add((X509Certificate) cert);
 			}
 
+			LOGGER.exiting(getClass().getName(), "getContent", certs);
 			return certs;
 		} else {
-			throw new IOException("Invalid Content Type");
+			IOException ioe = new IOException("Invalid Content Type");
+			
+			LOGGER.throwing(getClass().getName(), "getContent", ioe);
+			throw ioe;
 		}
 	}
 }

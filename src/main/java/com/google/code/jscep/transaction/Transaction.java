@@ -81,6 +81,8 @@ public class Transaction {
 	 * @throws CMSException 
 	 */
 	public CertStore performOperation(PkiOperation op) throws MalformedURLException, IOException, RequestPendingException, EnrollmentFailureException, GeneralSecurityException, ScepException {
+		LOGGER.entering(getClass().getName(), "performOperation");
+		
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(senderNonce);
 		msgGenerator.setTransactionId(transId);
@@ -91,15 +93,21 @@ public class Transaction {
 		PkiMessage response = transport.sendMessage(request);
 
 		if (response.getTransactionId().equals(this.transId) == false) {
-			throw new ScepException("Transaction ID Mismatch: Sent ["
+			ScepException se = new ScepException("Transaction ID Mismatch: Sent ["
 					+ this.transId + "]; Received [" + response.getTransactionId()
 					+ "]");
+			
+			LOGGER.throwing(getClass().getName(), "performOperation", se);
+			throw se;
 		}
 
 		if (response.getRecipientNonce().equals(senderNonce) == false) {
-			throw new ScepException("Sender Nonce Mismatch.  Sent ["
+			ScepException se = new ScepException("Sender Nonce Mismatch.  Sent ["
 					+ this.senderNonce + "]; Received ["
 					+ response.getRecipientNonce() + "]");
+			
+			LOGGER.throwing(getClass().getName(), "performOperation", se);
+			throw se;
 		}
 
 		// TODO: Detect replay attacks.
@@ -108,15 +116,24 @@ public class Transaction {
 		response.getSenderNonce();
 
 		if (response.getStatus().equals(PkiStatus.FAILURE)) {
-			throw new EnrollmentFailureException(response.getFailInfo().toString());
+			EnrollmentFailureException efe = new EnrollmentFailureException(response.getFailInfo().toString());
+			
+			LOGGER.throwing(getClass().getName(), "performOperation", efe);
+			throw efe;
 		} else if (response.getStatus().equals(PkiStatus.PENDING)) {
-			throw new RequestPendingException();
+			RequestPendingException rpe = new RequestPendingException();
+			
+			LOGGER.throwing(getClass().getName(), "performOperation", rpe);
+			throw rpe;
 		} else {
 			final byte[] repMsgData = response.getPkcsPkiEnvelope().getMessageData();
 			final DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
 			final DegenerateSignedData certRep = parser.parse(repMsgData);
 			
-			return certRep.getCertStore();
+			CertStore cs = certRep.getCertStore();
+			
+			LOGGER.exiting(getClass().getName(), "performOperation", cs);
+			return cs;
 		}
 	}
 	

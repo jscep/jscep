@@ -26,11 +26,8 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.util.logging.Logger;
-
-import org.bouncycastle.cms.CMSException;
 
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageParser;
@@ -50,10 +47,11 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	
 	/**
 	 * {@inheritDoc}
-	 * @throws GeneralSecurityException 
-	 * @throws CMSException 
+	 * @throws IOException 
 	 */
 	public PkiMessage getContent(InputStream in, String mimeType) throws IOException {
+		LOGGER.entering(getClass().getName(), "getContent");
+		
 		if (mimeType.equals("application/x-pki-message")) {
 			BufferedInputStream is = new BufferedInputStream(in);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -64,18 +62,22 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 			}
 
 			try {
-				// This is actually a pkiMessage here, not a CertRep
-				// 
-				// pkiMessage [SignedData]
-				//     pkcsPKIEnvelope [EnvelopedData]
-				//         CertRep [signedData]
 				final PkiMessageParser parser = new PkiMessageParser(keyPair);
-				return parser.parse(baos.toByteArray());
+				PkiMessage msg = parser.parse(baos.toByteArray());
+				
+				LOGGER.exiting(getClass().getName(), "getContent", msg);
+				return msg;
 			} catch (CmsException e) {
-				throw new IOException(e);
+				IOException ioe = new IOException(e);
+				
+				LOGGER.throwing(getClass().getName(), "getContent", ioe);
+				throw ioe;
 			}
 		} else {
-			throw new IOException("Invalid Content Type");
+			IOException ioe = new IOException("Invalid Content Type");
+			
+			LOGGER.throwing(getClass().getName(), "getContent", ioe);
+			throw ioe;
 		}
 	}
 }
