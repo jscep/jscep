@@ -23,19 +23,14 @@
 package com.google.code.jscep.response;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 /**
  * This class represents the list of capabilities supported by a particular
  * SCEP server.
  */
 public class Capabilities {
-	private static final Logger LOGGER = Logger.getLogger(Capabilities.class.getName());
 	/**
 	 * This class represents a single SCEP server capability.
 	 */
@@ -43,44 +38,44 @@ public class Capabilities {
     	/**
     	 * CA Supports the GetNextCACert message.
     	 */
-        GET_NEXT_CA_CERT,
+        GET_NEXT_CA_CERT("GetNextCACert"),
         /**
          * PKIOPeration messages may be sent via HTTP POST.
          */
-        POST_PKI_OPERATION,
+        POST_PKI_OPERATION("POSTPKIOperation"),
         /**
          * Clients may use current certificate and key to authenticate an enrollment request for a new certificate.
          */
-        RENEWAL,
+        RENEWAL("Renewal"),
         /**
          * CA Supports the SHA-512 hashing algorithm in signatures and fingerprints.
          */
-        SHA_512,
+        SHA_512("SHA-512"),
         /**
          * CA Supports the SHA-256 hashing algorithm in signatures and fingerprints.
          */
-        SHA_256,
+        SHA_256("SHA-256"),
         /**
          * CA Supports the SHA-1 hashing algorithm in signatures and fingerprints.
          */
-        SHA_1,
+        SHA_1("SHA-1"),
         /**
          * CA Supports triple-DES for encryption.
          */
-        TRIPLE_DES;
+        TRIPLE_DES("DES3");
+        
+        private String capability;
+        
+        private Capability(String capability) {
+        	this.capability = capability;
+        }
+        
+        public String toString() {
+        	return capability;
+        }
     }
     
-    private Set<Capability> capabilities;
-    private Map<String, Capability> map = new HashMap<String, Capability>();
-    {
-    	map.put("GetNextCACert", Capability.GET_NEXT_CA_CERT);
-    	map.put("POSTPKIOperation", Capability.POST_PKI_OPERATION);
-    	map.put("Renewal", Capability.RENEWAL);
-    	map.put("SHA-512", Capability.SHA_512);
-    	map.put("SHA-256", Capability.SHA_256);
-    	map.put("SHA-1", Capability.SHA_1);
-    	map.put("DES3", Capability.TRIPLE_DES);
-    }
+    private Set<Capability> set;
     
     /**
      * Creates a new Capabilities instance from the given list of
@@ -89,23 +84,21 @@ public class Capabilities {
      * @param capabilities the list of capabilities.
      */
     public Capabilities(List<String> capabilities) {
-    	this.capabilities = EnumSet.noneOf(Capability.class);
+    	set = EnumSet.noneOf(Capability.class);
     	
-    	for (String capability : capabilities) {
-    		// http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.2
-    		// 
-    		// A client MUST be able to accept and ignore any unknown keywords 
-    		// that might be sent back by a CA.
-    		if (map.containsKey(capability)) {
-    			this.capabilities.add(map.get(capability));
-    		} else {
-    			LOGGER.fine("Unrecognised Capability: \"" + capability + "\" (IGNORED)");
+    	// http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.2
+		// 
+		// A client MUST be able to accept and ignore any unknown keywords 
+		// that might be sent back by a CA.
+    	for (Capability enumCap : Capability.values()) {
+    		if (capabilities.contains(enumCap.toString())) {
+    			set.add(enumCap);
     		}
     	}
     }
 
     private boolean supports(Capability capability) {
-        return capabilities.contains(capability);
+        return set.contains(capability);
     }
 
     /**
@@ -217,17 +210,19 @@ public class Capabilities {
 
     @Override
     public String toString() {
-    	StringBuffer sb = new StringBuffer();
+    	final StringBuffer sb = new StringBuffer();
+    	
     	sb.append(String.format("%-20s%s%n%n", "Capability", "Supported"));
-    	for (Entry<String, Capability> entry : map.entrySet()) {
+    	for (Capability capability : Capability.values()) {
     		boolean supported;
-    		if (capabilities.contains(entry.getValue())) {
+    		if (set.contains(capability)) {
     			supported = true;
     		} else {
     			supported = false;
     		}
-    		sb.append(String.format("%-20s%s%n", entry.getKey(), supported));
+    		sb.append(String.format("%-20s%s%n", capability, supported));
     	}
+    	
     	return sb.toString();
     }
 }
