@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.util.HexUtil;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the <tt>SCEP</tt> <tt>transactionID</tt> attribute.
@@ -37,7 +38,7 @@ import com.google.code.jscep.util.HexUtil;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.1.1">SCEP Internet-Draft Reference</a>
  */
 public final class TransactionId {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
 	private static final AtomicLong ID_SOURCE = new AtomicLong();
 	private final byte[] id;
 	

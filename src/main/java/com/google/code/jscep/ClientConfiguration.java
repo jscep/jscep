@@ -30,12 +30,14 @@ import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
+import com.google.code.jscep.util.LoggingUtil;
+
 /**
  * This class represents the various configuration options that can be used to 
  * alter the behaviour of the client.
  */
 public class ClientConfiguration {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	private final URL url;
 	private final Proxy proxy;
 	private String caId;

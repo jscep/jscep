@@ -12,9 +12,10 @@ import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 
 import com.google.code.jscep.transaction.CmsException;
+import com.google.code.jscep.util.LoggingUtil;
 
 public class PkcsPkiEnvelopeGenerator {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private X509Certificate recipient;
 	private String cipher;
 	

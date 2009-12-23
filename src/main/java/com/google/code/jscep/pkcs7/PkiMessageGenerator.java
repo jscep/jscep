@@ -32,9 +32,10 @@ import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.ScepObjectIdentifiers;
 import com.google.code.jscep.transaction.TransactionId;
 import com.google.code.jscep.util.HexUtil;
+import com.google.code.jscep.util.LoggingUtil;
 
 public class PkiMessageGenerator {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	
 	private MessageType msgType;
 	private TransactionId transId;

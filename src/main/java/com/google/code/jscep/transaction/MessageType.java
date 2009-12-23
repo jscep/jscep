@@ -24,6 +24,8 @@ package com.google.code.jscep.transaction;
 
 import java.util.logging.Logger;
 
+import com.google.code.jscep.util.LoggingUtil;
+
 /**
  * This class represents the <tt>SCEP</tt> <tt>messageType</tt> attribute.
  * 
@@ -51,7 +53,7 @@ public enum MessageType {
 	 */
 	GetCRL(22);
 	
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
 	private final int value;
 	
 	private MessageType(int value) {

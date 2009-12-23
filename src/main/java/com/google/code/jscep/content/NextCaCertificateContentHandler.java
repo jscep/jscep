@@ -33,12 +33,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.util.LoggingUtil;
+
 /**
  * This class handles responses to <tt>GetNextCACert</tt> requests.
  */
 public class NextCaCertificateContentHandler implements
 		ScepContentHandler<List<X509Certificate>> {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.content");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
 	
 	public NextCaCertificateContentHandler(X509Certificate ca) {
 //		this.ca = ca;

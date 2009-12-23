@@ -1,7 +1,5 @@
 package com.google.code.jscep;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.URL;
 import java.security.Security;
 import java.security.cert.CertificateException;
@@ -14,7 +12,6 @@ import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Ignore;
 import org.junit.Test;
 
 //@Ignore

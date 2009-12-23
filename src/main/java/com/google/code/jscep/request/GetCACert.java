@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.content.CaCertificateContentHandler;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a <tt>GetCACert</tt> request.
@@ -34,7 +35,7 @@ import com.google.code.jscep.content.CaCertificateContentHandler;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
  */
 public class GetCACert implements Request<List<X509Certificate>> {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.request");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.request");
 	private String caIdentifier;
 
 	/**

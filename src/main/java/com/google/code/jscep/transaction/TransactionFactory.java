@@ -29,13 +29,14 @@ import java.util.logging.Logger;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.transport.Transport;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * Factory for generating new Transactions.
  * 
  */
 public final class TransactionFactory {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
 	/**
 	 * Private constructor to prevent instantiation.
 	 */

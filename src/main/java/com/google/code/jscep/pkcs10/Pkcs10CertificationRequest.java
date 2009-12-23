@@ -28,11 +28,13 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.util.LoggingUtil;
+
 /**
  * This class represents a PKCS#10 Certificate Request.
  *  */
 public abstract class Pkcs10CertificationRequest {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs10");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs10");
 	/**
 	 * Returns the DER-encoded certification request.
 	 *  

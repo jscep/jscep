@@ -35,12 +35,13 @@ import org.bouncycastle.cms.CMSException;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageParser;
 import com.google.code.jscep.transaction.CmsException;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class handles responses to <tt>PKIRequest</tt> requests.
  */
 public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.content");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
 	private final KeyPair keyPair;
 	
 	public CertRepContentHandler(KeyPair keyPair) {

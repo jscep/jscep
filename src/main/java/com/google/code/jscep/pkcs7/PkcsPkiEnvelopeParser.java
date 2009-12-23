@@ -11,9 +11,10 @@ import org.bouncycastle.cms.RecipientInformationStore;
 
 import com.google.code.jscep.transaction.CmsException;
 import com.google.code.jscep.util.HexUtil;
+import com.google.code.jscep.util.LoggingUtil;
 
 public class PkcsPkiEnvelopeParser {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private final KeyPair keyPair;
 	
 	public PkcsPkiEnvelopeParser(KeyPair keyPair) {

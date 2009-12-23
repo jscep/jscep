@@ -31,12 +31,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class handles responses to <tt>GetCACaps</tt> requests.
  */
 public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.content");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
 	
 	/**
 	 * {@inheritDoc}

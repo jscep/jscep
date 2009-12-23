@@ -28,12 +28,13 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.transaction.PkiStatus;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the outcome of a enrolment request.
  */
 public class EnrollmentResult {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	private List<X509Certificate> certs;
 	private Callable<EnrollmentResult> task;
 	private String message;

@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import com.google.code.jscep.pkcs10.Pkcs10CertificationRequest;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.util.HexUtil;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the <tt>SCEP</tt> <tt>PKCSReq</tt> <tt>pkiMessage</tt> type.
@@ -40,7 +41,7 @@ import com.google.code.jscep.util.HexUtil;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.1">SCEP Internet-Draft Reference</a>
  */
 public class PkcsReq implements PkiOperation {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.operations");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.operations");
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;

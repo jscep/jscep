@@ -24,6 +24,8 @@ package com.google.code.jscep.transaction;
 
 import java.util.logging.Logger;
 
+import com.google.code.jscep.util.LoggingUtil;
+
 /**
  * This class represents the <tt>SCEP</tt> <tt>pkiStatus</tt> attribute.
  * 
@@ -43,7 +45,7 @@ public enum PkiStatus {
      */
     PENDING(3);
     
-    private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
+    private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
     private final int value;
     
     private PkiStatus(int value) {

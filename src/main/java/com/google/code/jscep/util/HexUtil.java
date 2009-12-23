@@ -25,7 +25,7 @@ package com.google.code.jscep.util;
 import java.util.logging.Logger;
 
 public final class HexUtil {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.util");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.util");
 	static final byte[] HEX_CHAR_TABLE = {
 	    (byte)'0', (byte)'1', (byte)'2', (byte)'3',
 	    (byte)'4', (byte)'5', (byte)'6', (byte)'7',

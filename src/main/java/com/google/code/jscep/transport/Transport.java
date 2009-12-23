@@ -33,12 +33,13 @@ import org.bouncycastle.cms.CMSException;
 
 import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.request.Request;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the transport for sending a message to the SCEP server.
  */
 public abstract class Transport {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transport");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transport");
 	/**
 	 * Represents the <tt>HTTP</tt> method to be used for transport. 
 	 */

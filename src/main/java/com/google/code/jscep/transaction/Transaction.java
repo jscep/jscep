@@ -43,13 +43,14 @@ import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.transport.Transport;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a SCEP transaction, and provides a framework for 
  * performing operations.
  */
 public class Transaction {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
 	private final TransactionId transId;
 	private final Nonce senderNonce;
 	private final KeyPair keyPair;

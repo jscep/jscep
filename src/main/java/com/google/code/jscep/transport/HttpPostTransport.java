@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.request.Request;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * Transport representing the <tt>HTTP POST</tt> method
@@ -38,7 +39,7 @@ import com.google.code.jscep.request.Request;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-F
  */
 public class HttpPostTransport extends Transport {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transport");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transport");
 	
 	HttpPostTransport(URL url, Proxy proxy) {
 		super(url, proxy);

@@ -29,12 +29,13 @@ import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.TransactionId;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * Implementation of {@link PkiMessage} that uses Bouncy Castle.
  */
 class PkiMessageImpl implements PkiMessage {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private TransactionId transId;
 	private PkiStatus pkiStatus;
 	private Nonce recipientNonce;

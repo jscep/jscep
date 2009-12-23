@@ -37,9 +37,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.util.LoggingUtil;
 
 public abstract class ScepServlet extends HttpServlet {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	/**
 	 * Serialization ID
 	 */

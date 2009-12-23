@@ -25,13 +25,15 @@ package com.google.code.jscep.transaction;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.util.LoggingUtil;
+
 /**
  * This class represents the senderNonce and recipientNonce types.
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.1.5">SCEP Internet-Draft Reference</a>
  */
 public class Nonce {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
 	private byte[] nonce;
 	
 	/**

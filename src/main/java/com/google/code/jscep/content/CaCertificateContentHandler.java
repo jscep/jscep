@@ -39,12 +39,13 @@ import java.util.logging.Logger;
 
 import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class handles responses to <tt>GetCACert</tt> requests.
  */
 public class CaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.content");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
 	/**
 	 * {@inheritDoc}
 	 */

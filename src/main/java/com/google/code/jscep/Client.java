@@ -60,12 +60,13 @@ import com.google.code.jscep.response.Capabilities;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * SCEP Client
  */
 public class Client {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep");
+	private static Logger LOGGER = LoggingUtil.getLogger(Client.class);
     private URL url;						// Required
     private byte[] caDigest;				// Required
     private String digestAlgorithm;			// Optional

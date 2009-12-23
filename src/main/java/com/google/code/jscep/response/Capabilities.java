@@ -27,12 +27,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.util.LoggingUtil;
+
 /**
  * This class represents the list of capabilities supported by a particular
  * SCEP server.
  */
 public class Capabilities {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.response");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.response");
 	/**
 	 * This class represents a single SCEP server capability.
 	 */

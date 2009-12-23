@@ -9,8 +9,10 @@ import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 
+import com.google.code.jscep.util.LoggingUtil;
+
 public class DegenerateSignedDataGenerator {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private CertStore store;
 	
 	public void setCertStore(CertStore store) {

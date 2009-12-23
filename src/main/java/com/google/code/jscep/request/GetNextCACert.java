@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.code.jscep.content.NextCaCertificateContentHandler;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a <tt>GetNextCACert</tt> request.
@@ -34,7 +35,7 @@ import com.google.code.jscep.content.NextCaCertificateContentHandler;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6">SCEP Internet-Draft Reference</a>
  */
 public class GetNextCACert implements Request<List<X509Certificate>> {
-	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.request");
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.request");
     private final String caIdentifier;
     private final X509Certificate issuer;
     
