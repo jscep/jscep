@@ -26,13 +26,11 @@ import java.security.SecureRandom;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import com.google.code.jscep.util.HexUtil;
-
 /**
  * This class is used for generating nonces.
  */
 public final class NonceFactory {
-	private final static Logger LOGGER = Logger.getLogger(NonceFactory.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
 	private static final Random RND = new SecureRandom();
 	
 	/**
@@ -51,13 +49,15 @@ public final class NonceFactory {
 	 * @see java.security.SecureRandom
 	 */
 	public static Nonce nextNonce() {
-		LOGGER.info("Generating New Nonce");
+		LOGGER.entering(NonceFactory.class.getName(), "nextNonce");
 		
 		byte[] bytes = new byte[16];
 		RND.nextBytes(bytes);
+
+		final Nonce nonce = new Nonce(bytes);
 		
-		LOGGER.info("Nonce:\n" + HexUtil.format(bytes));
+		LOGGER.exiting(NonceFactory.class.getName(), "nextNonce", nonce);
 		
-		return new Nonce(bytes);
+		return nonce;
 	}
 }

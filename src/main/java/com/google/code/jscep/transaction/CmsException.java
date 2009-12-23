@@ -22,9 +22,12 @@
 
 package com.google.code.jscep.transaction;
 
+import java.util.logging.Logger;
+
 import com.google.code.jscep.ScepException;
 
 public class CmsException extends ScepException {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
 	/**
 	 * Serial Version
 	 */

@@ -39,7 +39,7 @@ import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.response.Capabilities;
 
 public abstract class ScepServlet extends HttpServlet {
-	private static final Logger LOGGER = Logger.getLogger(ScepServlet.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep");
 	/**
 	 * Serialization ID
 	 */

@@ -2,6 +2,7 @@ package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
 import java.security.cert.CertStore;
+import java.util.logging.Logger;
 
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -9,6 +10,7 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 
 public class DegenerateSignedDataGenerator {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
 	private CertStore store;
 	
 	public void setCertStore(CertStore store) {

@@ -36,7 +36,7 @@ import com.google.code.jscep.response.Capabilities;
  * This class handles responses to <tt>GetCACaps</tt> requests.
  */
 public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
-	private final static Logger LOGGER = Logger.getLogger(CaCapabilitiesContentHandler.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.content");
 	
 	/**
 	 * {@inheritDoc}

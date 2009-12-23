@@ -22,7 +22,10 @@
 
 package com.google.code.jscep;
 
+import java.util.logging.Logger;
+
 public class EnrollmentFailureException extends Exception {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep");
 	/**
 	 * 
 	 */

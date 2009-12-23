@@ -25,12 +25,14 @@ package com.google.code.jscep.response;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * This class represents the list of capabilities supported by a particular
  * SCEP server.
  */
 public class Capabilities {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.response");
 	/**
 	 * This class represents a single SCEP server capability.
 	 */

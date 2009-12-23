@@ -38,7 +38,7 @@ import com.google.code.jscep.request.Request;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-F
  */
 public class HttpPostTransport extends Transport {
-	private final static Logger LOGGER = Logger.getLogger(HttpPostTransport.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transport");
 	
 	HttpPostTransport(URL url, Proxy proxy) {
 		super(url, proxy);
@@ -64,5 +64,14 @@ public class HttpPostTransport extends Transport {
         }
         
         return msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
+	}
+	
+	@Override
+	public String toString() {
+		if (proxy == Proxy.NO_PROXY) {
+			return "HTTP POST Transport for " + url;
+		} else {
+			return "HTTP POST Transport for " + url + " (using " + proxy + ")";
+		}
 	}
 }

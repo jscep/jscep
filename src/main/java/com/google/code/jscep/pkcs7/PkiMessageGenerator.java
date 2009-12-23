@@ -34,7 +34,7 @@ import com.google.code.jscep.transaction.TransactionId;
 import com.google.code.jscep.util.HexUtil;
 
 public class PkiMessageGenerator {
-	private final static Logger LOGGER = Logger.getLogger(PkiMessageGenerator.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
 	
 	private MessageType msgType;
 	private TransactionId transId;

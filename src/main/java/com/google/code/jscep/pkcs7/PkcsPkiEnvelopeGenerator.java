@@ -3,6 +3,7 @@ package com.google.code.jscep.pkcs7;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
+import java.util.logging.Logger;
 
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
@@ -13,6 +14,7 @@ import org.bouncycastle.cms.CMSProcessableByteArray;
 import com.google.code.jscep.transaction.CmsException;
 
 public class PkcsPkiEnvelopeGenerator {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
 	private X509Certificate recipient;
 	private String cipher;
 	

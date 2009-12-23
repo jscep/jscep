@@ -1,5 +1,7 @@
 package com.google.code.jscep;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.security.Security;
 import java.security.cert.CertificateException;
@@ -36,8 +38,9 @@ public class ClientTest {
 		}}, null);
 		HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
 		
+		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("nj.proxy.avaya.com", 8000));
 		URL url = new URL("https://engtest66-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
-		ClientConfiguration config = new ClientConfiguration(url);
+		ClientConfiguration config = new ClientConfiguration(url, proxy);
 		config.setCaDigest(new byte[] {-93, -44, 23, 25, -106, 116, 80, -113, 36, 23, 76, -89, -36, -18, 89, -59});
 		config.setSubject(new X500Principal("CN=example.org"));
 		Client client = new Client(config);

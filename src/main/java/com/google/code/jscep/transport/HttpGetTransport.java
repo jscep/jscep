@@ -36,8 +36,7 @@ import com.google.code.jscep.request.Request;
  * Transport representing the <tt>HTTP GET</tt> method
  */
 public class HttpGetTransport extends Transport {
-	private final static Logger LOGGER = Logger
-			.getLogger(HttpGetTransport.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transport");
 
 	HttpGetTransport(URL url, Proxy proxy) {
 		super(url, proxy);
@@ -46,17 +45,25 @@ public class HttpGetTransport extends Transport {
 	@Override
 	public <T> T sendMessage(Request<T> msg) throws IOException,
 			MalformedURLException {
+		LOGGER.entering(getClass().getName(), "sendMessage");
+		
 		URL url = getUrl(msg.getOperation(), msg.getMessage());
 		LOGGER.info("Sending Request: " + url);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-			throw new IOException(conn.getResponseCode() + " "
-					+ conn.getResponseMessage());
+			IOException ioe = new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
+			
+			LOGGER.throwing(getClass().getName(), "sendMessage", ioe);
+			
+			throw ioe;
 		}
 
-		return msg.getContentHandler().getContent(conn.getInputStream(),
-				conn.getContentType());
+		final T response = msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
+		
+		LOGGER.exiting(getClass().getName(), "sendMessage", response);
+		
+		return response;
 	}
 
 	private URL getUrl(Operation op, Object message)
@@ -66,6 +73,15 @@ public class HttpGetTransport extends Transport {
 		} else {
 			// TODO: Does this encode bytes?
 			return new URL(getUrl(op).toExternalForm() + "&message=" + message);
+		}
+	}
+	
+	@Override
+	public String toString() {
+		if (proxy == Proxy.NO_PROXY) {
+			return "HTTP GET Transport for " + url;
+		} else {
+			return "HTTP GET Transport for " + url + " (using " + proxy + ")";
 		}
 	}
 }

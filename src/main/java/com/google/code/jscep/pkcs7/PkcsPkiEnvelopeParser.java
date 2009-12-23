@@ -13,7 +13,7 @@ import com.google.code.jscep.transaction.CmsException;
 import com.google.code.jscep.util.HexUtil;
 
 public class PkcsPkiEnvelopeParser {
-	private final static Logger LOGGER = Logger.getLogger(PkcsPkiEnvelopeParser.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
 	private final KeyPair keyPair;
 	
 	public PkcsPkiEnvelopeParser(KeyPair keyPair) {

@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.transaction;
 
+import java.util.logging.Logger;
+
 /**
  * This class represents the <tt>SCEP</tt> <tt>failInfo</tt> attribute.
  * 
@@ -49,6 +51,7 @@ public enum FailInfo {
      */
     badCertId(4, "No certificate could be identified matching the provided criteria");
     
+    private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
     private final int value;
     private final String desc;
 	

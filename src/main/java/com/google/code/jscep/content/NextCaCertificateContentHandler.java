@@ -31,13 +31,14 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * This class handles responses to <tt>GetNextCACert</tt> requests.
  */
 public class NextCaCertificateContentHandler implements
 		ScepContentHandler<List<X509Certificate>> {
-//	private final X509Certificate ca;
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.content");
 	
 	public NextCaCertificateContentHandler(X509Certificate ca) {
 //		this.ca = ca;

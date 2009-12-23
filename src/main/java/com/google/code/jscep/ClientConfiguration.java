@@ -26,6 +26,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
+import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -34,6 +35,7 @@ import javax.security.auth.x500.X500Principal;
  * alter the behaviour of the client.
  */
 public class ClientConfiguration {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep");
 	private final URL url;
 	private final Proxy proxy;
 	private String caId;

@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.util.logging.Logger;
 
 import org.bouncycastle.cms.CMSException;
 
@@ -37,6 +38,7 @@ import com.google.code.jscep.request.Request;
  * This class represents the transport for sending a message to the SCEP server.
  */
 public abstract class Transport {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transport");
 	/**
 	 * Represents the <tt>HTTP</tt> method to be used for transport. 
 	 */
@@ -99,11 +101,18 @@ public abstract class Transport {
 	 * @return a new Transport instance.
 	 */
 	public static Transport createTransport(Method method, URL url, Proxy proxy) {
+		LOGGER.entering(Transport.class.getName(), "createTransport");
+		
+		Transport t;
+		
 		if (method.equals(Method.GET)) {
-			return new HttpGetTransport(url, proxy);
+			t = new HttpGetTransport(url, proxy);
 		} else {
-			return new HttpPostTransport(url, proxy);
+			t = new HttpPostTransport(url, proxy);
 		}
+		
+		LOGGER.exiting(Transport.class.getName(), "createTransport", t);
+		return t;
 	}
 	
 	URL getUrl(Operation op) throws MalformedURLException {

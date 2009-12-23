@@ -37,7 +37,7 @@ import com.google.code.jscep.util.HexUtil;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.1.1">SCEP Internet-Draft Reference</a>
  */
 public final class TransactionId {
-	private final static Logger LOGGER = Logger.getLogger(TransactionId.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
 	private static final AtomicLong ID_SOURCE = new AtomicLong();
 	private final byte[] id;
 	
@@ -83,11 +83,17 @@ public final class TransactionId {
 	 * @return the new Transaction Id
 	 */
 	public static TransactionId createTransactionId(KeyPair keyPair) {
+		LOGGER.entering(TransactionId.class.getName(), "createTransactionId");
+		
+		TransactionId t;
 		if (keyPair == null) {
-			return new TransactionId();
+			t = new TransactionId();
 		} else {
-			return new TransactionId(keyPair);
+			t = new TransactionId(keyPair);
 		}
+		LOGGER.exiting(TransactionId.class.getName(), "createTransactionId", t);
+		
+		return t;
 	}
 	
 	/**
@@ -99,5 +105,10 @@ public final class TransactionId {
 	 */
 	public static TransactionId createTransactionId() {
 		return new TransactionId();
+	}
+	
+	@Override
+	public String toString() {
+		return "TransactionId " + Arrays.toString(id);
 	}
 }

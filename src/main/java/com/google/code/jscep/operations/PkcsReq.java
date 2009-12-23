@@ -40,7 +40,7 @@ import com.google.code.jscep.util.HexUtil;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.1">SCEP Internet-Draft Reference</a>
  */
 public class PkcsReq implements PkiOperation {
-	private final static Logger LOGGER = Logger.getLogger(PkcsReq.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.operations");
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;

@@ -24,6 +24,7 @@ package com.google.code.jscep.transaction;
 
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
+import java.util.logging.Logger;
 
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
@@ -34,6 +35,7 @@ import com.google.code.jscep.transport.Transport;
  * 
  */
 public final class TransactionFactory {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
 	/**
 	 * Private constructor to prevent instantiation.
 	 */

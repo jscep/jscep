@@ -23,6 +23,7 @@
 package com.google.code.jscep.transaction;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * This class represents the senderNonce and recipientNonce types.
@@ -30,6 +31,7 @@ import java.util.Arrays;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.1.5">SCEP Internet-Draft Reference</a>
  */
 public class Nonce {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
 	private byte[] nonce;
 	
 	/**
@@ -57,6 +59,11 @@ public class Nonce {
 	public boolean equals(Object o) {
 		Nonce n = (Nonce) o;
 		
-		return Arrays.equals(n.getBytes(), getBytes());
+		return Arrays.equals(n.nonce, nonce);
+	}
+	
+	@Override
+	public String toString() {
+		return "Nonce " + Arrays.toString(nonce);
 	}
 }

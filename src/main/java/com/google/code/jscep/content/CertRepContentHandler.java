@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.util.logging.Logger;
 
 import org.bouncycastle.cms.CMSException;
 
@@ -39,6 +40,7 @@ import com.google.code.jscep.transaction.CmsException;
  * This class handles responses to <tt>PKIRequest</tt> requests.
  */
 public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.content");
 	private final KeyPair keyPair;
 	
 	public CertRepContentHandler(KeyPair keyPair) {

@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.request;
 
+import java.util.logging.Logger;
+
 import com.google.code.jscep.content.CaCapabilitiesContentHandler;
 import com.google.code.jscep.response.Capabilities;
 
@@ -31,6 +33,7 @@ import com.google.code.jscep.response.Capabilities;
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
  */
 public class GetCACaps implements Request<Capabilities> {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.request");
 	private String caIdentifier;
 
 	public GetCACaps() {

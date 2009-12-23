@@ -52,7 +52,7 @@ import com.google.code.jscep.util.HexUtil;
  * Implementation of {@link Pkcs10CertificationRequest} that uses Bouncy Castle.
  */
 public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
-	private final static Logger LOGGER = Logger.getLogger(Pkcs10CertificationRequestImpl.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs10");
 	private final KeyPair keyPair;
 	private final X509Certificate identity;
 	private final Set<DEREncodable> attrs = new HashSet<DEREncodable>();

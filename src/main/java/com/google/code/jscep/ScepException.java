@@ -22,7 +22,10 @@
 
 package com.google.code.jscep;
 
+import java.util.logging.Logger;
+
 public class ScepException extends Exception {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep");
 	/**
 	 * Serial Version
 	 */

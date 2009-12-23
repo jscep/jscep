@@ -65,7 +65,7 @@ import com.google.code.jscep.transport.Transport;
  * SCEP Client
  */
 public class Client {
-	private final static Logger LOGGER = Logger.getLogger(Client.class.getName());
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep");
     private URL url;						// Required
     private byte[] caDigest;				// Required
     private String digestAlgorithm;			// Optional
@@ -219,11 +219,18 @@ public class Client {
     }
     
     private Transport createTransport() throws IOException, CMSException, GeneralSecurityException {
+    	LOGGER.entering(getClass().getName(), "createTransport");
+    	
+    	final Transport t;
     	if (getCapabilities().supportsPost()) {
-    		return Transport.createTransport(Transport.Method.POST, url, proxy);
+    		t = Transport.createTransport(Transport.Method.POST, url, proxy);
     	} else {
-    		return Transport.createTransport(Transport.Method.GET, url, proxy);
+    		t = Transport.createTransport(Transport.Method.GET, url, proxy);
     	}
+    	
+    	LOGGER.exiting(getClass().getName(), "createTransport", t);
+    	
+    	return t;
     }
     
     /**

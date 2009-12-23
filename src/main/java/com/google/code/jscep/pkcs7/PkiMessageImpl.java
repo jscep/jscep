@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.pkcs7;
 
+import java.util.logging.Logger;
+
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
@@ -32,6 +34,7 @@ import com.google.code.jscep.transaction.TransactionId;
  * Implementation of {@link PkiMessage} that uses Bouncy Castle.
  */
 class PkiMessageImpl implements PkiMessage {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.pkcs7");
 	private TransactionId transId;
 	private PkiStatus pkiStatus;
 	private Nonce recipientNonce;

@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
+import java.util.logging.Logger;
 
 import org.bouncycastle.cms.CMSException;
 
@@ -48,6 +49,7 @@ import com.google.code.jscep.transport.Transport;
  * performing operations.
  */
 public class Transaction {
+	private static Logger LOGGER = Logger.getLogger("com.google.code.jscep.transaction");
 	private final TransactionId transId;
 	private final Nonce senderNonce;
 	private final KeyPair keyPair;
