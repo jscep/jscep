@@ -118,4 +118,9 @@ public class Transaction {
 			return certRep.getCertStore();
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "Transaction [" + transId + "]";
+	}
 }

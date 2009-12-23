@@ -53,6 +53,8 @@ public final class TransactionFactory {
 	 * @return the new transaction.
 	 */
 	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String fingerprintAlgorithm) {
+		LOGGER.entering(TransactionFactory.class.getName(), "createTransaction");
+		
 		// TODO: Don't hardcode DES
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
 		envGenerator.setCipher("1.3.14.3.2.7");
@@ -64,6 +66,9 @@ public final class TransactionFactory {
 		msgGenerator.setIdentity(identity);
 		msgGenerator.setKeyPair(keyPair);
 		
-		return new Transaction(transport, keyPair, envGenerator, msgGenerator);
+		Transaction t = new Transaction(transport, keyPair, envGenerator, msgGenerator);
+		
+		LOGGER.exiting (TransactionFactory.class.getName(), "createTransaction", t);
+		return t;
 	}
 }
