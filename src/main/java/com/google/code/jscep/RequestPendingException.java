@@ -22,12 +22,7 @@
 
 package com.google.code.jscep;
 
-import java.util.logging.Logger;
-
-import com.google.code.jscep.util.LoggingUtil;
-
 public class RequestPendingException extends Exception {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	/**
 	 * 
 	 */

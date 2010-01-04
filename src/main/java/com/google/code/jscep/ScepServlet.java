@@ -51,6 +51,8 @@ public abstract class ScepServlet extends HttpServlet {
 	 */
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		LOGGER.entering(getClass().getName(), "service");
+		
 		final Operation op;
 		try {
 			op = getOperation(req);
@@ -102,7 +104,9 @@ public abstract class ScepServlet extends HttpServlet {
 		LOGGER.fine("Method " + reqMethod + " Allowed for Operation: " + op);
 		
 		if (op == Operation.GetCACaps) {
-			getCapabilities(req.getParameter("message"));
+			Capabilities caps = getCapabilities(req.getParameter("message"));
+			res.getWriter().write(caps.toString());
+			res.getWriter().close();
 		} else if (op == Operation.GetCACert) {
 			getCACertificate(req.getParameter("message"));
 		} else if (op == Operation.GetNextCACert) {
@@ -111,6 +115,7 @@ public abstract class ScepServlet extends HttpServlet {
 //			final ServletInputStream is = req.getInputStream();
 //			SignedData sd = new SignedData();
 		}
+		LOGGER.exiting(getClass().getName(), "service");
 	}
 	
 	abstract protected Capabilities getCapabilities(String identifier);

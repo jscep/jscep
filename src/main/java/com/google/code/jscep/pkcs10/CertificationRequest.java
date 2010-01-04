@@ -26,15 +26,11 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
-import java.util.logging.Logger;
-
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a PKCS#10 Certificate Request.
  *  */
-public abstract class Pkcs10CertificationRequest {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs10");
+public abstract class CertificationRequest {
 	/**
 	 * Returns the DER-encoded certification request.
 	 *  
@@ -59,7 +55,7 @@ public abstract class Pkcs10CertificationRequest {
 	 * @param identity the certificate to sign.
 	 * @return a new instance of this class.
 	 */
-	public static Pkcs10CertificationRequest getInstance(KeyPair keyPair, X509Certificate identity) {
-		return new Pkcs10CertificationRequestImpl(keyPair, identity);
+	public static CertificationRequest getInstance(KeyPair keyPair, X509Certificate identity) {
+		return new CertificationRequestImpl(keyPair, identity);
 	}
 }

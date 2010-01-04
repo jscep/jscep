@@ -24,7 +24,6 @@ package com.google.code.jscep.operations;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -33,7 +32,6 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
 
 import com.google.code.jscep.transaction.MessageType;
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the <tt>SCEP</tt> <tt>GetCert</tt> <tt>pkiMessage</tt> type.
@@ -41,7 +39,6 @@ import com.google.code.jscep.util.LoggingUtil;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.4">SCEP Internet-Draft Reference</a>
  */
 public class GetCert implements PkiOperation {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.operations");
 	private final X500Principal issuer;
     private final BigInteger serial;
 

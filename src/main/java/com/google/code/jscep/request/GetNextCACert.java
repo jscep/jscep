@@ -24,10 +24,8 @@ package com.google.code.jscep.request;
 
 import java.security.cert.X509Certificate;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.google.code.jscep.content.NextCaCertificateContentHandler;
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a <tt>GetNextCACert</tt> request.
@@ -35,19 +33,8 @@ import com.google.code.jscep.util.LoggingUtil;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.6">SCEP Internet-Draft Reference</a>
  */
 public class GetNextCACert implements Request<List<X509Certificate>> {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.request");
     private final String caIdentifier;
     private final X509Certificate issuer;
-    
-    /**
-     * Creates a new GetNextCACert request without a CA identification string.
-     * 
-     * @param issuer the existing CA certificate.
-     */
-    public GetNextCACert(X509Certificate issuer) {
-    	this.issuer = issuer;
-    	this.caIdentifier = null;
-    }
 
     /**
      * Creates a new GetNextCACert request with the given CA identification string.

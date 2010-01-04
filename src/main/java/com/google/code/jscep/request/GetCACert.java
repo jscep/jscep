@@ -24,26 +24,16 @@ package com.google.code.jscep.request;
 
 import java.security.cert.X509Certificate;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.google.code.jscep.content.CaCertificateContentHandler;
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a <tt>GetCACert</tt> request.
  * 
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-5.2.1
  */
-public class GetCACert implements Request<List<X509Certificate>> {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.request");
+public final class GetCACert implements Request<List<X509Certificate>> {
 	private String caIdentifier;
-
-	/**
-	 * Creates a new GetCACert request with no CA identification string.
-	 */
-	public GetCACert() {
-	}
-
 	/**
 	 * Creates a new GetCACert request with the given CA identification string.
 	 * 

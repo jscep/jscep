@@ -24,17 +24,14 @@ package com.google.code.jscep.request;
 
 import java.io.IOException;
 import java.security.KeyPair;
-import java.util.logging.Logger;
 
 import com.google.code.jscep.content.CertRepContentHandler;
 import com.google.code.jscep.pkcs7.PkiMessage;
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a <tt>PkiRequest</tt> request.
  */
 public class PkiRequest implements Request<PkiMessage> {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.request");
 	private final PkiMessage signedData;
 	private final KeyPair keyPair;
 

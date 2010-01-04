@@ -22,15 +22,11 @@
 
 package com.google.code.jscep.pkcs7;
 
-import java.util.logging.Logger;
-
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * Implementation of {@link PkcsPkiEnvelope} that uses Bouncy Castle.
  */
 class PkcsPkiEnvelopeImpl implements PkcsPkiEnvelope {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private byte[] msgData;
 	private byte[] encoded;
 	

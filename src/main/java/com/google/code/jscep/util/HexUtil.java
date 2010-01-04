@@ -22,19 +22,13 @@
 
 package com.google.code.jscep.util;
 
-import java.util.logging.Logger;
-
 public final class HexUtil {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.util");
 	static final byte[] HEX_CHAR_TABLE = {
 	    (byte)'0', (byte)'1', (byte)'2', (byte)'3',
 	    (byte)'4', (byte)'5', (byte)'6', (byte)'7',
 	    (byte)'8', (byte)'9', (byte)'A', (byte)'B',
 	    (byte)'C', (byte)'D', (byte)'E', (byte)'F'
 	  };   
-	
-	private HexUtil() {		
-	}
 	
 	public static byte[] toHex(byte[] bytes) {
 		byte[] hex = new byte[2 * bytes.length];

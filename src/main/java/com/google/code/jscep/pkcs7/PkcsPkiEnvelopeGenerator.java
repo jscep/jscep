@@ -28,6 +28,8 @@ public class PkcsPkiEnvelopeGenerator {
 	}
 	
 	public PkcsPkiEnvelope generate(byte[] messageData) throws CmsException, GeneralSecurityException, IOException {
+		LOGGER.entering(getClass().getName(), "generate");
+		
 		CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
     	gen.addKeyTransRecipient(recipient);
     	CMSProcessable processableData = new CMSProcessableByteArray(messageData);

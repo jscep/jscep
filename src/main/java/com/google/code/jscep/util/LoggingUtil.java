@@ -26,10 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class LoggingUtil {
+public final class LoggingUtil {
 	private static Map<String, Logger> cache = new HashMap<String, Logger>();
-	private LoggingUtil() {
-	}
 
 	public static Logger getLogger(Class<?> type) {
 		return getLogger(type.getPackage().getName());

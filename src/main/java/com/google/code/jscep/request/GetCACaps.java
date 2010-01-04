@@ -22,23 +22,16 @@
 
 package com.google.code.jscep.request;
 
-import java.util.logging.Logger;
-
 import com.google.code.jscep.content.CaCapabilitiesContentHandler;
 import com.google.code.jscep.response.Capabilities;
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a <tt>GetCACaps</tt> request.
  * 
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
  */
-public class GetCACaps implements Request<Capabilities> {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.request");
+public final class GetCACaps implements Request<Capabilities> {
 	private String caIdentifier;
-
-	public GetCACaps() {
-	}
 
 	public GetCACaps(String caIdentifier) {
 		this.caIdentifier = caIdentifier;

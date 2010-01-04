@@ -30,7 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
-import com.google.code.jscep.pkcs10.Pkcs10CertificationRequest;
+import com.google.code.jscep.pkcs10.CertificationRequest;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.util.HexUtil;
 import com.google.code.jscep.util.LoggingUtil;
@@ -68,7 +68,7 @@ public class PkcsReq implements PkiOperation {
      * @see <a href="http://tools.ietf.org/html/rfc2986">RFC 2986</a>
      */
     public byte[] getMessageData() throws IOException, GeneralSecurityException {
-    	Pkcs10CertificationRequest certReq = Pkcs10CertificationRequest.getInstance(keyPair, identity);
+    	CertificationRequest certReq = CertificationRequest.getInstance(keyPair, identity);
     	certReq.addAttribute("1.2.840.113549.1.9.7", new String(password));
     	
     	byte[] pkcs10 = certReq.getEncoded();

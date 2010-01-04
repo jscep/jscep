@@ -43,22 +43,21 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERUTF8String;
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import com.google.code.jscep.util.HexUtil;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * Implementation of {@link Pkcs10CertificationRequest} that uses Bouncy Castle.
+ * Implementation of {@link CertificationRequest} that uses Bouncy Castle.
  */
-public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
+public class CertificationRequestImpl extends CertificationRequest {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs10");
 	private final KeyPair keyPair;
 	private final X509Certificate identity;
 	private final Set<DEREncodable> attrs = new HashSet<DEREncodable>();
 	
-	Pkcs10CertificationRequestImpl(KeyPair keyPair, X509Certificate identity) {
+	CertificationRequestImpl(KeyPair keyPair, X509Certificate identity) {
 		this.keyPair = keyPair;
 		this.identity = identity;
 	}
@@ -97,7 +96,7 @@ public class Pkcs10CertificationRequestImpl extends Pkcs10CertificationRequest {
 		PublicKey pub = keyPair.getPublic();
 		PrivateKey priv = keyPair.getPrivate();
 		
-		CertificationRequest request = new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv, "SunRsaSign");
+		PKCS10CertificationRequest request = new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv, "SunRsaSign");
 		byte[] requestBytes = request.getDEREncoded();
 		
 		LOGGER.info("Generated PKCS #10 Request:\n" + HexUtil.formatHex(HexUtil.toHex(requestBytes)));

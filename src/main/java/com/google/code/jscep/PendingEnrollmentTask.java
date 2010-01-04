@@ -25,14 +25,12 @@ package com.google.code.jscep;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
-import java.util.logging.Logger;
 
 import com.google.code.jscep.operations.GetCertInitial;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a subsequent attempt to enrol a certificate in a PKI.
@@ -42,7 +40,6 @@ import com.google.code.jscep.util.LoggingUtil;
  * @see InitialEnrollmentTask
  */
 public final class PendingEnrollmentTask extends AbstractEnrollmentTask {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	private final Transport transport;
 	private final X509Certificate ca;
 	private final KeyPair keyPair;

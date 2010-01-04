@@ -1,7 +1,6 @@
 package com.google.code.jscep;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.eclipse.jetty.testing.HttpTester;
 import org.eclipse.jetty.testing.ServletTester;
@@ -18,19 +17,20 @@ public class ScepServletTest {
 	public void setUp() throws Exception {
 		tester = new ServletTester();
 		tester.setContextPath("/scep");
-		tester.addServlet(ScepServlet.class, "/pkiclient.exe");
+		tester.addServlet(ScepServletImpl.class, "/pkiclient.exe");
 		tester.start();
 	}
 	
 	@Test
 	public void testFoo() throws IOException, Exception {
 		final HttpTester req = new HttpTester();
-//		final HttpTester res = new HttpTester();
+		final HttpTester res = new HttpTester();
 		
 		req.setMethod("GET");
-		req.setURI("/scep/pkiclient.exe?operation=" + Operation.PKIOperation);
+		req.setURI("/scep/pkiclient.exe?operation=" + Operation.GetCACaps);
 		req.setVersion("HTTP/1.0");
 		
-//		String request = req.generate();
+		res.parse(tester.getResponses(req.generate()));
+		res.getContent();
 	}
 }

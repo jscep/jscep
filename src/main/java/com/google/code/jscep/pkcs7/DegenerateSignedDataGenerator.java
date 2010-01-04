@@ -20,10 +20,14 @@ public class DegenerateSignedDataGenerator {
 	}
 	
 	public DegenerateSignedData generate() {
+		LOGGER.entering(getClass().getName(), "generate");
+		
 		CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
 		try {
 			generator.addCertificatesAndCRLs(store);
 		} catch (Exception e) {
+			
+			LOGGER.throwing(getClass().getName(), "generate", e);
 			throw new RuntimeException(e);
 		}
 		CMSProcessable processable = new CMSProcessableByteArray(new byte[0]);
@@ -31,6 +35,8 @@ public class DegenerateSignedDataGenerator {
 		try {
 			signedData = generator.generate(processable, "BC");
 		} catch (Exception e) {
+			
+			LOGGER.throwing(getClass().getName(), "generate", e);
 			throw new RuntimeException(e);
 		}
 		
@@ -39,9 +45,12 @@ public class DegenerateSignedDataGenerator {
 		try {
 			dsd.setEncoded(signedData.getEncoded());
 		} catch (IOException e) {
+			
+			LOGGER.throwing(getClass().getName(), "generate", e);
 			throw new RuntimeException(e);
 		}
 		
+		LOGGER.exiting(getClass().getName(), "generate");
 		return dsd;
 	}
 }

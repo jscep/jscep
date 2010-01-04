@@ -23,15 +23,12 @@
 package com.google.code.jscep.asn1;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.X509Name;
-
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * <tt>IssuerAndSubject</tt> <tt>ASN.1</tt> Object
@@ -48,7 +45,6 @@ import com.google.code.jscep.util.LoggingUtil;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.3.1">SCEP Internet-Draft Reference</a>
  */
 public class IssuerAndSubject {
-	private static Logger LOGGER = LoggingUtil.getLogger(IssuerAndSubject.class);
 	private final X500Principal issuer;
 	private final X500Principal subject;
 

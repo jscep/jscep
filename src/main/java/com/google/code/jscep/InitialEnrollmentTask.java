@@ -26,20 +26,17 @@ import java.security.KeyPair;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
 
 import com.google.code.jscep.operations.PkcsReq;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the initial attempt at enrolling a certificate in a PKI.
  */
 public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	private final Transport transport;
 	private final X509Certificate ca;
 	private final KeyPair keyPair;
