@@ -27,6 +27,7 @@ import java.io.IOException;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.X509Name;
 
@@ -48,6 +49,13 @@ public class IssuerAndSubject {
 	private final X500Principal issuer;
 	private final X500Principal subject;
 
+	public IssuerAndSubject(ASN1Sequence sequence) {
+		ASN1EncodableVector v = (ASN1EncodableVector) sequence.getObjectAt(0);
+		
+		issuer = new X500Principal(v.get(0).getDERObject().getDEREncoded());
+		subject = new X500Principal(v.get(1).getDERObject().getDEREncoded());
+	}
+	
 	public IssuerAndSubject(X500Principal issuer, X500Principal subject) {
 		this.issuer = issuer;
 		this.subject = subject;

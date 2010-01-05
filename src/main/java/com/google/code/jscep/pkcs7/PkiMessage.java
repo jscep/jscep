@@ -27,6 +27,7 @@ import java.security.GeneralSecurityException;
 import org.bouncycastle.cms.CMSException;
 
 import com.google.code.jscep.transaction.FailInfo;
+import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.TransactionId;
@@ -75,5 +76,6 @@ public interface PkiMessage {
 	 * @throws CMSException 
 	 */
 	PkcsPkiEnvelope getPkcsPkiEnvelope();
+	MessageType getMessageType();
 	byte[] getEncoded();
 }

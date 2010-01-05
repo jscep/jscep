@@ -23,8 +23,10 @@
 package com.google.code.jscep;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -36,6 +38,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.pkcs.IssuerAndSerialNumber;
+import org.bouncycastle.jce.PKCS10CertificationRequest;
+
+import com.google.code.jscep.asn1.IssuerAndSubject;
+import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeParser;
+import com.google.code.jscep.pkcs7.PkiMessage;
+import com.google.code.jscep.pkcs7.PkiMessageParser;
 import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.response.Capability;
 import com.google.code.jscep.transaction.MessageType;
@@ -121,20 +132,41 @@ public abstract class ScepServlet extends HttpServlet {
 		} else if (op == Operation.GetNextCACert) {
 			getNextCACertificate(req.getParameter(MSG_PARAM));
 		} else {
-//			final ServletInputStream is = req.getInputStream();
-//			SignedData sd = new SignedData();
-			MessageType msgType = MessageType.GetCert;
+			PkcsPkiEnvelopeParser envParser = new PkcsPkiEnvelopeParser(getPrivate());
+			PkiMessageParser msgParser = new PkiMessageParser(envParser);
+			PkiMessage msg = msgParser.parse(getBytes(req.getInputStream()));
+			
+			MessageType msgType = msg.getMessageType();
+			byte[] msgData = msg.getPkcsPkiEnvelope().getMessageData();
 			if (msgType == MessageType.GetCert) {
-//				getCertificate();
+				final ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(msgData);
+				final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(seq);
+				final X500Principal principal = new X500Principal(iasn.getName().getDEREncoded());
+				final BigInteger serial = iasn.getCertificateSerialNumber().getValue();
+
+				getCertificate(principal, serial);
 			} else if (msgType == MessageType.GetCertInitial) {
-//				getCertificate();
+				final ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(msgData);
+				final IssuerAndSubject ias = new IssuerAndSubject(seq);
+				final X500Principal issuer = ias.getIssuer();
+				final X500Principal subject = ias.getSubject();
+				
+				getCertificate(issuer, subject);
 			} else if (msgType == MessageType.GetCRL) {
-//				getCRL();
+				final ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(msgData);
+				final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(seq);
+				final X500Principal principal = new X500Principal(iasn.getName().getDEREncoded());
+				
+				getCRL(principal, iasn.getCertificateSerialNumber().getValue());
 			} else if (msgType == MessageType.PKCSReq) {
-//				enrollCertificate(certificationRequest)
+				enrollCertificate(msgData);
 			}
 		}
 		LOGGER.exiting(getClass().getName(), "service");
+	}
+	
+	private byte[] getBytes(InputStream in) {
+		return new byte[0];
 	}
 	
 	private Operation getOperation(HttpServletRequest req) {
@@ -199,4 +231,5 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @return the certificate chain.
 	 */
 	abstract protected List<X509Certificate> enrollCertificate(byte[] certificationRequest);
+	abstract protected PrivateKey getPrivate();
 }
