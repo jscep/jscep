@@ -6,12 +6,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.response.Capability;
 
 public class CaCapabilitiesContentHandlerTest {
 	private CaCapabilitiesContentHandler fixture;
@@ -24,15 +25,15 @@ public class CaCapabilitiesContentHandlerTest {
 	@Test
 	public void testContentTypeIgnored() throws IOException {
 		final InputStream is = getStreamForCapabilities("DES3");
-		final Capabilities caps = fixture.getContent(is, "foo/bar");
-		Assert.assertTrue(caps.supportsTripleDES());
+		final Set<Capability> caps = fixture.getContent(is, "foo/bar");
+		Assert.assertTrue(caps.contains(Capability.TRIPLE_DES));
 	}
 	
 	@Test
 	public void testCorrectContentType() throws IOException {
 		final InputStream is = getStreamForCapabilities("DES3");
-		final Capabilities caps = fixture.getContent(is, "text/plain");
-		Assert.assertTrue(caps.supportsTripleDES());
+		final Set<Capability> caps = fixture.getContent(is, "text/plain");
+		Assert.assertTrue(caps.contains(Capability.TRIPLE_DES));
 	}
 	
 	private InputStream getStreamForCapabilities(String... capabilities) throws IOException {

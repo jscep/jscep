@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,42 +26,44 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.response.Capability;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class handles responses to <tt>GetCACaps</tt> requests.
  */
-public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
+public class CaCapabilitiesContentHandler implements ScepContentHandler<Set<Capability>> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-    public Capabilities getContent(InputStream in, String mimeType) throws IOException {
-    	LOGGER.entering(getClass().getName(), "getContent");
-    	
+	public Set<Capability> getContent(InputStream in, String mimeType) throws IOException {
+		LOGGER.entering(getClass().getName(), "getContent");
+
 		if (mimeType.equals("text/plain") == false) {
 			LOGGER.log(Level.WARNING, "capabilities.mime.warning", mimeType);
 		}
-		
-        final Set<String> capabilities = new HashSet<String>();
-        
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        String capability;
-        while ((capability = reader.readLine()) != null) {
-        	capabilities.add(capability);
-        }
-        reader.close();
 
-        Capabilities caps = new Capabilities(capabilities);
-        
-        LOGGER.exiting(getClass().getName(), "getContent", caps);
-        return caps;
-    }
+		final EnumSet<Capability> set = EnumSet.noneOf(Capability.class);
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		String capability;
+		while ((capability = reader.readLine()) != null) {
+			for (Capability enumValue : Capability.values()) {
+				if (enumValue.toString().equals(capability)) {
+					set.add(enumValue);
+				}
+			}
+		}
+		reader.close();
+
+		LOGGER.exiting(getClass().getName(), "getContent", set);
+		return set;
+	}
 }

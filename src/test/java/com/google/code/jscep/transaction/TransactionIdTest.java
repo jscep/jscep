@@ -27,4 +27,21 @@ public class TransactionIdTest {
 		Assert.assertFalse(transA.equals(transB));
 	}
 
+	@Test
+	public void testCreateTransactionIdNullKeyPair() {
+		TransactionId transA = TransactionId.createTransactionId(null);
+		TransactionId transB = TransactionId.createTransactionId(null);
+		
+		Assert.assertFalse(transA.equals(transB));
+	}
+	
+	@Test
+	public void testTransactionIdByteArray() {
+		final byte[] bytes = new byte[0];
+		
+		TransactionId transA = new TransactionId(bytes);
+		TransactionId transB = new TransactionId(bytes);
+		
+		Assert.assertEquals(transA, transB);
+	}
 }

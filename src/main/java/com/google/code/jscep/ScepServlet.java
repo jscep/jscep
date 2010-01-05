@@ -28,6 +28,7 @@ import java.math.BigInteger;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
@@ -36,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.code.jscep.request.Operation;
-import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.response.Capability;
 import com.google.code.jscep.util.LoggingUtil;
 
 public abstract class ScepServlet extends HttpServlet {
@@ -104,7 +105,7 @@ public abstract class ScepServlet extends HttpServlet {
 		LOGGER.fine("Method " + reqMethod + " Allowed for Operation: " + op);
 		
 		if (op == Operation.GetCACaps) {
-			Capabilities caps = getCapabilities(req.getParameter("message"));
+			Set<Capability> caps = getCapabilities(req.getParameter("message"));
 			res.getWriter().write(caps.toString());
 			res.getWriter().close();
 		} else if (op == Operation.GetCACert) {
@@ -118,7 +119,7 @@ public abstract class ScepServlet extends HttpServlet {
 		LOGGER.exiting(getClass().getName(), "service");
 	}
 	
-	abstract protected Capabilities getCapabilities(String identifier);
+	abstract protected Set<Capability> getCapabilities(String identifier);
 	abstract protected List<X509Certificate> getCACertificate(String identifier);
 	abstract protected List<X509Certificate> getNextCACertificate(String identifier);
 	abstract protected X509Certificate getCertificate(X500Principal issuer, BigInteger serial);

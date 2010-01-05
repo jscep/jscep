@@ -28,4 +28,8 @@ public class GetCACertTest {
 		Assert.assertEquals(caIdentifier, fixture.getMessage());
 	}
 
+	@Test
+	public void testContentHandler() {
+		Assert.assertNotNull(fixture.getContentHandler());
+	}
 }

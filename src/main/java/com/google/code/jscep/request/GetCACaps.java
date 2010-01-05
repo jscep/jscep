@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,17 @@
 
 package com.google.code.jscep.request;
 
+import java.util.Set;
+
 import com.google.code.jscep.content.CaCapabilitiesContentHandler;
-import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.response.Capability;
 
 /**
  * This class represents a <tt>GetCACaps</tt> request.
  * 
  * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
  */
-public final class GetCACaps implements Request<Capabilities> {
+public final class GetCACaps implements Request<Set<Capability>> {
 	private String caIdentifier;
 
 	public GetCACaps(String caIdentifier) {

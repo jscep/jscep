@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -56,7 +57,7 @@ import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetNextCACert;
-import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.response.Capability;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
@@ -153,7 +154,7 @@ public class Client {
 				}
 				try {
 					LOGGER.fine("Checking if the CA supports certificate renewal...");
-					if (getCapabilities().supportsRenewal() == false) {
+					if (getCapabilities().contains(Capability.RENEWAL) == false) {
 						throw new IllegalStateException("Your CA does not support renewal");
 					}
 				} catch (IOException e) {
@@ -215,15 +216,28 @@ public class Client {
 		}
     }
     
+    private String getBestMessageDigest() throws IOException, CMSException, GeneralSecurityException {
+    	Set<Capability> caps = getCapabilities();
+    	if (caps.contains(Capability.SHA_512)) {
+    		return "SHA-512";
+    	} else if (caps.contains(Capability.SHA_256)) {
+    		return "SHA-256";
+    	} else if (caps.contains(Capability.SHA_1)) {
+    		return "SHA-1";
+    	} else {
+    		return "MD5";
+    	}
+    }
+    
     private Transaction createTransaction() throws IOException, ScepException, CMSException, GeneralSecurityException {
-    	return TransactionFactory.createTransaction(createTransport(), retrieveSigningCertificate(), identity, keyPair, getCapabilities().getPreferredMessageDigest());
+    	return TransactionFactory.createTransaction(createTransport(), retrieveSigningCertificate(), identity, keyPair, getBestMessageDigest());
     }
     
     private Transport createTransport() throws IOException, CMSException, GeneralSecurityException {
     	LOGGER.entering(getClass().getName(), "createTransport");
     	
     	final Transport t;
-    	if (getCapabilities().supportsPost()) {
+    	if (getCapabilities().contains(Capability.POST_PKI_OPERATION)) {
     		t = Transport.createTransport(Transport.Method.POST, url, proxy);
     	} else {
     		t = Transport.createTransport(Transport.Method.GET, url, proxy);
@@ -243,7 +257,7 @@ public class Client {
     	return keyPair;
     }
 
-    private Capabilities getCapabilities() throws IOException, CMSException, GeneralSecurityException {
+    private Set<Capability> getCapabilities() throws IOException, CMSException, GeneralSecurityException {
     	GetCACaps req = new GetCACaps(caIdentifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
@@ -347,7 +361,7 @@ public class Client {
     public EnrollmentResult enroll(char[] password) throws Exception {
         final X509Certificate signer = retrieveSigningCertificate();
         
-        return new InitialEnrollmentTask(createTransport(), signer, keyPair, identity, password, getCapabilities().getPreferredMessageDigest()).call();
+        return new InitialEnrollmentTask(createTransport(), signer, keyPair, identity, password, getBestMessageDigest()).call();
     }
 
     /**

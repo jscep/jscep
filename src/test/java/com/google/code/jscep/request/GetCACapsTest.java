@@ -1,15 +1,16 @@
 package com.google.code.jscep.request;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.response.Capabilities;
+import com.google.code.jscep.response.Capability;
 
 public class GetCACapsTest {
-	private Request<Capabilities> fixture;
+	private Request<Set<Capability>> fixture;
 	private String caIdentifier;
 	
 	@Before
@@ -26,5 +27,10 @@ public class GetCACapsTest {
 	@Test
 	public void testGetMessage() throws IOException {
 		Assert.assertEquals(caIdentifier, fixture.getMessage());
+	}
+	
+	@Test
+	public void testContentHandler() {
+		Assert.assertNotNull(fixture.getContentHandler());
 	}
 }
