@@ -24,7 +24,6 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.util.encoders.Hex;
 
-import com.google.code.jscep.transaction.CmsException;
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
@@ -83,7 +82,9 @@ public class PkiMessageGenerator {
 		this.transId = transId;
 	}
 	
-	public PkiMessage generate(PkcsPkiEnvelope envelope) throws GeneralSecurityException, CmsException, IOException {
+	public PkiMessage generate(PkcsPkiEnvelope envelope) throws GeneralSecurityException, IOException {
+		LOGGER.entering(getClass().getName(), "generate");
+		
 		CMSProcessable envelopedData = new CMSProcessableByteArray(envelope.getEncoded());
 		CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
     	
@@ -94,7 +95,10 @@ public class PkiMessageGenerator {
         try {
 			gen.addCertificatesAndCRLs(certs);
 		} catch (CMSException e) {
-			throw new CmsException(e);
+			
+			IOException ioe = new IOException(e);
+			LOGGER.throwing(getClass().getName(), "parse", ioe);
+			throw ioe;
 		}
 		Hashtable<DERObjectIdentifier, Attribute> attributes = new Hashtable<DERObjectIdentifier, Attribute>();
 		attributes.put(toAttribute(msgType).getAttrType(), toAttribute(msgType));
@@ -116,12 +120,14 @@ public class PkiMessageGenerator {
 		try {
 			signedData = gen.generate(envelopedData, true, "BC");
 		} catch (CMSException e) {
-			throw new CmsException(e);
+			
+			IOException ioe = new IOException(e);
+			LOGGER.throwing(getClass().getName(), "parse", ioe);
+			throw ioe;
 		}
     	LOGGER.info("OUTGOING SignedData:\n" + HexUtil.formatHex(Hex.encode(signedData.getEncoded())));
     	
 		final PkiMessageImpl msg = new PkiMessageImpl();
-		
 		msg.setMessageType(msgType);
 		msg.setStatus(status); // Reply
 		msg.setFailInfo(failInfo); // Reply
@@ -132,6 +138,7 @@ public class PkiMessageGenerator {
 		msg.setPkcsPkiEnvelope(envelope);
 		msg.setEncoded(signedData.getEncoded());
 		
+		LOGGER.exiting(getClass().getName(), "generate", msg);
 		return msg;
 	}
 	

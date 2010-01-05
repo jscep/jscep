@@ -34,7 +34,7 @@ public class ScepServletImpl extends ScepServlet {
 	}
 
 	@Override
-	protected List<X509CRL> getCRL(X500Principal issuer, BigInteger serial) {
+	protected X509CRL getCRL(X500Principal issuer, BigInteger serial) {
 		// TODO Auto-generated method stub
 		return null;
 	}

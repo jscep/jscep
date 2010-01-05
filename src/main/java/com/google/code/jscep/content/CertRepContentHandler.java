@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,9 +29,9 @@ import java.io.InputStream;
 import java.security.KeyPair;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeParser;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageParser;
-import com.google.code.jscep.transaction.CmsException;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
@@ -61,18 +61,12 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 				baos.write(b);
 			}
 
-			try {
-				final PkiMessageParser parser = new PkiMessageParser(keyPair);
-				PkiMessage msg = parser.parse(baos.toByteArray());
-				
-				LOGGER.exiting(getClass().getName(), "getContent", msg);
-				return msg;
-			} catch (CmsException e) {
-				IOException ioe = new IOException(e);
-				
-				LOGGER.throwing(getClass().getName(), "getContent", ioe);
-				throw ioe;
-			}
+			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(keyPair.getPrivate());
+			final PkiMessageParser parser = new PkiMessageParser(envelopeParser);
+			PkiMessage msg = parser.parse(baos.toByteArray());
+			
+			LOGGER.exiting(getClass().getName(), "getContent", msg);
+			return msg;
 		} else {
 			IOException ioe = new IOException("Invalid Content Type");
 			

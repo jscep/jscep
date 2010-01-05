@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ abstract public class AbstractEnrollmentTask implements Callable<EnrollmentResul
 	abstract public EnrollmentResult call() throws Exception;
 	
 	protected List<X509Certificate> getCertificates(Collection<? extends Certificate> certs) {
-		List<X509Certificate> x509 = new ArrayList<X509Certificate>();
+		final List<X509Certificate> x509 = new ArrayList<X509Certificate>();
 		
 		for (Certificate cert : certs) {
 			x509.add((X509Certificate) cert);

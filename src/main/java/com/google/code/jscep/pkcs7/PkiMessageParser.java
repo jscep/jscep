@@ -1,6 +1,6 @@
 package com.google.code.jscep.pkcs7;
 
-import java.security.KeyPair;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -28,10 +28,10 @@ import com.google.code.jscep.util.LoggingUtil;
 public class PkiMessageParser {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private AttributeTable signedAttrs;
-	private final KeyPair keyPair;
+	private final PkcsPkiEnvelopeParser parser;
 	
-	public PkiMessageParser(KeyPair keyPair) {
-		this.keyPair = keyPair;
+	public PkiMessageParser(PkcsPkiEnvelopeParser parser) {
+		this.parser = parser;
 	}
 	
 	/**
@@ -39,19 +39,25 @@ public class PkiMessageParser {
 	 * @return a new instance of PkiMessage
 	 * @throws CmsException
 	 */
-	public PkiMessage parse(byte[] msgBytes) throws CmsException {
+	public PkiMessage parse(byte[] msgBytes) throws IOException {
 		LOGGER.info("Incoming SignedData:\n" + HexUtil.format(msgBytes));
 		CMSSignedData signedData;
 		try {
 			signedData = new CMSSignedData(msgBytes);
 		} catch (CMSException e) {
-			throw new CmsException();
+			
+			IOException ioe = new IOException(e);
+			LOGGER.throwing(getClass().getName(), "parse", ioe);
+			throw ioe;
 		}
     	SignerInformationStore store = signedData.getSignerInfos();
         Collection<?> signers = store.getSigners();
         
         if (signers.size() > 1) {
-        	throw new CmsException("Too Many SignerInfos");
+
+        	IOException ioe = new IOException("Too Many SignerInfos");
+			LOGGER.throwing(getClass().getName(), "parse", ioe);
+        	throw ioe;
         }
         
         SignerInformation signerInformation = (SignerInformation) signers.iterator().next();
@@ -60,17 +66,13 @@ public class PkiMessageParser {
         final CMSProcessable signedContent = signedData.getSignedContent();
 		byte[] envelopedData = (byte[]) signedContent.getContent();
 		
-		final PkcsPkiEnvelopeParser parser = new PkcsPkiEnvelopeParser(keyPair);
-		PkcsPkiEnvelope envelope = parser.parse(envelopedData);
-
 		final PkiMessageImpl msg = new PkiMessageImpl();
-        
-        msg.setTransactionId(extractTransactionId());
-        msg.setRecipientNonce(extractRecipientNonce());
-        msg.setSenderNonce(extractSenderNonce());
-        msg.setStatus(extractStatus());
-        msg.setMessageType(extractMessageType());
-		msg.setPkcsPkiEnvelope(envelope);
+		msg.setTransactionId(extractTransactionId());
+		msg.setRecipientNonce(extractRecipientNonce());
+		msg.setSenderNonce(extractSenderNonce());
+		msg.setStatus(extractStatus());
+		msg.setMessageType(extractMessageType());
+		msg.setPkcsPkiEnvelope(parser.parse(envelopedData));
 		
 		if (msg.getStatus() == PkiStatus.FAILURE) {
 			msg.setFailInfo(extractFailInfo());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,9 +38,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.response.Capability;
+import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.util.LoggingUtil;
 
 public abstract class ScepServlet extends HttpServlet {
+	private final static String GET = "GET";
+	private final static String POST = "POST";
+	private final static String MSG_PARAM = "message";
+	private final static String OP_PARAM = "operation";
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	/**
 	 * Serialization ID
@@ -83,20 +88,20 @@ public abstract class ScepServlet extends HttpServlet {
 		final String reqMethod = req.getMethod();
 			
 		if (op == Operation.PKIOperation) {
-			if (reqMethod.equals("POST") == false && reqMethod.equals("GET") == false) {
+			if (reqMethod.equals(POST) == false && reqMethod.equals("GET") == false) {
 				// PKIOperation must be sent using GET or POST
 			
 				res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-				res.addHeader("Allow", "GET, POST");
+				res.addHeader("Allow", GET + ", " + POST);
 				
 				return;
 			}
 		} else {
-			if (reqMethod.equals("GET") == false) {
+			if (reqMethod.equals(GET) == false) {
 				// Operations other than PKIOperation must be sent using GET
 				
 				res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-				res.addHeader("Allow", "GET");
+				res.addHeader("Allow", GET);
 				
 				return;
 			}
@@ -105,34 +110,93 @@ public abstract class ScepServlet extends HttpServlet {
 		LOGGER.fine("Method " + reqMethod + " Allowed for Operation: " + op);
 		
 		if (op == Operation.GetCACaps) {
-			Set<Capability> caps = getCapabilities(req.getParameter("message"));
-			res.getWriter().write(caps.toString());
+			final Set<Capability> caps = getCapabilities(req.getParameter("message"));
+			for (Capability cap : caps) {
+				res.getWriter().write(cap.toString());
+				res.getWriter().write('\n');
+			}
 			res.getWriter().close();
 		} else if (op == Operation.GetCACert) {
-			getCACertificate(req.getParameter("message"));
+			getCACertificate(req.getParameter(MSG_PARAM));
 		} else if (op == Operation.GetNextCACert) {
-			getNextCACertificate(req.getParameter("message"));
+			getNextCACertificate(req.getParameter(MSG_PARAM));
 		} else {
 //			final ServletInputStream is = req.getInputStream();
 //			SignedData sd = new SignedData();
+			MessageType msgType = MessageType.GetCert;
+			if (msgType == MessageType.GetCert) {
+//				getCertificate();
+			} else if (msgType == MessageType.GetCertInitial) {
+//				getCertificate();
+			} else if (msgType == MessageType.GetCRL) {
+//				getCRL();
+			} else if (msgType == MessageType.PKCSReq) {
+//				enrollCertificate(certificationRequest)
+			}
 		}
 		LOGGER.exiting(getClass().getName(), "service");
 	}
 	
-	abstract protected Set<Capability> getCapabilities(String identifier);
-	abstract protected List<X509Certificate> getCACertificate(String identifier);
-	abstract protected List<X509Certificate> getNextCACertificate(String identifier);
-	abstract protected X509Certificate getCertificate(X500Principal issuer, BigInteger serial);
-	abstract protected X509Certificate getCertificate(X500Principal issuer, X500Principal subject);
-	abstract protected List<X509CRL> getCRL(X500Principal issuer, BigInteger serial);
-	abstract protected List<X509Certificate> enrollCertificate(byte[] certificationRequest);
-	
 	private Operation getOperation(HttpServletRequest req) {
-		String op = req.getParameter("operation");
+		String op = req.getParameter(OP_PARAM);
 		if (op == null)
 		{
 			return null;
 		}
-		return Operation.valueOf(req.getParameter("operation"));
+		return Operation.valueOf(req.getParameter(OP_PARAM));
 	}
+	
+	/**
+	 * Returns the capabilities of the specified CA.
+	 * 
+	 * @param identifier the CA.
+	 * @return the capabilities.
+	 */
+	abstract protected Set<Capability> getCapabilities(String identifier);
+	/**
+	 * Returns the certificate of the specified CA.
+	 * 
+	 * @param identifier the CA.
+	 * @return the CA's certificate.
+	 */
+	abstract protected List<X509Certificate> getCACertificate(String identifier);
+	/**
+	 * Return the next X.509 certificate which will be used by
+	 * the specified CA.
+	 * 
+	 * @param identifier the CA. 
+	 * @return the list of certificates.
+	 */
+	abstract protected List<X509Certificate> getNextCACertificate(String identifier);
+	/**
+	 * Retrieve the certificate identified by the given parameters.
+	 * 
+	 * @param issuer the issuer name.
+	 * @param serial the serial number.
+	 * @return the identified certificate, if any.
+	 */
+	abstract protected X509Certificate getCertificate(X500Principal issuer, BigInteger serial);
+	/**
+	 * Get Cert Initial
+	 * 
+	 * @param issuer the issuer name.
+	 * @param subject the subject name.
+	 * @return the identified certificate, if any.
+	 */
+	abstract protected X509Certificate getCertificate(X500Principal issuer, X500Principal subject);
+	/**
+	 * Retrieve the CRL covering the given certificate identifiers.
+	 * 
+	 * @param issuer the certificate issuer.
+	 * @param serial the certificate serial number.
+	 * @return the CRL.
+	 */
+	abstract protected X509CRL getCRL(X500Principal issuer, BigInteger serial);
+	/**
+	 * Enroll a certificate into the PKI
+	 * 
+	 * @param certificationRequest the PKCS #10 CertificationRequest
+	 * @return the certificate chain.
+	 */
+	abstract protected List<X509Certificate> enrollCertificate(byte[] certificationRequest);
 }
