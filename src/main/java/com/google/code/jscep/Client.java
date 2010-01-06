@@ -272,7 +272,7 @@ public class Client {
         return trans.sendMessage(req);
     }
     
-    public List<X509Certificate> getNextCA() throws IOException, ScepException, CMSException, GeneralSecurityException {
+    public List<X509Certificate> getNextCA() throws IOException {
     	X509Certificate ca = retrieveCA();
     	
     	Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
@@ -398,7 +398,7 @@ public class Client {
      * @throws GeneralSecurityException
      * @throws CMSException 
      */
-    public X509Certificate getCert(BigInteger serial) throws IOException, ScepException, GeneralSecurityException, CMSException {
+    public X509Certificate getCert(BigInteger serial) throws IOException {
     	final X509Certificate ca = retrieveCA();
         // PKI Operation
         PkiOperation req = new GetCert(ca.getIssuerX500Principal(), serial);
@@ -411,7 +411,11 @@ public class Client {
 			throw new RuntimeException(e);
 		}
 
-        return getCertificates(store.getCertificates(null)).get(0);
+        try {
+			return getCertificates(store.getCertificates(null)).get(0);
+		} catch (CertStoreException e) {
+			throw new RuntimeException(e);
+		}
     }
     
     private List<X509Certificate> getCertificates(Collection<? extends Certificate> certs) {
