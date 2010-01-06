@@ -38,7 +38,7 @@ public abstract class CertificationRequest {
 	 * @throws GeneralSecurityException if any security error occurs.
 	 * @throws IOException if any IO error occurs.
 	 */
-	public abstract byte[] getEncoded() throws GeneralSecurityException, IOException;
+	public abstract byte[] getEncoded() throws IOException;
 	
 	/**
 	 * Adds an attribute to the certification request.

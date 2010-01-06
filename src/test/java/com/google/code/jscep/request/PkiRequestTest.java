@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelope;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.transaction.FailInfo;
+import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.NonceFactory;
 import com.google.code.jscep.transaction.PkiStatus;
@@ -73,6 +74,10 @@ public class PkiRequestTest {
 
 		public TransactionId getTransactionId() {
 			return TransactionId.createTransactionId();
+		}
+
+		public MessageType getMessageType() {
+			return MessageType.CertRep;
 		}
 		
 	}

@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.pkcs.IssuerAndSerialNumber;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeParser;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class PkiMessageGenerator {
 		this.transId = transId;
 	}
 	
-	public PkiMessage generate(PkcsPkiEnvelope envelope) throws GeneralSecurityException, IOException {
+	public PkiMessage generate(PkcsPkiEnvelope envelope) throws IOException {
 		LOGGER.entering(getClass().getName(), "generate");
 		
 		CMSProcessable envelopedData = new CMSProcessableByteArray(envelope.getEncoded());
@@ -91,11 +92,21 @@ public class PkiMessageGenerator {
     	final List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
         certList.add(identity);
         
-        CertStore certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
+        CertStore certs;
+		try {
+			certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
+		} catch (GeneralSecurityException e) {
+			RuntimeException rt = new RuntimeException(e);
+			LOGGER.throwing(getClass().getName(), "parse", rt);
+			throw rt;
+		}
         try {
 			gen.addCertificatesAndCRLs(certs);
+		} catch (CertStoreException e) {
+			RuntimeException rt = new RuntimeException(e);
+			LOGGER.throwing(getClass().getName(), "parse", rt);
+			throw rt;
 		} catch (CMSException e) {
-			
 			IOException ioe = new IOException(e);
 			LOGGER.throwing(getClass().getName(), "parse", ioe);
 			throw ioe;
@@ -120,10 +131,13 @@ public class PkiMessageGenerator {
 		try {
 			signedData = gen.generate(envelopedData, true, "BC");
 		} catch (CMSException e) {
-			
 			IOException ioe = new IOException(e);
 			LOGGER.throwing(getClass().getName(), "parse", ioe);
 			throw ioe;
+		} catch (GeneralSecurityException e) {
+			RuntimeException rt = new RuntimeException(e);
+			LOGGER.throwing(getClass().getName(), "parse", rt);
+			throw rt;
 		}
     	LOGGER.info("OUTGOING SignedData:\n" + HexUtil.formatHex(Hex.encode(signedData.getEncoded())));
     	

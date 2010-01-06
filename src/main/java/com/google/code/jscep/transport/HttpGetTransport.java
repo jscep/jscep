@@ -44,7 +44,7 @@ public class HttpGetTransport extends Transport {
 	}
 
 	@Override
-	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException {
+	public <T> T sendMessage(Request<T> msg) throws IOException {
 		LOGGER.entering(getClass().getName(), "sendMessage");
 		
 		final URL url = getUrl(msg.getOperation(), msg.getMessage());

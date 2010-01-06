@@ -22,21 +22,26 @@
 
 package com.google.code.jscep;
 
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 import com.google.code.jscep.operations.PkcsReq;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the initial attempt at enrolling a certificate in a PKI.
  */
 public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
+	private static Logger LOGGER = LoggingUtil.getLogger(Client.class);
 	private final Transport transport;
 	private final X509Certificate ca;
 	private final KeyPair keyPair;
@@ -65,9 +70,10 @@ public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 	
 	/**
 	 * Attempts an enrolment.
+	 * @throws IOException 
 	 */
 	@Override
-	public EnrollmentResult call() throws Exception {
+	public EnrollmentResult call() throws IOException {
 		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, digestAlgorithm);
 		PkiOperation req = new PkcsReq(keyPair, identity, digestAlgorithm, password);
 		try {
@@ -80,6 +86,10 @@ public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 			return new EnrollmentResult(task);
 		} catch (EnrollmentFailureException e) {
 			return new EnrollmentResult(e.getMessage());
+		} catch (CertStoreException e) {
+			RuntimeException rt = new RuntimeException(e);
+			LOGGER.throwing(getClass().getName(), "parse", rt);
+			throw rt;
 		}
 	}
 }

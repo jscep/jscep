@@ -23,13 +23,10 @@
 package com.google.code.jscep.pkcs10;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
+import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.Set;
@@ -90,13 +87,20 @@ public class CertificationRequestImpl extends CertificationRequest {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte[] getEncoded() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, IOException {
+	public byte[] getEncoded() throws IOException {
 		X500Principal subject = identity.getSubjectX500Principal();
 		LOGGER.info("Generating PKCS #10 Request for " + subject);
 		PublicKey pub = keyPair.getPublic();
 		PrivateKey priv = keyPair.getPrivate();
 		
-		PKCS10CertificationRequest request = new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv, "SunRsaSign");
+		PKCS10CertificationRequest request;
+		try {
+			request = new PKCS10CertificationRequest("SHA1withRSA", subject, pub, getAttributes(), priv, "SunRsaSign");
+		} catch (GeneralSecurityException e) {
+			RuntimeException rt = new RuntimeException(e);
+			LOGGER.throwing(getClass().getName(), "parse", rt);
+			throw rt;
+		}
 		byte[] requestBytes = request.getDEREncoded();
 		
 		LOGGER.info("Generated PKCS #10 Request:\n" + HexUtil.formatHex(HexUtil.toHex(requestBytes)));

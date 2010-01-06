@@ -23,17 +23,12 @@
 package com.google.code.jscep.transaction;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
 import java.util.logging.Logger;
 
-import org.bouncycastle.cms.CMSException;
-
 import com.google.code.jscep.EnrollmentFailureException;
 import com.google.code.jscep.RequestPendingException;
-import com.google.code.jscep.ScepException;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
@@ -72,15 +67,11 @@ public class Transaction {
 	 * 
 	 * @param op the operation to perform.
 	 * @return a certificate store, containing either certificates or CRLs.
-	 * @throws MalformedURLException if the SCEP URL is invalid.
 	 * @throws IOException if any I/O error occurs.
 	 * @throws RequestPendingException if manual intervention is required.
 	 * @throws EnrollmentFailureException if the request could not be serviced.
-	 * @throws GeneralSecurityException if any security error occurs.
-	 * @throws ScepException 
-	 * @throws CMSException 
 	 */
-	public CertStore performOperation(PkiOperation op) throws MalformedURLException, IOException, RequestPendingException, EnrollmentFailureException, GeneralSecurityException, ScepException {
+	public CertStore performOperation(PkiOperation op) throws IOException, EnrollmentFailureException, RequestPendingException {
 		LOGGER.entering(getClass().getName(), "performOperation");
 		
 		msgGenerator.setMessageType(op.getMessageType());
@@ -93,21 +84,21 @@ public class Transaction {
 		PkiMessage response = transport.sendMessage(request);
 
 		if (response.getTransactionId().equals(this.transId) == false) {
-			ScepException se = new ScepException("Transaction ID Mismatch: Sent ["
+			IOException ioe = new IOException("Transaction ID Mismatch: Sent ["
 					+ this.transId + "]; Received [" + response.getTransactionId()
 					+ "]");
 			
-			LOGGER.throwing(getClass().getName(), "performOperation", se);
-			throw se;
+			LOGGER.throwing(getClass().getName(), "performOperation", ioe);
+			throw ioe;
 		}
 
 		if (response.getRecipientNonce().equals(senderNonce) == false) {
-			ScepException se = new ScepException("Sender Nonce Mismatch.  Sent ["
+			IOException ioe = new IOException("Sender Nonce Mismatch.  Sent ["
 					+ this.senderNonce + "]; Received ["
 					+ response.getRecipientNonce() + "]");
 			
-			LOGGER.throwing(getClass().getName(), "performOperation", se);
-			throw se;
+			LOGGER.throwing(getClass().getName(), "performOperation", ioe);
+			throw ioe;
 		}
 
 		// TODO: Detect replay attacks.

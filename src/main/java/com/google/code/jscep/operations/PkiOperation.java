@@ -46,5 +46,5 @@ public interface PkiOperation {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws GeneralSecurityException if any security error occurs.
 	 */
-    byte[] getMessageData() throws IOException, GeneralSecurityException;
+    byte[] getMessageData() throws IOException;
 }

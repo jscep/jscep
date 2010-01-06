@@ -1,6 +1,7 @@
 package com.google.code.jscep;
 
 import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.EnumSet;
@@ -65,6 +66,12 @@ public class ScepServletImpl extends ScepServlet {
 
 	@Override
 	protected List<X509Certificate> getNextCACertificate(String identifier) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected PrivateKey getPrivate() {
 		// TODO Auto-generated method stub
 		return null;
 	}

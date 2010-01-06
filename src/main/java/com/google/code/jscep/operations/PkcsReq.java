@@ -23,7 +23,6 @@
 package com.google.code.jscep.operations;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -67,7 +66,7 @@ public class PkcsReq implements PkiOperation {
      * @return the Certification Request
      * @see <a href="http://tools.ietf.org/html/rfc2986">RFC 2986</a>
      */
-    public byte[] getMessageData() throws IOException, GeneralSecurityException {
+    public byte[] getMessageData() throws IOException {
     	CertificationRequest certReq = CertificationRequest.getInstance(keyPair, identity);
     	certReq.addAttribute("1.2.840.113549.1.9.7", new String(password));
     	
@@ -79,8 +78,13 @@ public class PkcsReq implements PkiOperation {
     	return pkcs10;
     }
     
-    private byte[] calculateDigest(byte[] pkcs10) throws NoSuchAlgorithmException {
-    	MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
+    private byte[] calculateDigest(byte[] pkcs10) {
+    	MessageDigest digest;
+		try {
+			digest = MessageDigest.getInstance(digestAlgorithm);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
     	
     	return digest.digest(pkcs10);
     }

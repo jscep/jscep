@@ -35,7 +35,9 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CRL;
 import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -46,7 +48,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.cms.CMSException;
@@ -216,7 +217,7 @@ public class Client {
 		}
     }
     
-    private String getBestMessageDigest() throws IOException, CMSException, GeneralSecurityException {
+    private String getBestMessageDigest() throws IOException {
     	Set<Capability> caps = getCapabilities();
     	if (caps.contains(Capability.SHA_512)) {
     		return "SHA-512";
@@ -229,11 +230,11 @@ public class Client {
     	}
     }
     
-    private Transaction createTransaction() throws IOException, ScepException, CMSException, GeneralSecurityException {
+    private Transaction createTransaction() throws IOException {
     	return TransactionFactory.createTransaction(createTransport(), retrieveSigningCertificate(), identity, keyPair, getBestMessageDigest());
     }
     
-    private Transport createTransport() throws IOException, CMSException, GeneralSecurityException {
+    private Transport createTransport() throws IOException {
     	LOGGER.entering(getClass().getName(), "createTransport");
     	
     	final Transport t;
@@ -257,14 +258,14 @@ public class Client {
     	return keyPair;
     }
 
-    private Set<Capability> getCapabilities() throws IOException, CMSException, GeneralSecurityException {
+    private Set<Capability> getCapabilities() throws IOException {
     	GetCACaps req = new GetCACaps(caIdentifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
         return trans.sendMessage(req);
     }
 
-    private List<X509Certificate> getCaCertificate() throws IOException, CMSException, GeneralSecurityException {
+    private List<X509Certificate> getCaCertificate() throws IOException {
     	GetCACert req = new GetCACert(caIdentifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
@@ -280,25 +281,47 @@ public class Client {
     	return trans.sendMessage(req);
     }
     
-    private X509Certificate retrieveCA() throws IOException, ScepException, CMSException, GeneralSecurityException {
+    private X509Certificate retrieveCA() throws IOException {
     	final List<X509Certificate> certs = getCaCertificate();
     	
     	// Validate
-    	final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
-        if (Arrays.equals(caDigest, md.digest(certs.get(0).getEncoded())) == false) {
-        	throw new ScepException("CA Fingerprint Error");
+    	MessageDigest md;
+		try {
+			md = MessageDigest.getInstance(digestAlgorithm);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		byte[] certBytes;
+		try {
+			certBytes = certs.get(0).getEncoded();
+		} catch (CertificateEncodingException e) {
+			throw new IOException(e);
+		}
+        if (Arrays.equals(caDigest, md.digest(certBytes)) == false) {
+        	throw new IOException("CA Fingerprint Error");
         }
     	
     	return certs.get(0);
     }
     
-    private X509Certificate retrieveSigningCertificate() throws IOException, ScepException, CMSException, GeneralSecurityException {
+    private X509Certificate retrieveSigningCertificate() throws IOException {
     	List<X509Certificate> certs = getCaCertificate();
     	
     	// Validate
-    	MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
-        if (Arrays.equals(caDigest, md.digest(certs.get(0).getEncoded())) == false) {
-        	throw new ScepException("CA Fingerprint Error");
+    	MessageDigest md;
+		try {
+			md = MessageDigest.getInstance(digestAlgorithm);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		byte[] certBytes;
+		try {
+			certBytes = certs.get(0).getEncoded();
+		} catch (CertificateEncodingException e) {
+			throw new IOException(e);
+		}
+        if (Arrays.equals(caDigest, md.digest(certBytes)) == false) {
+        	throw new IOException("CA Fingerprint Error");
         }
     	
     	if (certs.size() > 1) {
@@ -319,7 +342,7 @@ public class Client {
      * @throws GeneralSecurityException if any security error occurs.
      * @throws CMSException 
      */
-    public List<X509CRL> getCrl() throws IOException, ScepException, GeneralSecurityException, CMSException {
+    public List<X509CRL> getCrl() throws IOException {
         X509Certificate ca = retrieveCA();
         
         if (supportsDistributionPoints()) {
@@ -336,7 +359,11 @@ public class Client {
 				throw new RuntimeException(e);
 			}
 	        
-	        return getCRLs(store.getCRLs(null));
+	        try {
+				return getCRLs(store.getCRLs(null));
+			} catch (CertStoreException e) {
+				throw new IOException(e);
+			}
         }
     }
     
@@ -354,11 +381,8 @@ public class Client {
      * @param password the enrollment password.
      * @return the enrolled certificate.
      * @throws IOException if any I/O error occurs.
-     * @throws ScepException
-     * @throws GeneralSecurityException
-     * @throws UnsupportedCallbackException 
      */
-    public EnrollmentResult enroll(char[] password) throws Exception {
+    public EnrollmentResult enroll(char[] password) throws IOException {
         final X509Certificate signer = retrieveSigningCertificate();
         
         return new InitialEnrollmentTask(createTransport(), signer, keyPair, identity, password, getBestMessageDigest()).call();
