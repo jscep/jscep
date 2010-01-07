@@ -1,16 +1,15 @@
 package com.google.code.jscep.request;
 
 import java.io.IOException;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.response.Capability;
+import com.google.code.jscep.response.Capabilities;
 
 public class GetCACapsTest {
-	private Request<Set<Capability>> fixture;
+	private Request<Capabilities> fixture;
 	private String caIdentifier;
 	
 	@Before

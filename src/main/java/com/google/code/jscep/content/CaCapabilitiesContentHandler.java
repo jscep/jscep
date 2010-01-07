@@ -26,44 +26,43 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.EnumSet;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.response.Capabilities;
 import com.google.code.jscep.response.Capability;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class handles responses to <tt>GetCACaps</tt> requests.
  */
-public class CaCapabilitiesContentHandler implements ScepContentHandler<Set<Capability>> {
+public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Set<Capability> getContent(InputStream in, String mimeType) throws IOException {
+	public Capabilities getContent(InputStream in, String mimeType) throws IOException {
 		LOGGER.entering(getClass().getName(), "getContent");
 
 		if (mimeType.equals("text/plain") == false) {
 			LOGGER.log(Level.WARNING, "capabilities.mime.warning", mimeType);
 		}
 
-		final EnumSet<Capability> set = EnumSet.noneOf(Capability.class);
+		final Capabilities caps = new Capabilities();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		String capability;
 		while ((capability = reader.readLine()) != null) {
 			for (Capability enumValue : Capability.values()) {
 				if (enumValue.toString().equals(capability)) {
-					set.add(enumValue);
+					caps.add(enumValue);
 				}
 			}
 		}
 		reader.close();
 
-		LOGGER.exiting(getClass().getName(), "getContent", set);
-		return set;
+		LOGGER.exiting(getClass().getName(), "getContent", caps);
+		return caps;
 	}
 }
