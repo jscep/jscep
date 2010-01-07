@@ -22,12 +22,10 @@
 
 package com.google.code.jscep.asn1;
 
-import java.io.IOException;
-
-import javax.security.auth.x500.X500Principal;
-
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.X509Name;
 
@@ -45,36 +43,35 @@ import org.bouncycastle.asn1.x509.X509Name;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.3.1">SCEP Internet-Draft Reference</a>
  */
-public class IssuerAndSubject {
-	private final X500Principal issuer;
-	private final X500Principal subject;
+public class IssuerAndSubject extends ASN1Encodable {
+	private final X509Name issuer;
+	private final X509Name subject;
 
-	public IssuerAndSubject(ASN1Sequence sequence) {
-		ASN1EncodableVector v = (ASN1EncodableVector) sequence.getObjectAt(0);
-		
-		issuer = new X500Principal(v.get(0).getDERObject().getDEREncoded());
-		subject = new X500Principal(v.get(1).getDERObject().getDEREncoded());
+	public IssuerAndSubject(ASN1Sequence seq) {
+		issuer = X509Name.getInstance(seq.getObjectAt(0));
+		subject = X509Name.getInstance(seq.getObjectAt(1));
 	}
 	
-	public IssuerAndSubject(X500Principal issuer, X500Principal subject) {
+	public IssuerAndSubject(X509Name issuer, X509Name subject) {
 		this.issuer = issuer;
 		this.subject = subject;
 	}
 
-	public X500Principal getIssuer() {
+	public X509Name getIssuer() {
 		return issuer;
 	}
 
-	public X500Principal getSubject() {
+	public X509Name getSubject() {
 		return subject;
 	}
 
-	public byte[] getDEREncoded() throws IOException {
+	@Override
+	public DERObject toASN1Object() {
 		ASN1EncodableVector v = new ASN1EncodableVector();
-
-		v.add(new X509Name(issuer.getName()));
-		v.add(new X509Name(subject.getName()));
-
-		return new DERSequence(v).getDEREncoded();
+		
+		v.add(issuer);
+		v.add(subject);
+		
+		return new DERSequence(v);
 	}
 }

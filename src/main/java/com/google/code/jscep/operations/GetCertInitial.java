@@ -24,7 +24,7 @@ package com.google.code.jscep.operations;
 
 import java.io.IOException;
 
-import javax.security.auth.x500.X500Principal;
+import org.bouncycastle.asn1.x509.X509Name;
 
 import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.transaction.MessageType;
@@ -35,10 +35,10 @@ import com.google.code.jscep.transaction.MessageType;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.3">SCEP Internet-Draft Reference</a>
  */
 public class GetCertInitial implements PkiOperation {
-	private final X500Principal issuer;
-    private final X500Principal subject;
+	private final X509Name issuer;
+    private final X509Name subject;
 
-    public GetCertInitial(X500Principal issuer, X500Principal subject) {
+    public GetCertInitial(X509Name issuer, X509Name subject) {
         this.issuer = issuer;
         this.subject = subject;
     }

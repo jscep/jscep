@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.x509.X509Name;
+
 import com.google.code.jscep.response.Capability;
 import com.google.code.jscep.util.LoggingUtil;
 
@@ -51,15 +53,13 @@ public class ScepServletImpl extends ScepServlet {
 	}
 
 	@Override
-	protected X509Certificate getCertificate(X500Principal issuer,
-			BigInteger serial) {
+	protected X509Certificate getCertificate(X509Name issuer, BigInteger serial) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected X509Certificate getCertificate(X500Principal issuer,
-			X500Principal subject) {
+	protected X509Certificate getCertificate(X509Name issuer, X509Name subject) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -3,8 +3,7 @@ package com.google.code.jscep.operations;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import javax.security.auth.x500.X500Principal;
-
+import org.bouncycastle.asn1.x509.X509Name;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,13 +13,13 @@ import com.google.code.jscep.transaction.MessageType;
 
 public class GetCertInitialTest {
 	private PkiOperation fixture;
-	private X500Principal issuer;
-	private X500Principal subject;
+	private X509Name issuer;
+	private X509Name subject;
 	
 	@Before
 	public void setUp() {
-		issuer = new X500Principal("CN=issuer");
-		subject = new X500Principal("CN=subject");
+		issuer = new X509Name("CN=issuer");
+		subject = new X509Name("CN=subject");
 		fixture = new GetCertInitial(issuer, subject);
 	}
 

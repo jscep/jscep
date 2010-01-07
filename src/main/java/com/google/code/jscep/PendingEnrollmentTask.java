@@ -26,6 +26,8 @@ import java.security.KeyPair;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 
+import org.bouncycastle.asn1.x509.X509Name;
+
 import com.google.code.jscep.operations.GetCertInitial;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
@@ -68,10 +70,13 @@ public final class PendingEnrollmentTask extends AbstractEnrollmentTask {
 	 */
 	@Override
 	public EnrollmentResult call() throws Exception {
-		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, fingerprintAlgorithm);
-		PkiOperation req = new GetCertInitial(ca.getIssuerX500Principal(), identity.getSubjectX500Principal());
+		final Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, fingerprintAlgorithm);
+		final X509Name issuer = new X509Name(ca.getIssuerX500Principal().getName());
+		final X509Name subject = new X509Name(identity.getSubjectX500Principal().getName());
+		final PkiOperation req = new GetCertInitial(issuer, subject);
 		try {
-			CertStore store = trans.performOperation(req);
+			final CertStore store = trans.performOperation(req);
+			
 			return new EnrollmentResult(getCertificates(store.getCertificates(null)));
 		} catch (RequestPendingException e) {
 			return new EnrollmentResult(this);
