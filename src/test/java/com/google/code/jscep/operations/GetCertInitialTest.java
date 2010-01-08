@@ -32,7 +32,7 @@ public class GetCertInitialTest {
 	public void testGetMessageData() throws IOException, GeneralSecurityException {
 		final IssuerAndSubject ias = new IssuerAndSubject(issuer, subject);
 		
-		Assert.assertArrayEquals(ias.getDEREncoded(), fixture.getMessageData());
+		Assert.assertEquals(ias, fixture.getMessageData());
 	}
 
 }

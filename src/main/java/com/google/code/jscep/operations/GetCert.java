@@ -27,6 +27,7 @@ import java.math.BigInteger;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.pkcs.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
@@ -60,10 +61,10 @@ public class GetCert implements PkiOperation {
      * @return the IssuerAndSerialNumber
      * @see <a href="http://tools.ietf.org/html/rfc2315#section-6.7">SCEP Internet-Draft Reference</a>
      */
-	public byte[] getMessageData() throws IOException {
+	public ASN1Encodable getMessageData() throws IOException {
     	// TODO: BC Dependency
         X509Name issuerName = new X509Principal(issuer.getEncoded());
         
-        return new IssuerAndSerialNumber(issuerName, serial).getDEREncoded();
+        return new IssuerAndSerialNumber(issuerName, serial);
     }
 }

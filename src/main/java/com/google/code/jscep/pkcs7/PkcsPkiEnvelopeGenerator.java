@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSProcessable;
@@ -45,12 +46,12 @@ public class PkcsPkiEnvelopeGenerator {
 		this.cipher = cipher;
 	}
 	
-	public PkcsPkiEnvelope generate(byte[] messageData) throws IOException {
+	public PkcsPkiEnvelope generate(ASN1Encodable messageData) throws IOException {
 		LOGGER.entering(getClass().getName(), "generate");
 		
 		CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
     	gen.addKeyTransRecipient(recipient);
-    	CMSProcessable processableData = new CMSProcessableByteArray(messageData);
+    	CMSProcessable processableData = new CMSProcessableByteArray(messageData.getDEREncoded());
     	CMSEnvelopedData envelopedData;
 		try {
 			// Need BC Provider Here.

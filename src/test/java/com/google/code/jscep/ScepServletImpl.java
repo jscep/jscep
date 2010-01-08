@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import com.google.code.jscep.response.Capability;
 import com.google.code.jscep.util.LoggingUtil;
@@ -24,7 +25,7 @@ public class ScepServletImpl extends ScepServlet {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	
 	@Override
-	protected List<X509Certificate> enrollCertificate(byte[] certificationRequest) {
+	protected List<X509Certificate> enrollCertificate(PKCS10CertificationRequest certificationRequest) {
 		 LOGGER.entering(getClass().getName(), "enrollCertificate");
 		 
 		return null;

@@ -4,9 +4,19 @@ import java.security.Security;
 import java.util.EnumSet;
 import java.util.Set;
 
+/**
+ * This class represents a set of capabilities for a particular
+ * SCEP server.
+ */
 public class Capabilities {
 	private EnumSet<Capability> capabilities;
-	
+
+	/**
+	 * Constructs a new instance of this class with the specified
+	 * capabilities.
+	 * 
+	 * @param capabilities the capabilities.
+	 */
 	public Capabilities(Capability... capabilities) {
 		this.capabilities = EnumSet.noneOf(Capability.class);
 

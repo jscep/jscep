@@ -37,6 +37,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Object;
+
 import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.util.LoggingUtil;
@@ -89,7 +91,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			}
 			
 			DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
-			DegenerateSignedData dsd = parser.parse(baos.toByteArray());
+			DegenerateSignedData dsd = parser.parse(ASN1Object.fromByteArray(baos.toByteArray()));
 			
 			CertStore store = dsd.getCertStore();
 			CertSelector selector = new X509CertSelector();

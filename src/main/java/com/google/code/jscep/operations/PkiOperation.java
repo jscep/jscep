@@ -25,6 +25,8 @@ package com.google.code.jscep.operations;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+
 import com.google.code.jscep.transaction.MessageType;
 
 /**
@@ -46,5 +48,5 @@ public interface PkiOperation {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws GeneralSecurityException if any security error occurs.
 	 */
-    byte[] getMessageData() throws IOException;
+    ASN1Encodable getMessageData() throws IOException;
 }

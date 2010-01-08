@@ -22,19 +22,21 @@
 
 package com.google.code.jscep.pkcs7;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+
 
 /**
  * Implementation of {@link PkcsPkiEnvelope} that uses Bouncy Castle.
  */
 class PkcsPkiEnvelopeImpl implements PkcsPkiEnvelope {
-	private byte[] msgData;
+	private ASN1Encodable msgData;
 	private byte[] encoded;
 	
-	void setMessageData(byte[] msgData) {
+	void setMessageData(ASN1Encodable msgData) {
 		this.msgData = msgData;
 	}
 	
-	public byte[] getMessageData() {
+	public ASN1Encodable getMessageData() {
 		return msgData;
 	}
 	

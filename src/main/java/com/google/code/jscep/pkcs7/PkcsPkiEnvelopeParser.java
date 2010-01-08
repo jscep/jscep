@@ -26,6 +26,8 @@ import java.security.PrivateKey;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.RecipientInformation;
@@ -70,7 +72,7 @@ public class PkcsPkiEnvelopeParser {
 		}
 
     	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl();
-    	envelope.setMessageData(msgData);
+    	envelope.setMessageData(ASN1Object.fromByteArray(msgData));
     	envelope.setEncoded(envelopeBytes);
     	
     	LOGGER.exiting(getClass().getName(), "parse", envelope);

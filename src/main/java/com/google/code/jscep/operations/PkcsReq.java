@@ -23,11 +23,30 @@
 package com.google.code.jscep.operations;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.cert.X509Certificate;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
+
+import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import com.google.code.jscep.pkcs10.CertificationRequest;
 import com.google.code.jscep.transaction.MessageType;
@@ -66,16 +85,31 @@ public class PkcsReq implements PkiOperation {
      * @return the Certification Request
      * @see <a href="http://tools.ietf.org/html/rfc2986">RFC 2986</a>
      */
-    public byte[] getMessageData() throws IOException {
-    	CertificationRequest certReq = CertificationRequest.getInstance(keyPair, identity);
-    	certReq.addAttribute("1.2.840.113549.1.9.7", new String(password));
-    	
-    	byte[] pkcs10 = certReq.getEncoded();
-    	byte[] digest = calculateDigest(pkcs10);
-    	
-    	LOGGER.info("PKCS #10 Digest (" + digestAlgorithm + "):\n" + HexUtil.formatHex(HexUtil.toHex(digest)));
-    	
-    	return pkcs10;
+    public ASN1Encodable getMessageData() throws IOException {
+    	X500Principal subject = identity.getSubjectX500Principal();
+    	PublicKey pub = keyPair.getPublic();
+		PrivateKey priv = keyPair.getPrivate();
+		
+		Set<DEREncodable> attrs = new HashSet<DEREncodable>();
+		DERObjectIdentifier objectId = new DERObjectIdentifier("1.2.840.113549.1.9.7");
+		ASN1EncodableVector attrValues = new ASN1EncodableVector();
+		attrValues.add(new DERUTF8String(new String(password)));
+		ASN1EncodableVector attrVector = new ASN1EncodableVector();
+        attrVector.add(objectId);
+        attrVector.add(new DERSet(attrValues));
+        attrs.add(new DERSequence(attrVector));
+        
+		ASN1EncodableVector v = new ASN1EncodableVector();
+		for (DEREncodable attr : attrs) {
+			v.add(attr);
+		}
+		DERSet set = new DERSet(v);
+		
+		try {
+			return new PKCS10CertificationRequest("SHA1withRSA", subject, pub, set, priv, "SunRsaSign");
+		} catch (GeneralSecurityException e) {
+			throw new IOException(e);
+		}
     }
     
     private byte[] calculateDigest(byte[] pkcs10) {

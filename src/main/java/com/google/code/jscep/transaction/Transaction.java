@@ -27,6 +27,8 @@ import java.security.KeyPair;
 import java.security.cert.CertStore;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+
 import com.google.code.jscep.EnrollmentFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.operations.PkiOperation;
@@ -117,7 +119,7 @@ public class Transaction {
 			LOGGER.throwing(getClass().getName(), "performOperation", rpe);
 			throw rpe;
 		} else {
-			final byte[] repMsgData = response.getPkcsPkiEnvelope().getMessageData();
+			final ASN1Encodable repMsgData = response.getPkcsPkiEnvelope().getMessageData();
 			final DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
 			final DegenerateSignedData certRep = parser.parse(repMsgData);
 			

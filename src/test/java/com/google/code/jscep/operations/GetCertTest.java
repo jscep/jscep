@@ -37,7 +37,7 @@ public class GetCertTest {
 		final X509Name name = new X509Principal(issuer.getEncoded());
 		final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
 		
-		Assert.assertArrayEquals(iasn.getDEREncoded(), fixture.getMessageData());
+		Assert.assertEquals(iasn, fixture.getMessageData());
 	}
 
 }

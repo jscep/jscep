@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.pkcs7;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+
 
 /**
  * This class represents the <tt>SCEP</tt> <tt>pkcsPKIEnvelope</tt> object.
@@ -29,6 +31,6 @@ package com.google.code.jscep.pkcs7;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.2">SCEP Internet-Draft Reference</a>
  */
 public interface PkcsPkiEnvelope {
-	byte[] getMessageData();
+	ASN1Encodable getMessageData();
 	byte[] getEncoded();
 }

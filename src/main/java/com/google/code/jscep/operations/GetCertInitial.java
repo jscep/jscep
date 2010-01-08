@@ -24,6 +24,7 @@ package com.google.code.jscep.operations;
 
 import java.io.IOException;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.x509.X509Name;
 
 import com.google.code.jscep.asn1.IssuerAndSubject;
@@ -55,7 +56,7 @@ public class GetCertInitial implements PkiOperation {
      * 
      * @return the IssuerAndSubject.
      */
-	public byte[] getMessageData() throws IOException {
-		return new IssuerAndSubject(issuer, subject).getDEREncoded();
+	public ASN1Encodable getMessageData() throws IOException {
+		return new IssuerAndSubject(issuer, subject);
 	}
 }
