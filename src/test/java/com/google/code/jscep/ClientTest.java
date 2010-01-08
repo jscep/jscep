@@ -15,7 +15,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
+//@Ignore
 public class ClientTest {
 
 	@Test

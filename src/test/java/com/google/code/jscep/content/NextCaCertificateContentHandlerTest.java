@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.CertStore;
-import java.security.cert.CertificateException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -55,15 +54,11 @@ public class NextCaCertificateContentHandlerTest {
 		fixture.getContent(in, "foo/bar");
 	}
 	
-	@Test(expected=CertificateException.class)
+	@Test(expected=IOException.class)
 	public void testInvalidContent() throws Throwable {
 		InputStream in = new ByteArrayInputStream(new byte[] {1});
 		
-		try {
-			fixture.getContent(in, "application/x-x509-next-ca-cert");
-		} catch (IOException e) {
-			throw e.getCause();
-		}
+		fixture.getContent(in, "application/x-x509-next-ca-cert");
 	}
 	
 	private X509Certificate getCertificate() throws Exception {

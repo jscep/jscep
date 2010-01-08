@@ -30,6 +30,8 @@ import java.security.cert.X509Certificate;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import org.bouncycastle.x509.X509CertStoreSelector;
+
 import com.google.code.jscep.operations.PkcsReq;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
@@ -79,7 +81,7 @@ public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 		try {
 			CertStore store = trans.performOperation(req);
 			
-			return new EnrollmentResult(getCertificates(store.getCertificates(null)));
+			return new EnrollmentResult(getCertificates(store.getCertificates(new X509CertStoreSelector())));
 		} catch (RequestPendingException e) {
 			Callable<EnrollmentResult> task = new PendingEnrollmentTask(transport, ca, keyPair, identity, digestAlgorithm);
 			

@@ -8,8 +8,6 @@ import java.security.cert.CertStoreParameters;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.X509Certificate;
-import java.security.cert.X509Extension;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -18,8 +16,9 @@ import java.util.logging.Logger;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.pkcs.SignedData;
-import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.SignedData;
 
 import com.google.code.jscep.util.LoggingUtil;
 
@@ -29,33 +28,36 @@ public class DegenerateSignedDataParser {
 		LOGGER.entering(getClass().getName(), "parse");
 		
 		try {
+			ContentInfo ci = ContentInfo.getInstance(signedData);
+			assert(ci.getContentType().equals(CMSObjectIdentifiers.signedData));
+			ASN1Sequence seq = (ASN1Sequence) ci.getContent();
 			final CertificateFactory factory = CertificateFactory.getInstance("X.509");
-			SignedData pkcsSd = new SignedData((ASN1Sequence) signedData);
+			SignedData sd = new SignedData(seq);
 			Collection collection = new HashSet<Object>();
-			ASN1Set certs = pkcsSd.getCertificates();
-			ASN1Set crls = pkcsSd.getCRLs();
-			Enumeration<?> certEnum = certs.getObjects();
-			while (certEnum.hasMoreElements()) {
-				ASN1Sequence o = (ASN1Sequence) certEnum.nextElement();
-				ByteArrayInputStream bais = new ByteArrayInputStream(o.getDEREncoded());
-				Certificate cert = factory.generateCertificate(bais);
-				collection.add(cert);
+			ASN1Set certs = sd.getCertificates();
+			ASN1Set crls = sd.getCRLs();
+			if (certs != null) {
+				Enumeration<?> certEnum = certs.getObjects();
+				while (certEnum.hasMoreElements()) {
+					ASN1Sequence o = (ASN1Sequence) certEnum.nextElement();
+					ByteArrayInputStream bais = new ByteArrayInputStream(o.getDEREncoded());
+					Certificate cert = factory.generateCertificate(bais);
+					collection.add(cert);
+				}
 			}
-			Enumeration<?> crlEnum = crls.getObjects();
-			while (crlEnum.hasMoreElements()) {
-				ASN1Sequence o = (ASN1Sequence) certEnum.nextElement();
-				ByteArrayInputStream bais = new ByteArrayInputStream(o.getDEREncoded());
-				CRL crl = factory.generateCRL(bais);
-				collection.add(crl);
+			if (crls != null) {
+				Enumeration<?> crlEnum = crls.getObjects();
+				while (crlEnum.hasMoreElements()) {
+					ASN1Sequence o = (ASN1Sequence) crlEnum.nextElement();
+					ByteArrayInputStream bais = new ByteArrayInputStream(o.getDEREncoded());
+					CRL crl = factory.generateCRL(bais);
+					collection.add(crl);
+				}
 			}
 			CertStoreParameters parameters = new CollectionCertStoreParameters(collection);
 			CertStore store = CertStore.getInstance("Collection", parameters);
-//			CMSSignedData sd = new CMSSignedData(signedData.getDEREncoded());
-//            CertStore store = sd.getCertificatesAndCRLs("Collection", "BC");
             
-            DegenerateSignedDataImpl certRep = new DegenerateSignedDataImpl();
-            certRep.setCertStore(store);
-            certRep.setEncoded(signedData.getDEREncoded());
+            DegenerateSignedDataImpl certRep = new DegenerateSignedDataImpl(store, signedData.getDEREncoded());
             
             LOGGER.exiting(getClass().getName(), "parse", certRep);
             return certRep;

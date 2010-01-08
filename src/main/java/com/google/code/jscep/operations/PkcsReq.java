@@ -24,14 +24,9 @@ package com.google.code.jscep.operations;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.security.KeyPair;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,9 +43,7 @@ import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 
-import com.google.code.jscep.pkcs10.CertificationRequest;
 import com.google.code.jscep.transaction.MessageType;
-import com.google.code.jscep.util.HexUtil;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
@@ -110,16 +103,5 @@ public class PkcsReq implements PkiOperation {
 		} catch (GeneralSecurityException e) {
 			throw new IOException(e);
 		}
-    }
-    
-    private byte[] calculateDigest(byte[] pkcs10) {
-    	MessageDigest digest;
-		try {
-			digest = MessageDigest.getInstance(digestAlgorithm);
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
-    	
-    	return digest.digest(pkcs10);
     }
 }

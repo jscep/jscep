@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSSignedData;
@@ -41,8 +46,14 @@ public class PkiMessageParser {
 	 */
 	public PkiMessage parse(byte[] msgBytes) throws IOException {
 		LOGGER.info("Incoming SignedData:\n" + HexUtil.format(msgBytes));
+		SignedData cmsSd;
 		CMSSignedData signedData;
 		try {
+			ASN1Object obj = ASN1Object.fromByteArray(msgBytes);
+			ContentInfo info = ContentInfo.getInstance(obj);
+			assert(info.getContentType().equals(CMSObjectIdentifiers.signedData));
+			ASN1Sequence seq = (ASN1Sequence) info.getContent();
+			cmsSd = SignedData.getInstance(seq);
 			signedData = new CMSSignedData(msgBytes);
 		} catch (CMSException e) {
 			

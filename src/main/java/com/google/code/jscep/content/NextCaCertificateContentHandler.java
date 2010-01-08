@@ -22,17 +22,23 @@
 
 package com.google.code.jscep.content;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
+import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Object;
+
+import com.google.code.jscep.pkcs7.DegenerateSignedData;
+import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
@@ -61,11 +67,14 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 			
 			Collection<? extends Certificate> collection;
 			try {
-				CertificateFactory cf = CertificateFactory.getInstance("X.509");
-				collection = cf.generateCertificates(in);
-			} catch (CertificateException e) {
+				DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
+				DegenerateSignedData sd = parser.parse(ASN1Object.fromByteArray(getBytes(in)));
+				CertStore store = sd.getCertStore();
+				collection = store.getCertificates(new X509CertSelector());
+//				CertificateFactory cf = CertificateFactory.getInstance("X.509");
+//				collection = cf.generateCertificates(in);
+			} catch (CertStoreException e) {
 				IOException ioe = new IOException(e);
-				
 				LOGGER.throwing(getClass().getName(), "getContent", ioe);
 				throw ioe;
 			}
@@ -82,5 +91,16 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 			LOGGER.throwing(getClass().getName(), "getContent", ioe);
 			throw ioe;
 		}
+	}
+	
+	private byte[] getBytes(InputStream in) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		int i;
+		while ((i = in.read()) != -1) {
+			baos.write(i);
+		}
+		
+		return baos.toByteArray();
 	}
 }

@@ -3,14 +3,11 @@ package com.google.code.jscep.pkcs7;
 import java.security.cert.CertStore;
 
 class DegenerateSignedDataImpl implements DegenerateSignedData {
-	private CertStore certStore;
-	private byte[] encoded;
+	private final CertStore certStore;
+	private final byte[] encoded;
 	
-	void setCertStore(CertStore certStore) {
-		this.certStore = certStore;
-	}
-	
-	void setEncoded(byte[] encoded) {
+	DegenerateSignedDataImpl(CertStore store, byte[] encoded) {
+		this.certStore = store;
 		this.encoded = encoded;
 	}
 	

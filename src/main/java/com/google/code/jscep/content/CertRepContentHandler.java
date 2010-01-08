@@ -53,17 +53,16 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 		LOGGER.entering(getClass().getName(), "getContent");
 		
 		if (mimeType.equals("application/x-pki-message")) {
-			BufferedInputStream is = new BufferedInputStream(in);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 			int b;
-			while ((b = is.read()) != -1) {
+			while ((b = in.read()) != -1) {
 				baos.write(b);
 			}
 
 			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(keyPair.getPrivate());
 			final PkiMessageParser parser = new PkiMessageParser(envelopeParser);
-			PkiMessage msg = parser.parse(baos.toByteArray());
+			final PkiMessage msg = parser.parse(baos.toByteArray());
 			
 			LOGGER.exiting(getClass().getName(), "getContent", msg);
 			return msg;
