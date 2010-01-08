@@ -22,10 +22,23 @@
 package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.cms.EncryptedContentInfo;
+import org.bouncycastle.asn1.cms.EnvelopedData;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
+import org.bouncycastle.asn1.cms.OriginatorInfo;
+import org.bouncycastle.asn1.cms.RecipientIdentifier;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSProcessable;
@@ -48,12 +61,25 @@ public class PkcsPkiEnvelopeGenerator {
 	
 	public PkcsPkiEnvelope generate(ASN1Encodable messageData) throws IOException {
 		LOGGER.entering(getClass().getName(), "generate");
-		
+
+		EnvelopedData ed;
 		CMSEnvelopedDataGenerator gen = new CMSEnvelopedDataGenerator();
     	gen.addKeyTransRecipient(recipient);
     	CMSProcessable processableData = new CMSProcessableByteArray(messageData.getDEREncoded());
     	CMSEnvelopedData envelopedData;
 		try {
+//			final X509Name name = new X509Name(recipient.getIssuerDN().getName());
+//			final BigInteger serialNumber = recipient.getSerialNumber();
+//			final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
+//			final RecipientIdentifier rid = new RecipientIdentifier(iasn);
+//			final AlgorithmIdentifier keyEncryptionAlgorithm = null;
+//			final ASN1OctetString encryptedKey = null;
+//			final KeyTransRecipientInfo keyTrans = new KeyTransRecipientInfo(rid, keyEncryptionAlgorithm, encryptedKey);
+//			final ASN1Set recipientInfos = new DERSet(keyTrans);
+//			
+//			EncryptedContentInfo contentInfo = null;
+//			ed = new EnvelopedData(null, recipientInfos, contentInfo, null);
+			
 			// Need BC Provider Here.
 			envelopedData = gen.generate(processableData, cipher, "BC");
 		} catch (Exception e) {
