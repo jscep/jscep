@@ -24,19 +24,12 @@ package com.google.code.jscep.pkcs7;
 import java.io.IOException;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
+import java.security.Key;
 import java.security.PrivateKey;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
-import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -50,10 +43,6 @@ import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.RecipientInformation;
-import org.bouncycastle.cms.RecipientInformationStore;
 
 import com.google.code.jscep.util.LoggingUtil;
 
@@ -69,75 +58,47 @@ public class PkcsPkiEnvelopeParser {
 	public PkcsPkiEnvelope parse(byte[] envelopeBytes) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse");
 		
-		EnvelopedData cmsEd;
-		CMSEnvelopedData ed;
-		try {
-			ASN1Object enc = ASN1Object.fromByteArray(envelopeBytes);
-			ContentInfo info = ContentInfo.getInstance(enc);
-			assert(info.getContentType().equals(CMSObjectIdentifiers.envelopedData));
-			ASN1Sequence seq = (ASN1Sequence) info.getContent();
-			cmsEd = new EnvelopedData((ASN1Sequence) seq);
-			ed = new CMSEnvelopedData(envelopeBytes);
-		} catch (CMSException e) {
-			
-			IOException ioe = new IOException(e);
-			LOGGER.throwing(getClass().getName(), "parse", ioe);
-			throw ioe;
-		}
+		ASN1Object enc = ASN1Object.fromByteArray(envelopeBytes);
+		ContentInfo envInfo = ContentInfo.getInstance(enc);
+		assert(envInfo.getContentType().equals(CMSObjectIdentifiers.envelopedData));
+		EnvelopedData cmsEd = new EnvelopedData((ASN1Sequence) envInfo.getContent());
 		
-		EncryptedContentInfo eci = cmsEd.getEncryptedContentInfo();
-		ASN1OctetString ec = eci.getEncryptedContent();
-		AlgorithmIdentifier algId = eci.getContentEncryptionAlgorithm();
+		final EncryptedContentInfo eci = cmsEd.getEncryptedContentInfo();
+		final ASN1OctetString ec = eci.getEncryptedContent();
+		final AlgorithmIdentifier algId = eci.getContentEncryptionAlgorithm();
 		
 		ASN1Set recipientInfoSet = cmsEd.getRecipientInfos();
 		Enumeration<?> riEnum = recipientInfoSet.getObjects();
+		ContentInfo ci = null;
 		while (riEnum.hasMoreElements()) {
-			ASN1Sequence seq = (ASN1Sequence) riEnum.nextElement();
-			RecipientInfo ri = new RecipientInfo((DERObject) seq);
+			final ASN1Sequence seq = (ASN1Sequence) riEnum.nextElement();
+			final RecipientInfo ri = new RecipientInfo((DERObject) seq);
 			assert(ri.getInfo() instanceof KeyTransRecipientInfo);
-			KeyTransRecipientInfo info = (KeyTransRecipientInfo) ri.getInfo();
-			ASN1OctetString key = info.getEncryptedKey();
-			AlgorithmIdentifier alg = info.getKeyEncryptionAlgorithm();
-			byte[] keyBytes;
+			
+			final KeyTransRecipientInfo keyTransInfo = (KeyTransRecipientInfo) ri.getInfo();
+			final ASN1OctetString key = keyTransInfo.getEncryptedKey();
+			final AlgorithmIdentifier alg = keyTransInfo.getKeyEncryptionAlgorithm();
 			try {
-				Cipher cipher = Cipher.getInstance(alg.getObjectId().getId());
-				cipher.init(Cipher.DECRYPT_MODE, privKey);
-				keyBytes = cipher.doFinal(key.getOctets());
-				System.out.println(keyBytes);
+				final Cipher cipher = Cipher.getInstance(alg.getObjectId().getId());
+				cipher.init(Cipher.UNWRAP_MODE, privKey);
+				final Key secretKey = cipher.unwrap(key.getOctets(), "DES", Cipher.SECRET_KEY);
 				
-				Cipher msgCipher = Cipher.getInstance(algId.getObjectId().getId());
-				System.out.println(algId.getObjectId().getId());
-				SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
-				DESKeySpec desKeySpec = new DESKeySpec(keyBytes);
-				SecretKey secretKey = keyFactory.generateSecret(desKeySpec);
-				System.out.println(secretKey);
-				msgCipher.init(Cipher.DECRYPT_MODE, secretKey, (AlgorithmParameters) null);
-				byte[] content = msgCipher.doFinal(ec.getOctets());
-				System.out.println(content);
+				final ASN1Object params = (ASN1Object) algId.getParameters();
+				AlgorithmParameters algParams = AlgorithmParameters.getInstance("DES");
+				algParams.init(params.getEncoded());
+				
+				final Cipher msgCipher = Cipher.getInstance(algId.getObjectId().getId());
+				msgCipher.init(Cipher.DECRYPT_MODE, secretKey, algParams);
+				final byte[] content = msgCipher.doFinal(ec.getOctets());
+				
+				ci = ContentInfo.getInstance(ASN1Object.fromByteArray(content));
 			} catch (GeneralSecurityException e) {
 				throw new IOException(e);
 			}
-
-			System.out.println(alg.getObjectId());
-			System.out.println(info);
-		}
-		
-		final RecipientInformationStore recipientStore = ed.getRecipientInfos();
-		final Collection<RecipientInformation> recipientInfos = recipientStore.getRecipients();
-    	final RecipientInformation recipient = recipientInfos.iterator().next();
-    	
-    	byte[] msgData;
-		try {
-			msgData = recipient.getContent(privKey, "BC");
-		} catch (Exception e) {
-			
-			IOException ioe = new IOException(e);
-			LOGGER.throwing(getClass().getName(), "parse", ioe);
-			throw ioe;
 		}
 
     	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl();
-    	envelope.setMessageData(ASN1Object.fromByteArray(msgData));
+    	envelope.setMessageData(ci);
     	envelope.setEncoded(envelopeBytes);
     	
     	LOGGER.exiting(getClass().getName(), "parse", envelope);
