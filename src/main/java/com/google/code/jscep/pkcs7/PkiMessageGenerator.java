@@ -1,6 +1,7 @@
 package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
@@ -12,12 +13,27 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.cms.SignerIdentifier;
+import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.X509CertificateStructure;
+import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -44,7 +60,7 @@ public class PkiMessageGenerator {
 	private FailInfo failInfo;
 	private KeyPair keyPair;
 	private X509Certificate identity;
-	private String digest;
+	private AlgorithmIdentifier digest;
 	private PkiStatus status;
 	
 	public void setKeyPair(KeyPair keyPair) {
@@ -63,7 +79,7 @@ public class PkiMessageGenerator {
 		this.recipientNonce = nonce;
 	}
 	
-	public void setDigest(String digest) {
+	public void setDigest(AlgorithmIdentifier digest) {
 		this.digest = digest;
 	}
 	
@@ -125,10 +141,17 @@ public class PkiMessageGenerator {
 		}
         attributes.put(toAttribute(transId).getAttrType(), toAttribute(transId));
 		AttributeTable table = new AttributeTable(attributes);
-        gen.addSigner(keyPair.getPrivate(), identity, digest, table, null);
+        gen.addSigner(keyPair.getPrivate(), identity, digest.getObjectId().getId(), table, null);
         
     	CMSSignedData signedData;
 		try {
+			ASN1Set digestAlgorithms = getDigestAlgorithms();
+			ContentInfo contentInfo = getContentInfo();
+			ASN1Set certificates = getCertificates();
+			ASN1Set crls = getCRLs();
+			ASN1Set signerInfos = getSignerInfos();
+//			SignedData sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signedInfos);
+			
 			signedData = gen.generate(envelopedData, true, "BC");
 		} catch (CMSException e) {
 			IOException ioe = new IOException(e);
@@ -154,6 +177,107 @@ public class PkiMessageGenerator {
 		
 		LOGGER.exiting(getClass().getName(), "generate", msg);
 		return msg;
+	}
+	
+	private ContentInfo getContentInfo() {
+		DERObjectIdentifier contentType = getContentType();
+		DEREncodable content = getContent();
+		
+		return new ContentInfo(contentType, content);
+	}
+	
+	private DERObjectIdentifier getContentType() {
+		return CMSObjectIdentifiers.envelopedData;
+	}
+	
+	private DEREncodable getContent() {
+		return null;
+	}
+	
+	private ASN1Set getCertificates() {
+		return new DERSet(getCertificate());
+	}
+	
+	private X509CertificateStructure getCertificate() {
+		return null;
+	}
+	
+	private ASN1Set getCRLs() {
+		return new DERSet();
+	}
+	
+	private ASN1Set getSignerInfos() {
+		return new DERSet(getSignerInfo());
+	}
+	
+	private SignerInfo getSignerInfo() {
+		SignerIdentifier sid = getSignerIdentifier();
+		AlgorithmIdentifier digAlgorithm = getDigestAlgorithm();
+		ASN1Set authenticatedAttributes = getAuthenticatedAttributes();
+		AlgorithmIdentifier digEncryptionAlgorithm = getDigestEncryptionAlgorithm();
+		ASN1OctetString encryptedDigest = getEncryptedDigest();
+		ASN1Set unauthenticatedAttributes = getUnauthenticatedAttributes();
+		
+		return new SignerInfo(sid, digAlgorithm, authenticatedAttributes, digEncryptionAlgorithm, encryptedDigest, unauthenticatedAttributes);
+	}
+	
+	private ASN1Set getUnauthenticatedAttributes() {
+		return new DERSet();
+	}
+	
+	private ASN1OctetString getEncryptedDigest() {
+		return null;
+	}
+	
+	private ASN1Set getAuthenticatedAttributes() {
+		final ASN1EncodableVector vector = new ASN1EncodableVector();
+		
+		vector.add(getTransactionId());
+		vector.add(getMessageType());
+		
+		return new DERSet(vector);
+	}
+	
+	private Attribute getMessageType() {
+		final DERObjectIdentifier attrType = new DERObjectIdentifier(ScepObjectIdentifiers.messageType);
+    	final ASN1Set attr = new DERSet(new DERPrintableString(Integer.toString(msgType.getValue())));
+    	
+        return new Attribute(attrType, new DERSet(attr));
+	}
+	
+	private Attribute getTransactionId() {
+		final DERObjectIdentifier attrType = new DERObjectIdentifier(ScepObjectIdentifiers.transId);
+		final ASN1Set attrValues = new DERSet(new DERPrintableString(transId.getBytes()));
+		
+		return new Attribute(attrType, attrValues);
+	}
+	
+	private ASN1Set getDigestAlgorithms() {
+		return new DERSet(getDigestAlgorithm());
+	}
+	
+	private AlgorithmIdentifier getDigestAlgorithm() {
+		return digest;
+	}
+	
+	private AlgorithmIdentifier getDigestEncryptionAlgorithm() {
+		return new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption);
+	}
+	
+	private SignerIdentifier getSignerIdentifier() {
+		return new SignerIdentifier(getIssuerAndSerialNumber());
+	}
+	
+	private IssuerAndSerialNumber getIssuerAndSerialNumber() {
+		return new IssuerAndSerialNumber(getIssuer(), getSerialNumber());
+	}
+	
+	private X509Name getIssuer() {
+		return new X509Name(identity.getIssuerDN().getName());
+	}
+	
+	private BigInteger getSerialNumber() {
+		return identity.getSerialNumber();
 	}
 	
 	private Attribute toAttribute(MessageType msgType) {

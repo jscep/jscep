@@ -26,6 +26,10 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.transport.Transport;
@@ -58,12 +62,12 @@ public final class TransactionFactory {
 		
 		// TODO: Don't hardcode DES
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
-		envGenerator.setCipher("1.3.14.3.2.7");
+		envGenerator.setCipher(getCipherAlgorithm());
 		envGenerator.setRecipient(ca);
 
 		// TODO: Don't hardcode SHA-1
 		final PkiMessageGenerator msgGenerator = new PkiMessageGenerator();
-		msgGenerator.setDigest("1.3.14.3.2.26");
+		msgGenerator.setDigest(getDigestAlgorithm());
 		msgGenerator.setIdentity(identity);
 		msgGenerator.setKeyPair(keyPair);
 		
@@ -71,5 +75,15 @@ public final class TransactionFactory {
 		
 		LOGGER.exiting (TransactionFactory.class.getName(), "createTransaction", t);
 		return t;
+	}
+	
+	private static AlgorithmIdentifier getCipherAlgorithm() {
+		// DES
+		return new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.7"));
+	}
+	
+	private static AlgorithmIdentifier getDigestAlgorithm() {
+		// SHA-1
+		return new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.26"));
 	}
 }

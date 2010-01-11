@@ -49,13 +49,13 @@ import com.google.code.jscep.util.LoggingUtil;
 public class PkcsPkiEnvelopeGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private X509Certificate recipient;
-	private String cipher;
+	private AlgorithmIdentifier cipher;
 	
 	public void setRecipient(X509Certificate recipient) {
 		this.recipient = recipient;
 	}
 	
-	public void setCipher(String cipher) {
+	public void setCipher(AlgorithmIdentifier cipher) {
 		this.cipher = cipher;
 	}
 	
@@ -81,7 +81,7 @@ public class PkcsPkiEnvelopeGenerator {
 //			ed = new EnvelopedData(null, recipientInfos, contentInfo, null);
 			
 			// Need BC Provider Here.
-			envelopedData = gen.generate(processableData, cipher, "BC");
+			envelopedData = gen.generate(processableData, cipher.getObjectId().getId(), "BC");
 		} catch (Exception e) {
 			
 			IOException ioe = new IOException(e);
