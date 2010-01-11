@@ -4,18 +4,23 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.Signature;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
@@ -27,13 +32,13 @@ import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerIdentifier;
 import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -62,6 +67,7 @@ public class PkiMessageGenerator {
 	private X509Certificate identity;
 	private AlgorithmIdentifier digest;
 	private PkiStatus status;
+	private ASN1Encodable content;
 	
 	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
@@ -100,6 +106,8 @@ public class PkiMessageGenerator {
 	}
 	
 	public PkiMessage generate(PkcsPkiEnvelope envelope) throws IOException {
+		this.content = ASN1Object.fromByteArray(envelope.getEncoded());
+		
 		LOGGER.entering(getClass().getName(), "generate");
 		
 		CMSProcessable envelopedData = new CMSProcessableByteArray(envelope.getEncoded());
@@ -144,15 +152,20 @@ public class PkiMessageGenerator {
         gen.addSigner(keyPair.getPrivate(), identity, digest.getObjectId().getId(), table, null);
         
     	CMSSignedData signedData;
+    	SignedData sd;
 		try {
 			ASN1Set digestAlgorithms = getDigestAlgorithms();
 			ContentInfo contentInfo = getContentInfo();
 			ASN1Set certificates = getCertificates();
 			ASN1Set crls = getCRLs();
 			ASN1Set signerInfos = getSignerInfos();
-//			SignedData sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signedInfos);
-			
+			sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
 			signedData = gen.generate(envelopedData, true, "BC");
+			
+			byte[] manual = sd.getEncoded();
+			byte[] bc = signedData.getEncoded();
+			
+			assert(Arrays.equals(manual, bc));
 		} catch (CMSException e) {
 			IOException ioe = new IOException(e);
 			LOGGER.throwing(getClass().getName(), "parse", ioe);
@@ -191,7 +204,7 @@ public class PkiMessageGenerator {
 	}
 	
 	private DEREncodable getContent() {
-		return null;
+		return content;
 	}
 	
 	private ASN1Set getCertificates() {
@@ -199,7 +212,16 @@ public class PkiMessageGenerator {
 	}
 	
 	private X509CertificateStructure getCertificate() {
-		return null;
+		try {
+			ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(identity.getEncoded());
+			X509CertificateStructure x509 = new X509CertificateStructure(seq);
+			
+			return x509;
+		} catch (CertificateEncodingException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	private ASN1Set getCRLs() {
@@ -226,7 +248,17 @@ public class PkiMessageGenerator {
 	}
 	
 	private ASN1OctetString getEncryptedDigest() {
-		return null;
+		try {
+			Signature signature = Signature.getInstance("SHA1withRSA");
+			signature.initSign(keyPair.getPrivate());
+			
+			signature.update(getContentInfo().getDEREncoded());
+			return new DEROctetString(signature.sign());
+		} catch (GeneralSecurityException e) {
+			throw new RuntimeException(e);
+//		} catch (IOException e) {
+//			throw new RuntimeException(e);
+		}
 	}
 	
 	private ASN1Set getAuthenticatedAttributes() {
