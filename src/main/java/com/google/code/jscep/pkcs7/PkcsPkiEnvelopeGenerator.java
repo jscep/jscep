@@ -22,23 +22,12 @@
 package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
-import org.bouncycastle.asn1.cms.OriginatorInfo;
-import org.bouncycastle.asn1.cms.RecipientIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSProcessable;

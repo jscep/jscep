@@ -154,11 +154,11 @@ public class PkiMessageGenerator {
     	CMSSignedData signedData;
     	SignedData sd;
 		try {
-			ASN1Set digestAlgorithms = getDigestAlgorithms();
-			ContentInfo contentInfo = getContentInfo();
-			ASN1Set certificates = getCertificates();
-			ASN1Set crls = getCRLs();
-			ASN1Set signerInfos = getSignerInfos();
+			final ASN1Set digestAlgorithms = getDigestAlgorithms();
+			final ContentInfo contentInfo = getContentInfo();
+			final ASN1Set certificates = getCertificates();
+			final ASN1Set crls = getCRLs();
+			final ASN1Set signerInfos = getSignerInfos();
 			sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
 			signedData = gen.generate(envelopedData, true, "BC");
 			
