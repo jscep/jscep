@@ -12,9 +12,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<modules>
-		<module>api</module>
-		<module>client</module>
-		<module>server</module>
+		<module>jscep-api</module>
+		<module>jscep-client</module>
+		<module>jscep-server</module>
 	</modules>
 	<licenses>
 		<license>

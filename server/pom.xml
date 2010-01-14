@@ -1,10 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.google.code.jscep</groupId>
+		<artifactId>jscep</artifactId>
+		<version>0.20.2-SNAPSHOT</version>
+	</parent>
 	<groupId>com.google.code.jscep</groupId>
-	<artifactId>server</artifactId>
+	<artifactId>jscep-server</artifactId>
 	<packaging>jar</packaging>
-	<version>0.20.2-SNAPSHOT</version>
+	<!-- <version>0.20.2-SNAPSHOT</version> -->
 	<name>jSCEP Server</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>
@@ -12,6 +17,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>api</artifactId>
+			<version>0.20.2-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
