@@ -9,7 +9,6 @@
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep-server</artifactId>
 	<packaging>jar</packaging>
-	<!-- <version>0.20.2-SNAPSHOT</version> -->
 	<name>jSCEP Server</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>
@@ -19,7 +18,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
-			<artifactId>api</artifactId>
+			<artifactId>jscep-api</artifactId>
 			<version>0.20.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
