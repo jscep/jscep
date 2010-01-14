@@ -150,6 +150,7 @@ public class PkiMessageGenerator {
 		AttributeTable table = new AttributeTable(attributes);
         gen.addSigner(keyPair.getPrivate(), identity, digest.getObjectId().getId(), table, null);
         
+        ContentInfo ci;
     	CMSSignedData signedData;
     	SignedData sd;
 		try {
@@ -161,10 +162,8 @@ public class PkiMessageGenerator {
 			sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
 			signedData = gen.generate(envelopedData, true, "BC");
 			
-//			byte[] manual = sd.getEncoded();
-//			byte[] bc = signedData.getEncoded();
-			
-//			assert(Arrays.equals(manual, bc));
+			DERObjectIdentifier contentType = CMSObjectIdentifiers.signedData;
+			ci = new ContentInfo(contentType, sd);
 		} catch (CMSException e) {
 			IOException ioe = new IOException(e);
 			LOGGER.throwing(getClass().getName(), "parse", ioe);

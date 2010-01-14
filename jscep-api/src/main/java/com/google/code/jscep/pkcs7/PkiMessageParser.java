@@ -2,10 +2,14 @@ package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -14,6 +18,7 @@ import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSSignedData;
@@ -61,21 +66,24 @@ public class PkiMessageParser {
 			LOGGER.throwing(getClass().getName(), "parse", ioe);
 			throw ioe;
 		}
-    	SignerInformationStore store = signedData.getSignerInfos();
-        Collection<?> signers = store.getSigners();
+		
+		Set<SignerInfo> signerInfoSet = getSignerInfo(cmsSd);
         
-        if (signers.size() > 1) {
-
+        if (signerInfoSet.size() > 1) {
         	IOException ioe = new IOException("Too Many SignerInfos");
 			LOGGER.throwing(getClass().getName(), "parse", ioe);
         	throw ioe;
         }
-        
-        SignerInformation signerInformation = (SignerInformation) signers.iterator().next();
-        signedAttrs = signerInformation.getSignedAttributes();
+
+        SignerInfo signerInfo = signerInfoSet.iterator().next();
+        System.out.println(signedData.getSignedContentTypeOID());
+        signedAttrs = getAttributeTable(signerInfo);
+//        ContentInfo ci = cmsSd.getEncapContentInfo();
+//        DEROctetString octetString = (DEROctetString) ci.getContent();
 
         final CMSProcessable signedContent = signedData.getSignedContent();
 		byte[] envelopedData = (byte[]) signedContent.getContent();
+//		envelopedData = ci.getEncoded();
 		
 		final PkiMessageImpl msg = new PkiMessageImpl();
 		msg.setTransactionId(extractTransactionId());
@@ -90,6 +98,22 @@ public class PkiMessageParser {
 		}
 		
 		return msg; 
+	}
+	
+	private Set<SignerInfo> getSignerInfo(SignedData signedData) {
+		final Set<SignerInfo> set = new HashSet<SignerInfo>();
+		final Enumeration<?> signerInfos = signedData.getSignerInfos().getObjects();
+		
+		while (signerInfos.hasMoreElements()) {
+			final ASN1Sequence seq = (ASN1Sequence) signerInfos.nextElement();
+			set.add(new SignerInfo(seq));
+		}
+		
+		return set;
+	}
+	
+	private AttributeTable getAttributeTable(SignerInfo signerInfo) {
+		return new AttributeTable(signerInfo.getAuthenticatedAttributes());
 	}
 	
 	private TransactionId extractTransactionId() {
