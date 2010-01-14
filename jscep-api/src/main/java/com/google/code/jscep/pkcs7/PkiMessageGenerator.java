@@ -162,10 +162,10 @@ public class PkiMessageGenerator {
 			sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
 			signedData = gen.generate(envelopedData, true, "BC");
 			
-			byte[] manual = sd.getEncoded();
-			byte[] bc = signedData.getEncoded();
+//			byte[] manual = sd.getEncoded();
+//			byte[] bc = signedData.getEncoded();
 			
-			assert(Arrays.equals(manual, bc));
+//			assert(Arrays.equals(manual, bc));
 		} catch (CMSException e) {
 			IOException ioe = new IOException(e);
 			LOGGER.throwing(getClass().getName(), "parse", ioe);
