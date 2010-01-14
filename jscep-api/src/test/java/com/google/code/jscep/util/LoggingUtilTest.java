@@ -6,19 +6,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.Client;
+import com.google.code.jscep.ScepException;
 
 public class LoggingUtilTest {
 	private Logger fixture;
 	
 	@Before
 	public void setUp() {
-		fixture = LoggingUtil.getLogger(Client.class);
+		fixture = LoggingUtil.getLogger(ScepException.class);
 	}
 	
 	@Test
 	public void testGetLoggerClass() {
-		Assert.assertEquals(fixture, LoggingUtil.getLogger(Client.class));
+		Assert.assertEquals(fixture, LoggingUtil.getLogger(ScepException.class));
 	}
 
 	@Test
