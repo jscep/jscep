@@ -54,7 +54,6 @@ public class PkcsPkiEnvelopeParser {
 		this.privKey = keyPair;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public PkcsPkiEnvelope parse(byte[] envelopeBytes) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse");
 		

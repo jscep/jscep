@@ -24,8 +24,6 @@ package com.google.code.jscep.pkcs7;
 
 import java.security.GeneralSecurityException;
 
-import org.bouncycastle.cms.CMSException;
-
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
