@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<version>0.20.2-SNAPSHOT</version>
 	<name>jSCEP</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
@@ -11,9 +11,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	<modules>
-		<module>api</module>
-	</modules>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
