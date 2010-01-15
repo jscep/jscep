@@ -40,7 +40,7 @@ public class PkcsPkiEnvelopeTest {
 		final X509Certificate cert = X509CertificateFactory.createCertificate(subject, keyPair);
 
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
-		envGenerator.setCipher(getCipherAlgorithm());
+		envGenerator.setCipherAlgorithm(getCipherAlgorithm());
 		envGenerator.setRecipient(cert);
 		
 		fixture = envGenerator.generate(msgData);

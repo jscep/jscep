@@ -21,13 +21,44 @@
  */
 package com.google.code.jscep.pkcs7;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.AlgorithmParameterGenerator;
+import java.security.AlgorithmParameters;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.BERConstructedOctetString;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
+import org.bouncycastle.asn1.cms.RecipientIdentifier;
+import org.bouncycastle.asn1.cms.RecipientInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.TBSCertificateStructure;
+import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSProcessable;
@@ -38,14 +69,14 @@ import com.google.code.jscep.util.LoggingUtil;
 public class PkcsPkiEnvelopeGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private X509Certificate recipient;
-	private AlgorithmIdentifier cipher;
+	private AlgorithmIdentifier cipherAlgorithm;
 	
 	public void setRecipient(X509Certificate recipient) {
 		this.recipient = recipient;
 	}
 	
-	public void setCipher(AlgorithmIdentifier cipher) {
-		this.cipher = cipher;
+	public void setCipherAlgorithm(AlgorithmIdentifier cipherAlgorithm) {
+		this.cipherAlgorithm = cipherAlgorithm;
 	}
 	
 	public PkcsPkiEnvelope generate(ASN1Encodable messageData) throws IOException {
@@ -57,20 +88,35 @@ public class PkcsPkiEnvelopeGenerator {
     	CMSProcessable processableData = new CMSProcessableByteArray(messageData.getDEREncoded());
     	CMSEnvelopedData envelopedData;
 		try {
-//			final X509Name name = new X509Name(recipient.getIssuerDN().getName());
-//			final BigInteger serialNumber = recipient.getSerialNumber();
-//			final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
-//			final RecipientIdentifier rid = new RecipientIdentifier(iasn);
-//			final AlgorithmIdentifier keyEncryptionAlgorithm = null;
-//			final ASN1OctetString encryptedKey = null;
+			final X509Name name = new X509Name(recipient.getIssuerDN().getName());
+			final BigInteger serialNumber = recipient.getSerialNumber();
+			final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
+			final RecipientIdentifier rid = new RecipientIdentifier(iasn);
+
+			SecretKey encryptionkey = KeyGenerator.getInstance("DES").generateKey();
+			AlgorithmParameterGenerator generator = AlgorithmParameterGenerator.getInstance("DES");
+			AlgorithmParameters params = generator.generateParameters(); 
+			Cipher cipher = Cipher.getInstance("DES");
+			cipher.init(Cipher.ENCRYPT_MODE, encryptionkey, params);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			CipherOutputStream output = new CipherOutputStream(baos, cipher);
+			processableData.write(output);
+			output.close();
+			final ASN1OctetString encryptedContent = new BERConstructedOctetString(baos.toByteArray());
+			
+			final AlgorithmIdentifier keyEncryptionAlgorithm = null;
 //			final KeyTransRecipientInfo keyTrans = new KeyTransRecipientInfo(rid, keyEncryptionAlgorithm, encryptedKey);
-//			final ASN1Set recipientInfos = new DERSet(keyTrans);
+			final KeyTransRecipientInfo keyTrans = toRecipientInfo(recipient, encryptionkey);
+			ASN1EncodableVector v = new ASN1EncodableVector();
+			v.add(keyTrans);
+			final ASN1Set recipientInfos = new DERSet(v);
 //			
-//			EncryptedContentInfo contentInfo = null;
-//			ed = new EnvelopedData(null, recipientInfos, contentInfo, null);
+			EncryptedContentInfo eci = new EncryptedContentInfo(PKCSObjectIdentifiers.data, keyEncryptionAlgorithm, encryptedContent);
+//			ed = new EnvelopedData(null, recipientInfos, eci, null);
+			ContentInfo ci = new ContentInfo(PKCSObjectIdentifiers.envelopedData, eci);
 			
 			// Need BC Provider Here.
-			envelopedData = gen.generate(processableData, cipher.getObjectId().getId(), "BC");
+			envelopedData = gen.generate(processableData, cipherAlgorithm.getObjectId().getId(), "BC");
 		} catch (Exception e) {
 			
 			IOException ioe = new IOException(e);
@@ -84,5 +130,20 @@ public class PkcsPkiEnvelopeGenerator {
     	
     	LOGGER.exiting(getClass().getName(), "generate", envelope);
 		return envelope;
+	}
+	
+	private KeyTransRecipientInfo toRecipientInfo(X509Certificate certificate, SecretKey key) throws CertificateEncodingException, IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException {
+		TBSCertificateStructure tbsCert = TBSCertificateStructure.getInstance(ASN1Object.fromByteArray(certificate.getTBSCertificate()));
+		AlgorithmIdentifier algId = tbsCert.getSubjectPublicKeyInfo().getAlgorithmId();
+
+		// Always RSA
+		Cipher cipher = Cipher.getInstance("RSA");
+		cipher.init(Cipher.WRAP_MODE, certificate.getPublicKey());
+		
+		ASN1OctetString encKey = new DEROctetString(cipher.wrap(key));
+		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(tbsCert.getIssuer(), tbsCert.getSerialNumber().getValue());
+		ASN1InputStream aIn = new ASN1InputStream(certificate.getTBSCertificate());
+		
+		return new KeyTransRecipientInfo(new RecipientIdentifier(iasn), algId, encKey);
 	}
 }

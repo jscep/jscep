@@ -62,7 +62,7 @@ public final class TransactionFactory {
 		
 		// TODO: Don't hardcode DES
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
-		envGenerator.setCipher(getCipherAlgorithm());
+		envGenerator.setCipherAlgorithm(getCipherAlgorithm());
 		envGenerator.setRecipient(ca);
 
 		// TODO: Don't hardcode SHA-1
