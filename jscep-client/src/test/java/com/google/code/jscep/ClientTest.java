@@ -5,7 +5,6 @@ import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import javax.crypto.KeyGenerator;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -21,10 +20,6 @@ public class ClientTest {
 	@Test
 	public void testEnroll() throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
-		System.out.println(Security.getAlgorithms("AlgorithmParameterGenerator"));
-		KeyGenerator kg = KeyGenerator.getInstance("DES");
-		System.out.println(kg.getProvider());
-//		Security.addProvider(new BouncyCastleProvider());
 		
 		SSLContext ctx = SSLContext.getInstance("TLS");
 		ctx.init(null, new TrustManager[] {new X509TrustManager() {
