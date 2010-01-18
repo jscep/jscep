@@ -20,7 +20,7 @@ public class ClientTest {
 
 	@Test
 	public void testEnroll() throws Exception {
-		Security.addProvider(new BouncyCastleProvider());
+//		Security.addProvider(new BouncyCastleProvider());
 		
 		SSLContext ctx = SSLContext.getInstance("TLS");
 		ctx.init(null, new TrustManager[] {new X509TrustManager() {

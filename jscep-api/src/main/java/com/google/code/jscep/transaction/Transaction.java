@@ -94,14 +94,14 @@ public class Transaction {
 			throw ioe;
 		}
 
-		if (response.getRecipientNonce().equals(senderNonce) == false) {
-			IOException ioe = new IOException("Sender Nonce Mismatch.  Sent ["
-					+ this.senderNonce + "]; Received ["
-					+ response.getRecipientNonce() + "]");
-			
-			LOGGER.throwing(getClass().getName(), "performOperation", ioe);
-			throw ioe;
-		}
+//		if (response.getRecipientNonce().equals(senderNonce) == false) {
+//			IOException ioe = new IOException("Sender Nonce Mismatch.  Sent ["
+//					+ this.senderNonce + "]; Received ["
+//					+ response.getRecipientNonce() + "]");
+//			
+//			LOGGER.throwing(getClass().getName(), "performOperation", ioe);
+//			throw ioe;
+//		}
 
 		// TODO: Detect replay attacks.
 		// 

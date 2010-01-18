@@ -54,7 +54,7 @@ public class PkiMessageParser {
 		final AttributeTable signedAttrs = getAttributeTable(signerInfo);
 		final PkiMessageImpl msg = new PkiMessageImpl();
 		msg.setTransactionId(extractTransactionId(signedAttrs));
-		msg.setRecipientNonce(extractRecipientNonce(signedAttrs));
+//		msg.setRecipientNonce(extractRecipientNonce(signedAttrs));
 		msg.setSenderNonce(extractSenderNonce(signedAttrs));
 		msg.setStatus(extractStatus(signedAttrs));
 		msg.setMessageType(extractMessageType(signedAttrs));

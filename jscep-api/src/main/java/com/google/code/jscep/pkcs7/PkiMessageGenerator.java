@@ -6,28 +6,23 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.BERConstructedOctetString;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -49,12 +44,6 @@ import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessable;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.util.encoders.Hex;
 
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
@@ -62,7 +51,6 @@ import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.ScepObjectIdentifiers;
 import com.google.code.jscep.transaction.TransactionId;
-import com.google.code.jscep.util.HexUtil;
 import com.google.code.jscep.util.LoggingUtil;
 
 public class PkiMessageGenerator {
@@ -77,7 +65,7 @@ public class PkiMessageGenerator {
 	private X509Certificate identity;
 	private AlgorithmIdentifier digest;
 	private PkiStatus status;
-	private ASN1Encodable content;
+	private ContentInfo content;
 	
 	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
@@ -116,76 +104,26 @@ public class PkiMessageGenerator {
 	}
 	
 	public PkiMessage generate(PkcsPkiEnvelope envelope) throws IOException {
-		this.content = ASN1Object.fromByteArray(envelope.getEncoded());
+		this.content = new ContentInfo((ASN1Sequence) ASN1Object.fromByteArray(envelope.getEncoded()));
 		
 		LOGGER.entering(getClass().getName(), "generate");
 		
-		CMSProcessable envelopedData = new CMSProcessableByteArray(envelope.getEncoded());
-		CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
-    	
-    	final List<X509Certificate> certList = new ArrayList<X509Certificate>(1);
-        certList.add(identity);
-        
-        CertStore certs;
-		try {
-			certs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList));
-		} catch (GeneralSecurityException e) {
-			RuntimeException rt = new RuntimeException(e);
-			LOGGER.throwing(getClass().getName(), "parse", rt);
-			throw rt;
-		}
-        try {
-			gen.addCertificatesAndCRLs(certs);
-		} catch (CertStoreException e) {
-			RuntimeException rt = new RuntimeException(e);
-			LOGGER.throwing(getClass().getName(), "parse", rt);
-			throw rt;
-		} catch (CMSException e) {
-			IOException ioe = new IOException(e);
-			LOGGER.throwing(getClass().getName(), "parse", ioe);
-			throw ioe;
-		}
-		Hashtable<DERObjectIdentifier, Attribute> attributes = new Hashtable<DERObjectIdentifier, Attribute>();
-		attributes.put(toAttribute(msgType).getAttrType(), toAttribute(msgType));
-		if (status != null) {
-			attributes.put(toAttribute(status).getAttrType(), toAttribute(status));
-		}
-		if (failInfo != null) {
-			attributes.put(toAttribute(failInfo).getAttrType(), toAttribute(failInfo));
-		}
-		attributes.put(toAttribute(ScepObjectIdentifiers.senderNonce, senderNonce).getAttrType(), toAttribute(ScepObjectIdentifiers.senderNonce, senderNonce));
-		if (recipientNonce != null) {
-			attributes.put(toAttribute(ScepObjectIdentifiers.recipientNonce, recipientNonce).getAttrType(), toAttribute(ScepObjectIdentifiers.recipientNonce, recipientNonce));
-		}
-        attributes.put(toAttribute(transId).getAttrType(), toAttribute(transId));
-		AttributeTable table = new AttributeTable(attributes);
-        gen.addSigner(keyPair.getPrivate(), identity, digest.getObjectId().getId(), table, null);
-        
         ContentInfo ci;
-    	CMSSignedData signedData;
-    	SignedData sd;
 		try {
 			final ASN1Set digestAlgorithms = getDigestAlgorithms();
 			final ContentInfo contentInfo = getContentInfo();
 			final ASN1Set certificates = getCertificates();
 			final ASN1Set crls = getCRLs();
 			final ASN1Set signerInfos = getSignerInfos();
-			sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
-			signedData = gen.generate(envelopedData, true, "BC");
+			final SignedData sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
 			
 			DERObjectIdentifier contentType = CMSObjectIdentifiers.signedData;
 			ci = new ContentInfo(contentType, sd);
-
-		} catch (CMSException e) {
-			IOException ioe = new IOException(e);
-			LOGGER.throwing(getClass().getName(), "parse", ioe);
-			throw ioe;
 		} catch (GeneralSecurityException e) {
 			RuntimeException rt = new RuntimeException(e);
 			LOGGER.throwing(getClass().getName(), "parse", rt);
 			throw rt;
 		}
-    	LOGGER.info("OUTGOING SignedData:\n" + HexUtil.formatHex(Hex.encode(signedData.getEncoded())));
     	
 		final PkiMessageImpl msg = new PkiMessageImpl();
 		msg.setMessageType(msgType);
@@ -196,7 +134,7 @@ public class PkiMessageGenerator {
 		msg.setTransactionId(transId);
 		
 		msg.setPkcsPkiEnvelope(envelope);
-		msg.setEncoded(signedData.getEncoded());
+		msg.setEncoded(ci.getEncoded());
 		
 		LOGGER.exiting(getClass().getName(), "generate", msg);
 		return msg;
@@ -210,11 +148,12 @@ public class PkiMessageGenerator {
 	}
 	
 	private DERObjectIdentifier getContentType() {
-		return CMSObjectIdentifiers.envelopedData;
+		return CMSObjectIdentifiers.data;
 	}
 	
 	private DEREncodable getContent() {
-		return content;
+		ASN1OctetString str = new BERConstructedOctetString(content);
+		return str;
 	}
 	
 	private ASN1Set getCertificates() {
@@ -235,7 +174,7 @@ public class PkiMessageGenerator {
 	}
 	
 	private ASN1Set getCRLs() {
-		return new DERSet();
+		return null;
 	}
 	
 	private ASN1Set getSignerInfos() throws IOException, GeneralSecurityException {
@@ -252,11 +191,13 @@ public class PkiMessageGenerator {
 		Hashtable table = new Hashtable();
 		table.put(getTransactionId().getAttrType(), getTransactionId());
 		table.put(getMessageType().getAttrType(), getMessageType());
+//		table.put(getS, arg1)
 		Attribute contentAttr = new Attribute(CMSAttributes.contentType, new DERSet(PKCSObjectIdentifiers.data));
 		table.put(contentAttr.getAttrType(), contentAttr);
 		Attribute signingTime = new Attribute(CMSAttributes.signingTime, new DERSet(new Time(new Date())));
 		table.put(signingTime.getAttrType(), signingTime);
 		Attribute hashAttr = new Attribute(CMSAttributes.messageDigest, new DERSet(new DEROctetString(hash)));
+		table.put(hashAttr.getAttrType(), hashAttr);
 		
 		AttributeTable signed = new AttributeTable(table);
 		ASN1Set signedAttr = new DERSet(signed.toASN1EncodableVector());
@@ -277,7 +218,7 @@ public class PkiMessageGenerator {
 	}
 	
 	private ASN1Set getUnauthenticatedAttributes() {
-		return new DERSet();
+		return null;
 	}
 	
 	private ASN1OctetString getEncryptedDigest() throws IOException {
@@ -291,6 +232,7 @@ public class PkiMessageGenerator {
 			Hashtable table = new Hashtable();
 			table.put(getTransactionId().getAttrType(), getTransactionId());
 			table.put(getMessageType().getAttrType(), getMessageType());
+			table.put(getSenderNonce().getAttrType(), getSenderNonce());
 			Attribute contentAttr = new Attribute(CMSAttributes.contentType, new DERSet(PKCSObjectIdentifiers.data));
 			table.put(contentAttr.getAttrType(), contentAttr);
 			Attribute signingTime = new Attribute(CMSAttributes.signingTime, new DERSet(new Time(new Date())));
@@ -328,7 +270,14 @@ public class PkiMessageGenerator {
 		final DERObjectIdentifier attrType = new DERObjectIdentifier(ScepObjectIdentifiers.messageType);
     	final ASN1Set attr = new DERSet(new DERPrintableString(Integer.toString(msgType.getValue())));
     	
-        return new Attribute(attrType, new DERSet(attr));
+        return new Attribute(attrType, attr);
+	}
+	
+	private Attribute getSenderNonce() {
+		final DERObjectIdentifier attrType = new DERObjectIdentifier(ScepObjectIdentifiers.senderNonce);
+    	final ASN1Set attr = new DERSet(new DERPrintableString(senderNonce.getBytes()));
+    	
+        return new Attribute(attrType, attr);
 	}
 	
 	private Attribute getTransactionId() {
