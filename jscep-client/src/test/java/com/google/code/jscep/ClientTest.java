@@ -2,6 +2,7 @@ package com.google.code.jscep;
 
 import java.net.URL;
 import java.security.Security;
+import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 

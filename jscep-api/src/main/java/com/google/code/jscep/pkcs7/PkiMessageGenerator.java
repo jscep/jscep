@@ -1,9 +1,12 @@
 package com.google.code.jscep.pkcs7;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
@@ -11,8 +14,12 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -24,17 +31,21 @@ import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerIdentifier;
 import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.cms.Time;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
@@ -164,6 +175,7 @@ public class PkiMessageGenerator {
 			
 			DERObjectIdentifier contentType = CMSObjectIdentifiers.signedData;
 			ci = new ContentInfo(contentType, sd);
+
 		} catch (CMSException e) {
 			IOException ioe = new IOException(e);
 			LOGGER.throwing(getClass().getName(), "parse", ioe);
@@ -226,32 +238,76 @@ public class PkiMessageGenerator {
 		return new DERSet();
 	}
 	
-	private ASN1Set getSignerInfos() {
+	private ASN1Set getSignerInfos() throws IOException, GeneralSecurityException {
 		return new DERSet(getSignerInfo());
 	}
 	
-	private SignerInfo getSignerInfo() {
+	private SignerInfo getSignerInfo() throws IOException, GeneralSecurityException {
+		final MessageDigest digest = MessageDigest.getInstance("SHA1");
+		final Signature sig = Signature.getInstance("SHA1withRSA");
+		
+		digest.update(content.getEncoded());
+		byte[] hash = digest.digest();
+		
+		Hashtable table = new Hashtable();
+		table.put(getTransactionId().getAttrType(), getTransactionId());
+		table.put(getMessageType().getAttrType(), getMessageType());
+		Attribute contentAttr = new Attribute(CMSAttributes.contentType, new DERSet(PKCSObjectIdentifiers.data));
+		table.put(contentAttr.getAttrType(), contentAttr);
+		Attribute signingTime = new Attribute(CMSAttributes.signingTime, new DERSet(new Time(new Date())));
+		table.put(signingTime.getAttrType(), signingTime);
+		Attribute hashAttr = new Attribute(CMSAttributes.messageDigest, new DERSet(new DEROctetString(hash)));
+		
+		AttributeTable signed = new AttributeTable(table);
+		ASN1Set signedAttr = new DERSet(signed.toASN1EncodableVector());
+		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+		DEROutputStream dOut = new DEROutputStream(bOut);
+		dOut.writeObject(signedAttr);
+
+		sig.initSign(keyPair.getPrivate());
+		sig.update(bOut.toByteArray());
+		
 		SignerIdentifier sid = getSignerIdentifier();
 		AlgorithmIdentifier digAlgorithm = getDigestAlgorithm();
-		ASN1Set authenticatedAttributes = getAuthenticatedAttributes();
 		AlgorithmIdentifier digEncryptionAlgorithm = getDigestEncryptionAlgorithm();
-		ASN1OctetString encryptedDigest = getEncryptedDigest();
+		ASN1OctetString encryptedDigest = new DEROctetString(sig.sign());
 		ASN1Set unauthenticatedAttributes = getUnauthenticatedAttributes();
 		
-		return new SignerInfo(sid, digAlgorithm, authenticatedAttributes, digEncryptionAlgorithm, encryptedDigest, unauthenticatedAttributes);
+		return new SignerInfo(sid, digAlgorithm, signedAttr, digEncryptionAlgorithm, encryptedDigest, unauthenticatedAttributes);
 	}
 	
 	private ASN1Set getUnauthenticatedAttributes() {
 		return new DERSet();
 	}
 	
-	private ASN1OctetString getEncryptedDigest() {
+	private ASN1OctetString getEncryptedDigest() throws IOException {
 		try {
-			Signature signature = Signature.getInstance("SHA1withRSA");
-			signature.initSign(keyPair.getPrivate());
+			final MessageDigest digest = MessageDigest.getInstance("SHA1");
+			final Signature sig = Signature.getInstance("SHA1withRSA");
 			
-			signature.update(getContentInfo().getDEREncoded());
-			return new DEROctetString(signature.sign());
+			digest.update(content.getEncoded());
+			byte[] hash = digest.digest();
+			
+			Hashtable table = new Hashtable();
+			table.put(getTransactionId().getAttrType(), getTransactionId());
+			table.put(getMessageType().getAttrType(), getMessageType());
+			Attribute contentAttr = new Attribute(CMSAttributes.contentType, new DERSet(PKCSObjectIdentifiers.data));
+			table.put(contentAttr.getAttrType(), contentAttr);
+			Attribute signingTime = new Attribute(CMSAttributes.signingTime, new DERSet(new Time(new Date())));
+			table.put(signingTime.getAttrType(), signingTime);
+			Attribute hashAttr = new Attribute(CMSAttributes.messageDigest, new DERSet(new DEROctetString(hash)));
+			
+			AttributeTable signed = new AttributeTable(table);
+			ASN1Set signedAttr = new DERSet(signed.toASN1EncodableVector());
+			ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+			DEROutputStream dOut = new DEROutputStream(bOut);
+			dOut.writeObject(signedAttr);
+
+			sig.initSign(keyPair.getPrivate());
+			sig.update(bOut.toByteArray());
+			
+			return new DEROctetString(sig.sign());
+			
 		} catch (GeneralSecurityException e) {
 			throw new RuntimeException(e);
 //		} catch (IOException e) {
