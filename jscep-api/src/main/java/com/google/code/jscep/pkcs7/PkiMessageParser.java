@@ -37,35 +37,35 @@ public class PkiMessageParser {
 	 * @param msgBytes DER-encoded degenerate certificates-only signedData
 	 * @return a new instance of PkiMessage
 	 */
-	public PkiMessage parse(byte[] msgBytes) throws IOException {
+	public PkiMessageImpl parse(byte[] msgBytes) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse");
 
 		final ContentInfo sdContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(msgBytes));
 		final SignedData signedData = SignedData.getInstance((ASN1Sequence) sdContentInfo.getContent());
-		final Set<SignerInfo> signerInfoSet = getSignerInfo(signedData);
+//		final Set<SignerInfo> signerInfoSet = getSignerInfo(signedData);
+//
+//		if (signerInfoSet.size() > 1) {
+//			IOException ioe = new IOException("Too Many SignerInfos");
+//			LOGGER.throwing(getClass().getName(), "parse", ioe);
+//			throw ioe;
+//		}
 
-		if (signerInfoSet.size() > 1) {
-			IOException ioe = new IOException("Too Many SignerInfos");
-			LOGGER.throwing(getClass().getName(), "parse", ioe);
-			throw ioe;
-		}
-
-		final SignerInfo signerInfo = signerInfoSet.iterator().next();
-		final AttributeTable signedAttrs = getAttributeTable(signerInfo);
-		final PkiMessageImpl msg = new PkiMessageImpl();
-		msg.setTransactionId(extractTransactionId(signedAttrs));
+//		final SignerInfo signerInfo = signerInfoSet.iterator().next();
+//		final AttributeTable signedAttrs = getAttributeTable(signerInfo);
+		
+//		final ContentInfo edContentInfo = signedData.getEncapContentInfo();
+//		final DEROctetString octetString = (DEROctetString) edContentInfo.getContent();
+		final PkiMessageImpl msg = new PkiMessageImpl(signedData);
+//		msg.setPkcsPkiEnvelope(parser.parse(octetString.getOctets()));
+//		msg.setTransactionId(extractTransactionId(signedAttrs));
 //		msg.setRecipientNonce(extractRecipientNonce(signedAttrs));
-		msg.setSenderNonce(extractSenderNonce(signedAttrs));
-		msg.setStatus(extractStatus(signedAttrs));
-		msg.setMessageType(extractMessageType(signedAttrs));
-		
-		final ContentInfo edContentInfo = signedData.getEncapContentInfo();
-		final DEROctetString octetString = (DEROctetString) edContentInfo.getContent();
-		msg.setPkcsPkiEnvelope(parser.parse(octetString.getOctets()));
-		
-		if (msg.getStatus() == PkiStatus.FAILURE) {
-			msg.setFailInfo(extractFailInfo(signedAttrs));
-		}
+//		msg.setSenderNonce(extractSenderNonce(signedAttrs));
+//		msg.setStatus(extractStatus(signedAttrs));
+//		msg.setMessageType(extractMessageType(signedAttrs));
+//		
+//		if (msg.getStatus() == PkiStatus.FAILURE) {
+//			msg.setFailInfo(extractFailInfo(signedAttrs));
+//		}
 		
 		LOGGER.exiting(getClass().getName(), "parse", msg);
 		return msg; 
@@ -88,7 +88,7 @@ public class PkiMessageParser {
 	}
 	
 	private TransactionId extractTransactionId(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId);
+		DERObjectIdentifier oid = ScepObjectIdentifiers.transId;
         Attribute transIdAttr = signedAttrs.get(oid);
         DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
         
@@ -121,7 +121,7 @@ public class PkiMessageParser {
 	}
 
 	private PkiStatus extractStatus(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.pkiStatus);
+		DERObjectIdentifier oid = ScepObjectIdentifiers.pkiStatus;
         Attribute attr = signedAttrs.get(oid);
         DERPrintableString pkiStatus = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
 

@@ -76,7 +76,6 @@ public class PkcsPkiEnvelopeParser {
 			
 			final KeyTransRecipientInfo keyTransInfo = (KeyTransRecipientInfo) ri.getInfo();
 			final ASN1OctetString key = keyTransInfo.getEncryptedKey();
-			final AlgorithmIdentifier alg = keyTransInfo.getKeyEncryptionAlgorithm();
 			try {
 				final Cipher cipher = Cipher.getInstance("RSA");
 				cipher.init(Cipher.UNWRAP_MODE, privKey);
@@ -96,7 +95,7 @@ public class PkcsPkiEnvelopeParser {
 			}
 		}
 
-    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl();
+    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(cmsEd);
     	envelope.setMessageData(ci);
     	envelope.setEncoded(envelopeBytes);
     	

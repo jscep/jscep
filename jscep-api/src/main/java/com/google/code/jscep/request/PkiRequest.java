@@ -27,11 +27,12 @@ import java.security.KeyPair;
 
 import com.google.code.jscep.content.CertRepContentHandler;
 import com.google.code.jscep.pkcs7.PkiMessage;
+import com.google.code.jscep.pkcs7.PkiMessageImpl;
 
 /**
  * This class represents a <tt>PkiRequest</tt> request.
  */
-public class PkiRequest implements Request<PkiMessage> {
+public class PkiRequest implements Request<PkiMessageImpl> {
 	private final PkiMessage signedData;
 	private final KeyPair keyPair;
 
