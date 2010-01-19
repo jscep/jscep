@@ -36,10 +36,8 @@ import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelope;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
-import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeImpl;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
-import com.google.code.jscep.pkcs7.PkiMessageImpl;
 import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
@@ -85,7 +83,7 @@ public class Transaction {
 		PkcsPkiEnvelope envelope = envGenerator.generate(op.getMessageData());
 		PkiMessage msg = msgGenerator.generate(envelope);
 		PkiRequest request = new PkiRequest(msg, keyPair);
-		PkiMessageImpl response = transport.sendMessage(request);
+		PkiMessage response = transport.sendMessage(request);
 
 		if (response.getTransactionId().equals(this.transId) == false) {
 			IOException ioe = new IOException("Transaction ID Mismatch: Sent ["
@@ -121,10 +119,9 @@ public class Transaction {
 			LOGGER.throwing(getClass().getName(), "performOperation", rpe);
 			throw rpe;
 		} else {
-			final PkcsPkiEnvelopeImpl env = (PkcsPkiEnvelopeImpl) envGenerator.generate((ASN1Encodable) response.getContent().getEncapContentInfo().getContent());
-			final ASN1Encodable repMsgData = env.getMessageData();
+			final ASN1Encodable repMsgData = response.getPkcsPkiEnvelope().getMessageData();
 			final DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
-			final DegenerateSignedData certRep = parser.parse((ASN1Encodable) env.getContent().getEncryptedContentInfo());
+			final DegenerateSignedData certRep = parser.parse(repMsgData);
 			
 			CertStore cs = certRep.getCertStore();
 			

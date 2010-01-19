@@ -22,53 +22,55 @@
 
 package com.google.code.jscep.pkcs7;
 
-import java.io.IOException;
-
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.EnvelopedData;
-import org.bouncycastle.asn1.cms.SignedData;
-import org.bouncycastle.asn1.cms.SignerInfo;
-
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
-import com.google.code.jscep.transaction.ScepObjectIdentifiers;
 import com.google.code.jscep.transaction.TransactionId;
 
 /**
  * Implementation of {@link PkiMessage} that uses Bouncy Castle.
  */
-public class PkiMessageImpl extends ContentInfo implements PkiMessage {
+class PkiMessageImpl implements PkiMessage {
+	private TransactionId transId;
+	private PkiStatus pkiStatus;
 	private Nonce recipientNonce;
 	private Nonce senderNonce;
 	private FailInfo failInfo;
 	private MessageType msgType;
+	private byte[] encoded;
+	private PkcsPkiEnvelope pkcsPkiEnvelope;
 	
-	PkiMessageImpl(SignedData data) {
-		super(CMSObjectIdentifiers.signedData, data);
+	PkiMessageImpl() {
+		
+	}
+
+	void setPkcsPkiEnvelope(PkcsPkiEnvelope envelope) {
+		this.pkcsPkiEnvelope = envelope;
 	}
 	
-	public PkcsPkiEnvelope getPkcsPkiEnvelope() throws IOException {
-		final EnvelopedData data = (EnvelopedData) getContent().getEncapContentInfo().getContent();
-		
-		return new PkcsPkiEnvelopeImpl(data);
+	public PkcsPkiEnvelope getPkcsPkiEnvelope() {
+		return pkcsPkiEnvelope;
+	}
+	
+	void setFailInfo(FailInfo failInfo) {
+		this.failInfo = failInfo;
 	}
 	
 	public FailInfo getFailInfo() {
 		return failInfo;
 	}
 	
+	void setStatus(PkiStatus status) {
+		this.pkiStatus = status;
+	}
+	
 	public PkiStatus getStatus() {
-		final Attribute attr = getAttributeTable().get(ScepObjectIdentifiers.pkiStatus);
-		final DERPrintableString attrValue = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
-		
-		return PkiStatus.valueOf(Integer.parseInt(attrValue.toString()));
+		return pkiStatus;
+	}
+	
+	void setRecipientNonce(Nonce nonce) {
+		this.recipientNonce = nonce;
 	}
 	
 	public Nonce getRecipientNonce() {
@@ -79,26 +81,31 @@ public class PkiMessageImpl extends ContentInfo implements PkiMessage {
 		return senderNonce;
 	}
 	
+	public void setSenderNonce(Nonce senderNonce) {
+		this.senderNonce = senderNonce;
+	}
+	
+	void setTransactionId(TransactionId transId) {
+		this.transId = transId;
+	}
+	
 	public TransactionId getTransactionId() {
-		final Attribute attr = getAttributeTable().get(ScepObjectIdentifiers.transId);
-		final DERPrintableString attrValue = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
-		
-		return new TransactionId(attrValue.getOctets());
+		return transId;
+	}
+	
+	void setEncoded(byte[] encoded) {
+		this.encoded = encoded;
+	}
+	
+	public byte[] getEncoded() {
+		return encoded;
+	}
+	
+	void setMessageType(MessageType msgType) {
+		this.msgType = msgType;
 	}
 	
 	public MessageType getMessageType() {
 		return msgType;
-	}
-	
-	private SignerInfo getSignerInfo() {
-		return new SignerInfo((ASN1Sequence) getContent().getSignerInfos().getObjectAt(0));
-	}
-	
-	private AttributeTable getAttributeTable() {
-		return new AttributeTable(getSignerInfo().getAuthenticatedAttributes());
-	}
-	
-	public SignedData getContent() {
-		return (SignedData) super.getContent();
 	}
 }

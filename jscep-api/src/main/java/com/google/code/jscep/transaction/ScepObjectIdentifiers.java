@@ -22,8 +22,6 @@
 
 package com.google.code.jscep.transaction;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
-
 /**
  * Object Identifiers used by SCEP
  * 
@@ -37,7 +35,7 @@ public interface ScepObjectIdentifiers {
     /**
 	 * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) pkiStatus(3)
 	 */
-    DERObjectIdentifier pkiStatus = new DERObjectIdentifier("2.16.840.1.113733.1.9.3");
+    String pkiStatus = "2.16.840.1.113733.1.9.3";
     /**
      * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) failInfo(4)
      */
@@ -53,7 +51,7 @@ public interface ScepObjectIdentifiers {
     /**
      * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) transId(7)
      */
-    DERObjectIdentifier transId = new DERObjectIdentifier("2.16.840.1.113733.1.9.7");
+    String transId = "2.16.840.1.113733.1.9.7";
     /**
      * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) pkiStatus(8)
      */

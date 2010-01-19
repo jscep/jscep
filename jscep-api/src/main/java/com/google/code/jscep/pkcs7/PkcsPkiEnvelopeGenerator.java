@@ -81,7 +81,6 @@ public class PkcsPkiEnvelopeGenerator {
 		LOGGER.entering(getClass().getName(), "generate");
 
     	final ContentInfo contentInfo;
-    	final EnvelopedData ed;
 		try {
 			final Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
 			final SecretKey encKey = KeyGenerator.getInstance("DES").generateKey();
@@ -100,7 +99,7 @@ public class PkcsPkiEnvelopeGenerator {
 			recipientInfos.add(keyTrans);
 
 			final EncryptedContentInfo eci = new EncryptedContentInfo(PKCSObjectIdentifiers.data, encAlgId, encContent);
-			ed = new EnvelopedData(null, new DERSet(recipientInfos), eci, null);
+			final EnvelopedData ed = new EnvelopedData(null, new DERSet(recipientInfos), eci, null);
 			contentInfo = new ContentInfo(PKCSObjectIdentifiers.envelopedData, ed);
 			
 		} catch (Exception e) {
@@ -110,7 +109,7 @@ public class PkcsPkiEnvelopeGenerator {
 			throw ioe;
 		}
     	
-    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(ed);
+    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl();
     	envelope.setEncoded(contentInfo.getEncoded());
     	envelope.setMessageData(messageData);
     	

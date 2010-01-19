@@ -22,10 +22,7 @@
 
 package com.google.code.jscep.pkcs7;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
-
-import org.bouncycastle.asn1.cms.SignedData;
 
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
@@ -76,7 +73,7 @@ public interface PkiMessage {
 	 * @throws GeneralSecurityException 
 	 * @throws CMSException 
 	 */
-	PkcsPkiEnvelope getPkcsPkiEnvelope() throws IOException;
+	PkcsPkiEnvelope getPkcsPkiEnvelope();
 	MessageType getMessageType();
-	byte[] getEncoded() throws IOException;
+	byte[] getEncoded();
 }

@@ -30,14 +30,13 @@ import java.util.logging.Logger;
 
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeParser;
 import com.google.code.jscep.pkcs7.PkiMessage;
-import com.google.code.jscep.pkcs7.PkiMessageImpl;
 import com.google.code.jscep.pkcs7.PkiMessageParser;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class handles responses to <tt>PKIRequest</tt> requests.
  */
-public class CertRepContentHandler implements ScepContentHandler<PkiMessageImpl> {
+public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
 	private final KeyPair keyPair;
 	
@@ -49,7 +48,7 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessageImpl>
 	 * {@inheritDoc}
 	 * @throws IOException 
 	 */
-	public PkiMessageImpl getContent(InputStream in, String mimeType) throws IOException {
+	public PkiMessage getContent(InputStream in, String mimeType) throws IOException {
 		LOGGER.entering(getClass().getName(), "getContent");
 		
 		if (mimeType.equals("application/x-pki-message")) {
@@ -62,7 +61,7 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessageImpl>
 
 			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(keyPair.getPrivate());
 			final PkiMessageParser parser = new PkiMessageParser(envelopeParser);
-			final PkiMessageImpl msg = parser.parse(baos.toByteArray());
+			final PkiMessage msg = parser.parse(baos.toByteArray());
 			
 			LOGGER.exiting(getClass().getName(), "getContent", msg);
 			return msg;
