@@ -49,8 +49,6 @@ import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.cms.CMSException;
-
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
 import com.google.code.jscep.operations.PkiOperation;
@@ -76,7 +74,7 @@ public class Client {
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
     
-    public Client(ClientConfiguration config) throws IllegalStateException, IOException, ScepException, CMSException, GeneralSecurityException {
+    public Client(ClientConfiguration config) throws IllegalStateException, IOException, ScepException, GeneralSecurityException {
     	url = config.getUrl();
     	proxy = config.getProxy();
     	caDigest = config.getCaDigest();
