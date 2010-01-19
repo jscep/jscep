@@ -4,7 +4,7 @@
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep</artifactId>
 	<packaging>pom</packaging>
-	<version>0.20.2-SNAPSHOT</version>
+	<version>0.20.2</version>
 	<name>jSCEP</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>

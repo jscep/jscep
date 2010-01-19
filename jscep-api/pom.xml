@@ -4,12 +4,11 @@
 	<parent>
 		<groupId>com.google.code.jscep</groupId>
 		<artifactId>jscep</artifactId>
-		<version>0.20.2-SNAPSHOT</version>
+		<version>0.20.2</version>
 	</parent>
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep-api</artifactId>
 	<packaging>jar</packaging>
-	<version>0.20.2-SNAPSHOT</version>
 	<name>jSCEP API</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>
