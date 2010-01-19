@@ -54,7 +54,7 @@ public class PkiMessageParser {
 		final AttributeTable signedAttrs = getAttributeTable(signerInfo);
 		final PkiMessageImpl msg = new PkiMessageImpl();
 		msg.setTransactionId(extractTransactionId(signedAttrs));
-//		msg.setRecipientNonce(extractRecipientNonce(signedAttrs));
+		msg.setRecipientNonce(extractRecipientNonce(signedAttrs));
 		msg.setSenderNonce(extractSenderNonce(signedAttrs));
 		msg.setStatus(extractStatus(signedAttrs));
 		msg.setMessageType(extractMessageType(signedAttrs));
@@ -88,7 +88,7 @@ public class PkiMessageParser {
 	}
 	
 	private TransactionId extractTransactionId(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.transId);
+		DERObjectIdentifier oid = ScepObjectIdentifiers.transId;
         Attribute transIdAttr = signedAttrs.get(oid);
         DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
         
@@ -97,7 +97,7 @@ public class PkiMessageParser {
 
 	private FailInfo extractFailInfo(AttributeTable signedAttrs) {
 		DERObjectIdentifier oid;
-		oid = new DERObjectIdentifier(ScepObjectIdentifiers.failInfo);
+		oid = ScepObjectIdentifiers.failInfo;
 		Attribute failInfoAttribute = signedAttrs.get(oid);
 		DERPrintableString failInfo = (DERPrintableString) failInfoAttribute.getAttrValues().getObjectAt(0);
 		
@@ -105,7 +105,7 @@ public class PkiMessageParser {
 	}
 
 	private Nonce extractRecipientNonce(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.recipientNonce);
+		DERObjectIdentifier oid = ScepObjectIdentifiers.recipientNonce;
         Attribute recipientNonceAttribute = signedAttrs.get(oid);
         DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
         
@@ -113,7 +113,7 @@ public class PkiMessageParser {
 	}
 	
 	private Nonce extractSenderNonce(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.senderNonce);
+		DERObjectIdentifier oid = ScepObjectIdentifiers.senderNonce;
         Attribute recipientNonceAttribute = signedAttrs.get(oid);
         DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
         
@@ -121,7 +121,7 @@ public class PkiMessageParser {
 	}
 
 	private PkiStatus extractStatus(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.pkiStatus);
+		DERObjectIdentifier oid = ScepObjectIdentifiers.pkiStatus;
         Attribute attr = signedAttrs.get(oid);
         DERPrintableString pkiStatus = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
 
@@ -129,7 +129,7 @@ public class PkiMessageParser {
 	}
 	
 	private MessageType extractMessageType(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = new DERObjectIdentifier(ScepObjectIdentifiers.messageType);
+		DERObjectIdentifier oid = ScepObjectIdentifiers.messageType;
         Attribute msgTypeAttribute = signedAttrs.get(oid);
         DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);
         

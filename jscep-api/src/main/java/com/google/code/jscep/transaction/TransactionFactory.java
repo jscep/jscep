@@ -27,7 +27,6 @@ import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
