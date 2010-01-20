@@ -29,6 +29,11 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.HexEncoder;
+
+import com.google.code.jscep.util.HexUtil;
+
 /**
  * This class represents the various configuration options that can be used to 
  * alter the behaviour of the client.
@@ -178,6 +183,31 @@ public class ClientConfiguration {
 	 */
 	public void setCaDigest(byte[] caDigest) {
 		this.caDigest = caDigest;
+		this.digestAlgorithm = "MD5";
+	}
+	
+	/**
+	 * Set the message digest of the CA certificate.
+	 * <p>
+	 * The digestAlgorithm must be one of <tt>MD5</tt>, <tt>SHA-1</tt>, 
+	 * <tt>SHA-256</tt> or <tt>SHA-512</tt>
+	 * 
+	 * @param caDigest the digest in hex format.
+	 * @param digestAlgorithm the digest algorithm.
+	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
+	 */
+	public void setCaDigest(String caDigest, String digestAlgorithm) {
+		this.caDigest = HexUtil.fromHex(caDigest);
+		this.digestAlgorithm = digestAlgorithm;
+	}
+	
+	/**
+	 * Set the MD5 message digest of the CA certificate.
+	 * 
+	 * @param caDigest the digest in hex format.
+	 */
+	public void setCaDigest(String caDigest) {
+		this.caDigest = HexUtil.fromHex(caDigest);
 		this.digestAlgorithm = "MD5";
 	}
 	

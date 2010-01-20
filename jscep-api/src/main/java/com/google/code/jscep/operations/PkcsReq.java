@@ -30,11 +30,9 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
@@ -44,7 +42,6 @@ import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import com.google.code.jscep.transaction.MessageType;
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the <tt>SCEP</tt> <tt>PKCSReq</tt> <tt>pkiMessage</tt> type.
@@ -52,16 +49,13 @@ import com.google.code.jscep.util.LoggingUtil;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.1">SCEP Internet-Draft Reference</a>
  */
 public class PkcsReq implements PkiOperation<PKCS10CertificationRequest> {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.operations");
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;
-    private final String digestAlgorithm;
 
     public PkcsReq(KeyPair keyPair, X509Certificate identity, String digestAlgorithm, char[] password) {
         this.keyPair = keyPair;
         this.identity = identity;
-        this.digestAlgorithm = digestAlgorithm;
         this.password = password;
     }
 

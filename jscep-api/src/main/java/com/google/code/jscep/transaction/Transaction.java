@@ -73,7 +73,7 @@ public class Transaction {
 	 * @throws RequestPendingException if manual intervention is required.
 	 * @throws EnrollmentFailureException if the request could not be serviced.
 	 */
-	public CertStore performOperation(PkiOperation op) throws IOException, EnrollmentFailureException, RequestPendingException {
+	public <T extends ASN1Encodable> CertStore performOperation(PkiOperation<T> op) throws IOException, EnrollmentFailureException, RequestPendingException {
 		LOGGER.entering(getClass().getName(), "performOperation");
 		
 		msgGenerator.setMessageType(op.getMessageType());

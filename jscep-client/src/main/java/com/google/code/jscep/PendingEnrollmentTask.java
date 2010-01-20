@@ -28,6 +28,7 @@ import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.x509.X509Name;
 
+import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.operations.GetCertInitial;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
@@ -73,7 +74,7 @@ public final class PendingEnrollmentTask extends AbstractEnrollmentTask {
 		final Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, fingerprintAlgorithm);
 		final X509Name issuer = new X509Name(ca.getIssuerX500Principal().getName());
 		final X509Name subject = new X509Name(identity.getSubjectX500Principal().getName());
-		final PkiOperation req = new GetCertInitial(issuer, subject);
+		final PkiOperation<IssuerAndSubject> req = new GetCertInitial(issuer, subject);
 		try {
 			final CertStore store = trans.performOperation(req);
 			

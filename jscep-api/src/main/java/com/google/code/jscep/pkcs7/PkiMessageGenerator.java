@@ -103,14 +103,15 @@ public class PkiMessageGenerator {
 		
 		LOGGER.entering(getClass().getName(), "generate");
 		
-        ContentInfo ci;
+        final ContentInfo ci;
+        final SignedData sd;
 		try {
 			final ASN1Set digestAlgorithms = getDigestAlgorithms();
 			final ContentInfo contentInfo = getContentInfo();
 			final ASN1Set certificates = getCertificates();
 			final ASN1Set crls = getCRLs();
 			final ASN1Set signerInfos = getSignerInfos();
-			final SignedData sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
+			sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
 			
 			ci = new ContentInfo(CMSObjectIdentifiers.signedData, sd);
 		} catch (GeneralSecurityException e) {
@@ -119,13 +120,7 @@ public class PkiMessageGenerator {
 			throw rt;
 		}
     	
-		final PkiMessageImpl msg = new PkiMessageImpl(ci);
-		msg.setMessageType(msgType);
-		msg.setStatus(status); // Reply
-		msg.setFailInfo(failInfo); // Reply
-		msg.setSenderNonce(senderNonce);
-		msg.setRecipientNonce(recipientNonce); // Reply
-		msg.setTransactionId(transId);
+		final PkiMessageImpl msg = new PkiMessageImpl(sd);
 		
 		msg.setPkcsPkiEnvelope(envelope);
 		msg.setEncoded(ci.getEncoded());

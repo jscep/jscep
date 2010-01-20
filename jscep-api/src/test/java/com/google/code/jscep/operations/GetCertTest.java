@@ -16,7 +16,7 @@ import org.junit.Test;
 import com.google.code.jscep.transaction.MessageType;
 
 public class GetCertTest {
-	private PkiOperation fixture;
+	private PkiOperation<IssuerAndSerialNumber> fixture;
 	private X500Principal issuer;
 	private BigInteger serial;
 	

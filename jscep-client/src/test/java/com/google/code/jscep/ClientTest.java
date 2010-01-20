@@ -10,10 +10,9 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
+//@Ignore
 public class ClientTest {
 
 	@Test
@@ -38,7 +37,6 @@ public class ClientTest {
 		config.setSubject(new X500Principal("CN=example.org"));
 		Client client = new Client(config);
 		EnrollmentResult result = client.enroll("INBOUND_TLSuscl99".toCharArray());
-		System.out.println(result.getCertificates());
 	}
 
 }

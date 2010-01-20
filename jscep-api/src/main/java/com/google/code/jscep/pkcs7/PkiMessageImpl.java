@@ -22,8 +22,19 @@
 
 package com.google.code.jscep.pkcs7;
 
-import org.bouncycastle.asn1.cms.ContentInfo;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.cms.SignerInfo;
+
+import com.google.code.jscep.asn1.SCEPObjectIdentifiers;
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
@@ -34,17 +45,27 @@ import com.google.code.jscep.transaction.TransactionId;
  * Implementation of {@link PkiMessage} that uses Bouncy Castle.
  */
 class PkiMessageImpl implements PkiMessage {
-	private TransactionId transId;
-	private PkiStatus pkiStatus;
-	private Nonce recipientNonce;
-	private Nonce senderNonce;
-	private FailInfo failInfo;
-	private MessageType msgType;
 	private byte[] encoded;
 	private PkcsPkiEnvelope pkcsPkiEnvelope;
+	private final SignerInfo signerInfo;
 	
-	PkiMessageImpl(ContentInfo info) {
+	PkiMessageImpl(SignedData signedData) {
+		this.signerInfo = getSignerSet(signedData).iterator().next();
+	}
+	
+	private Set<SignerInfo> getSignerSet(SignedData signedData) {
+		final Set<SignerInfo> set = new HashSet<SignerInfo>();
+		final Enumeration<?> signerInfos = signedData.getSignerInfos().getObjects();
 		
+		while (signerInfos.hasMoreElements()) {
+			set.add(SignerInfo.getInstance(signerInfos.nextElement()));
+		}
+		
+		return set;
+	}
+	
+	private AttributeTable getAttributeTable() {
+		return new AttributeTable(signerInfo.getAuthenticatedAttributes());
 	}
 
 	void setPkcsPkiEnvelope(PkcsPkiEnvelope envelope) {
@@ -55,44 +76,44 @@ class PkiMessageImpl implements PkiMessage {
 		return pkcsPkiEnvelope;
 	}
 	
-	void setFailInfo(FailInfo failInfo) {
-		this.failInfo = failInfo;
-	}
+//	void setFailInfo(FailInfo failInfo) {
+//		this.failInfo = failInfo;
+//	}
 	
 	public FailInfo getFailInfo() {
-		return failInfo;
-	}
-	
-	void setStatus(PkiStatus status) {
-		this.pkiStatus = status;
+		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.failInfo);
+		final DERPrintableString failInfo = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
+		
+		return FailInfo.valueOf(Integer.parseInt(failInfo.getString()));
 	}
 	
 	public PkiStatus getStatus() {
-		return pkiStatus;
+		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.pkiStatus);
+		final DERPrintableString pkiStatus = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
+
+		return PkiStatus.valueOf(Integer.parseInt(pkiStatus.toString()));
 	}
 	
-	void setRecipientNonce(Nonce nonce) {
-		this.recipientNonce = nonce;
+	private Nonce getNonce(DERObjectIdentifier oid) {
+		final Attribute attr = getAttributeTable().get(oid);
+		final DEROctetString nonce = (DEROctetString) attr.getAttrValues().getObjectAt(0);
+
+		return new Nonce(nonce.getOctets());
 	}
 	
 	public Nonce getRecipientNonce() {
-		return recipientNonce;
+		return getNonce(SCEPObjectIdentifiers.recipientNonce);
 	}
 	
 	public Nonce getSenderNonce() {
-		return senderNonce;
-	}
-	
-	public void setSenderNonce(Nonce senderNonce) {
-		this.senderNonce = senderNonce;
-	}
-	
-	void setTransactionId(TransactionId transId) {
-		this.transId = transId;
+		return getNonce(SCEPObjectIdentifiers.senderNonce);
 	}
 	
 	public TransactionId getTransactionId() {
-		return transId;
+		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.transId);
+		DERPrintableString transId = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
+		
+		return new TransactionId(transId.getOctets());
 	}
 	
 	void setEncoded(byte[] encoded) {
@@ -103,11 +124,10 @@ class PkiMessageImpl implements PkiMessage {
 		return encoded;
 	}
 	
-	void setMessageType(MessageType msgType) {
-		this.msgType = msgType;
-	}
-	
 	public MessageType getMessageType() {
-		return msgType;
+		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.messageType);
+		final DERPrintableString msgType = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
+		
+		return MessageType.valueOf(Integer.parseInt(msgType.getString()));
 	}
 }

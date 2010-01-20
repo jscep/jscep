@@ -24,6 +24,7 @@ import com.google.code.jscep.util.LoggingUtil;
 
 public class DegenerateSignedDataParser {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
+
 	public DegenerateSignedData parse(ASN1Encodable signedData) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse");
 		
@@ -32,8 +33,8 @@ public class DegenerateSignedDataParser {
 			assert(ci.getContentType().equals(CMSObjectIdentifiers.signedData));
 			ASN1Sequence seq = (ASN1Sequence) ci.getContent();
 			final CertificateFactory factory = CertificateFactory.getInstance("X.509");
-			SignedData sd = new SignedData(seq);
-			Collection collection = new HashSet<Object>();
+			final SignedData sd = new SignedData(seq);
+			final Collection<Object> collection = new HashSet<Object>();
 			ASN1Set certs = sd.getCertificates();
 			ASN1Set crls = sd.getCRLs();
 			if (certs != null) {

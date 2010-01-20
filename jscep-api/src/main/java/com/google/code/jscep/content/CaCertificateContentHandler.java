@@ -96,6 +96,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			CertStore store = dsd.getCertStore();
 			CertSelector selector = new X509CertSelector();
 			try {
+				@SuppressWarnings("unchecked")
 				Collection<X509Certificate> certsCollection = (Collection<X509Certificate>) store.getCertificates(selector);
 				for (X509Certificate cert : certsCollection) {
 					certs.add(cert);

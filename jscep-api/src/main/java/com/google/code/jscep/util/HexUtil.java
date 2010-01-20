@@ -55,6 +55,32 @@ public final class HexUtil {
 		
 		return hex;
 	}
+	
+	/**
+	 * Converts the given hex string to a byte array.
+	 * 
+	 * @param hex the hex string
+	 * @return a byte array
+	 */
+	public static byte[] fromHex(String hex) {
+		return fromHex(hex.getBytes());
+	}
+	
+	/**
+	 * Converts the given hex array to a byte array
+	 * 
+	 * @param hex the hex array
+	 * @return the byte array
+	 */
+	public static byte[] fromHex(byte[] hex) {
+		byte[] bytes = new byte[hex.length / 2];
+
+		for (int i = 0; i < bytes.length; i++) {
+			int v = i * 2;
+//			bytes[i] = 
+		}
+		return bytes;
+	}
 
 	/**
 	 * Converts the given byte array to a formatted hex

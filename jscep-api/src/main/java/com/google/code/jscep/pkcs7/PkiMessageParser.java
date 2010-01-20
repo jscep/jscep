@@ -8,21 +8,11 @@ import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
 
-import com.google.code.jscep.asn1.SCEPObjectIdentifiers;
-import com.google.code.jscep.transaction.FailInfo;
-import com.google.code.jscep.transaction.MessageType;
-import com.google.code.jscep.transaction.Nonce;
-import com.google.code.jscep.transaction.PkiStatus;
-import com.google.code.jscep.transaction.TransactionId;
 import com.google.code.jscep.util.LoggingUtil;
 
 public class PkiMessageParser {
@@ -50,22 +40,10 @@ public class PkiMessageParser {
 			throw ioe;
 		}
 
-		final SignerInfo signerInfo = signerInfoSet.iterator().next();
-		final AttributeTable signedAttrs = getAttributeTable(signerInfo);
-		final PkiMessageImpl msg = new PkiMessageImpl(sdContentInfo);
-		msg.setTransactionId(extractTransactionId(signedAttrs));
-		msg.setRecipientNonce(extractRecipientNonce(signedAttrs));
-		msg.setSenderNonce(extractSenderNonce(signedAttrs));
-		msg.setStatus(extractStatus(signedAttrs));
-		msg.setMessageType(extractMessageType(signedAttrs));
-		
+		final PkiMessageImpl msg = new PkiMessageImpl(signedData);
 		final ContentInfo edContentInfo = signedData.getEncapContentInfo();
 		final DEROctetString octetString = (DEROctetString) edContentInfo.getContent();
 		msg.setPkcsPkiEnvelope(parser.parse(octetString.getOctets()));
-		
-		if (msg.getStatus() == PkiStatus.FAILURE) {
-			msg.setFailInfo(extractFailInfo(signedAttrs));
-		}
 		
 		LOGGER.exiting(getClass().getName(), "parse", msg);
 		return msg; 
@@ -81,58 +59,5 @@ public class PkiMessageParser {
 		}
 		
 		return set;
-	}
-	
-	private AttributeTable getAttributeTable(SignerInfo signerInfo) {
-		return new AttributeTable(signerInfo.getAuthenticatedAttributes());
-	}
-	
-	private TransactionId extractTransactionId(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = SCEPObjectIdentifiers.transId;
-        Attribute transIdAttr = signedAttrs.get(oid);
-        DERPrintableString transId = (DERPrintableString) transIdAttr.getAttrValues().getObjectAt(0);
-        
-        return new TransactionId(transId.getOctets());
-	}
-
-	private FailInfo extractFailInfo(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid;
-		oid = SCEPObjectIdentifiers.failInfo;
-		Attribute failInfoAttribute = signedAttrs.get(oid);
-		DERPrintableString failInfo = (DERPrintableString) failInfoAttribute.getAttrValues().getObjectAt(0);
-		
-		return FailInfo.valueOf(Integer.parseInt(failInfo.getString()));
-	}
-
-	private Nonce extractRecipientNonce(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = SCEPObjectIdentifiers.recipientNonce;
-        Attribute recipientNonceAttribute = signedAttrs.get(oid);
-        DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
-        
-        return new Nonce(attr.getOctets());
-	}
-	
-	private Nonce extractSenderNonce(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = SCEPObjectIdentifiers.senderNonce;
-        Attribute recipientNonceAttribute = signedAttrs.get(oid);
-        DEROctetString attr = (DEROctetString) recipientNonceAttribute.getAttrValues().getObjectAt(0);
-        
-        return new Nonce(attr.getOctets());
-	}
-
-	private PkiStatus extractStatus(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = SCEPObjectIdentifiers.pkiStatus;
-        Attribute attr = signedAttrs.get(oid);
-        DERPrintableString pkiStatus = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
-
-        return PkiStatus.valueOf(Integer.parseInt(pkiStatus.toString()));
-	}
-	
-	private MessageType extractMessageType(AttributeTable signedAttrs) {
-		DERObjectIdentifier oid = SCEPObjectIdentifiers.messageType;
-        Attribute msgTypeAttribute = signedAttrs.get(oid);
-        DERPrintableString msgType = (DERPrintableString) msgTypeAttribute.getAttrValues().getObjectAt(0);
-        
-        return MessageType.valueOf(Integer.parseInt(msgType.getString()));
 	}
 }
