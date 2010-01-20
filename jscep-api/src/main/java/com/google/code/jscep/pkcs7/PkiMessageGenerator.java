@@ -119,7 +119,7 @@ public class PkiMessageGenerator {
 			throw rt;
 		}
     	
-		final PkiMessageImpl msg = new PkiMessageImpl();
+		final PkiMessageImpl msg = new PkiMessageImpl(ci);
 		msg.setMessageType(msgType);
 		msg.setStatus(status); // Reply
 		msg.setFailInfo(failInfo); // Reply

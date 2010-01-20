@@ -29,7 +29,7 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#appendix-A">SCEP Internet-Draft Reference</a>
  */
-public interface ScepObjectIdentifiers {
+public interface SCEPObjectIdentifiers {
 	/**
 	 * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) messageType(2)
 	 */

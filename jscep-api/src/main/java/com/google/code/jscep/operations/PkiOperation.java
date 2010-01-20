@@ -34,7 +34,7 @@ import com.google.code.jscep.transaction.MessageType;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
  */
-public interface PkiOperation {
+public interface PkiOperation<T extends ASN1Encodable> {
 	/**
 	 * Returns the message type for this operation.
 	 * 
@@ -48,5 +48,5 @@ public interface PkiOperation {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws GeneralSecurityException if any security error occurs.
 	 */
-    ASN1Encodable getMessageData() throws IOException;
+    T getMessageData() throws IOException;
 }

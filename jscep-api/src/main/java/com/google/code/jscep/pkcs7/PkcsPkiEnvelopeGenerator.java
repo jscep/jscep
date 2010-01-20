@@ -109,7 +109,7 @@ public class PkcsPkiEnvelopeGenerator {
 			throw ioe;
 		}
     	
-    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl();
+    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(contentInfo);
     	envelope.setEncoded(contentInfo.getEncoded());
     	envelope.setMessageData(messageData);
     	

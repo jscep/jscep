@@ -35,7 +35,7 @@ import com.google.code.jscep.transaction.MessageType;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.3">SCEP Internet-Draft Reference</a>
  */
-public class GetCertInitial implements PkiOperation {
+public class GetCertInitial implements PkiOperation<IssuerAndSubject> {
 	private final X509Name issuer;
     private final X509Name subject;
 
@@ -56,7 +56,7 @@ public class GetCertInitial implements PkiOperation {
      * 
      * @return the IssuerAndSubject.
      */
-	public ASN1Encodable getMessageData() throws IOException {
+	public IssuerAndSubject getMessageData() throws IOException {
 		return new IssuerAndSubject(issuer, subject);
 	}
 }

@@ -51,7 +51,7 @@ import com.google.code.jscep.util.LoggingUtil;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.1">SCEP Internet-Draft Reference</a>
  */
-public class PkcsReq implements PkiOperation {
+public class PkcsReq implements PkiOperation<PKCS10CertificationRequest> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.operations");
     private final X509Certificate identity;
     private final char[] password;
@@ -78,7 +78,7 @@ public class PkcsReq implements PkiOperation {
      * @return the Certification Request
      * @see <a href="http://tools.ietf.org/html/rfc2986">RFC 2986</a>
      */
-    public ASN1Encodable getMessageData() throws IOException {
+    public PKCS10CertificationRequest getMessageData() throws IOException {
     	X500Principal subject = identity.getSubjectX500Principal();
     	PublicKey pub = keyPair.getPublic();
 		PrivateKey priv = keyPair.getPrivate();

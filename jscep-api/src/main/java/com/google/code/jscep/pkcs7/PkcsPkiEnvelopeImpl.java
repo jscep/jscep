@@ -23,6 +23,7 @@
 package com.google.code.jscep.pkcs7;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.cms.ContentInfo;
 
 
 /**
@@ -31,6 +32,10 @@ import org.bouncycastle.asn1.ASN1Encodable;
 class PkcsPkiEnvelopeImpl implements PkcsPkiEnvelope {
 	private ASN1Encodable msgData;
 	private byte[] encoded;
+	
+	public PkcsPkiEnvelopeImpl(ContentInfo info) {
+		
+	}
 	
 	void setMessageData(ASN1Encodable msgData) {
 		this.msgData = msgData;

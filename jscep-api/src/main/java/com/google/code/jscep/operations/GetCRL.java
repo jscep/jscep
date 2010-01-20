@@ -39,7 +39,7 @@ import com.google.code.jscep.transaction.MessageType;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.5">SCEP Internet-Draft Reference</a>
  */
-public class GetCRL implements PkiOperation {
+public class GetCRL implements PkiOperation<IssuerAndSerialNumber> {
     private final X500Principal issuer;
     private final BigInteger serial;
 
@@ -61,8 +61,7 @@ public class GetCRL implements PkiOperation {
      * @return the IssuerAndSerialNumber.
      * @see <a href="http://tools.ietf.org/html/rfc2315#section-6.7">SCEP Internet-Draft Reference</a>
      */
-	public ASN1Encodable getMessageData() throws IOException {
-    	// TODO: BC Dependency
+	public IssuerAndSerialNumber getMessageData() throws IOException {
         X509Name issuerName = new X509Principal(issuer.getEncoded());
 
         return new IssuerAndSerialNumber(issuerName, serial);

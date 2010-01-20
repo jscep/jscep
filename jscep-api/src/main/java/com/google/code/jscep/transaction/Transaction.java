@@ -122,8 +122,7 @@ public class Transaction {
 			final ASN1Encodable repMsgData = response.getPkcsPkiEnvelope().getMessageData();
 			final DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
 			final DegenerateSignedData certRep = parser.parse(repMsgData);
-			
-			CertStore cs = certRep.getCertStore();
+			final CertStore cs = certRep.getCertStore();
 			
 			LOGGER.exiting(getClass().getName(), "performOperation", cs);
 			return cs;

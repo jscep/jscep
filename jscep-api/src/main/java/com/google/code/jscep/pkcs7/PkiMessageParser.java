@@ -52,7 +52,7 @@ public class PkiMessageParser {
 
 		final SignerInfo signerInfo = signerInfoSet.iterator().next();
 		final AttributeTable signedAttrs = getAttributeTable(signerInfo);
-		final PkiMessageImpl msg = new PkiMessageImpl();
+		final PkiMessageImpl msg = new PkiMessageImpl(sdContentInfo);
 		msg.setTransactionId(extractTransactionId(signedAttrs));
 		msg.setRecipientNonce(extractRecipientNonce(signedAttrs));
 		msg.setSenderNonce(extractSenderNonce(signedAttrs));

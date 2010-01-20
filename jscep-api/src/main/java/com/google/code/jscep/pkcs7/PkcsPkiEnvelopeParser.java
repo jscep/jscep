@@ -95,7 +95,7 @@ public class PkcsPkiEnvelopeParser {
 			}
 		}
 
-    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl();
+    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(envInfo);
     	envelope.setMessageData(ci);
     	envelope.setEncoded(envelopeBytes);
     	

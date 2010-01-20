@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.pkcs7;
 
+import org.bouncycastle.asn1.cms.ContentInfo;
+
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
@@ -41,7 +43,7 @@ class PkiMessageImpl implements PkiMessage {
 	private byte[] encoded;
 	private PkcsPkiEnvelope pkcsPkiEnvelope;
 	
-	PkiMessageImpl() {
+	PkiMessageImpl(ContentInfo info) {
 		
 	}
 
