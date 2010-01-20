@@ -74,7 +74,7 @@ public class Client {
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
     
-    public Client(ClientConfiguration config) throws IllegalStateException, IOException, ScepException, GeneralSecurityException {
+    public Client(ClientConfiguration config) throws IllegalStateException, IOException, GeneralSecurityException {
     	url = config.getUrl();
     	proxy = config.getProxy();
     	caDigest = config.getCaDigest();
@@ -208,7 +208,7 @@ public class Client {
     	LOGGER.fine("Creating Self-Signed Certificate for " + subject);
     	
     	try {
-    		return X509CertificateFactory.createCertificate(subject, keyPair);
+    		return X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
