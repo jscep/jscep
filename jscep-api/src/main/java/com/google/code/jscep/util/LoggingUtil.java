@@ -26,13 +26,39 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * This class provides logging facilities.
+ */
 public final class LoggingUtil {
 	private static Map<String, Logger> cache = new HashMap<String, Logger>();
 
+	/**
+	 * Prevent Instantiation
+	 */
+	private LoggingUtil() {
+	}
+	
+	/**
+	 * Returns a logger for the given class.
+	 * 
+	 * @param type the logger.
+	 * @return a logger for the given class.
+	 */
 	public static Logger getLogger(Class<?> type) {
 		return getLogger(type.getPackage().getName());
 	}
-	
+
+	/**
+	 * Returns a logger for the given package name.
+	 * <p>
+	 * This method returns a logger configured with a resource
+	 * bundle for the given package.  Loggers are cached, so 
+	 * calling this method repeatedly with the same package name
+	 * will yield the same logger.
+	 * 
+	 * @param packageName the package name.
+	 * @return a logger for the given package name.
+	 */
 	public static Logger getLogger(String packageName) {
 		if (cache.containsKey(packageName) == false) {
 			cache.put(packageName, Logger.getLogger(packageName, packageName + ".messages"));

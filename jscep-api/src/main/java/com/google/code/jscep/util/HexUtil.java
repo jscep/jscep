@@ -22,14 +22,27 @@
 
 package com.google.code.jscep.util;
 
+/**
+ * This class provides utilities for converting between byte
+ * arrays and hexadecimal strings.
+ */
 public final class HexUtil {
 	static final byte[] HEX_CHAR_TABLE = {
 	    (byte)'0', (byte)'1', (byte)'2', (byte)'3',
 	    (byte)'4', (byte)'5', (byte)'6', (byte)'7',
 	    (byte)'8', (byte)'9', (byte)'A', (byte)'B',
 	    (byte)'C', (byte)'D', (byte)'E', (byte)'F'
-	  };   
+	  };
 	
+	private HexUtil() {
+	}
+	
+	/**
+	 * Converts the given byte array to an array of hex characters.
+	 * 
+	 * @param bytes the byte array to convert.
+	 * @return an array of hex characters.
+	 */
 	public static byte[] toHex(byte[] bytes) {
 		byte[] hex = new byte[2 * bytes.length];
 		int index = 0;
@@ -42,11 +55,25 @@ public final class HexUtil {
 		
 		return hex;
 	}
-	
+
+	/**
+	 * Converts the given byte array to a formatted hex
+	 * string.
+	 * 
+	 * @param bytes the byte array.
+	 * @return the formatted string.
+	 */
 	public static String format(byte[] bytes) {
 		return formatHex(toHex(bytes));
 	}
 
+	/**
+	 * Converts the given byte array of hex characters 
+	 * to a formatted string.
+
+	 * @param hex the byte array.
+	 * @return the formatted string.
+	 */
 	public static String formatHex(byte[] hex) {
 		StringBuilder sb = new StringBuilder();
 		String s = new String(hex).toUpperCase();
