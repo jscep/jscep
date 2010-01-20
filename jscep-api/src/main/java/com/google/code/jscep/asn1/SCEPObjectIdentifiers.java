@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.transaction;
+package com.google.code.jscep.asn1;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
 

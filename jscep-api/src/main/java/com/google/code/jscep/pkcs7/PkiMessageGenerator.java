@@ -39,11 +39,11 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.asn1.x509.X509Name;
 
+import com.google.code.jscep.asn1.SCEPObjectIdentifiers;
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
-import com.google.code.jscep.transaction.ScepObjectIdentifiers;
 import com.google.code.jscep.transaction.TransactionId;
 import com.google.code.jscep.util.LoggingUtil;
 
@@ -223,7 +223,7 @@ public class PkiMessageGenerator {
 	}
 	
 	private Attribute getMessageType() {
-		final DERObjectIdentifier attrType = ScepObjectIdentifiers.messageType;
+		final DERObjectIdentifier attrType = SCEPObjectIdentifiers.messageType;
     	final ASN1Set attr = new DERSet(new DERPrintableString(Integer.toString(msgType.getValue())));
     	
         return new Attribute(attrType, attr);
@@ -238,14 +238,14 @@ public class PkiMessageGenerator {
 	}
 	
 	private Attribute getSenderNonce() {
-		final DERObjectIdentifier attrType = ScepObjectIdentifiers.senderNonce;
+		final DERObjectIdentifier attrType = SCEPObjectIdentifiers.senderNonce;
     	final ASN1Set attr = new DERSet(new DEROctetString(senderNonce.getBytes()));
     	
         return new Attribute(attrType, attr);
 	}
 	
 	private Attribute getTransactionId() {
-		final DERObjectIdentifier attrType = ScepObjectIdentifiers.transId;
+		final DERObjectIdentifier attrType = SCEPObjectIdentifiers.transId;
 		final ASN1Set attrValues = new DERSet(new DERPrintableString(transId.getBytes()));
 		
 		return new Attribute(attrType, attrValues);
@@ -282,16 +282,16 @@ public class PkiMessageGenerator {
 	private Attribute getFailInfo() {
 		DERPrintableString attr = new DERPrintableString(Integer.toString(failInfo.getValue()));
 
-		return new Attribute(ScepObjectIdentifiers.failInfo, new DERSet(attr));
+		return new Attribute(SCEPObjectIdentifiers.failInfo, new DERSet(attr));
 	}
 	
 	private Attribute getStatus() {
 		DERPrintableString attr = new DERPrintableString(Integer.toString(status.getValue()));
 
-		return new Attribute(ScepObjectIdentifiers.pkiStatus, new DERSet(attr));
+		return new Attribute(SCEPObjectIdentifiers.pkiStatus, new DERSet(attr));
 	}
 	
 	 private Attribute getRecipientNonce() {
-		 return new Attribute(ScepObjectIdentifiers.recipientNonce, new DERSet(new DEROctetString(recipientNonce.getBytes())));
+		 return new Attribute(SCEPObjectIdentifiers.recipientNonce, new DERSet(new DEROctetString(recipientNonce.getBytes())));
 	 }
 }
