@@ -20,7 +20,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.code.jscep.X509CertificateFactory;
-import com.google.code.jscep.transaction.CmsException;
 
 public class PkcsPkiEnvelopeTest {
 	private ASN1Encodable msgData;
@@ -52,7 +51,7 @@ public class PkcsPkiEnvelopeTest {
 	}
 	
 	@Test
-	public void testGetCertStore() throws NoSuchProviderException, NoSuchAlgorithmException, CmsException {
+	public void testGetCertStore() throws NoSuchProviderException, NoSuchAlgorithmException {
 		Assert.assertEquals(msgData, fixture.getMessageData());
 	}
 

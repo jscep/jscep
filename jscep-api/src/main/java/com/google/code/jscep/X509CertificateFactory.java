@@ -35,8 +35,26 @@ import org.bouncycastle.x509.X509V1CertificateGenerator;
 
 import com.google.code.jscep.util.LoggingUtil;
 
+/**
+ * This class is used for generating ephemeral certificates.
+ */
 public final class X509CertificateFactory {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
+	
+	private X509CertificateFactory() {
+	}
+
+	/**
+	 * Creates a self-signed ephemeral certificate.
+	 * <p> 
+	 * The resulting certificate will have a not-before date
+	 * of yesterday, and not-after date of tomorrow.
+	 * 
+	 * @param subject the subject to certify.
+	 * @param keyPair the key pair to sign the certificate with.
+	 * @return new certificate.
+	 * @throws GeneralSecurityException
+	 */
 	public static X509Certificate createEphemeralCertificate(X500Principal subject, KeyPair keyPair) throws GeneralSecurityException {
 		LOGGER.entering(X509CertificateFactory.class.getName(), "createCertificate");
 		final Calendar cal = Calendar.getInstance();
