@@ -37,7 +37,7 @@ import com.google.code.jscep.util.LoggingUtil;
 
 public final class X509CertificateFactory {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
-	public static X509Certificate createCertificate(X500Principal subject, KeyPair keyPair) throws GeneralSecurityException {
+	public static X509Certificate createEphemeralCertificate(X500Principal subject, KeyPair keyPair) throws GeneralSecurityException {
 		LOGGER.entering(X509CertificateFactory.class.getName(), "createCertificate");
 		final Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);

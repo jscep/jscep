@@ -79,7 +79,7 @@ public class CaCertificateContentHandlerTest {
 	private X509Certificate getCertificate() throws Exception {
 		X500Principal subject = new X500Principal("CN=example.org");
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
-		X509Certificate cert = X509CertificateFactory.createCertificate(subject, keyPair);
+		X509Certificate cert = X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
 		
 		return cert;
 	}

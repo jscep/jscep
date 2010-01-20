@@ -37,7 +37,7 @@ public class PkcsPkiEnvelopeTest {
 		
 		final KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
 		final X500Principal subject = new X500Principal("CN=example.org");
-		final X509Certificate cert = X509CertificateFactory.createCertificate(subject, keyPair);
+		final X509Certificate cert = X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
 
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
 		envGenerator.setCipherAlgorithm(getCipherAlgorithm());
