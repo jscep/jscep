@@ -171,7 +171,9 @@ public class PkiMessageGenerator {
 	}
 	
 	private SignerInfo getSignerInfo() throws IOException, GeneralSecurityException {
+		// TODO: Hardcoded Algorithm
 		final MessageDigest digest = MessageDigest.getInstance("SHA1");
+		// TODO: Hardcoded Algorithm
 		final Signature sig = Signature.getInstance("SHA1withRSA");
 		
 		digest.update(content.getEncoded());

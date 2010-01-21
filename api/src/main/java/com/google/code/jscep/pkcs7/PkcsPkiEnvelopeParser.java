@@ -77,14 +77,17 @@ public class PkcsPkiEnvelopeParser {
 			final KeyTransRecipientInfo keyTransInfo = (KeyTransRecipientInfo) ri.getInfo();
 			final ASN1OctetString key = keyTransInfo.getEncryptedKey();
 			try {
+				// TODO: Hardcoded Algorithm
 				final Cipher cipher = Cipher.getInstance("RSA");
 				cipher.init(Cipher.UNWRAP_MODE, privKey);
+				// TODO: Hardcoded Algorithm
 				final Key secretKey = cipher.unwrap(key.getOctets(), "DES", Cipher.SECRET_KEY);
 				
 				final ASN1Object params = (ASN1Object) algId.getParameters();
 				AlgorithmParameters algParams = AlgorithmParameters.getInstance("DES");
 				algParams.init(params.getEncoded());
 				
+				// TODO: Hardcoded Algorithm
 				final Cipher msgCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
 				msgCipher.init(Cipher.DECRYPT_MODE, secretKey, algParams);
 				final byte[] content = msgCipher.doFinal(ec.getOctets());

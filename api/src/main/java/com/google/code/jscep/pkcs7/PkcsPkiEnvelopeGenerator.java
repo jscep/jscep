@@ -62,6 +62,7 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 
+import com.google.code.jscep.util.AlgorithmDictionary;
 import com.google.code.jscep.util.LoggingUtil;
 
 public class PkcsPkiEnvelopeGenerator {
@@ -82,7 +83,8 @@ public class PkcsPkiEnvelopeGenerator {
 
     	final ContentInfo contentInfo;
 		try {
-			final Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
+			final Cipher cipher = Cipher.getInstance(AlgorithmDictionary.lookup(cipherAlgorithm));
+			// TODO: Hardcoded Algorithm
 			final SecretKey encKey = KeyGenerator.getInstance("DES").generateKey();
 			final AlgorithmParameters params = generateParameters();
 			final AlgorithmIdentifier encAlgId = getAlgorithmIdentifier(cipherAlgorithm.getObjectId(), params);
@@ -122,6 +124,7 @@ public class PkcsPkiEnvelopeGenerator {
 		final SecureRandom rnd = new SecureRandom();
 		rnd.nextBytes(iv);
 		
+		// TODO: Hardcoded Algorithm
 		final AlgorithmParameters params = AlgorithmParameters.getInstance("DES");
 		params.init(new IvParameterSpec(iv));
 		
@@ -141,6 +144,7 @@ public class PkcsPkiEnvelopeGenerator {
 		AlgorithmIdentifier keyEncAlg = tbs.getSubjectPublicKeyInfo().getAlgorithmId();
 
 		ASN1OctetString encKey;
+		// TODO: Hardcoded Algorithm
 		Cipher keyCipher = Cipher.getInstance("RSA");
 		keyCipher.init(Cipher.WRAP_MODE, pubKey);
 		encKey = new DEROctetString(keyCipher.wrap(key));

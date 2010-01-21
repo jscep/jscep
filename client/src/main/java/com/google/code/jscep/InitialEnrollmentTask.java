@@ -30,7 +30,7 @@ import java.security.cert.X509Certificate;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.x509.X509CertStoreSelector;
 
 import com.google.code.jscep.operations.PkcsReq;
@@ -78,7 +78,7 @@ public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 	@Override
 	public EnrollmentResult call() throws IOException {
 		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, digestAlgorithm);
-		PkiOperation<PKCS10CertificationRequest> req = new PkcsReq(keyPair, identity, digestAlgorithm, password);
+		PkiOperation<CertificationRequest> req = new PkcsReq(keyPair, identity, digestAlgorithm, password);
 		try {
 			CertStore store = trans.performOperation(req);
 			

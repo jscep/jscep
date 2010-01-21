@@ -29,9 +29,6 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.util.encoders.Hex;
-import org.bouncycastle.util.encoders.HexEncoder;
-
 import com.google.code.jscep.util.HexUtil;
 
 /**

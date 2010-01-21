@@ -59,12 +59,10 @@ public final class TransactionFactory {
 	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String fingerprintAlgorithm) {
 		LOGGER.entering(TransactionFactory.class.getName(), "createTransaction");
 		
-		// TODO: Don't hardcode DES
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
 		envGenerator.setCipherAlgorithm(getCipherAlgorithm());
 		envGenerator.setRecipient(ca);
 
-		// TODO: Don't hardcode SHA-1
 		final PkiMessageGenerator msgGenerator = new PkiMessageGenerator();
 		msgGenerator.setDigest(getDigestAlgorithm());
 		msgGenerator.setIdentity(identity);
@@ -77,12 +75,12 @@ public final class TransactionFactory {
 	}
 	
 	private static AlgorithmIdentifier getCipherAlgorithm() {
-		// DES
+		// TODO: Hardcoded Algoritm
 		return new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.7"));
 	}
 	
 	private static AlgorithmIdentifier getDigestAlgorithm() {
-		// SHA-1
+		// TODO: Hardcoded Algoritm
 		return new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.26"));
 	}
 }

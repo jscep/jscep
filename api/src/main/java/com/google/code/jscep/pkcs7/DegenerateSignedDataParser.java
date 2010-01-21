@@ -32,6 +32,7 @@ public class DegenerateSignedDataParser {
 			ContentInfo ci = ContentInfo.getInstance(signedData);
 			assert(ci.getContentType().equals(CMSObjectIdentifiers.signedData));
 			ASN1Sequence seq = (ASN1Sequence) ci.getContent();
+			// TODO: Hardcoded Algorithm
 			final CertificateFactory factory = CertificateFactory.getInstance("X.509");
 			final SignedData sd = new SignedData(seq);
 			final Collection<Object> collection = new HashSet<Object>();
