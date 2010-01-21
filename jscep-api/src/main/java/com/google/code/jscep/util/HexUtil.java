@@ -77,7 +77,10 @@ public final class HexUtil {
 
 		for (int i = 0; i < bytes.length; i++) {
 			int v = i * 2;
-//			bytes[i] = 
+			int b = Character.digit(hex[v], 16) << 4;
+			b = b | Character.digit(hex[v + 1], 16);
+			
+			bytes[i] = (byte) (b & 0xFF);
 		}
 		return bytes;
 	}
