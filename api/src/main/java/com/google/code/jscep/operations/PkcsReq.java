@@ -41,6 +41,7 @@ import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 
+import com.google.code.jscep.pkcs9.ChallengePassword;
 import com.google.code.jscep.transaction.MessageType;
 
 /**
@@ -76,20 +77,9 @@ public class PkcsReq implements PkiOperation<PKCS10CertificationRequest> {
     	X500Principal subject = identity.getSubjectX500Principal();
     	PublicKey pub = keyPair.getPublic();
 		PrivateKey priv = keyPair.getPrivate();
-		
-		Set<DEREncodable> attrs = new HashSet<DEREncodable>();
-		DERObjectIdentifier objectId = new DERObjectIdentifier("1.2.840.113549.1.9.7");
-		ASN1EncodableVector attrValues = new ASN1EncodableVector();
-		attrValues.add(new DERUTF8String(new String(password)));
-		ASN1EncodableVector attrVector = new ASN1EncodableVector();
-        attrVector.add(objectId);
-        attrVector.add(new DERSet(attrValues));
-        attrs.add(new DERSequence(attrVector));
         
-		ASN1EncodableVector v = new ASN1EncodableVector();
-		for (DEREncodable attr : attrs) {
-			v.add(attr);
-		}
+		final ASN1EncodableVector v = new ASN1EncodableVector();
+		v.add(new ChallengePassword(new String(password)));
 		DERSet set = new DERSet(v);
 		
 		try {
