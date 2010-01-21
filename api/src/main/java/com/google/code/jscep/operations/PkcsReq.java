@@ -22,24 +22,24 @@
 
 package com.google.code.jscep.operations;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.Signature;
 import java.security.cert.X509Certificate;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.DEREncodable;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.DERUTF8String;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.asn1.pkcs.CertificationRequest;
+import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x509.X509Name;
 
 import com.google.code.jscep.pkcs9.ChallengePassword;
 import com.google.code.jscep.transaction.MessageType;
@@ -49,7 +49,7 @@ import com.google.code.jscep.transaction.MessageType;
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.1">SCEP Internet-Draft Reference</a>
  */
-public class PkcsReq implements PkiOperation<PKCS10CertificationRequest> {
+public class PkcsReq implements PkiOperation<CertificationRequest> {
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;
@@ -73,19 +73,46 @@ public class PkcsReq implements PkiOperation<PKCS10CertificationRequest> {
      * @return the Certification Request
      * @see <a href="http://tools.ietf.org/html/rfc2986">RFC 2986</a>
      */
-    public PKCS10CertificationRequest getMessageData() throws IOException {
-    	X500Principal subject = identity.getSubjectX500Principal();
-    	PublicKey pub = keyPair.getPublic();
-		PrivateKey priv = keyPair.getPrivate();
-        
-		final ASN1EncodableVector v = new ASN1EncodableVector();
-		v.add(new ChallengePassword(new String(password)));
-		DERSet set = new DERSet(v);
-		
+    public CertificationRequest getMessageData() throws IOException {
 		try {
-			return new PKCS10CertificationRequest("SHA1withRSA", subject, pub, set, priv, "SunRsaSign");
+			final CertificationRequestInfo info = getCertificationRequestInfo();
+			return new CertificationRequest(info, getSignatureAlgorithm(), sign(info));
+			
 		} catch (GeneralSecurityException e) {
 			throw new IOException(e);
 		}
+    }
+    
+    private CertificationRequestInfo getCertificationRequestInfo() throws IOException {
+		return new CertificationRequestInfo(getSubject(), getPublicKeyInfo(), getAttributes());
+    }
+
+	private X509Name getSubject() {
+		return new X509Name(identity.getSubjectX500Principal().getName());
+	}
+
+	private DERSet getAttributes() {
+		final ASN1EncodableVector v = new ASN1EncodableVector();
+		v.add(new ChallengePassword(new String(password)));
+		
+		return new DERSet(v);
+	}
+    
+    private DERBitString sign(CertificationRequestInfo info) throws GeneralSecurityException {
+    	Signature signature = Signature.getInstance("SHA1withRSA");
+    	signature.initSign(keyPair.getPrivate());
+    	
+    	return new DERBitString(signature.sign());
+    }
+    
+    private SubjectPublicKeyInfo getPublicKeyInfo() throws IOException {
+    	final ByteArrayInputStream bIn = new ByteArrayInputStream(keyPair.getPublic().getEncoded());
+		final ASN1InputStream dIn = new ASN1InputStream(bIn);
+		
+    	return new SubjectPublicKeyInfo((ASN1Sequence) dIn.readObject());
+    }
+    
+    private AlgorithmIdentifier getSignatureAlgorithm() {
+    	return new AlgorithmIdentifier(PKCSObjectIdentifiers.sha1WithRSAEncryption);
     }
 }
