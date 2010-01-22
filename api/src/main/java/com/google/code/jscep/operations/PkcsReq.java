@@ -121,4 +121,8 @@ public class PkcsReq implements PkiOperation<CertificationRequest> {
     private AlgorithmIdentifier getSignatureAlgorithm() {
     	return new AlgorithmIdentifier(signatureAlgorithm);
     }
+    
+    public String toString() {
+    	return "PKCSReq";
+    }
 }

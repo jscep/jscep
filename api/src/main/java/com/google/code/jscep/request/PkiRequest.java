@@ -60,4 +60,9 @@ public class PkiRequest implements Request<PkiMessage> {
 	public CertRepContentHandler getContentHandler() {
 		return new CertRepContentHandler(keyPair);
 	}
+	
+	@Override
+	public String toString() {
+		return signedData.toString();
+	}
 }

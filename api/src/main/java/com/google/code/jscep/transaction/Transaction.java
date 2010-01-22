@@ -76,7 +76,7 @@ public class Transaction {
 	 * @throws EnrollmentFailureException if the request could not be serviced.
 	 */
 	public <T extends ASN1Encodable> CertStore performOperation(PkiOperation<T> op) throws IOException, EnrollmentFailureException, RequestPendingException {
-		LOGGER.entering(getClass().getName(), "performOperation");
+		LOGGER.entering(getClass().getName(), "performOperation", op);
 		
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(senderNonce);

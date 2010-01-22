@@ -58,4 +58,9 @@ public class GetCertInitial implements PkiOperation<IssuerAndSubject> {
 	public IssuerAndSubject getMessageData() throws IOException {
 		return new IssuerAndSubject(issuer, subject);
 	}
+	
+	@Override
+	public String toString() {
+		return "GetCertInitial";
+	}
 }
