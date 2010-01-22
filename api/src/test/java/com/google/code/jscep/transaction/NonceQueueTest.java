@@ -35,7 +35,7 @@ public class NonceQueueTest {
 
 	@Test
 	public void testOffer() {
-		Assert.assertFalse(queue.offer(nonce));
+		Assert.assertTrue(queue.offer(nonce));
 		Assert.assertEquals(SIZE, queue.size());
 	}
 

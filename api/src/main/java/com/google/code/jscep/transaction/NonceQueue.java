@@ -39,13 +39,9 @@ public class NonceQueue extends AbstractQueue<Nonce> {
 	 * Inserts the specified nonce into this queue if possible.
 	 * <p>
 	 * This queue will maintain a fixed size, pushing out the oldest
-	 * nonce first.  If this nonce is already in the queue (a replay)
-	 * this method will return false.
+	 * nonce first, so this method will always return true.
 	 */
 	public boolean offer(Nonce nonce) {
-		if (backingQueue.contains(nonce)) {
-			return false;
-		}
 		if (size() == size) {
 			backingQueue.poll();
 		}

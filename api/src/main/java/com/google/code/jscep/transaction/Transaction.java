@@ -57,7 +57,6 @@ public class Transaction {
 	private final Transport transport;
 	private final PkcsPkiEnvelopeGenerator envGenerator;
 	private final PkiMessageGenerator msgGenerator;
-	private final Set<Nonce> previousNonces = new HashSet<Nonce>();
 
 	Transaction(Transport transport, KeyPair keyPair, PkcsPkiEnvelopeGenerator envGenerator, PkiMessageGenerator msgGenerator, String digestAlgorithm) {
 		this.transport = transport;
@@ -100,14 +99,20 @@ public class Transaction {
 
 		// The requester SHOULD verify that the recipientNonce of the reply
 		// matches the senderNonce it sent in the request.
-		assert(response.getRecipientNonce().equals(senderNonce));
+		if (response.getRecipientNonce().equals(senderNonce) == false) {
+			throw new InvalidNonceException("Response recipient nonce and request sender nonce are not equal");
+		}
 
-		// TODO: Detect replay attacks.
-		// 
 		// http://tools.ietf.org/html/draft-nourse-scep-20#section-8.5
-		// Check the nonce has not been encountered before.
-		assert(QUEUE.offer(response.getSenderNonce()));
+		// Check that the nonce has not been encountered before.
+		if (QUEUE.contains(response.getSenderNonce())) {
+			throw new InvalidNonceException("This nonce has been encountered before.  Possible replay attack?");
+		} else {
+			QUEUE.offer(response.getSenderNonce());
+		}
 
+		// TODO: Need to add some tests here to ensure that
+		// the response has no envelope (see section 3). 
 		if (response.getStatus().equals(PkiStatus.FAILURE)) {
 			EnrollmentFailureException efe = new EnrollmentFailureException(response.getFailInfo().toString());
 			
