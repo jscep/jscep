@@ -33,7 +33,6 @@ import org.bouncycastle.asn1.cms.ContentInfo;
  */
 class PkcsPkiEnvelopeImpl implements PkcsPkiEnvelope {
 	private ASN1Encodable msgData;
-	private byte[] encoded;
 	private final ContentInfo info;
 	
 	public PkcsPkiEnvelopeImpl(ContentInfo info) {
