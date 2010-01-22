@@ -1,5 +1,7 @@
 package com.google.code.jscep.pkcs7;
 
+import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 
 public class MessageData {
@@ -11,6 +13,12 @@ public class MessageData {
 	
 	public ContentInfo getContent() {
 		return contentInfo;
+	}
+	
+	public static MessageData getInstance(DEREncodable content) {
+		ContentInfo info = new ContentInfo(CMSObjectIdentifiers.data, content);
+		
+		return new MessageData(info);
 	}
 	
 	@Override

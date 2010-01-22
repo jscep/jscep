@@ -117,7 +117,7 @@ public class PkcsPkiEnvelopeGenerator {
 		}
     	
     	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(contentInfo);
-    	envelope.setMessageData(new MessageData(new ContentInfo(CMSObjectIdentifiers.data, messageData)));
+    	envelope.setMessageData(MessageData.getInstance(messageData));
     	
     	LOGGER.exiting(getClass().getName(), "generate", envelope);
 		return envelope;
