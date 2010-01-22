@@ -55,7 +55,7 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 	 * {@inheritDoc}
 	 */
 	public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
-		LOGGER.entering(getClass().getName(), "getContent");
+		LOGGER.entering(getClass().getName(), "getContent", new Object[] {in, mimeType});
 		
 		if (mimeType.equals("application/x-x509-next-ca-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1

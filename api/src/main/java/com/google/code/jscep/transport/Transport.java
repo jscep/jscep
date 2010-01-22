@@ -96,7 +96,7 @@ public abstract class Transport {
 	 * @return a new Transport instance.
 	 */
 	public static Transport createTransport(Method method, URL url, Proxy proxy) {
-		LOGGER.entering(Transport.class.getName(), "createTransport");
+		LOGGER.entering(Transport.class.getName(), "createTransport", new Object[] { method, url, proxy });
 		
 		Transport t;
 		

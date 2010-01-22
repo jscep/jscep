@@ -67,4 +67,13 @@ public class GetNextCACert implements Request<List<X509Certificate>> {
     public NextCaCertificateContentHandler getContentHandler() {
     	return new NextCaCertificateContentHandler(issuer);
     }
+    
+    @Override
+	public String toString() {
+    	if (caIdentifier != null) {
+    		return "GetNextCACert(" + caIdentifier + ")";
+    	} else {
+    		return "GetNextCACert";
+    	}
+	}
 }

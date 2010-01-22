@@ -24,6 +24,8 @@ package com.google.code.jscep.transaction;
 
 import java.util.Arrays;
 
+import com.google.code.jscep.util.HexUtil;
+
 /**
  * This class represents the senderNonce and recipientNonce types.
  * 
@@ -62,6 +64,6 @@ public class Nonce {
 	
 	@Override
 	public String toString() {
-		return "Nonce " + Arrays.toString(nonce);
+		return HexUtil.toHexString(nonce);
 	}
 }

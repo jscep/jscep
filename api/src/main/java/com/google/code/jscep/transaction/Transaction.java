@@ -25,8 +25,6 @@ package com.google.code.jscep.transaction;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -36,6 +34,7 @@ import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
+import com.google.code.jscep.pkcs7.MessageData;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelope;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
 import com.google.code.jscep.pkcs7.PkiMessage;
@@ -113,20 +112,20 @@ public class Transaction {
 
 		// TODO: Need to add some tests here to ensure that
 		// the response has no envelope (see section 3). 
-		if (response.getStatus().equals(PkiStatus.FAILURE)) {
+		if (response.getPkiStatus().equals(PkiStatus.FAILURE)) {
 			EnrollmentFailureException efe = new EnrollmentFailureException(response.getFailInfo().toString());
 			
 			LOGGER.throwing(getClass().getName(), "performOperation", efe);
 			throw efe;
-		} else if (response.getStatus().equals(PkiStatus.PENDING)) {
+		} else if (response.getPkiStatus().equals(PkiStatus.PENDING)) {
 			RequestPendingException rpe = new RequestPendingException();
 			
 			LOGGER.throwing(getClass().getName(), "performOperation", rpe);
 			throw rpe;
 		} else {
-			final ASN1Encodable repMsgData = response.getPkcsPkiEnvelope().getMessageData();
+			final MessageData repMsgData = response.getPkcsPkiEnvelope().getMessageData();
 			final DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
-			final DegenerateSignedData certRep = parser.parse(repMsgData);
+			final DegenerateSignedData certRep = parser.parse(repMsgData.getContent());
 			final CertStore cs = certRep.getCertStore();
 			
 			LOGGER.exiting(getClass().getName(), "performOperation", cs);
@@ -136,6 +135,12 @@ public class Transaction {
 	
 	@Override
 	public String toString() {
-		return "Transaction [" + transId + "]";
+		final StringBuilder sb = new StringBuilder();
+		
+		sb.append("Transaction [\n");
+		sb.append("\ttransactionId: " + transId + "\n");
+		sb.append("]");
+		
+		return sb.toString();
 	}
 }

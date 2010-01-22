@@ -56,7 +56,7 @@ public final class X509CertificateFactory {
 	 * @throws GeneralSecurityException
 	 */
 	public static X509Certificate createEphemeralCertificate(X500Principal subject, KeyPair keyPair) throws GeneralSecurityException {
-		LOGGER.entering(X509CertificateFactory.class.getName(), "createCertificate");
+		LOGGER.entering(X509CertificateFactory.class.getName(), "createEphemeralCertificate", new Object[] {subject, keyPair});
 		final Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
 		final Date notBefore = cal.getTime();
@@ -72,6 +72,9 @@ public final class X509CertificateFactory {
 		gen.setSignatureAlgorithm("SHA1withRSA");
 		gen.setSubjectDN(subject);
 
-		return gen.generate(keyPair.getPrivate());
+		X509Certificate cert = gen.generate(keyPair.getPrivate());
+		
+		LOGGER.exiting(X509CertificateFactory.class.getName(), "createEphemeralCertificate", cert);
+		return cert;
 	}
 }

@@ -125,7 +125,7 @@ public class PkiMessageGenerator {
 			throw rt;
 		}
     	
-		final PkiMessageImpl msg = new PkiMessageImpl(signedData);
+		final PkiMessageImpl msg = new PkiMessageImpl(ci);
 		
 		msg.setPkcsPkiEnvelope(envelope);
 		msg.setEncoded(ci.getEncoded());

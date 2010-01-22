@@ -52,6 +52,7 @@ import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
@@ -80,7 +81,7 @@ public class PkcsPkiEnvelopeGenerator {
 	}
 	
 	public PkcsPkiEnvelope generate(ASN1Encodable messageData) throws IOException {
-		LOGGER.entering(getClass().getName(), "generate");
+		LOGGER.entering(getClass().getName(), "generate", messageData);
 
     	final ContentInfo contentInfo;
 		try {
@@ -116,7 +117,7 @@ public class PkcsPkiEnvelopeGenerator {
 		}
     	
     	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(contentInfo);
-    	envelope.setMessageData(messageData);
+    	envelope.setMessageData(new MessageData(new ContentInfo(CMSObjectIdentifiers.data, messageData)));
     	
     	LOGGER.exiting(getClass().getName(), "generate", envelope);
 		return envelope;

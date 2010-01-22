@@ -31,6 +31,7 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
 
@@ -48,8 +49,12 @@ class PkiMessageImpl implements PkiMessage {
 	private byte[] encoded;
 	private PkcsPkiEnvelope pkcsPkiEnvelope;
 	private final SignerInfo signerInfo;
+	private final ContentInfo contentInfo;
+	private final SignedData signedData;
 	
-	PkiMessageImpl(SignedData signedData) {
+	PkiMessageImpl(ContentInfo contentInfo) {
+		this.contentInfo = contentInfo;
+		this.signedData = SignedData.getInstance(contentInfo.getContent());
 		this.signerInfo = getSignerSet(signedData).iterator().next();
 	}
 	
@@ -82,13 +87,19 @@ class PkiMessageImpl implements PkiMessage {
 	
 	public FailInfo getFailInfo() {
 		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.failInfo);
+		if (attr == null) {
+			return null;
+		}
 		final DERPrintableString failInfo = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
 		
 		return FailInfo.valueOf(Integer.parseInt(failInfo.getString()));
 	}
 	
-	public PkiStatus getStatus() {
+	public PkiStatus getPkiStatus() {
 		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.pkiStatus);
+		if (attr == null) {
+			return null;
+		}
 		final DERPrintableString pkiStatus = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
 
 		return PkiStatus.valueOf(Integer.parseInt(pkiStatus.toString()));
@@ -96,6 +107,9 @@ class PkiMessageImpl implements PkiMessage {
 	
 	private Nonce getNonce(DERObjectIdentifier oid) {
 		final Attribute attr = getAttributeTable().get(oid);
+		if (attr == null) {
+			return null;
+		}
 		final DEROctetString nonce = (DEROctetString) attr.getAttrValues().getObjectAt(0);
 
 		return new Nonce(nonce.getOctets());
@@ -129,5 +143,32 @@ class PkiMessageImpl implements PkiMessage {
 		final DERPrintableString msgType = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
 		
 		return MessageType.valueOf(Integer.parseInt(msgType.getString()));
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if (getPkiStatus() == null) {
+			sb.append("pkiMessage (request) [\n");
+		} else {
+			sb.append("pkiMessage (response) [\n");
+		}
+		sb.append("\tcontentType: " + contentInfo.getContentType() + "\n");
+		sb.append("\ttransactionId: " + getTransactionId() + "\n");
+		sb.append("\tmessageType: " + getMessageType() + "\n");
+		if (getPkiStatus() != null) {
+			sb.append("\tpkiStatus: " + getPkiStatus() + "\n");
+		}
+		if (getFailInfo() != null) {
+			sb.append("\tfailInfo: " + getFailInfo() + "\n");
+		}
+		sb.append("\tsenderNonce: " + getSenderNonce() + "\n");
+		if (getRecipientNonce() != null) {
+			sb.append("\trecipientNonce: " + getRecipientNonce() + "\n");
+		}
+		sb.append("\tpkcsPkiEnvelope: " + pkcsPkiEnvelope.toString().replaceAll("\n", "\n\t") + "\n");
+		sb.append("]");
+		
+		return sb.toString();
 	}
 }

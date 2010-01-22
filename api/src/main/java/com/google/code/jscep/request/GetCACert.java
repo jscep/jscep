@@ -63,4 +63,13 @@ public final class GetCACert implements Request<List<X509Certificate>> {
 	public CaCertificateContentHandler getContentHandler() {
 		return new CaCertificateContentHandler();
 	}
+	
+	@Override
+	public String toString() {
+		if (caIdentifier != null) {
+			return "GetCACert(" + caIdentifier + ")";
+		} else {
+			return "GetCACert";
+		}
+	}
 }

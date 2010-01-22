@@ -53,7 +53,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 	 * {@inheritDoc}
 	 */
 	public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
-		LOGGER.entering(getClass().getName(), "getContent");
+		LOGGER.entering(getClass().getName(), "getContent", new Object[] {in, mimeType});
 		
 		final List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
 		final CertificateFactory cf;

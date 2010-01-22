@@ -47,7 +47,6 @@ public final class TransactionId {
 	}
 	
 	private TransactionId(KeyPair keyPair, String digestAlgorithm) {
-		LOGGER.fine("Generating new TransactionId from Key Pair");
     	MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance(digestAlgorithm);
@@ -55,13 +54,10 @@ public final class TransactionId {
             throw new RuntimeException(e);
         }
         id = HexUtil.toHex(digest.digest(keyPair.getPublic().getEncoded()));
-        LOGGER.fine("Transaction Id:\n" + HexUtil.formatHex(id));
 	}
 	
 	private TransactionId() {
-		LOGGER.fine("Generating new TransactionId");
 		id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes();
-		LOGGER.fine("Transaction Id:\n" + HexUtil.formatHex(id));
 	}
 	
 	public byte[] getBytes() {
@@ -83,12 +79,11 @@ public final class TransactionId {
 	 * @return the new Transaction Id
 	 */
 	public static TransactionId createTransactionId(KeyPair keyPair, String digestAlgorithm) {
-		LOGGER.entering(TransactionId.class.getName(), "createTransactionId");
+		LOGGER.entering(TransactionId.class.getName(), "createTransactionId", new Object[] {keyPair, digestAlgorithm});
 		
 		TransactionId t = new TransactionId(keyPair, digestAlgorithm);
 
 		LOGGER.exiting(TransactionId.class.getName(), "createTransactionId", t);
-		
 		return t;
 	}
 	
@@ -100,11 +95,16 @@ public final class TransactionId {
 	 * @return the new Transaction Id
 	 */
 	public static TransactionId createTransactionId() {
-		return new TransactionId();
+		LOGGER.entering(TransactionId.class.getName(), "createTransactionId");
+		
+		TransactionId t =  new TransactionId();
+		
+		LOGGER.exiting(TransactionId.class.getName(), "createTransactionId", t);
+		return t;
 	}
 	
 	@Override
 	public String toString() {
-		return "TransactionId " + Arrays.toString(id);
+		return new String(id);
 	}
 }

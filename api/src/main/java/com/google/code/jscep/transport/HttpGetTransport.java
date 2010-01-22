@@ -45,7 +45,7 @@ public class HttpGetTransport extends Transport {
 
 	@Override
 	public <T> T sendMessage(Request<T> msg) throws IOException {
-		LOGGER.entering(getClass().getName(), "sendMessage");
+		LOGGER.entering(getClass().getName(), "sendMessage", msg);
 		
 		final URL url = getUrl(msg.getOperation(), msg.getMessage());
 		final HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);

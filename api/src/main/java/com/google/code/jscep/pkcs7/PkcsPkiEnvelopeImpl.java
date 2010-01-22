@@ -24,7 +24,6 @@ package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.ContentInfo;
 
 
@@ -32,22 +31,34 @@ import org.bouncycastle.asn1.cms.ContentInfo;
  * Implementation of {@link PkcsPkiEnvelope} that uses Bouncy Castle.
  */
 class PkcsPkiEnvelopeImpl implements PkcsPkiEnvelope {
-	private ASN1Encodable msgData;
+	private MessageData msgData;
 	private final ContentInfo info;
 	
 	public PkcsPkiEnvelopeImpl(ContentInfo info) {
 		this.info = info;
 	}
 	
-	void setMessageData(ASN1Encodable msgData) {
+	void setMessageData(MessageData msgData) {
 		this.msgData = msgData;
 	}
 	
-	public ASN1Encodable getMessageData() {
+	public MessageData getMessageData() {
 		return msgData;
 	}
 	
 	public byte[] getEncoded() throws IOException {
 		return info.getEncoded();
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		
+		sb.append("pkcsPkiEnvelope [\n");
+		sb.append("\tcontentType: " + info.getContentType() + "\n");
+		sb.append("\tmessageData: " + msgData.toString().replaceAll("\n", "\n\t") + "\n");
+		sb.append("]");
+		
+		return sb.toString();
 	}
 }

@@ -49,7 +49,7 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	 * @throws IOException 
 	 */
 	public PkiMessage getContent(InputStream in, String mimeType) throws IOException {
-		LOGGER.entering(getClass().getName(), "getContent");
+		LOGGER.entering(getClass().getName(), "getContent", new Object[] {in, mimeType});
 		
 		if (mimeType.equals("application/x-pki-message")) {
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();

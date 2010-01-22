@@ -26,7 +26,7 @@ public class DegenerateSignedDataParser {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 
 	public DegenerateSignedData parse(ASN1Encodable signedData) throws IOException {
-		LOGGER.entering(getClass().getName(), "parse");
+		LOGGER.entering(getClass().getName(), "parse", signedData);
 		
 		try {
 			ContentInfo ci = ContentInfo.getInstance(signedData);

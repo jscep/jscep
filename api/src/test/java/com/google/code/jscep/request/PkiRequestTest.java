@@ -68,7 +68,7 @@ public class PkiRequestTest {
 			return NonceFactory.nextNonce();
 		}
 
-		public PkiStatus getStatus() {
+		public PkiStatus getPkiStatus() {
 			return PkiStatus.SUCCESS;
 		}
 

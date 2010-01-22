@@ -57,4 +57,13 @@ public final class GetCACaps implements Request<Capabilities> {
 	public CaCapabilitiesContentHandler getContentHandler() {
 		return new CaCapabilitiesContentHandler();
 	}
+	
+	@Override
+	public String toString() {
+		if (caIdentifier != null) {
+			return "GetCACaps(" + caIdentifier + ")";
+		} else {
+			return "GetCACaps";
+		}
+	}
 }

@@ -47,7 +47,7 @@ public interface PkiMessage {
 	 * 
 	 * @return the status.
 	 */
-	PkiStatus getStatus();
+	PkiStatus getPkiStatus();
 	/**
 	 * Returns the recipient nonce for this response.
 	 * 

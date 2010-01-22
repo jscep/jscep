@@ -30,7 +30,7 @@ public class PkiMessageParser {
 	 * @return a new instance of PkiMessage
 	 */
 	public PkiMessage parse(byte[] msgBytes) throws IOException {
-		LOGGER.entering(getClass().getName(), "parse");
+		LOGGER.entering(getClass().getName(), "parse", msgBytes);
 
 		final ContentInfo sdContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(msgBytes));
 		final SignedData signedData = SignedData.getInstance((ASN1Sequence) sdContentInfo.getContent());
@@ -48,7 +48,7 @@ public class PkiMessageParser {
 			throw ioe;
 		}
 
-		final PkiMessageImpl msg = new PkiMessageImpl(signedData);
+		final PkiMessageImpl msg = new PkiMessageImpl(sdContentInfo);
 		final ContentInfo edContentInfo = signedData.getEncapContentInfo();
 		final DEROctetString octetString = (DEROctetString) edContentInfo.getContent();
 		msg.setPkcsPkiEnvelope(parser.parse(octetString.getOctets()));

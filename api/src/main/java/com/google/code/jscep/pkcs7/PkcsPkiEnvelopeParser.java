@@ -56,7 +56,7 @@ public class PkcsPkiEnvelopeParser {
 	}
 	
 	public PkcsPkiEnvelope parse(byte[] envelopeBytes) throws IOException {
-		LOGGER.entering(getClass().getName(), "parse");
+		LOGGER.entering(getClass().getName(), "parse", envelopeBytes);
 		
 		final ContentInfo envInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(envelopeBytes));
 		final EnvelopedData envelopedData = new EnvelopedData((ASN1Sequence) envInfo.getContent());
@@ -101,7 +101,7 @@ public class PkcsPkiEnvelopeParser {
 		}
 
     	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(envInfo);
-    	envelope.setMessageData(ci);
+    	envelope.setMessageData(new MessageData(ci));
     	
     	LOGGER.exiting(getClass().getName(), "parse", envelope);
 		return envelope;
