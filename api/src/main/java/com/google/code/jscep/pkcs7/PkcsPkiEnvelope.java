@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.pkcs7;
 
+import java.io.IOException;
+
 import org.bouncycastle.asn1.ASN1Encodable;
 
 
@@ -32,5 +34,5 @@ import org.bouncycastle.asn1.ASN1Encodable;
  */
 public interface PkcsPkiEnvelope {
 	ASN1Encodable getMessageData();
-	byte[] getEncoded();
+	byte[] getEncoded() throws IOException;
 }

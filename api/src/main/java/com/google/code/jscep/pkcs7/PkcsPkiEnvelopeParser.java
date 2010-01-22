@@ -22,6 +22,7 @@
 package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
 import java.security.Key;
@@ -61,8 +62,13 @@ public class PkcsPkiEnvelopeParser {
 		ContentInfo envInfo = ContentInfo.getInstance(enc);
 		assert(envInfo.getContentType().equals(CMSObjectIdentifiers.envelopedData));
 		EnvelopedData cmsEd = new EnvelopedData((ASN1Sequence) envInfo.getContent());
+		// 3.1.2 version MUST be 0
+		assert(cmsEd.getVersion().getValue().equals(BigInteger.ZERO));
 		
 		final EncryptedContentInfo eci = cmsEd.getEncryptedContentInfo();
+		
+		// 3.1.2 contentType in encryptedContentInfo MUST be data as defined in PKCS#7 
+		assert(eci.getContentType().equals(CMSObjectIdentifiers.data));
 		final ASN1OctetString ec = eci.getEncryptedContent();
 		final AlgorithmIdentifier algId = eci.getContentEncryptionAlgorithm();
 		
@@ -100,7 +106,6 @@ public class PkcsPkiEnvelopeParser {
 
     	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(envInfo);
     	envelope.setMessageData(ci);
-    	envelope.setEncoded(envelopeBytes);
     	
     	LOGGER.exiting(getClass().getName(), "parse", envelope);
 		return envelope;

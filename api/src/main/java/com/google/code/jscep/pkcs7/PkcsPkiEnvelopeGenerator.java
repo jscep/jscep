@@ -23,6 +23,7 @@ package com.google.code.jscep.pkcs7;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -100,8 +101,11 @@ public class PkcsPkiEnvelopeGenerator {
 			final ASN1EncodableVector recipientInfos = new ASN1EncodableVector();
 			recipientInfos.add(keyTrans);
 
+			// 3.1.2 contentType in encryptedContentInfo MUST be data as defined in PKCS#7
 			final EncryptedContentInfo eci = new EncryptedContentInfo(PKCSObjectIdentifiers.data, encAlgId, encContent);
 			final EnvelopedData ed = new EnvelopedData(null, new DERSet(recipientInfos), eci, null);
+			// 3.1.2 version MUST be 0
+			assert(ed.getVersion().getValue().equals(BigInteger.ZERO));
 			contentInfo = new ContentInfo(PKCSObjectIdentifiers.envelopedData, ed);
 			
 		} catch (Exception e) {
@@ -112,7 +116,6 @@ public class PkcsPkiEnvelopeGenerator {
 		}
     	
     	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(contentInfo);
-    	envelope.setEncoded(contentInfo.getEncoded());
     	envelope.setMessageData(messageData);
     	
     	LOGGER.exiting(getClass().getName(), "generate", envelope);
