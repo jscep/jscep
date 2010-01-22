@@ -3,12 +3,16 @@ package com.google.code.jscep.response;
 import java.security.Security;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.logging.Logger;
+
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents a set of capabilities for a particular
  * SCEP server.
  */
 public class Capabilities {
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.response");
 	private EnumSet<Capability> capabilities;
 
 	/**
@@ -73,13 +77,18 @@ public class Capabilities {
 	 * @return the strongest cipher algorithm supported by the server and client.
 	 */
 	public String getStrongestCipher() {
+		LOGGER.entering(getClass().getName(), "getStrongestCipher");
 		final Set<String> ciphers = Security.getAlgorithms("Cipher");
 		
+		final String cipher;
 		if (ciphers.contains("DESEDE") && capabilities.contains(Capability.TRIPLE_DES)) {
-			return "DESEDE";
+			cipher = "DESEDE";
 		} else {
-			return "DES";
+			cipher = "DES";
 		}
+		
+		LOGGER.exiting(getClass().getName(), "getStrongestCipher", cipher);
+		return cipher;
 	}
 	
 	/**
@@ -96,16 +105,26 @@ public class Capabilities {
 	 * @return the strongest message digest algorithm supported by the server and client.
 	 */
 	public String getStrongestMessageDigest() {
+		
 		final Set<String> digests = Security.getAlgorithms("MessageDigest");
 		
+		final String digest;
 		if (digests.contains("SHA-512") && capabilities.contains(Capability.SHA_512)) {
-			return "SHA-512";
+			digest = "SHA-512";
 		} else if (digests.contains("SHA-256") && capabilities.contains(Capability.SHA_256)) {
-			return "SHA-256";
+			digest = "SHA-256";
 		} else if (digests.contains("SHA") && capabilities.contains(Capability.SHA_1)) {
-			return "SHA";
+			digest = "SHA";
 		} else {
-			return "MD5";
+			digest = "MD5";
 		}
+		
+		LOGGER.exiting(getClass().getName(), "getStrongestMessageDigest()", digest);
+		return digest;
+	}
+	
+	@Override
+	public String toString() {
+		return capabilities.toString();
 	}
 }
