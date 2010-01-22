@@ -1,6 +1,5 @@
 package com.google.code.jscep;
 
-import java.math.BigInteger;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
