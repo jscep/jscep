@@ -33,6 +33,7 @@ public class PkiMessageParser {
 
 		final ContentInfo sdContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(msgBytes));
 		final SignedData signedData = SignedData.getInstance((ASN1Sequence) sdContentInfo.getContent());
+		// 3.1 version MUST be 1
 		assert(signedData.getVersion().getValue().equals(BigInteger.ONE));
 		final Set<SignerInfo> signerInfoSet = getSignerInfo(signedData);
 

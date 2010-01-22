@@ -112,6 +112,7 @@ public class PkiMessageGenerator {
 			final ASN1Set crls = getCRLs();
 			final ASN1Set signerInfos = getSignerInfos();
 			signedData = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
+			// 3.1 version MUST be 1
 			assert(signedData.getVersion().getValue().equals(BigInteger.ONE));
 			
 			ci = new ContentInfo(CMSObjectIdentifiers.signedData, signedData);
