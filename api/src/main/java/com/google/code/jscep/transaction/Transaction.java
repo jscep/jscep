@@ -25,6 +25,8 @@ package com.google.code.jscep.transaction;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -47,6 +49,7 @@ import com.google.code.jscep.util.LoggingUtil;
  * performing operations.
  */
 public class Transaction {
+	private static NonceQueue QUEUE = new NonceQueue(20);
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
 	private final TransactionId transId;
 	private final Nonce senderNonce;
@@ -54,6 +57,7 @@ public class Transaction {
 	private final Transport transport;
 	private final PkcsPkiEnvelopeGenerator envGenerator;
 	private final PkiMessageGenerator msgGenerator;
+	private final Set<Nonce> previousNonces = new HashSet<Nonce>();
 
 	Transaction(Transport transport, KeyPair keyPair, PkcsPkiEnvelopeGenerator envGenerator, PkiMessageGenerator msgGenerator, String digestAlgorithm) {
 		this.transport = transport;
@@ -101,7 +105,8 @@ public class Transaction {
 		// TODO: Detect replay attacks.
 		// 
 		// http://tools.ietf.org/html/draft-nourse-scep-20#section-8.5
-		response.getSenderNonce();
+		// Check the nonce has not been encountered before.
+		assert(QUEUE.offer(response.getSenderNonce()));
 
 		if (response.getStatus().equals(PkiStatus.FAILURE)) {
 			EnrollmentFailureException efe = new EnrollmentFailureException(response.getFailInfo().toString());
