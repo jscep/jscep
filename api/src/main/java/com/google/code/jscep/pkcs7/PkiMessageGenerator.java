@@ -104,23 +104,24 @@ public class PkiMessageGenerator {
 		LOGGER.entering(getClass().getName(), "generate");
 		
         final ContentInfo ci;
-        final SignedData sd;
+        final SignedData signedData;
 		try {
 			final ASN1Set digestAlgorithms = getDigestAlgorithms();
 			final ContentInfo contentInfo = getContentInfo();
 			final ASN1Set certificates = getCertificates();
 			final ASN1Set crls = getCRLs();
 			final ASN1Set signerInfos = getSignerInfos();
-			sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
+			signedData = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
+			assert(signedData.getVersion().getValue().equals(BigInteger.ONE));
 			
-			ci = new ContentInfo(CMSObjectIdentifiers.signedData, sd);
+			ci = new ContentInfo(CMSObjectIdentifiers.signedData, signedData);
 		} catch (GeneralSecurityException e) {
 			RuntimeException rt = new RuntimeException(e);
 			LOGGER.throwing(getClass().getName(), "parse", rt);
 			throw rt;
 		}
     	
-		final PkiMessageImpl msg = new PkiMessageImpl(sd);
+		final PkiMessageImpl msg = new PkiMessageImpl(signedData);
 		
 		msg.setPkcsPkiEnvelope(envelope);
 		msg.setEncoded(ci.getEncoded());

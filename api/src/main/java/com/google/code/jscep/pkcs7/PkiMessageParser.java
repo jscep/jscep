@@ -1,6 +1,7 @@
 package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class PkiMessageParser {
 
 		final ContentInfo sdContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(msgBytes));
 		final SignedData signedData = SignedData.getInstance((ASN1Sequence) sdContentInfo.getContent());
+		assert(signedData.getVersion().getValue().equals(BigInteger.ONE));
 		final Set<SignerInfo> signerInfoSet = getSignerInfo(signedData);
 
 		if (signerInfoSet.size() > 1) {
