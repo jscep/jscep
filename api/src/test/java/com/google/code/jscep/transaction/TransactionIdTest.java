@@ -13,8 +13,8 @@ public class TransactionIdTest {
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 		KeyPair keyPair = generator.generateKeyPair();
 		
-		TransactionId transA = TransactionId.createTransactionId(keyPair);
-		TransactionId transB = TransactionId.createTransactionId(keyPair);
+		TransactionId transA = TransactionId.createTransactionId(keyPair, "SHA");
+		TransactionId transB = TransactionId.createTransactionId(keyPair, "SHA");
 		
 		Assert.assertEquals(transA, transB);
 	}
@@ -23,14 +23,6 @@ public class TransactionIdTest {
 	public void testCreateTransactionId() {
 		TransactionId transA = TransactionId.createTransactionId();
 		TransactionId transB = TransactionId.createTransactionId();
-		
-		Assert.assertFalse(transA.equals(transB));
-	}
-
-	@Test
-	public void testCreateTransactionIdNullKeyPair() {
-		TransactionId transA = TransactionId.createTransactionId(null);
-		TransactionId transB = TransactionId.createTransactionId(null);
 		
 		Assert.assertFalse(transA.equals(transB));
 	}

@@ -55,10 +55,10 @@ public class Transaction {
 	private final PkcsPkiEnvelopeGenerator envGenerator;
 	private final PkiMessageGenerator msgGenerator;
 
-	Transaction(Transport transport, KeyPair keyPair, PkcsPkiEnvelopeGenerator envGenerator, PkiMessageGenerator msgGenerator) {
+	Transaction(Transport transport, KeyPair keyPair, PkcsPkiEnvelopeGenerator envGenerator, PkiMessageGenerator msgGenerator, String digestAlgorithm) {
 		this.transport = transport;
 		this.keyPair = keyPair;
-		this.transId = TransactionId.createTransactionId(keyPair);
+		this.transId = TransactionId.createTransactionId(keyPair, digestAlgorithm);
 		this.senderNonce = NonceFactory.nextNonce();
 		this.envGenerator = envGenerator;
 		this.msgGenerator = msgGenerator;
@@ -94,14 +94,9 @@ public class Transaction {
 			throw ioe;
 		}
 
-//		if (response.getRecipientNonce().equals(senderNonce) == false) {
-//			IOException ioe = new IOException("Sender Nonce Mismatch.  Sent ["
-//					+ this.senderNonce + "]; Received ["
-//					+ response.getRecipientNonce() + "]");
-//			
-//			LOGGER.throwing(getClass().getName(), "performOperation", ioe);
-//			throw ioe;
-//		}
+		// The requester SHOULD verify that the recipientNonce of the reply
+		// matches the senderNonce it sent in the request.
+		assert(response.getRecipientNonce().equals(senderNonce));
 
 		// TODO: Detect replay attacks.
 		// 

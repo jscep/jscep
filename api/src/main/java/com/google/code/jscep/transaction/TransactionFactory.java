@@ -53,10 +53,10 @@ public final class TransactionFactory {
 	 * @param ca the CA certificate.
 	 * @param identity the certificate to enroll.
 	 * @param keyPair the key pair to use.
-	 * @param fingerprintAlgorithm the finger print algorithm.
+	 * @param digestAlgorithm the finger print algorithm.
 	 * @return the new transaction.
 	 */
-	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String fingerprintAlgorithm) {
+	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String digestAlgorithm) {
 		LOGGER.entering(TransactionFactory.class.getName(), "createTransaction");
 		
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
@@ -68,7 +68,7 @@ public final class TransactionFactory {
 		msgGenerator.setIdentity(identity);
 		msgGenerator.setKeyPair(keyPair);
 		
-		Transaction t = new Transaction(transport, keyPair, envGenerator, msgGenerator);
+		Transaction t = new Transaction(transport, keyPair, envGenerator, msgGenerator, digestAlgorithm);
 		
 		LOGGER.exiting (TransactionFactory.class.getName(), "createTransaction", t);
 		return t;

@@ -46,12 +46,11 @@ public final class TransactionId {
 		this.id = id;
 	}
 	
-	private TransactionId(KeyPair keyPair) {
+	private TransactionId(KeyPair keyPair, String digestAlgorithm) {
 		LOGGER.fine("Generating new TransactionId from Key Pair");
     	MessageDigest digest = null;
         try {
-        	// Always MD5
-            digest = MessageDigest.getInstance("MD5");
+            digest = MessageDigest.getInstance(digestAlgorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -83,15 +82,11 @@ public final class TransactionId {
 	 * 
 	 * @return the new Transaction Id
 	 */
-	public static TransactionId createTransactionId(KeyPair keyPair) {
+	public static TransactionId createTransactionId(KeyPair keyPair, String digestAlgorithm) {
 		LOGGER.entering(TransactionId.class.getName(), "createTransactionId");
 		
-		TransactionId t;
-		if (keyPair == null) {
-			t = new TransactionId();
-		} else {
-			t = new TransactionId(keyPair);
-		}
+		TransactionId t = new TransactionId(keyPair, digestAlgorithm);
+
 		LOGGER.exiting(TransactionId.class.getName(), "createTransactionId", t);
 		
 		return t;
