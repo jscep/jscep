@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
@@ -33,8 +34,12 @@ public class PkiMessageParser {
 
 		final ContentInfo sdContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(msgBytes));
 		final SignedData signedData = SignedData.getInstance((ASN1Sequence) sdContentInfo.getContent());
+		
 		// 3.1 version MUST be 1
 		assert(signedData.getVersion().getValue().equals(BigInteger.ONE));
+		// 3.1 the contentType in contentInfo MUST be data
+		assert(signedData.getEncapContentInfo().getContentType().equals(CMSObjectIdentifiers.data));
+		
 		final Set<SignerInfo> signerInfoSet = getSignerInfo(signedData);
 
 		if (signerInfoSet.size() > 1) {

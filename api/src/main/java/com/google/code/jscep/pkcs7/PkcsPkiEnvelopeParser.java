@@ -58,21 +58,17 @@ public class PkcsPkiEnvelopeParser {
 	public PkcsPkiEnvelope parse(byte[] envelopeBytes) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse");
 		
-		ASN1Object enc = ASN1Object.fromByteArray(envelopeBytes);
-		ContentInfo envInfo = ContentInfo.getInstance(enc);
-		assert(envInfo.getContentType().equals(CMSObjectIdentifiers.envelopedData));
-		EnvelopedData cmsEd = new EnvelopedData((ASN1Sequence) envInfo.getContent());
+		final ContentInfo envInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(envelopeBytes));
+		final EnvelopedData envelopedData = new EnvelopedData((ASN1Sequence) envInfo.getContent());
+		final EncryptedContentInfo eci = envelopedData.getEncryptedContentInfo();
 		// 3.1.2 version MUST be 0
-		assert(cmsEd.getVersion().getValue().equals(BigInteger.ZERO));
-		
-		final EncryptedContentInfo eci = cmsEd.getEncryptedContentInfo();
-		
+		assert(envelopedData.getVersion().getValue().equals(BigInteger.ZERO));		
 		// 3.1.2 contentType in encryptedContentInfo MUST be data as defined in PKCS#7 
 		assert(eci.getContentType().equals(CMSObjectIdentifiers.data));
 		final ASN1OctetString ec = eci.getEncryptedContent();
 		final AlgorithmIdentifier algId = eci.getContentEncryptionAlgorithm();
 		
-		ASN1Set recipientInfoSet = cmsEd.getRecipientInfos();
+		ASN1Set recipientInfoSet = envelopedData.getRecipientInfos();
 		Enumeration<?> riEnum = recipientInfoSet.getObjects();
 		ContentInfo ci = null;
 		while (riEnum.hasMoreElements()) {
