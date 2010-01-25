@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
@@ -55,10 +54,8 @@ public class PkiMessageParser {
 
 		final PkiMessage msg = new PkiMessage(sdContentInfo);
 		if (msg.isRequest() || msg.getPkiStatus() == PkiStatus.SUCCESS) {
-			final ContentInfo edContentInfo = signedData.getEncapContentInfo();
-			final DEROctetString octetString = (DEROctetString) edContentInfo.getContent();
 			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(privateKey);
-			msg.setPkcsPkiEnvelope(envelopeParser.parse(octetString.getOctets()));	
+			msg.setPkcsPkiEnvelope(envelopeParser.parse(signedData.getEncapContentInfo()));	
 		} else {
 			// TODO: Assert No ContentInfo
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-3

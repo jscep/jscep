@@ -37,6 +37,7 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
@@ -45,6 +46,7 @@ import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
+import com.google.code.jscep.util.AlgorithmDictionary;
 import com.google.code.jscep.util.LoggingUtil;
 
 public class PkcsPkiEnvelopeParser {
@@ -55,10 +57,12 @@ public class PkcsPkiEnvelopeParser {
 		this.privKey = keyPair;
 	}
 	
-	public PkcsPkiEnvelope parse(byte[] envelopeBytes) throws IOException {
-		LOGGER.entering(getClass().getName(), "parse", envelopeBytes);
+	public PkcsPkiEnvelope parse(ContentInfo envContentInfo) throws IOException {
+		LOGGER.entering(getClass().getName(), "parse", envContentInfo);
+		assert(envContentInfo.getContentType().equals(CMSObjectIdentifiers.data));
+		final DEROctetString octetString = (DEROctetString) envContentInfo.getContent();
 		
-		final ContentInfo envInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(envelopeBytes));
+		final ContentInfo envInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(octetString.getOctets()));
 		final EnvelopedData envelopedData = new EnvelopedData((ASN1Sequence) envInfo.getContent());
 		final EncryptedContentInfo eci = envelopedData.getEncryptedContentInfo();
 		// 3.1.2 version MUST be 0
@@ -79,18 +83,17 @@ public class PkcsPkiEnvelopeParser {
 			final KeyTransRecipientInfo keyTransInfo = (KeyTransRecipientInfo) ri.getInfo();
 			final ASN1OctetString key = keyTransInfo.getEncryptedKey();
 			try {
-				// TODO: Hardcoded Algorithm
-				final Cipher cipher = Cipher.getInstance("RSA");
+				final Cipher cipher = Cipher.getInstance(AlgorithmDictionary.lookup(keyTransInfo.getKeyEncryptionAlgorithm()));
 				cipher.init(Cipher.UNWRAP_MODE, privKey);
 				// TODO: Hardcoded Algorithm
 				final Key secretKey = cipher.unwrap(key.getOctets(), "DES", Cipher.SECRET_KEY);
 				
 				final ASN1Object params = (ASN1Object) algId.getParameters();
+				// TODO: Hardcoded Algorithm
 				AlgorithmParameters algParams = AlgorithmParameters.getInstance("DES");
 				algParams.init(params.getEncoded());
 				
-				// TODO: Hardcoded Algorithm
-				final Cipher msgCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
+				final Cipher msgCipher = Cipher.getInstance(AlgorithmDictionary.lookup(algId));
 				msgCipher.init(Cipher.DECRYPT_MODE, secretKey, algParams);
 				final byte[] content = msgCipher.doFinal(ec.getOctets());
 				
