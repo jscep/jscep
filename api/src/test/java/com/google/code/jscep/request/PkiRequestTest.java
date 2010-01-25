@@ -6,17 +6,11 @@ import java.security.KeyPairGenerator;
 
 import junit.framework.Assert;
 
+import org.easymock.classextension.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.pkcs7.PkcsPkiEnvelope;
 import com.google.code.jscep.pkcs7.PkiMessage;
-import com.google.code.jscep.transaction.FailInfo;
-import com.google.code.jscep.transaction.MessageType;
-import com.google.code.jscep.transaction.Nonce;
-import com.google.code.jscep.transaction.NonceFactory;
-import com.google.code.jscep.transaction.PkiStatus;
-import com.google.code.jscep.transaction.TransactionId;
 
 public class PkiRequestTest {
 	private PkiMessage message;
@@ -24,7 +18,10 @@ public class PkiRequestTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		message = new MockPkiMessage();
+		message = EasyMock.createMock(PkiMessage.class);
+		EasyMock.expect(message.getEncoded()).andReturn(new byte[0]).times(2);
+		EasyMock.replay(message);
+		
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
 		
 		fixture = new PkiRequest(message, keyPair);
@@ -43,42 +40,5 @@ public class PkiRequestTest {
 	@Test
 	public void testContentHandler() {
 		Assert.assertNotNull(fixture.getContentHandler());
-	}
-
-	private static class MockPkiMessage implements PkiMessage {
-		private byte[] bytes = new byte[0];
-		
-		public byte[] getEncoded() {
-			return bytes;
-		}
-
-		public FailInfo getFailInfo() {
-			return null;
-		}
-
-		public PkcsPkiEnvelope getPkcsPkiEnvelope() {
-			return null;
-		}
-
-		public Nonce getRecipientNonce() {
-			return NonceFactory.nextNonce();
-		}
-
-		public Nonce getSenderNonce() {
-			return NonceFactory.nextNonce();
-		}
-
-		public PkiStatus getPkiStatus() {
-			return PkiStatus.SUCCESS;
-		}
-
-		public TransactionId getTransactionId() {
-			return TransactionId.createTransactionId();
-		}
-
-		public MessageType getMessageType() {
-			return MessageType.CertRep;
-		}
-		
 	}
 }

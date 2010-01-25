@@ -100,7 +100,7 @@ public class PkcsPkiEnvelopeParser {
 			}
 		}
 
-    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(envInfo);
+    	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(envInfo);
     	envelope.setMessageData(new MessageData(ci));
     	
     	LOGGER.exiting(getClass().getName(), "parse", envelope);

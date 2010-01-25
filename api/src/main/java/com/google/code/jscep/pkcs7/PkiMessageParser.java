@@ -2,6 +2,7 @@ package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,14 +16,18 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
 
+import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.util.LoggingUtil;
 
 public class PkiMessageParser {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
-	private final PkcsPkiEnvelopeParser parser;
+	private PrivateKey privateKey;
 	
-	public PkiMessageParser(PkcsPkiEnvelopeParser parser) {
-		this.parser = parser;
+	public PkiMessageParser() {
+	}
+	
+	public void setPrivateKey(PrivateKey privateKey) {
+		this.privateKey = privateKey;
 	}
 	
 	/**
@@ -48,10 +53,16 @@ public class PkiMessageParser {
 			throw ioe;
 		}
 
-		final PkiMessageImpl msg = new PkiMessageImpl(sdContentInfo);
-		final ContentInfo edContentInfo = signedData.getEncapContentInfo();
-		final DEROctetString octetString = (DEROctetString) edContentInfo.getContent();
-		msg.setPkcsPkiEnvelope(parser.parse(octetString.getOctets()));
+		final PkiMessage msg = new PkiMessage(sdContentInfo);
+		if (msg.isRequest() || msg.getPkiStatus() == PkiStatus.SUCCESS) {
+			final ContentInfo edContentInfo = signedData.getEncapContentInfo();
+			final DEROctetString octetString = (DEROctetString) edContentInfo.getContent();
+			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(privateKey);
+			msg.setPkcsPkiEnvelope(envelopeParser.parse(octetString.getOctets()));	
+		} else {
+			// TODO: Assert No ContentInfo
+			// http://tools.ietf.org/html/draft-nourse-scep-20#section-3
+		}
 		
 		LOGGER.exiting(getClass().getName(), "parse", msg);
 		return msg; 

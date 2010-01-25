@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -61,6 +62,8 @@ public class PkiMessageGenerator {
 	private PkiStatus status;
 	private ContentInfo content;
 	private byte[] hash;
+	private X509Certificate recipient;
+	private AlgorithmIdentifier cipherAlgorithm;
 	
 	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
@@ -98,10 +101,24 @@ public class PkiMessageGenerator {
 		this.transId = transId;
 	}
 	
-	public PkiMessage generate(PkcsPkiEnvelope envelope) throws IOException {
+	public void setRecipient(X509Certificate recipient) {
+		this.recipient = recipient;
+	}
+	
+	public void setCipherAlgorithm(AlgorithmIdentifier cipherAlgorithm) {
+		this.cipherAlgorithm = cipherAlgorithm;
+	}
+	
+	public PkiMessage generate(ASN1Encodable messageData) throws IOException {
+		LOGGER.entering(getClass().getName(), "generate");
+		// TODO: MessageData could be empty...
+		final PkcsPkiEnvelopeGenerator envelopeGenerator = new PkcsPkiEnvelopeGenerator();
+		envelopeGenerator.setCipherAlgorithm(cipherAlgorithm);
+		envelopeGenerator.setRecipient(recipient);
+		final PkcsPkiEnvelope envelope = envelopeGenerator.generate(messageData);
+		
 		this.content = new ContentInfo((ASN1Sequence) ASN1Object.fromByteArray(envelope.getEncoded()));
 		
-		LOGGER.entering(getClass().getName(), "generate");
 		
         final ContentInfo ci;
         final SignedData signedData;
@@ -125,7 +142,7 @@ public class PkiMessageGenerator {
 			throw rt;
 		}
     	
-		final PkiMessageImpl msg = new PkiMessageImpl(ci);
+		final PkiMessage msg = new PkiMessage(ci);
 		
 		msg.setPkcsPkiEnvelope(envelope);
 		msg.setEncoded(ci.getEncoded());

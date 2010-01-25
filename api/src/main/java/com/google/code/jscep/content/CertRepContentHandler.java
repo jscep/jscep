@@ -59,8 +59,8 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 				baos.write(b);
 			}
 
-			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(keyPair.getPrivate());
-			final PkiMessageParser parser = new PkiMessageParser(envelopeParser);
+			final PkiMessageParser parser = new PkiMessageParser();
+			parser.setPrivateKey(keyPair.getPrivate());
 			final PkiMessage msg = parser.parse(baos.toByteArray());
 			
 			LOGGER.exiting(getClass().getName(), "getContent", msg);

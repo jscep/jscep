@@ -68,6 +68,6 @@ public class GetCert implements PkiOperation<IssuerAndSerialNumber> {
 	
 	@Override
 	public String toString() {
-		return "GetCert";
+		return getMessageType().toString();
 	}
 }

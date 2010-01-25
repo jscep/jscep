@@ -58,17 +58,15 @@ public final class TransactionFactory {
 	 */
 	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String digestAlgorithm) {
 		LOGGER.entering(TransactionFactory.class.getName(), "createTransaction");
-		
-		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
-		envGenerator.setCipherAlgorithm(getCipherAlgorithm());
-		envGenerator.setRecipient(ca);
 
 		final PkiMessageGenerator msgGenerator = new PkiMessageGenerator();
 		msgGenerator.setDigest(getDigestAlgorithm());
 		msgGenerator.setIdentity(identity);
 		msgGenerator.setKeyPair(keyPair);
+		msgGenerator.setCipherAlgorithm(getCipherAlgorithm());
+		msgGenerator.setRecipient(ca);
 		
-		Transaction t = new Transaction(transport, keyPair, envGenerator, msgGenerator, digestAlgorithm);
+		Transaction t = new Transaction(transport, keyPair, msgGenerator, digestAlgorithm);
 		
 		LOGGER.exiting (TransactionFactory.class.getName(), "createTransaction", t);
 		return t;

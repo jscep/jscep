@@ -24,13 +24,43 @@ package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
 
+import org.bouncycastle.asn1.cms.ContentInfo;
+
 
 /**
  * This class represents the <tt>SCEP</tt> <tt>pkcsPKIEnvelope</tt> object.
  * 
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.2">SCEP Internet-Draft Reference</a>
  */
-public interface PkcsPkiEnvelope {
-	MessageData getMessageData();
-	byte[] getEncoded() throws IOException;
+public class PkcsPkiEnvelope {
+	private MessageData msgData;
+	private final ContentInfo info;
+	
+	public PkcsPkiEnvelope(ContentInfo info) {
+		this.info = info;
+	}
+	
+	void setMessageData(MessageData msgData) {
+		this.msgData = msgData;
+	}
+	
+	public MessageData getMessageData() {
+		return msgData;
+	}
+	
+	public byte[] getEncoded() throws IOException {
+		return info.getEncoded();
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		
+		sb.append("pkcsPkiEnvelope [\n");
+		sb.append("\tcontentType: " + info.getContentType() + "\n");
+		sb.append("\tmessageData: " + msgData.toString().replaceAll("\n", "\n\t") + "\n");
+		sb.append("]");
+		
+		return sb.toString();
+	}
 }

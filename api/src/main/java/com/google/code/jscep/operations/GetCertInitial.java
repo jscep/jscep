@@ -61,6 +61,6 @@ public class GetCertInitial implements PkiOperation<IssuerAndSubject> {
 	
 	@Override
 	public String toString() {
-		return "GetCertInitial";
+		return getMessageType().toString();
 	}
 }

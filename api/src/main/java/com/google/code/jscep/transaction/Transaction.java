@@ -35,8 +35,6 @@ import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.pkcs7.MessageData;
-import com.google.code.jscep.pkcs7.PkcsPkiEnvelope;
-import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.request.PkiRequest;
@@ -54,15 +52,13 @@ public class Transaction {
 	private final Nonce senderNonce;
 	private final KeyPair keyPair;
 	private final Transport transport;
-	private final PkcsPkiEnvelopeGenerator envGenerator;
 	private final PkiMessageGenerator msgGenerator;
 
-	Transaction(Transport transport, KeyPair keyPair, PkcsPkiEnvelopeGenerator envGenerator, PkiMessageGenerator msgGenerator, String digestAlgorithm) {
+	Transaction(Transport transport, KeyPair keyPair, PkiMessageGenerator msgGenerator, String digestAlgorithm) {
 		this.transport = transport;
 		this.keyPair = keyPair;
 		this.transId = TransactionId.createTransactionId(keyPair, digestAlgorithm);
 		this.senderNonce = NonceFactory.nextNonce();
-		this.envGenerator = envGenerator;
 		this.msgGenerator = msgGenerator;
 	}
 
@@ -82,8 +78,7 @@ public class Transaction {
 		msgGenerator.setSenderNonce(senderNonce);
 		msgGenerator.setTransactionId(transId);
 		
-		PkcsPkiEnvelope envelope = envGenerator.generate(op.getMessageData());
-		PkiMessage msg = msgGenerator.generate(envelope);
+		PkiMessage msg = msgGenerator.generate(op.getMessageData());
 		PkiRequest request = new PkiRequest(msg, keyPair);
 		PkiMessage response = transport.sendMessage(request);
 

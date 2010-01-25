@@ -52,7 +52,7 @@ public class PkcsPkiEnvelopeTest {
 	
 	@Test
 	public void testGetCertStore() throws NoSuchProviderException, NoSuchAlgorithmException {
-		Assert.assertEquals(msgData, fixture.getMessageData());
+		Assert.assertEquals(msgData, fixture.getMessageData().getContent().getContent());
 	}
 
 }

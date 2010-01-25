@@ -22,8 +22,20 @@
 
 package com.google.code.jscep.pkcs7;
 
-import java.security.GeneralSecurityException;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.cms.SignerInfo;
+
+import com.google.code.jscep.asn1.SCEPObjectIdentifiers;
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
@@ -35,45 +47,134 @@ import com.google.code.jscep.transaction.TransactionId;
  *
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
  */
-public interface PkiMessage {
-	/**
-	 * Returns the failInfo of this response.
-	 * 
-	 * @return the failInfo.
-	 */
-	FailInfo getFailInfo();
-	/**
-	 * Returns the status of this response.
-	 * 
-	 * @return the status.
-	 */
-	PkiStatus getPkiStatus();
-	/**
-	 * Returns the recipient nonce for this response.
-	 * 
-	 * @return the recipient nonce.
-	 */
-	Nonce getRecipientNonce();
-	/**
-	 * Returns the sender nonce for this response.
-	 * 
-	 * @return the sender nonce.
-	 */
-	Nonce getSenderNonce();
-	/**
-	 * Returns the transaction ID for this response.
-	 * 
-	 * @return the transaction ID.
-	 */
-	TransactionId getTransactionId();
-	/**
-	 * Returns the enveloped data.
-	 * 
-	 * @return the enveloped data.
-	 * @throws GeneralSecurityException 
-	 * @throws CMSException 
-	 */
-	PkcsPkiEnvelope getPkcsPkiEnvelope();
-	MessageType getMessageType();
-	byte[] getEncoded();
+public class PkiMessage {
+	private byte[] encoded;
+	private PkcsPkiEnvelope pkcsPkiEnvelope;
+	private final SignerInfo signerInfo;
+	private final ContentInfo contentInfo;
+	private final SignedData signedData;
+	
+	PkiMessage(ContentInfo contentInfo) {
+		this.contentInfo = contentInfo;
+		this.signedData = SignedData.getInstance(contentInfo.getContent());
+		this.signerInfo = getSignerSet(signedData).iterator().next();
+	}
+	
+	private Set<SignerInfo> getSignerSet(SignedData signedData) {
+		final Set<SignerInfo> set = new HashSet<SignerInfo>();
+		final Enumeration<?> signerInfos = signedData.getSignerInfos().getObjects();
+		
+		while (signerInfos.hasMoreElements()) {
+			set.add(SignerInfo.getInstance(signerInfos.nextElement()));
+		}
+		
+		return set;
+	}
+	
+	public boolean isRequest() {
+		return getPkiStatus() == null;
+	}
+	
+	private AttributeTable getAttributeTable() {
+		return new AttributeTable(signerInfo.getAuthenticatedAttributes());
+	}
+
+	void setPkcsPkiEnvelope(PkcsPkiEnvelope envelope) {
+		this.pkcsPkiEnvelope = envelope;
+	}
+	
+	public PkcsPkiEnvelope getPkcsPkiEnvelope() {
+		return pkcsPkiEnvelope;
+	}
+	
+//	void setFailInfo(FailInfo failInfo) {
+//		this.failInfo = failInfo;
+//	}
+	
+	public FailInfo getFailInfo() {
+		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.failInfo);
+		if (attr == null) {
+			return null;
+		}
+		final DERPrintableString failInfo = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
+		
+		return FailInfo.valueOf(Integer.parseInt(failInfo.getString()));
+	}
+	
+	public PkiStatus getPkiStatus() {
+		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.pkiStatus);
+		if (attr == null) {
+			return null;
+		}
+		final DERPrintableString pkiStatus = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
+
+		return PkiStatus.valueOf(Integer.parseInt(pkiStatus.toString()));
+	}
+	
+	private Nonce getNonce(DERObjectIdentifier oid) {
+		final Attribute attr = getAttributeTable().get(oid);
+		if (attr == null) {
+			return null;
+		}
+		final DEROctetString nonce = (DEROctetString) attr.getAttrValues().getObjectAt(0);
+
+		return new Nonce(nonce.getOctets());
+	}
+	
+	public Nonce getRecipientNonce() {
+		return getNonce(SCEPObjectIdentifiers.recipientNonce);
+	}
+	
+	public Nonce getSenderNonce() {
+		return getNonce(SCEPObjectIdentifiers.senderNonce);
+	}
+	
+	public TransactionId getTransactionId() {
+		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.transId);
+		DERPrintableString transId = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
+		
+		return new TransactionId(transId.getOctets());
+	}
+	
+	void setEncoded(byte[] encoded) {
+		this.encoded = encoded;
+	}
+	
+	public byte[] getEncoded() {
+		return encoded;
+	}
+	
+	public MessageType getMessageType() {
+		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.messageType);
+		final DERPrintableString msgType = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
+		
+		return MessageType.valueOf(Integer.parseInt(msgType.getString()));
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if (getPkiStatus() == null) {
+			sb.append("pkiMessage (request) [\n");
+		} else {
+			sb.append("pkiMessage (response) [\n");
+		}
+		sb.append("\tcontentType: " + contentInfo.getContentType() + "\n");
+		sb.append("\ttransactionId: " + getTransactionId() + "\n");
+		sb.append("\tmessageType: " + getMessageType() + "\n");
+		if (getPkiStatus() != null) {
+			sb.append("\tpkiStatus: " + getPkiStatus() + "\n");
+		}
+		if (getFailInfo() != null) {
+			sb.append("\tfailInfo: " + getFailInfo() + "\n");
+		}
+		sb.append("\tsenderNonce: " + getSenderNonce() + "\n");
+		if (getRecipientNonce() != null) {
+			sb.append("\trecipientNonce: " + getRecipientNonce() + "\n");
+		}
+		sb.append("\tpkcsPkiEnvelope: " + pkcsPkiEnvelope.toString().replaceAll("\n", "\n\t") + "\n");
+		sb.append("]");
+		
+		return sb.toString();
+	}
 }

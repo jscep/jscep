@@ -68,6 +68,6 @@ public class GetCRL implements PkiOperation<IssuerAndSerialNumber> {
 	
 	@Override
 	public String toString() {
-		return "GetCRL";
+		return getMessageType().toString();
 	}
 }

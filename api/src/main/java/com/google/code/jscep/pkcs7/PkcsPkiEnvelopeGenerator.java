@@ -52,7 +52,6 @@ import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
@@ -116,7 +115,7 @@ public class PkcsPkiEnvelopeGenerator {
 			throw ioe;
 		}
     	
-    	final PkcsPkiEnvelopeImpl envelope = new PkcsPkiEnvelopeImpl(contentInfo);
+    	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(contentInfo);
     	envelope.setMessageData(MessageData.getInstance(messageData));
     	
     	LOGGER.exiting(getClass().getName(), "generate", envelope);
