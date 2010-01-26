@@ -17,5 +17,12 @@ public class NonceTest {
 	public void testEquals() {
 		Assert.assertEquals(new Nonce(new byte[0]), new Nonce(new byte[0]));
 	}
-
+	
+	@Test
+	public void testNextNonce() {
+		Nonce nonce1 = Nonce.nextNonce();
+		Nonce nonce2 = Nonce.nextNonce();
+		
+		Assert.assertFalse(nonce1.equals(nonce2));
+	}
 }

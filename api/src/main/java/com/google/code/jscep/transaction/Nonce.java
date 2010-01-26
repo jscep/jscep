@@ -22,9 +22,13 @@
 
 package com.google.code.jscep.transaction;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Random;
+import java.util.logging.Logger;
 
 import com.google.code.jscep.util.HexUtil;
+import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the senderNonce and recipientNonce types.
@@ -32,6 +36,8 @@ import com.google.code.jscep.util.HexUtil;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.1.5">SCEP Internet-Draft Reference</a>
  */
 public class Nonce {
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
+	private static final Random RND = new SecureRandom();
 	private byte[] nonce;
 	
 	/**
@@ -65,5 +71,27 @@ public class Nonce {
 	@Override
 	public String toString() {
 		return HexUtil.toHexString(nonce);
+	}
+	
+	/**
+	 * Generates a new random Nonce.
+	 * <p>
+	 * This method does not guarantee that multiple invocations will produce a different
+	 * nonce, as the byte generation is provided by a SecureRandom instance.
+	 * 
+	 * @return the generated nonce.
+	 * @see java.security.SecureRandom
+	 */
+	public static Nonce nextNonce() {
+		LOGGER.entering(Nonce.class.getName(), "nextNonce");
+		
+		byte[] bytes = new byte[16];
+		RND.nextBytes(bytes);
+
+		final Nonce nonce = new Nonce(bytes);
+		
+		LOGGER.exiting(Nonce.class.getName(), "nextNonce", nonce);
+		
+		return nonce;
 	}
 }

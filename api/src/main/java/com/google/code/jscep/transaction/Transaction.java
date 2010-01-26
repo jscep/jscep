@@ -58,7 +58,7 @@ public class Transaction {
 		this.transport = transport;
 		this.keyPair = keyPair;
 		this.transId = TransactionId.createTransactionId(keyPair, digestAlgorithm);
-		this.senderNonce = NonceFactory.nextNonce();
+		this.senderNonce = Nonce.nextNonce();
 		this.msgGenerator = msgGenerator;
 	}
 

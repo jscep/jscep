@@ -15,7 +15,7 @@ public class NonceQueueTest {
 	
 	@Before
 	public void setUp() {
-		nonce = NonceFactory.nextNonce();
+		nonce = Nonce.nextNonce();
 		queue = new NonceQueue(SIZE);
 		queue.add(nonce);
 	}
@@ -53,9 +53,9 @@ public class NonceQueueTest {
 	
 	@Test
 	public void testFixedSize() {
-		queue.offer(NonceFactory.nextNonce());
-		queue.offer(NonceFactory.nextNonce());
-		queue.offer(NonceFactory.nextNonce());
+		queue.offer(Nonce.nextNonce());
+		queue.offer(Nonce.nextNonce());
+		queue.offer(Nonce.nextNonce());
 		
 		Assert.assertSame(SIZE, queue.size());
 	}
