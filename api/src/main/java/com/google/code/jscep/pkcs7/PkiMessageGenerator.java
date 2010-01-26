@@ -201,8 +201,7 @@ public class PkiMessageGenerator {
 	}
 	
 	private DEREncodable getContent() {
-		ASN1OctetString str = new BERConstructedOctetString(content);
-		return str;
+		return new BERConstructedOctetString(content);
 	}
 	
 	private ASN1Set getCertificates() {
