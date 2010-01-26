@@ -58,12 +58,11 @@ public class DegenerateSignedDataParser {
 			}
 			CertStoreParameters parameters = new CollectionCertStoreParameters(collection);
 			CertStore store = CertStore.getInstance("Collection", parameters);
-            
-            DegenerateSignedDataImpl certRep = new DegenerateSignedDataImpl(store, signedData.getDEREncoded());
-            
-            LOGGER.exiting(getClass().getName(), "parse", certRep);
-            return certRep;
 
+			DegenerateSignedData certRep = new DegenerateSignedData(store, signedData.getDEREncoded());
+
+			LOGGER.exiting(getClass().getName(), "parse", certRep);
+			return certRep;
 		} catch (Exception e) {
 			
 			LOGGER.throwing(getClass().getName(), "parse", e);

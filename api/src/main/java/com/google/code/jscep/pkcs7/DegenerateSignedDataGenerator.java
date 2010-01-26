@@ -57,7 +57,7 @@ public class DegenerateSignedDataGenerator {
 		
 		SignedData sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
 		ContentInfo ci = new ContentInfo(CMSObjectIdentifiers.signedData, sd);
-		DegenerateSignedData dsd =new DegenerateSignedDataImpl(store, ci.getDEREncoded());
+		DegenerateSignedData dsd =new DegenerateSignedData(store, ci.getDEREncoded());
 		
 		LOGGER.exiting(getClass().getName(), "generate", dsd);
 		return dsd;
