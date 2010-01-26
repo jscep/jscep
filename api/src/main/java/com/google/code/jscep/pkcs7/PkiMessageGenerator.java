@@ -59,11 +59,12 @@ public class PkiMessageGenerator {
 	private KeyPair keyPair;
 	private X509Certificate identity;
 	private AlgorithmIdentifier digest;
-	private PkiStatus status;
+	private PkiStatus pkiStatus;
 	private ContentInfo content;
 	private byte[] hash;
 	private X509Certificate recipient;
 	private AlgorithmIdentifier cipherAlgorithm;
+	private ASN1Encodable msgData;
 	
 	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
@@ -89,8 +90,12 @@ public class PkiMessageGenerator {
 		this.senderNonce = nonce;
 	}
 	
-	public void setStatus(PkiStatus status) {
-		this.status = status;
+	public void setStatus(PkiStatus pkiStatus) {
+		this.pkiStatus = pkiStatus;
+	}
+	
+	public void setMessageData(ASN1Encodable msgData) {
+		this.msgData = msgData;
 	}
 	
 	public void setMessageType(MessageType msgType) {
@@ -109,16 +114,49 @@ public class PkiMessageGenerator {
 		this.cipherAlgorithm = cipherAlgorithm;
 	}
 	
-	public PkiMessage generate(ASN1Encodable messageData) throws IOException {
+	public PkiMessage generate() throws IOException {
 		LOGGER.entering(getClass().getName(), "generate");
-		// TODO: MessageData could be empty...
-		final PkcsPkiEnvelopeGenerator envelopeGenerator = new PkcsPkiEnvelopeGenerator();
-		envelopeGenerator.setCipherAlgorithm(cipherAlgorithm);
-		envelopeGenerator.setRecipient(recipient);
-		final PkcsPkiEnvelope envelope = envelopeGenerator.generate(messageData);
 		
-		this.content = new ContentInfo((ASN1Sequence) ASN1Object.fromByteArray(envelope.getEncoded()));
+		// 3.1
+		if (transId == null) {
+			throw new IllegalStateException("Missing transactionID");
+		}
+		if (msgType == null) {
+			throw new IllegalStateException("Missing messageType");
+		}
+		if (senderNonce == null) {
+			throw new IllegalStateException("Missing senderNonce");
+		}
+		if (msgType == MessageType.CertRep) {
+			// Response
+			if (pkiStatus == null) {
+				throw new IllegalStateException("Missing pkiStatus");
+			} else if (pkiStatus == PkiStatus.FAILURE) {
+				if (failInfo == null) {
+					throw new IllegalStateException("Missing failInfo");
+				}
+			}
+			if (recipientNonce == null) {
+				throw new IllegalStateException("Missing recipientNonce");
+			}
+		}
 		
+		if (digest == null) {
+			throw new IllegalStateException("Missing messageDigest");
+		}
+
+		final PkcsPkiEnvelope envelope;
+		if (msgData == null) {
+			envelope = null;
+		} else {
+			final PkcsPkiEnvelopeGenerator envelopeGenerator = new PkcsPkiEnvelopeGenerator();
+			envelopeGenerator.setCipherAlgorithm(cipherAlgorithm);
+			envelopeGenerator.setRecipient(recipient);
+			envelopeGenerator.setMessageData(msgData);
+			
+			envelope = envelopeGenerator.generate();
+			this.content = new ContentInfo((ASN1Sequence) ASN1Object.fromByteArray(envelope.getEncoded()));
+		}
 		
         final ContentInfo ci;
         final SignedData signedData;
@@ -209,7 +247,7 @@ public class PkiMessageGenerator {
 		table.put(getSigningTime().getAttrType(), getSigningTime());
 		table.put(getMessageDigest().getAttrType(), getMessageDigest());
 		
-		if (status != null) {
+		if (pkiStatus != null) {
 			table.put(getStatus().getAttrType(), getStatus());
 		}
 		if (failInfo != null) {
@@ -305,7 +343,7 @@ public class PkiMessageGenerator {
 	}
 	
 	private Attribute getStatus() {
-		DERPrintableString attr = new DERPrintableString(Integer.toString(status.getValue()));
+		DERPrintableString attr = new DERPrintableString(Integer.toString(pkiStatus.getValue()));
 
 		return new Attribute(SCEPObjectIdentifiers.pkiStatus, new DERSet(attr));
 	}
