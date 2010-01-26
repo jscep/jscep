@@ -14,19 +14,16 @@ import java.util.Hashtable;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.BERConstructedOctetString;
 import org.bouncycastle.asn1.DEREncodable;
-import org.bouncycastle.asn1.DEREncodableVector;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
@@ -62,12 +59,11 @@ public class PkiMessageGenerator {
 	private KeyPair keyPair;
 	private X509Certificate identity;
 	private AlgorithmIdentifier digest;
-	private PkiStatus pkiStatus;
-	private ASN1Encodable content;
+	private PkiStatus status;
+	private ContentInfo content;
 	private byte[] hash;
 	private X509Certificate recipient;
 	private AlgorithmIdentifier cipherAlgorithm;
-	private ASN1Encodable msgData;
 	
 	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
@@ -93,8 +89,8 @@ public class PkiMessageGenerator {
 		this.senderNonce = nonce;
 	}
 	
-	public void setPkiStatus(PkiStatus status) {
-		this.pkiStatus = status;
+	public void setStatus(PkiStatus status) {
+		this.status = status;
 	}
 	
 	public void setMessageType(MessageType msgType) {
@@ -113,49 +109,16 @@ public class PkiMessageGenerator {
 		this.cipherAlgorithm = cipherAlgorithm;
 	}
 	
-	public PkiMessage generate() throws IOException {
+	public PkiMessage generate(ASN1Encodable messageData) throws IOException {
 		LOGGER.entering(getClass().getName(), "generate");
+		// TODO: MessageData could be empty...
+		final PkcsPkiEnvelopeGenerator envelopeGenerator = new PkcsPkiEnvelopeGenerator();
+		envelopeGenerator.setCipherAlgorithm(cipherAlgorithm);
+		envelopeGenerator.setRecipient(recipient);
+		final PkcsPkiEnvelope envelope = envelopeGenerator.generate(messageData);
 		
-		// 3.1
-		if (transId == null) {
-			throw new IllegalStateException("Missing transactionID");
-		}
-		if (msgType == null) {
-			throw new IllegalStateException("Missing messageType");
-		}
-		if (senderNonce == null) {
-			throw new IllegalStateException("Missing senderNonce");
-		}
-		if (msgType == MessageType.CertRep) {
-			// Response
-			if (pkiStatus == null) {
-				throw new IllegalStateException("Missing pkiStatus");
-			} else if (pkiStatus == PkiStatus.FAILURE) {
-				if (failInfo == null) {
-					throw new IllegalStateException("Missing failInfo");
-				}
-			}
-			if (recipientNonce == null) {
-				throw new IllegalStateException("Missing recipientNonce");
-			}
-		}
+		this.content = new ContentInfo((ASN1Sequence) ASN1Object.fromByteArray(envelope.getEncoded()));
 		
-		if (digest == null) {
-			throw new IllegalStateException("Missing messageDigest");
-		}
-
-		final PkcsPkiEnvelope envelope;
-		if (msgData == null) {
-			envelope = null;
-		} else {
-			final PkcsPkiEnvelopeGenerator envelopeGenerator = new PkcsPkiEnvelopeGenerator();
-			envelopeGenerator.setCipherAlgorithm(cipherAlgorithm);
-			envelopeGenerator.setRecipient(recipient);
-			envelopeGenerator.setMessageData(msgData);
-			
-			envelope = envelopeGenerator.generate();
-			this.content = new ContentInfo((ASN1Sequence) ASN1Object.fromByteArray(envelope.getEncoded()));
-		}
 		
         final ContentInfo ci;
         final SignedData signedData;
@@ -181,9 +144,7 @@ public class PkiMessageGenerator {
     	
 		final PkiMessage msg = new PkiMessage(ci);
 		
-		if (envelope != null) {
-			msg.setPkcsPkiEnvelope(envelope);
-		}
+		msg.setPkcsPkiEnvelope(envelope);
 		msg.setEncoded(ci.getEncoded());
 		
 		LOGGER.exiting(getClass().getName(), "generate", msg);
@@ -191,29 +152,19 @@ public class PkiMessageGenerator {
 	}
 	
 	private ContentInfo getContentInfo() {
-		final DEREncodableVector vector = new ASN1EncodableVector();
-		vector.add(CMSObjectIdentifiers.data);
-		if (content != null) {
-			vector.add(getContent());
-		}
+		DERObjectIdentifier contentType = CMSObjectIdentifiers.data;
+		DEREncodable content = getContent();
 		
-		return new ContentInfo(new DERSequence(vector));
+		return new ContentInfo(contentType, content);
 	}
 	
 	private Attribute getContentType() {
 		return new Attribute(CMSAttributes.contentType, new DERSet(PKCSObjectIdentifiers.data));
 	}
 	
-	public void setMessageData(ASN1Encodable msgData) {
-		this.msgData = msgData;
-	}
-	
 	private DEREncodable getContent() {
-		if (content == null) {
-			return null;
-		} else {
-			return new BERConstructedOctetString(content);
-		}
+		ASN1OctetString str = new BERConstructedOctetString(content);
+		return str;
 	}
 	
 	private ASN1Set getCertificates() {
@@ -247,9 +198,7 @@ public class PkiMessageGenerator {
 		// TODO: Hardcoded Algorithm
 		final Signature sig = Signature.getInstance("SHA1withRSA");
 		
-		if (content != null) {
-			digest.update(content.getEncoded());
-		}
+		digest.update(content.getEncoded());
 		hash = digest.digest();
 		
 		final Hashtable<DERObjectIdentifier, Attribute> table = new Hashtable<DERObjectIdentifier, Attribute>();
@@ -260,7 +209,7 @@ public class PkiMessageGenerator {
 		table.put(getSigningTime().getAttrType(), getSigningTime());
 		table.put(getMessageDigest().getAttrType(), getMessageDigest());
 		
-		if (pkiStatus != null) {
+		if (status != null) {
 			table.put(getStatus().getAttrType(), getStatus());
 		}
 		if (failInfo != null) {
@@ -356,7 +305,7 @@ public class PkiMessageGenerator {
 	}
 	
 	private Attribute getStatus() {
-		DERPrintableString attr = new DERPrintableString(Integer.toString(pkiStatus.getValue()));
+		DERPrintableString attr = new DERPrintableString(Integer.toString(status.getValue()));
 
 		return new Attribute(SCEPObjectIdentifiers.pkiStatus, new DERSet(attr));
 	}

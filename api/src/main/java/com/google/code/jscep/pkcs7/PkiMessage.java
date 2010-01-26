@@ -72,7 +72,7 @@ public class PkiMessage {
 	}
 	
 	public boolean isRequest() {
-		return getMessageType() != MessageType.CertRep;
+		return getPkiStatus() == null;
 	}
 	
 	private AttributeTable getAttributeTable() {
@@ -86,6 +86,10 @@ public class PkiMessage {
 	public PkcsPkiEnvelope getPkcsPkiEnvelope() {
 		return pkcsPkiEnvelope;
 	}
+	
+//	void setFailInfo(FailInfo failInfo) {
+//		this.failInfo = failInfo;
+//	}
 	
 	public FailInfo getFailInfo() {
 		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.failInfo);
@@ -150,7 +154,7 @@ public class PkiMessage {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		if (isRequest()) {
+		if (getPkiStatus() == null) {
 			sb.append("pkiMessage (request) [\n");
 		} else {
 			sb.append("pkiMessage (response) [\n");
@@ -168,9 +172,7 @@ public class PkiMessage {
 		if (getRecipientNonce() != null) {
 			sb.append("\trecipientNonce: " + getRecipientNonce() + "\n");
 		}
-		if (pkcsPkiEnvelope != null) {
-			sb.append("\tpkcsPkiEnvelope: " + pkcsPkiEnvelope.toString().replaceAll("\n", "\n\t") + "\n");
-		}
+		sb.append("\tpkcsPkiEnvelope: " + pkcsPkiEnvelope.toString().replaceAll("\n", "\n\t") + "\n");
 		sb.append("]");
 		
 		return sb.toString();

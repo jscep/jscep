@@ -41,9 +41,8 @@ public class PkcsPkiEnvelopeTest {
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
 		envGenerator.setCipherAlgorithm(getCipherAlgorithm());
 		envGenerator.setRecipient(cert);
-		envGenerator.setMessageData(msgData);
 		
-		fixture = envGenerator.generate();
+		fixture = envGenerator.generate(msgData);
 	}
 	
 	private static AlgorithmIdentifier getCipherAlgorithm() {

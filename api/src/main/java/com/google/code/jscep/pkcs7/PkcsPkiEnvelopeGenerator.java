@@ -70,7 +70,6 @@ public class PkcsPkiEnvelopeGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private X509Certificate recipient;
 	private AlgorithmIdentifier cipherAlgorithm;
-	private ASN1Encodable msgData;
 	
 	public void setRecipient(X509Certificate recipient) {
 		this.recipient = recipient;
@@ -80,12 +79,8 @@ public class PkcsPkiEnvelopeGenerator {
 		this.cipherAlgorithm = cipherAlgorithm;
 	}
 	
-	public void setMessageData(ASN1Encodable msgData) {
-		this.msgData = msgData;
-	}
-	
-	public PkcsPkiEnvelope generate() throws IOException {
-		LOGGER.entering(getClass().getName(), "generate");
+	public PkcsPkiEnvelope generate(ASN1Encodable messageData) throws IOException {
+		LOGGER.entering(getClass().getName(), "generate", messageData);
 
     	final ContentInfo contentInfo;
 		try {
@@ -98,7 +93,7 @@ public class PkcsPkiEnvelopeGenerator {
 						
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			CipherOutputStream caos = new CipherOutputStream(baos, cipher);
-			caos.write(msgData.getDEREncoded());
+			caos.write(messageData.getDEREncoded());
 			caos.close();
 			
 			final ASN1OctetString encContent = new BERConstructedOctetString(baos.toByteArray());
@@ -121,7 +116,7 @@ public class PkcsPkiEnvelopeGenerator {
 		}
     	
     	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(contentInfo);
-    	envelope.setMessageData(MessageData.getInstance(msgData));
+    	envelope.setMessageData(MessageData.getInstance(messageData));
     	
     	LOGGER.exiting(getClass().getName(), "generate", envelope);
 		return envelope;

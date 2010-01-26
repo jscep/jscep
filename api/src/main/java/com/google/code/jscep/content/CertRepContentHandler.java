@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.security.KeyPair;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeParser;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageParser;
 import com.google.code.jscep.util.LoggingUtil;
