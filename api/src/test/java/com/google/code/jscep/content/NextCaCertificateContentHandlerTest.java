@@ -13,12 +13,13 @@ import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.cms.SignedData;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.code.jscep.X509CertificateFactory;
-import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataGenerator;
+import com.google.code.jscep.pkcs7.MessageData;
 
 public class NextCaCertificateContentHandlerTest {
 	private NextCaCertificateContentHandler fixture;
@@ -36,9 +37,9 @@ public class NextCaCertificateContentHandlerTest {
 
 		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
 		generator.setCertStore(store);
-		DegenerateSignedData dsd = generator.generate();
+		SignedData dsd = generator.generate();
 		
-		InputStream in = new ByteArrayInputStream(dsd.getEncoded());
+		InputStream in = new ByteArrayInputStream(MessageData.getInstance(dsd).getEncoded());
 		fixture.getContent(in, "application/x-x509-next-ca-cert");
 	}
 	
@@ -48,7 +49,7 @@ public class NextCaCertificateContentHandlerTest {
 
 		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
 		generator.setCertStore(store);
-		DegenerateSignedData dsd = generator.generate();
+		SignedData dsd = generator.generate();
 		
 		InputStream in = new ByteArrayInputStream(dsd.getEncoded());
 		fixture.getContent(in, "foo/bar");

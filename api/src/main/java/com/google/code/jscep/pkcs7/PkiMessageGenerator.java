@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -64,7 +63,7 @@ public class PkiMessageGenerator {
 	private byte[] hash;
 	private X509Certificate recipient;
 	private AlgorithmIdentifier cipherAlgorithm;
-	private ASN1Encodable msgData;
+	private MessageData msgData;
 	
 	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
@@ -94,7 +93,7 @@ public class PkiMessageGenerator {
 		this.pkiStatus = pkiStatus;
 	}
 	
-	public void setMessageData(ASN1Encodable msgData) {
+	public void setMessageData(MessageData msgData) {
 		this.msgData = msgData;
 	}
 	
@@ -190,9 +189,7 @@ public class PkiMessageGenerator {
 		}
     	
 		final PkiMessage msg = new PkiMessage(ci);
-		
 		msg.setPkcsPkiEnvelope(envelope);
-		msg.setEncoded(ci.getEncoded());
 		
 		LOGGER.exiting(getClass().getName(), "generate", msg);
 		return msg;

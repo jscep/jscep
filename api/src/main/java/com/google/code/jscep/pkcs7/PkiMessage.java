@@ -22,6 +22,8 @@
 
 package com.google.code.jscep.pkcs7;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,7 +50,6 @@ import com.google.code.jscep.transaction.TransactionId;
  * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
  */
 public class PkiMessage {
-	private byte[] encoded;
 	private PkcsPkiEnvelope pkcsPkiEnvelope;
 	private final SignerInfo signerInfo;
 	private final ContentInfo contentInfo;
@@ -132,12 +133,8 @@ public class PkiMessage {
 		return new TransactionId(transId.getOctets());
 	}
 	
-	void setEncoded(byte[] encoded) {
-		this.encoded = encoded;
-	}
-	
-	public byte[] getEncoded() {
-		return encoded;
+	public byte[] getEncoded() throws IOException {
+		return contentInfo.getEncoded();
 	}
 	
 	public MessageType getMessageType() {
@@ -172,5 +169,19 @@ public class PkiMessage {
 		sb.append("]");
 		
 		return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof PkiMessage == false) {
+			return false;
+		}
+		final PkiMessage other = (PkiMessage) o;
+		
+		try {
+			return Arrays.equals(getEncoded(), other.getEncoded());
+		} catch (IOException e) {
+			return false;
+		}
 	}
 }

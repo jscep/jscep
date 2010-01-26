@@ -42,7 +42,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Object;
@@ -70,9 +69,9 @@ public class PkcsPkiEnvelopeGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private X509Certificate recipient;
 	private AlgorithmIdentifier cipherAlgorithm;
-	private ASN1Encodable msgData;
+	private MessageData msgData;
 	
-	public void setMessageData(ASN1Encodable msgData) {
+	public void setMessageData(MessageData msgData) {
 		this.msgData = msgData;
 	}
 	
@@ -98,7 +97,7 @@ public class PkcsPkiEnvelopeGenerator {
 						
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			CipherOutputStream caos = new CipherOutputStream(baos, cipher);
-			caos.write(msgData.getDEREncoded());
+			caos.write(msgData.getContent().getDEREncoded());
 			caos.close();
 			
 			final ASN1OctetString encContent = new BERConstructedOctetString(baos.toByteArray());
@@ -121,7 +120,7 @@ public class PkcsPkiEnvelopeGenerator {
 		}
     	
     	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(contentInfo);
-    	envelope.setMessageData(MessageData.getInstance(msgData));
+    	envelope.setMessageData(msgData);
     	
     	LOGGER.exiting(getClass().getName(), "generate", envelope);
 		return envelope;

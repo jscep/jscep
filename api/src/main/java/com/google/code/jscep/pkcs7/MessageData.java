@@ -1,6 +1,10 @@
 package com.google.code.jscep.pkcs7;
 
+import java.io.IOException;
+
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 
@@ -11,7 +15,15 @@ public class MessageData {
 		this.contentInfo = contentInfo;
 	}
 	
-	public ContentInfo getContent() {
+	public DERObjectIdentifier getContentType() {
+		return contentInfo.getContentType();
+	}
+	
+	public ASN1Encodable getContent() {
+		return (ASN1Encodable) contentInfo.getContent();
+	}
+	
+	public ContentInfo getContentInfo() {
 		return contentInfo;
 	}
 	
@@ -19,6 +31,14 @@ public class MessageData {
 		ContentInfo info = new ContentInfo(CMSObjectIdentifiers.data, content);
 		
 		return new MessageData(info);
+	}
+	
+	public byte[] getDEREncoded() {
+		return contentInfo.getDEREncoded();
+	}
+	
+	public byte[] getEncoded() throws IOException {
+		return contentInfo.getEncoded();
 	}
 	
 	@Override

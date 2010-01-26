@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
@@ -39,7 +38,6 @@ import java.util.logging.Logger;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.SignedData;
 
-import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.util.LoggingUtil;
 import com.google.code.jscep.util.SignedDataUtilities;

@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -74,7 +75,7 @@ public class PkcsPkiEnvelopeParser {
 		
 		ASN1Set recipientInfoSet = envelopedData.getRecipientInfos();
 		Enumeration<?> riEnum = recipientInfoSet.getObjects();
-		ContentInfo ci = null;
+		ASN1Encodable msgData = null;
 		while (riEnum.hasMoreElements()) {
 			final ASN1Sequence seq = (ASN1Sequence) riEnum.nextElement();
 			final RecipientInfo ri = new RecipientInfo((DERObject) seq);
@@ -97,14 +98,14 @@ public class PkcsPkiEnvelopeParser {
 				msgCipher.init(Cipher.DECRYPT_MODE, secretKey, algParams);
 				final byte[] content = msgCipher.doFinal(ec.getOctets());
 				
-				ci = ContentInfo.getInstance(ASN1Object.fromByteArray(content));
+				msgData = ASN1Object.fromByteArray(content);
 			} catch (GeneralSecurityException e) {
 				throw new IOException(e);
 			}
 		}
 
     	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(envInfo);
-    	envelope.setMessageData(new MessageData(ci));
+    	envelope.setMessageData(MessageData.getInstance(msgData));
     	
     	LOGGER.exiting(getClass().getName(), "parse", envelope);
 		return envelope;

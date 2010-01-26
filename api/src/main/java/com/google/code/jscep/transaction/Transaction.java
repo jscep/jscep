@@ -24,12 +24,8 @@ package com.google.code.jscep.transaction;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CRLException;
 import java.security.cert.CertStore;
-import java.security.cert.CertificateException;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -83,9 +79,9 @@ public class Transaction {
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(senderNonce);
 		msgGenerator.setTransactionId(transId);
-		msgGenerator.setMessageData(op.getMessageData());
+		msgGenerator.setMessageData(MessageData.getInstance(op.getMessageData()));
 		
-		PkiMessage msg = msgGenerator.generate();
+		final PkiMessage msg = msgGenerator.generate();
 		PkiRequest request = new PkiRequest(msg, keyPair);
 		PkiMessage response = transport.sendMessage(request);
 

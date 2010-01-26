@@ -41,7 +41,7 @@ public class PkcsPkiEnvelopeTest {
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
 		envGenerator.setCipherAlgorithm(getCipherAlgorithm());
 		envGenerator.setRecipient(cert);
-		envGenerator.setMessageData(msgData);
+		envGenerator.setMessageData(MessageData.getInstance(msgData));
 		
 		fixture = envGenerator.generate();
 	}
@@ -53,7 +53,7 @@ public class PkcsPkiEnvelopeTest {
 	
 	@Test
 	public void testGetCertStore() throws NoSuchProviderException, NoSuchAlgorithmException {
-		Assert.assertEquals(msgData, fixture.getMessageData().getContent().getContent());
+		Assert.assertEquals(msgData, fixture.getMessageData().getContent());
 	}
 
 }

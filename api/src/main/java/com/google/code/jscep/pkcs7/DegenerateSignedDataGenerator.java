@@ -30,36 +30,37 @@ public class DegenerateSignedDataGenerator {
 		this.store = store;
 	}
 	
-	public DegenerateSignedData generate() throws IOException {
+	public SignedData generate() throws IOException {
 		LOGGER.entering(getClass().getName(), "generate");
 		
-		DERSet digestAlgorithms = new DERSet();
+		final DERSet digestAlgorithms = new DERSet();
 		ContentInfo contentInfo = new ContentInfo(CMSObjectIdentifiers.data, new DEROctetString(new byte[0]));
-		DERSet signerInfos = new DERSet();
-		DEREncodableVector certVector = new ASN1EncodableVector();
-		DEREncodableVector crlVector = new ASN1EncodableVector();
-		try {
-			Collection<? extends Certificate> certs = store.getCertificates(new X509CertSelector());
-			for (Certificate cert : certs) {
-				certVector.add(ASN1Object.fromByteArray(cert.getEncoded()));
+		final DERSet signerInfos = new DERSet();
+		final DEREncodableVector certVector = new ASN1EncodableVector();
+		final DEREncodableVector crlVector = new ASN1EncodableVector();
+		if (store != null) {
+			try {
+				final Collection<? extends Certificate> certs = store.getCertificates(new X509CertSelector());
+				for (Certificate cert : certs) {
+					certVector.add(ASN1Object.fromByteArray(cert.getEncoded()));
+				}
+				final Collection<? extends CRL> crls = store.getCRLs(new X509CRLSelector());
+				for (CRL crl : crls) {
+					X509CRL x509crl = (X509CRL) crl;
+					crlVector.add(ASN1Object.fromByteArray(x509crl.getEncoded()));
+				}
+			} catch (GeneralSecurityException e) {
+				
+				LOGGER.throwing(getClass().getName(), "generate", e);
+				throw new RuntimeException(e);
 			}
-			Collection<? extends CRL> crls = store.getCRLs(new X509CRLSelector());
-			for (CRL crl : crls) {
-				X509CRL x509crl = (X509CRL) crl;
-				crlVector.add(ASN1Object.fromByteArray(x509crl.getEncoded()));
-			}
-		} catch (GeneralSecurityException e) {
-			LOGGER.throwing(getClass().getName(), "generate", e);
-			throw new RuntimeException(e);
 		}
-		DERSet certificates = new DERSet(certVector);
-		DERSet crls = new DERSet(crlVector);
+		final DERSet certificates = new DERSet(certVector);
+		final DERSet crls = new DERSet(crlVector);
 		
-		SignedData sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
-		ContentInfo ci = new ContentInfo(CMSObjectIdentifiers.signedData, sd);
-		DegenerateSignedData dsd =new DegenerateSignedData(store, ci.getDEREncoded());
+		final SignedData sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
 		
-		LOGGER.exiting(getClass().getName(), "generate", dsd);
-		return dsd;
+		LOGGER.exiting(getClass().getName(), "generate", sd);
+		return sd;
 	}
 }

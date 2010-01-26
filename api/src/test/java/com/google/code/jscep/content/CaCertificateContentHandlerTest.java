@@ -14,14 +14,15 @@ import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.code.jscep.X509CertificateFactory;
-import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataGenerator;
+import com.google.code.jscep.pkcs7.MessageData;
 
 public class CaCertificateContentHandlerTest {
 	private CaCertificateContentHandler fixture;
@@ -50,7 +51,7 @@ public class CaCertificateContentHandlerTest {
 
 		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
 		generator.setCertStore(store);
-		DegenerateSignedData dsd = generator.generate();
+		SignedData dsd = generator.generate();
 		
 		InputStream in = new ByteArrayInputStream(dsd.getEncoded());
 		fixture.getContent(in, "application/x-x509-ca-cert");
@@ -70,9 +71,10 @@ public class CaCertificateContentHandlerTest {
 
 		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
 		generator.setCertStore(store);
-		DegenerateSignedData dsd = generator.generate();
+		SignedData sd = generator.generate();
+		MessageData md = MessageData.getInstance(sd);
 		
-		InputStream in = new ByteArrayInputStream(dsd.getEncoded());
+		InputStream in = new ByteArrayInputStream(md.getEncoded());
 		fixture.getContent(in, "application/x-x509-ca-ra-cert");
 	}
 	
