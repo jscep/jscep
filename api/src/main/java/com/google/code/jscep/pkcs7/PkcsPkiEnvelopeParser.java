@@ -60,7 +60,7 @@ public class PkcsPkiEnvelopeParser {
 	
 	public PkcsPkiEnvelope parse(ContentInfo envContentInfo) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse", envContentInfo);
-		assert(envContentInfo.getContentType().equals(CMSObjectIdentifiers.data));
+
 		final DEROctetString octetString = (DEROctetString) envContentInfo.getContent();
 		
 		final ContentInfo envInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(octetString.getOctets()));

@@ -19,10 +19,9 @@ public class DegenerateSignedDataParser {
 		
 		try {
 			ContentInfo ci = ContentInfo.getInstance(signedData);
-			assert(ci.getContentType().equals(CMSObjectIdentifiers.signedData));
+			assert(ci.getContentType().equals(CMSObjectIdentifiers.data));
 			ASN1Sequence seq = (ASN1Sequence) ci.getContent();
 			final SignedData sd = new SignedData(seq);
-
 
 			LOGGER.exiting(getClass().getName(), "parse", sd);
 			return sd;
