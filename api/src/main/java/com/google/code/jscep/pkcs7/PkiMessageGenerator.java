@@ -90,7 +90,7 @@ public class PkiMessageGenerator {
 		this.senderNonce = nonce;
 	}
 	
-	public void setStatus(PkiStatus pkiStatus) {
+	public void setPkiStatus(PkiStatus pkiStatus) {
 		this.pkiStatus = pkiStatus;
 	}
 	
