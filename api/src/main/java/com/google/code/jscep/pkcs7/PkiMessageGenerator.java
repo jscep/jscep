@@ -82,7 +82,7 @@ public class PkiMessageGenerator {
 		this.recipientNonce = nonce;
 	}
 	
-	public void setDigest(AlgorithmIdentifier digest) {
+	public void setMessageDigest(AlgorithmIdentifier digest) {
 		this.digest = digest;
 	}
 	

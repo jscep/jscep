@@ -59,7 +59,7 @@ public final class TransactionFactory {
 		LOGGER.entering(TransactionFactory.class.getName(), "createTransaction");
 
 		final PkiMessageGenerator msgGenerator = new PkiMessageGenerator();
-		msgGenerator.setDigest(getDigestAlgorithm());
+		msgGenerator.setMessageDigest(getDigestAlgorithm());
 		msgGenerator.setIdentity(identity);
 		msgGenerator.setKeyPair(keyPair);
 		msgGenerator.setCipherAlgorithm(getCipherAlgorithm());
