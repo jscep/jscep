@@ -87,10 +87,6 @@ public class PkiMessage {
 		return pkcsPkiEnvelope;
 	}
 	
-//	void setFailInfo(FailInfo failInfo) {
-//		this.failInfo = failInfo;
-//	}
-	
 	public FailInfo getFailInfo() {
 		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.failInfo);
 		if (attr == null) {
