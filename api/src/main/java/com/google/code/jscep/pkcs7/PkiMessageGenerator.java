@@ -142,7 +142,16 @@ public class PkiMessageGenerator {
 		}
 		
 		if (digest == null) {
-			throw new IllegalStateException("Missing messageDigest");
+			throw new IllegalStateException("Missing Message Digest Algorithm");
+		}
+		if (cipherAlgorithm == null) {
+			throw new IllegalStateException("Missing Cipher Algorithm");
+		}
+		if (keyPair == null) {
+			throw new IllegalStateException("Missing Key Pair");
+		}
+		if (recipient == null) {
+			throw new IllegalStateException("Missing Recipient");
 		}
 
 		final PkcsPkiEnvelope envelope;

@@ -25,6 +25,7 @@ package com.google.code.jscep.content;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.cert.CertSelector;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
@@ -38,10 +39,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.cms.SignedData;
 
-import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.util.LoggingUtil;
+import com.google.code.jscep.util.SignedDataUtilities;
 
 /**
  * This class handles responses to <tt>GetCACert</tt> requests.
@@ -91,9 +93,16 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			}
 			
 			DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
-			DegenerateSignedData dsd = parser.parse(ASN1Object.fromByteArray(baos.toByteArray()));
-			
-			CertStore store = dsd.getCertStore();
+			SignedData dsd = parser.parse(ASN1Object.fromByteArray(baos.toByteArray()));
+			CertStore store;
+			try {
+				store = SignedDataUtilities.extractCertStore(dsd);
+			} catch (GeneralSecurityException e) {
+				IOException ioe = new IOException(e);
+				
+				LOGGER.throwing(getClass().getName(), "getContent", ioe);
+				throw ioe;
+			}
 			CertSelector selector = new X509CertSelector();
 			try {
 				@SuppressWarnings("unchecked")

@@ -23,16 +23,21 @@
 package com.google.code.jscep.transaction;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CRLException;
 import java.security.cert.CertStore;
+import java.security.cert.CertificateException;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.cms.SignedData;
 
 import com.google.code.jscep.EnrollmentFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.operations.PkiOperation;
-import com.google.code.jscep.pkcs7.DegenerateSignedData;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.pkcs7.MessageData;
 import com.google.code.jscep.pkcs7.PkiMessage;
@@ -40,6 +45,7 @@ import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
+import com.google.code.jscep.util.SignedDataUtilities;
 
 /**
  * This class represents a SCEP transaction, and provides a framework for 
@@ -121,8 +127,16 @@ public class Transaction {
 		} else {
 			final MessageData repMsgData = response.getPkcsPkiEnvelope().getMessageData();
 			final DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
-			final DegenerateSignedData certRep = parser.parse(repMsgData.getContent());
-			final CertStore cs = certRep.getCertStore();
+			final SignedData signedData = parser.parse(repMsgData.getContent());
+			CertStore cs;
+			try {
+				cs = SignedDataUtilities.extractCertStore(signedData);
+			} catch (GeneralSecurityException e) {
+				IOException ioe = new IOException(e);
+				
+				LOGGER.throwing(getClass().getName(), "getContent", ioe);
+				throw ioe;
+			}
 			
 			LOGGER.exiting(getClass().getName(), "performOperation", cs);
 			return cs;
