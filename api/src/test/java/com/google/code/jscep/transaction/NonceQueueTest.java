@@ -1,7 +1,5 @@
 package com.google.code.jscep.transaction;
 
-import static org.junit.Assert.fail;
-
 import java.util.Iterator;
 
 import org.junit.Assert;
