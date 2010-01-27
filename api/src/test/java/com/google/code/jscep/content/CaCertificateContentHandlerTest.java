@@ -47,10 +47,8 @@ public class CaCertificateContentHandlerTest {
 	
 	@Test(expected=IOException.class)
 	public void testSingleCertificateFail() throws Exception {
-		CertStore store = getCertStore();
-
 		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
-		generator.setCertStore(store);
+		generator.addCertificate(getCertificate());
 		SignedData dsd = generator.generate();
 		
 		InputStream in = new ByteArrayInputStream(dsd.getEncoded());
@@ -67,10 +65,8 @@ public class CaCertificateContentHandlerTest {
 	
 	@Test
 	public void testMultipleCertificates() throws Exception {
-		CertStore store = getCertStore();
-
 		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
-		generator.setCertStore(store);
+		generator.addCertificate(getCertificate());
 		SignedData sd = generator.generate();
 		MessageData md = MessageData.getInstance(sd);
 		

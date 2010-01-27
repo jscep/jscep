@@ -33,10 +33,8 @@ public class NextCaCertificateContentHandlerTest {
 	
 	@Test
 	public void testSuccess() throws Exception {
-		CertStore store = getCertStore();
-
 		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
-		generator.setCertStore(store);
+		generator.addCertificate(ca);
 		SignedData dsd = generator.generate();
 		
 		InputStream in = new ByteArrayInputStream(MessageData.getInstance(dsd).getEncoded());
@@ -45,10 +43,8 @@ public class NextCaCertificateContentHandlerTest {
 	
 	@Test(expected=IOException.class)
 	public void testInvalidMime() throws Exception {
-		CertStore store = getCertStore();
-
 		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
-		generator.setCertStore(store);
+		generator.addCertificate(ca);
 		SignedData dsd = generator.generate();
 		
 		InputStream in = new ByteArrayInputStream(dsd.getEncoded());
