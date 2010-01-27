@@ -36,7 +36,7 @@ public class ClientTest {
 		config.setCaDigest(new byte[] {-93, -44, 23, 25, -106, 116, 80, -113, 36, 23, 76, -89, -36, -18, 89, -59});
 		config.setSubject(new X500Principal("CN=example.org"));
 		Client client = new Client(config);
-		EnrollmentResult result = client.enroll("INBOUND_TLSuscl99".toCharArray());
+		client.enroll("INBOUND_TLSuscl99".toCharArray());
 	}
 
 }

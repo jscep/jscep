@@ -6,11 +6,7 @@ import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Security;
-import java.security.cert.CertStore;
-import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -80,17 +76,6 @@ public class CaCertificateContentHandlerTest {
 		X509Certificate cert = X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
 		
 		return cert;
-	}
-
-	private CertStore getCertStore() throws Exception {
-		X509Certificate cert = getCertificate();
-		List<X509Certificate> certs = new ArrayList<X509Certificate>();
-		certs.add(cert);
-		
-		CollectionCertStoreParameters params = new CollectionCertStoreParameters(certs);
-		CertStore store = CertStore.getInstance("Collection", params);
-		
-		return store;
 	}
 	
 	@Test(expected=IOException.class)
