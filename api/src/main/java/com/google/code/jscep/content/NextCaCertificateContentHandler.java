@@ -40,7 +40,7 @@ import org.bouncycastle.asn1.cms.SignedData;
 
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.util.LoggingUtil;
-import com.google.code.jscep.util.SignedDataUtilities;
+import com.google.code.jscep.util.SignedDataUtil;
 
 /**
  * This class handles responses to <tt>GetNextCACert</tt> requests.
@@ -70,7 +70,7 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 			try {
 				DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
 				SignedData sd = parser.parse(ASN1Object.fromByteArray(getBytes(in)));
-				CertStore store = SignedDataUtilities.extractCertStore(sd);
+				CertStore store = SignedDataUtil.extractCertStore(sd);
 				collection = store.getCertificates(new X509CertSelector());
 			} catch (GeneralSecurityException e) {
 				final IOException ioe = new IOException(e);

@@ -43,7 +43,7 @@ import org.bouncycastle.asn1.cms.SignedData;
 
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.util.LoggingUtil;
-import com.google.code.jscep.util.SignedDataUtilities;
+import com.google.code.jscep.util.SignedDataUtil;
 
 /**
  * This class handles responses to <tt>GetCACert</tt> requests.
@@ -96,7 +96,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			SignedData dsd = parser.parse(ASN1Object.fromByteArray(baos.toByteArray()));
 			CertStore store;
 			try {
-				store = SignedDataUtilities.extractCertStore(dsd);
+				store = SignedDataUtil.extractCertStore(dsd);
 			} catch (GeneralSecurityException e) {
 				IOException ioe = new IOException(e);
 				

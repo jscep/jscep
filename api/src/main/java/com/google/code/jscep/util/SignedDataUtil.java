@@ -16,7 +16,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.cms.SignedData;
 
-public final class SignedDataUtilities {
+public final class SignedDataUtil {
 	public static CertStore extractCertStore(SignedData signedData) throws GeneralSecurityException {
 		final CertificateFactory factory = CertificateFactory.getInstance("X.509");
 		final Collection<Object> collection = new HashSet<Object>();

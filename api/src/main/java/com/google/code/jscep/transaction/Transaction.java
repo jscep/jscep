@@ -41,7 +41,7 @@ import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.request.PkiRequest;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
-import com.google.code.jscep.util.SignedDataUtilities;
+import com.google.code.jscep.util.SignedDataUtil;
 
 /**
  * This class represents a SCEP transaction, and provides a framework for 
@@ -126,7 +126,7 @@ public class Transaction {
 			final SignedData signedData = parser.parse(repMsgData.getContent());
 			CertStore cs;
 			try {
-				cs = SignedDataUtilities.extractCertStore(signedData);
+				cs = SignedDataUtil.extractCertStore(signedData);
 			} catch (GeneralSecurityException e) {
 				IOException ioe = new IOException(e);
 				
