@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.transaction;
 
 import java.security.KeyPair;
@@ -35,7 +34,7 @@ import com.google.code.jscep.util.LoggingUtil;
 /**
  * This class represents the <tt>SCEP</tt> <tt>transactionID</tt> attribute.
  * 
- * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1.1.1">SCEP Internet-Draft Reference</a>
+ * @author davidjgrant1978
  */
 public final class TransactionId {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");

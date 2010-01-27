@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.operations;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ import com.google.code.jscep.transaction.MessageType;
 /**
  * This interface defines the common structure of a <tt>SCEP</tt> <tt>pkiMessage</tt>
  * 
- * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
+ * @author davidjgrant1978
  */
 public interface PkiOperation<T extends ASN1Encodable> {
 	/**

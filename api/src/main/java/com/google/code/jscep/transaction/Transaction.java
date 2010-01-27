@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.transaction;
 
 import java.io.IOException;
@@ -46,6 +45,8 @@ import com.google.code.jscep.util.SignedDataUtil;
 /**
  * This class represents a SCEP transaction, and provides a framework for 
  * performing operations.
+ * 
+ * @author davidjgrant1978
  */
 public class Transaction {
 	private static NonceQueue QUEUE = new NonceQueue(20);

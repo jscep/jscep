@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.util;
 
 import java.util.HashMap;
@@ -28,15 +27,16 @@ import java.util.logging.Logger;
 
 /**
  * This class provides logging facilities.
+ * 
+ * @author davidjgrant1978
  */
 public final class LoggingUtil {
 	private static Map<String, Logger> cache = new HashMap<String, Logger>();
 
 	/**
-	 * Prevent Instantiation
+	 * Private constructor to prevent instantiation.
 	 */
-	private LoggingUtil() {
-	}
+	private LoggingUtil() {}
 	
 	/**
 	 * Returns a logger for the given class.

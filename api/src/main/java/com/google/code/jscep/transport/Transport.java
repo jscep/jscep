@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.transport;
 
 import java.io.IOException;
@@ -34,6 +33,8 @@ import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class represents the transport for sending a message to the SCEP server.
+ * 
+ * @author davidjgrant1978
  */
 public abstract class Transport {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transport");

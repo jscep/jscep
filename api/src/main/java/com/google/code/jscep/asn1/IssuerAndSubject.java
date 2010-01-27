@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.asn1;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -41,7 +40,7 @@ import org.bouncycastle.asn1.x509.X509Name;
  * }
  * </pre>
  * 
- * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.2.3.1">SCEP Internet-Draft Reference</a>
+ * @author davidjgrant1978
  */
 public class IssuerAndSubject extends ASN1Encodable {
 	private final X509Name issuer;

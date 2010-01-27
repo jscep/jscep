@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.content;
 
 import java.io.ByteArrayOutputStream;
@@ -47,6 +46,8 @@ import com.google.code.jscep.util.SignedDataUtil;
 
 /**
  * This class handles responses to <tt>GetCACert</tt> requests.
+ * 
+ * @author davidjgrant1978
  */
 public class CaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");

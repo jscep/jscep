@@ -50,6 +50,10 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import com.google.code.jscep.util.AlgorithmDictionary;
 import com.google.code.jscep.util.LoggingUtil;
 
+/**
+ * 
+ * @author davidjgrant1978
+ */
 public class PkcsPkiEnvelopeParser {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private final PrivateKey privKey;

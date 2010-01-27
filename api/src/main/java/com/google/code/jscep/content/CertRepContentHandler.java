@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.content;
 
 import java.io.ByteArrayOutputStream;
@@ -34,6 +33,8 @@ import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class handles responses to <tt>PKIRequest</tt> requests.
+ * 
+ * @author davidjgrant1978
  */
 public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");

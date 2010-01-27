@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,13 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.request;
 
 /**
  * This class represents the operation for a given <tt>SCEP</tt> transaction.
  *
- * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.1">SCEP Internet-Draft Reference</a>
+ * @author davidjgrant1978
  */
 public enum Operation {
 	/**

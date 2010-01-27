@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.pkcs7;
 
 import java.io.IOException;
@@ -47,7 +46,7 @@ import com.google.code.jscep.transaction.TransactionId;
 /**
  * This interface represents the <tt>SCEP</tt> <tt>pkiMessage</tt>.
  *
- * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-3.1">SCEP Internet-Draft Reference</a>
+ * @author davidjgrant1978
  */
 public class PkiMessage {
 	private PkcsPkiEnvelope pkcsPkiEnvelope;

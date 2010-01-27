@@ -19,11 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.response;
 
 /**
  * This class represents a single SCEP server capability.
+ * 
+ * @author davidjgrant1978
  */
 public enum Capability {
 	/**

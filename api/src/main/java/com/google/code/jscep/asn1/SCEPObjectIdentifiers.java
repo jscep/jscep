@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.asn1;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
@@ -27,7 +26,7 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
 /**
  * Object Identifiers used by SCEP
  * 
- * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#appendix-A">SCEP Internet-Draft Reference</a>
+ * @author davidjgrant1978
  */
 public interface SCEPObjectIdentifiers {
 	/**

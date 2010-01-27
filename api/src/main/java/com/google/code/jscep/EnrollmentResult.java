@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep;
 
 import java.security.cert.X509Certificate;
@@ -30,6 +29,8 @@ import com.google.code.jscep.transaction.PkiStatus;
 
 /**
  * This class represents the outcome of a enrolment request.
+ * 
+ * @author davidjgrant1978
  */
 public class EnrollmentResult {
 	private List<X509Certificate> certs;

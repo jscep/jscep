@@ -65,6 +65,10 @@ import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 import com.google.code.jscep.util.AlgorithmDictionary;
 import com.google.code.jscep.util.LoggingUtil;
 
+/**
+ * 
+ * @author davidjgrant1978
+ */
 public class PkcsPkiEnvelopeGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private X509Certificate recipient;

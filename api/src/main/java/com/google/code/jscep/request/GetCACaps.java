@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.request;
 
 import com.google.code.jscep.content.CaCapabilitiesContentHandler;
@@ -28,7 +27,7 @@ import com.google.code.jscep.response.Capabilities;
 /**
  * This class represents a <tt>GetCACaps</tt> request.
  * 
- * @link http://tools.ietf.org/html/draft-nourse-scep-19#appendix-D.1
+ * @author davidjgrant1978
  */
 public final class GetCACaps implements Request<Capabilities> {
 	private String caIdentifier;

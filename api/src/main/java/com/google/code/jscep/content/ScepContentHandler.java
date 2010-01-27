@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.content;
 
 import java.io.IOException;
@@ -28,8 +27,8 @@ import java.io.InputStream;
 /**
  * This interface represents a mechanism for handling specific SCEP content.
  * 
- * @param <T>
- *            the content handled by the handler implementation
+ * @author davidjgrant1978
+ * @param <T> the content handled by the handler implementation
  */
 public interface ScepContentHandler<T> {
 	/**

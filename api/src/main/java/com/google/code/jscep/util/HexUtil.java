@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 David Grant
+ * Copyright (c) 2009-2010 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,12 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.google.code.jscep.util;
 
 /**
  * This class provides utilities for converting between byte
  * arrays and hexadecimal strings.
+ * 
+ * @author davidjgrant1978
  */
 public final class HexUtil {
 	static final byte[] HEX_CHAR_TABLE = {
@@ -34,8 +35,10 @@ public final class HexUtil {
 	    (byte)'c', (byte)'d', (byte)'e', (byte)'f'
 	  };
 	
-	private HexUtil() {
-	}
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
+	private HexUtil() {}
 	
 	/**
 	 * Converts the given byte array to an array of hex characters.
