@@ -28,6 +28,7 @@ import java.security.cert.CertStore;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.cms.SignedData;
 
 import com.google.code.jscep.EnrollmentFailureException;
@@ -74,7 +75,7 @@ public class Transaction {
 	 * @throws RequestPendingException if manual intervention is required.
 	 * @throws EnrollmentFailureException if the request could not be serviced.
 	 */
-	public <T extends ASN1Encodable> CertStore performOperation(PKIOperation<T> op) throws IOException, EnrollmentFailureException, RequestPendingException {
+	public <T extends DEREncodable> CertStore performOperation(PKIOperation<T> op) throws IOException, EnrollmentFailureException, RequestPendingException {
 		LOGGER.entering(getClass().getName(), "performOperation", op);
 		
 		msgGenerator.setMessageType(op.getMessageType());
