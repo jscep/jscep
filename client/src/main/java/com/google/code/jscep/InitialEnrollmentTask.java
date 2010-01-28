@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.x509.X509CertStoreSelector;
 
-import com.google.code.jscep.operations.PkcsReq;
+import com.google.code.jscep.operations.PKCSReq;
 import com.google.code.jscep.operations.PkiOperation;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
