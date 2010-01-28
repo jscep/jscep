@@ -27,7 +27,7 @@ import java.util.List;
 import com.google.code.jscep.content.CaCertificateContentHandler;
 
 /**
- * This class represents a <tt>GetCACert</tt> request.
+ * This class represents a <code>GetCACert</code> request.
  * 
  * @author David Grant
  */

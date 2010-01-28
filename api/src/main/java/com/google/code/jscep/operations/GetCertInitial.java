@@ -29,11 +29,12 @@ import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.transaction.MessageType;
 
 /**
- * This class represents the <tt>SCEP</tt> <tt>GetCertInitial</tt> <tt>pkiMessage</tt> type.
+ * This class represents the SCEP <code>GetCertInitial</code> 
+ * <code>pkiMessage</code> type.
  * 
  * @author David Grant
  */
-public class GetCertInitial implements PkiOperation<IssuerAndSubject> {
+public class GetCertInitial implements PKIOperation<IssuerAndSubject> {
 	private final X509Name issuer;
     private final X509Name subject;
 
@@ -58,6 +59,9 @@ public class GetCertInitial implements PkiOperation<IssuerAndSubject> {
 		return new IssuerAndSubject(issuer, subject);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return getMessageType().toString();

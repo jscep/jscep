@@ -22,7 +22,7 @@
 package com.google.code.jscep.request;
 
 /**
- * This class represents the operation for a given <tt>SCEP</tt> transaction.
+ * This enum represents the different types of transaction operations in SCEP.
  *
  * @author David Grant
  */

@@ -28,7 +28,7 @@ import com.google.code.jscep.content.CertRepContentHandler;
 import com.google.code.jscep.pkcs7.PkiMessage;
 
 /**
- * This class represents a <tt>PkiRequest</tt> request.
+ * This class represents a <code>PkiRequest</code> request.
  * 
  * @author David Grant
  */

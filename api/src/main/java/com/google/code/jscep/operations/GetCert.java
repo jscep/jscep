@@ -33,11 +33,12 @@ import org.bouncycastle.jce.X509Principal;
 import com.google.code.jscep.transaction.MessageType;
 
 /**
- * This class represents the <tt>SCEP</tt> <tt>GetCert</tt> <tt>pkiMessage</tt> type.
+ * This class represents the SCEP <code>GetCert</code> <code>pkiMessage</code> 
+ * type.
  * 
  * @author David Grant
  */
-public class GetCert implements PkiOperation<IssuerAndSerialNumber> {
+public class GetCert implements PKIOperation<IssuerAndSerialNumber> {
 	private final X500Principal issuer;
     private final BigInteger serial;
 
@@ -65,6 +66,9 @@ public class GetCert implements PkiOperation<IssuerAndSerialNumber> {
         return new IssuerAndSerialNumber(issuerName, serial);
     }
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return getMessageType().toString();

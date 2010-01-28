@@ -27,7 +27,7 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 
 
 /**
- * This class represents the <tt>SCEP</tt> <tt>pkcsPKIEnvelope</tt> object.
+ * This class represents the SCEP <code>pkcsPKIEnvelope</code> type.
  * 
  * @author David Grant
  */

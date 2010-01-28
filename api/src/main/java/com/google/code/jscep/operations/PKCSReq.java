@@ -46,11 +46,11 @@ import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.util.AlgorithmDictionary;
 
 /**
- * This class represents the <tt>SCEP</tt> <tt>PKCSReq</tt> <tt>pkiMessage</tt> type.
+ * This class represents the SCEP <code>PKCSReq</code> <code>pkiMessage</code> type.
  * 
  * @author David Grant
  */
-public class PKCSReq implements PkiOperation<CertificationRequest> {
+public class PKCSReq implements PKIOperation<CertificationRequest> {
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;
@@ -121,6 +121,9 @@ public class PKCSReq implements PkiOperation<CertificationRequest> {
     	return new AlgorithmIdentifier(signatureAlgorithm);
     }
     
+    /**
+	 * {@inheritDoc}
+	 */
     @Override
     public String toString() {
     	return getMessageType().toString();

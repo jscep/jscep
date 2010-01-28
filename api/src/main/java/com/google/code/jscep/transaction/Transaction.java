@@ -32,7 +32,7 @@ import org.bouncycastle.asn1.cms.SignedData;
 
 import com.google.code.jscep.EnrollmentFailureException;
 import com.google.code.jscep.RequestPendingException;
-import com.google.code.jscep.operations.PkiOperation;
+import com.google.code.jscep.operations.PKIOperation;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.pkcs7.MessageData;
 import com.google.code.jscep.pkcs7.PkiMessage;
@@ -74,7 +74,7 @@ public class Transaction {
 	 * @throws RequestPendingException if manual intervention is required.
 	 * @throws EnrollmentFailureException if the request could not be serviced.
 	 */
-	public <T extends ASN1Encodable> CertStore performOperation(PkiOperation<T> op) throws IOException, EnrollmentFailureException, RequestPendingException {
+	public <T extends ASN1Encodable> CertStore performOperation(PKIOperation<T> op) throws IOException, EnrollmentFailureException, RequestPendingException {
 		LOGGER.entering(getClass().getName(), "performOperation", op);
 		
 		msgGenerator.setMessageType(op.getMessageType());

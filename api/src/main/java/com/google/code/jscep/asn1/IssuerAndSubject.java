@@ -29,10 +29,9 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.X509Name;
 
 /**
- * <tt>IssuerAndSubject</tt> <tt>ASN.1</tt> Object
+ * This class represents the SCEP <code>IssuerAndSubject</code> ASN.1 object.
  * <p>
- * The <tt>IssuerAndSubject</tt> object is defined in the <tt>SCEP</tt> Internet-Draft
- * by the following notation:
+ * This object is defined by the following ASN.1 notation:
  * <pre>
  * IssuerAndSubject ::= SEQUENCE {
  *     issuer Name,

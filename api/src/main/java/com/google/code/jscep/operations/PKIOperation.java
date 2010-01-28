@@ -29,11 +29,11 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import com.google.code.jscep.transaction.MessageType;
 
 /**
- * This interface defines the common structure of a <tt>SCEP</tt> <tt>pkiMessage</tt>
+ * This interface defines the common structure of a SCEP <code>pkiMessage</code>
  * 
  * @author David Grant
  */
-public interface PkiOperation<T extends ASN1Encodable> {
+public interface PKIOperation<T extends ASN1Encodable> {
 	/**
 	 * Returns the message type for this operation.
 	 * 

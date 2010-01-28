@@ -25,7 +25,7 @@ import com.google.code.jscep.content.CaCapabilitiesContentHandler;
 import com.google.code.jscep.response.Capabilities;
 
 /**
- * This class represents a <tt>GetCACaps</tt> request.
+ * This class represents a <code>GetCACaps</code> request.
  * 
  * @author David Grant
  */
