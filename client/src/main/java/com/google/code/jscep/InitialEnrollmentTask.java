@@ -78,7 +78,7 @@ public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 	@Override
 	public EnrollmentResult call() throws IOException {
 		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, digestAlgorithm);
-		PkiOperation<CertificationRequest> req = new PkcsReq(keyPair, identity, digestAlgorithm, password);
+		PkiOperation<CertificationRequest> req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
 		try {
 			CertStore store = trans.performOperation(req);
 			
