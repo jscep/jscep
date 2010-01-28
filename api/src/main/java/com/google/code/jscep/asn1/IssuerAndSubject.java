@@ -40,7 +40,7 @@ import org.bouncycastle.asn1.x509.X509Name;
  * }
  * </pre>
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class IssuerAndSubject extends ASN1Encodable {
 	private final X509Name issuer;

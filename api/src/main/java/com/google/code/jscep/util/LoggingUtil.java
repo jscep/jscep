@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * This class provides logging facilities.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public final class LoggingUtil {
 	private static Map<String, Logger> cache = new HashMap<String, Logger>();

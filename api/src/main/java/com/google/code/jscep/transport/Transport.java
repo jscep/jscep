@@ -34,7 +34,7 @@ import com.google.code.jscep.util.LoggingUtil;
 /**
  * This class represents the transport for sending a message to the SCEP server.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public abstract class Transport {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transport");

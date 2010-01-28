@@ -32,7 +32,7 @@ import com.google.code.jscep.util.LoggingUtil;
 /**
  * This class represents the senderNonce and recipientNonce types.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class Nonce {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");

@@ -23,7 +23,7 @@ package com.google.code.jscep;
 
 /**
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class RequestPendingException extends Exception {
 	/**

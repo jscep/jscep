@@ -31,7 +31,7 @@ import com.google.code.jscep.transaction.MessageType;
 /**
  * This interface defines the common structure of a <tt>SCEP</tt> <tt>pkiMessage</tt>
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public interface PkiOperation<T extends ASN1Encodable> {
 	/**

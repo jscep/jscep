@@ -34,7 +34,7 @@ import com.google.code.jscep.util.LoggingUtil;
 /**
  * This class represents the <tt>SCEP</tt> <tt>transactionID</tt> attribute.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public final class TransactionId {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");

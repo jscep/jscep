@@ -35,7 +35,7 @@ import com.google.code.jscep.util.LoggingUtil;
 /**
  * Transport representing the <tt>HTTP GET</tt> method
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class HttpGetTransport extends Transport {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transport");

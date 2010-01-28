@@ -46,7 +46,7 @@ import com.google.code.jscep.util.SignedDataUtil;
  * This class represents a SCEP transaction, and provides a framework for 
  * performing operations.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class Transaction {
 	private static NonceQueue QUEUE = new NonceQueue(20);

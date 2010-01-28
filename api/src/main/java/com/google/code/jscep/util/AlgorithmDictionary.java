@@ -37,7 +37,7 @@ import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
  * The internal dictionary is by no means comprehensive, and new algorithms are
  * generally as and when they are required by changes to the SCEP specification.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public final class AlgorithmDictionary {
 	private final static Map<DERObjectIdentifier, String> contents = new HashMap<DERObjectIdentifier, String>();

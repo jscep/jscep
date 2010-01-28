@@ -24,7 +24,7 @@ package com.google.code.jscep.request;
 /**
  * This class represents the operation for a given <tt>SCEP</tt> transaction.
  *
- * @author davidjgrant1978
+ * @author David Grant
  */
 public enum Operation {
 	/**

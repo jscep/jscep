@@ -41,7 +41,7 @@ import org.bouncycastle.asn1.cms.SignedData;
  * This class contains utility methods for manipulating SingedData
  * objects.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public final class SignedDataUtil {
 	/**

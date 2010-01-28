@@ -48,7 +48,7 @@ import com.google.code.jscep.util.AlgorithmDictionary;
 /**
  * This class represents the <tt>SCEP</tt> <tt>PKCSReq</tt> <tt>pkiMessage</tt> type.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class PkcsReq implements PkiOperation<CertificationRequest> {
     private final X509Certificate identity;

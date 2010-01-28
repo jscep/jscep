@@ -32,7 +32,7 @@ import com.google.code.jscep.util.LoggingUtil;
  * This class represents a set of capabilities for a particular
  * SCEP server.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class Capabilities {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.response");

@@ -27,7 +27,7 @@ import com.google.code.jscep.response.Capabilities;
 /**
  * This class represents a <tt>GetCACaps</tt> request.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public final class GetCACaps implements Request<Capabilities> {
 	private String caIdentifier;

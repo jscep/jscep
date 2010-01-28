@@ -33,12 +33,22 @@ import org.bouncycastle.asn1.cms.SignedData;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * 
- * @author davidjgrant1978
+ * This class parses a ASN1 structure and extracts a degenerate (certificates
+ * and CRLs only) SignedData instance.
+ *  
+ * @author David Grant
  */
 public class DegenerateSignedDataParser {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 
+	/**
+	 * Parses the provided ASN1 object and extracts a degenerate SignedData
+	 * instance.
+	 * 
+	 * @param signedData the ASN1 object to parse.
+	 * @return a new degenerate SignedData instance.
+	 * @throws IOException if any I/O error occurs.
+	 */
 	public SignedData parse(ASN1Encodable signedData) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse", signedData);
 		

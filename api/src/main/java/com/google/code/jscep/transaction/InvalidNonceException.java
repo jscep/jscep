@@ -25,7 +25,7 @@ package com.google.code.jscep.transaction;
  * This class represents the error condition when an invalid
  * Nonce is received by a SCEP peer.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class InvalidNonceException extends RuntimeException {
 

@@ -29,7 +29,7 @@ import com.google.code.jscep.content.NextCaCertificateContentHandler;
 /**
  * This class represents a <tt>GetNextCACert</tt> request.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class GetNextCACert implements Request<List<X509Certificate>> {
     private final String caIdentifier;

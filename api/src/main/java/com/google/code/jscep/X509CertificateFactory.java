@@ -38,7 +38,7 @@ import com.google.code.jscep.util.LoggingUtil;
 /**
  * This class is used for generating ephemeral certificates.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public final class X509CertificateFactory {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");

@@ -25,7 +25,7 @@ package com.google.code.jscep.util;
  * This class provides utilities for converting between byte
  * arrays and hexadecimal strings.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public final class HexUtil {
 	static final byte[] HEX_CHAR_TABLE = {

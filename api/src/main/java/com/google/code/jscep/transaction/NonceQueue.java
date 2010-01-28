@@ -32,7 +32,7 @@ import java.util.Queue;
  * The size of this queue can be altered depending on performance
  * requirements.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class NonceQueue extends AbstractQueue<Nonce> {
 	private final int size;

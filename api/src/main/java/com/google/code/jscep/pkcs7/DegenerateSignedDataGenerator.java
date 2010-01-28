@@ -43,27 +43,57 @@ import org.bouncycastle.asn1.cms.SignedData;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
+ * This class is used for generating degenerate (certificates and CRLs only) 
+ * SignedData instances.
+ * <p>
+ * Example usage:
+ * <pre>
+ * X509Certificate cert = ...;
  * 
- * @author davidjgrant1978
+ * DegenerateSignedDataGenerator gen = new DegenerateSignedDataGenerator();
+ * gen.addCertificate(cert);
+ * SignedData signedData = gen.generate();
+ * </pre>
+ * 
+ * @author David Grant
  */
 public class DegenerateSignedDataGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private final List<X509Certificate> certs;
 	private final List<X509CRL> crls;
 	
+	/**
+	 * Creates a new instance of <code>DegenerateSignedDataGenerator</code>
+	 */
 	public DegenerateSignedDataGenerator() {
 		certs = new LinkedList<X509Certificate>();
 		crls = new LinkedList<X509CRL>();
 	}
 	
+	/**
+	 * Adds the provided certificate to the resulting SignedData.
+	 * 
+	 * @param cert the certificate to add.
+	 */
 	public void addCertificate(X509Certificate cert) {
 		certs.add(cert);
 	}
 	
+	/**
+	 * Adds the provided CRL to the resulting SignedData.
+	 * 
+	 * @param crl the CRL to add.
+	 */
 	public void addCRL(X509CRL crl) {
 		crls.add(crl);
 	}
 	
+	/**
+	 * Generates a new degenerate SignedData instance.
+	 * 
+	 * @return a new degenerate SignedData instance.
+	 * @throws IOException if any I/O error occurs.
+	 */
 	public SignedData generate() throws IOException {
 		LOGGER.entering(getClass().getName(), "generate");
 		

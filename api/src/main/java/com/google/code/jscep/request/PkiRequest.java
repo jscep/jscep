@@ -30,7 +30,7 @@ import com.google.code.jscep.pkcs7.PkiMessage;
 /**
  * This class represents a <tt>PkiRequest</tt> request.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class PkiRequest implements Request<PkiMessage> {
 	private final PkiMessage signedData;

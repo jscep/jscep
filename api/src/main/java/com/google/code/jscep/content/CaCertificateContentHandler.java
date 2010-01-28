@@ -47,7 +47,7 @@ import com.google.code.jscep.util.SignedDataUtil;
 /**
  * This class handles responses to <tt>GetCACert</tt> requests.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class CaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");

@@ -44,7 +44,7 @@ import com.google.code.jscep.util.SignedDataUtil;
 /**
  * This class handles responses to <tt>GetNextCACert</tt> requests.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class NextCaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");

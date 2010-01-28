@@ -25,7 +25,7 @@ package com.google.code.jscep.transaction;
 /**
  * This class represents the <tt>SCEP</tt> <tt>pkiStatus</tt> attribute.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public enum PkiStatus {
 	/**

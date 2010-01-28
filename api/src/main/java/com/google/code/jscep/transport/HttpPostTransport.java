@@ -35,7 +35,7 @@ import com.google.code.jscep.util.LoggingUtil;
 /**
  * Transport representing the <tt>HTTP POST</tt> method
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class HttpPostTransport extends Transport {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transport");

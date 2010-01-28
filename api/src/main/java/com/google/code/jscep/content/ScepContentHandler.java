@@ -27,7 +27,7 @@ import java.io.InputStream;
 /**
  * This interface represents a mechanism for handling specific SCEP content.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  * @param <T> the content handled by the handler implementation
  */
 public interface ScepContentHandler<T> {

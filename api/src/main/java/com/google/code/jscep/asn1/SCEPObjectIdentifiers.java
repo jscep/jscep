@@ -26,7 +26,7 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
 /**
  * Object Identifiers used by SCEP
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public interface SCEPObjectIdentifiers {
 	/**

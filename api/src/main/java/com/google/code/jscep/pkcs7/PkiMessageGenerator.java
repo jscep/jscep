@@ -70,7 +70,7 @@ import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class PkiMessageGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");

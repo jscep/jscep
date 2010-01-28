@@ -29,7 +29,7 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 /**
  * This class represents the <tt>SCEP</tt> <tt>pkcsPKIEnvelope</tt> object.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class PkcsPkiEnvelope {
 	private MessageData msgData;

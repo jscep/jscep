@@ -46,7 +46,7 @@ import com.google.code.jscep.transaction.TransactionId;
 /**
  * This interface represents the <tt>SCEP</tt> <tt>pkiMessage</tt>.
  *
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class PkiMessage {
 	private PkcsPkiEnvelope pkcsPkiEnvelope;

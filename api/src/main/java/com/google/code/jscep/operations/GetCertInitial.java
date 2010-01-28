@@ -31,7 +31,7 @@ import com.google.code.jscep.transaction.MessageType;
 /**
  * This class represents the <tt>SCEP</tt> <tt>GetCertInitial</tt> <tt>pkiMessage</tt> type.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class GetCertInitial implements PkiOperation<IssuerAndSubject> {
 	private final X509Name issuer;

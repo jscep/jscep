@@ -67,7 +67,7 @@ import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class PkcsPkiEnvelopeGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");

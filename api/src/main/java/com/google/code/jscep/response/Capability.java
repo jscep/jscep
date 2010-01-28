@@ -24,7 +24,7 @@ package com.google.code.jscep.response;
 /**
  * This class represents a single SCEP server capability.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public enum Capability {
 	/**

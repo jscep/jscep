@@ -30,7 +30,7 @@ import com.google.code.jscep.transaction.PkiStatus;
 /**
  * This class represents the outcome of a enrolment request.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class EnrollmentResult {
 	private List<X509Certificate> certs;

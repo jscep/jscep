@@ -29,7 +29,7 @@ import com.google.code.jscep.content.CaCertificateContentHandler;
 /**
  * This class represents a <tt>GetCACert</tt> request.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public final class GetCACert implements Request<List<X509Certificate>> {
 	private String caIdentifier;

@@ -31,7 +31,7 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 /**
  * This class represents a PKCS #9 challengePassword.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class ChallengePassword extends Attribute {
 	/**

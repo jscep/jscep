@@ -35,7 +35,7 @@ import com.google.code.jscep.transaction.MessageType;
 /**
  * This class represents the <tt>SCEP</tt> <tt>GetCRL</tt> <tt>pkiMessage</tt> type.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class GetCRL implements PkiOperation<IssuerAndSerialNumber> {
     private final X500Principal issuer;

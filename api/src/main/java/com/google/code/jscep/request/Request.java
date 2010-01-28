@@ -28,7 +28,7 @@ import com.google.code.jscep.content.ScepContentHandler;
 /**
  * This interface represents a <tt>SCEP</tt> request.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  * @param <T> the response type associated with this request
  */
 public interface Request<T> {

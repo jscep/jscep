@@ -35,7 +35,7 @@ import com.google.code.jscep.transaction.MessageType;
 /**
  * This class represents the <tt>SCEP</tt> <tt>GetCert</tt> <tt>pkiMessage</tt> type.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class GetCert implements PkiOperation<IssuerAndSerialNumber> {
 	private final X500Principal issuer;

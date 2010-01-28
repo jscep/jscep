@@ -31,7 +31,7 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 /**
  * This class represents the SCEP <code>messageData</code> data structure. 
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public class MessageData {
 	private final ContentInfo contentInfo;

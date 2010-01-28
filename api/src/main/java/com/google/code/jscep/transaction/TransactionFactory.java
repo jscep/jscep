@@ -35,7 +35,7 @@ import com.google.code.jscep.util.LoggingUtil;
 /**
  * Factory for generating new Transactions.
  * 
- * @author davidjgrant1978
+ * @author David Grant
  */
 public final class TransactionFactory {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
