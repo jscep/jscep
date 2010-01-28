@@ -21,7 +21,7 @@ import com.google.code.jscep.X509CertificateFactory;
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
 import com.google.code.jscep.operations.GetCertInitial;
-import com.google.code.jscep.operations.PkcsReq;
+import com.google.code.jscep.operations.PKCSReq;
 import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
@@ -108,7 +108,7 @@ public class PkiMessageTest {
 	
 	@Test
 	public void testPKCSReqRequest() throws IOException {
-		final PkcsReq req = new PkcsReq(keyPair, identity, "SHA", new char[0]);
+		final PKCSReq req = new PKCSReq(keyPair, identity, "SHA", new char[0]);
 		
 		generator.setMessageType(MessageType.PKCSReq);
 		generator.setMessageData(MessageData.getInstance(req.getMessageData()));
