@@ -24,16 +24,16 @@ package com.google.code.jscep.operations;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.DEREncodable;
 
 import com.google.code.jscep.transaction.MessageType;
 
 /**
- * This interface defines the common structure of a SCEP <code>pkiMessage</code>
+ * This interface defines the common structure of a SCEP operation.
  * 
  * @author David Grant
  */
-public interface PKIOperation<T extends ASN1Encodable> {
+public interface PKIOperation<T extends DEREncodable> {
 	/**
 	 * Returns the message type for this operation.
 	 * 
@@ -47,5 +47,5 @@ public interface PKIOperation<T extends ASN1Encodable> {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws GeneralSecurityException if any security error occurs.
 	 */
-    T getMessageData() throws IOException;
+    T getMessage() throws IOException;
 }

@@ -77,7 +77,7 @@ public class PKCSReq implements PKIOperation<CertificationRequest> {
      * @return the Certification Request
      * @see <a href="http://tools.ietf.org/html/rfc2986">RFC 2986</a>
      */
-    public CertificationRequest getMessageData() throws IOException {
+    public CertificationRequest getMessage() throws IOException {
 		try {
 			final CertificationRequestInfo info = getCertificationRequestInfo();
 			return new CertificationRequest(info, getSignatureAlgorithm(), sign(info));

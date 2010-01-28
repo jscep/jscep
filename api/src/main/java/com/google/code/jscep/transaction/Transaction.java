@@ -80,7 +80,7 @@ public class Transaction {
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(senderNonce);
 		msgGenerator.setTransactionId(transId);
-		msgGenerator.setMessageData(MessageData.getInstance(op.getMessageData()));
+		msgGenerator.setMessageData(MessageData.getInstance(op.getMessage()));
 		
 		final PkiMessage msg = msgGenerator.generate();
 		PkiRequest request = new PkiRequest(msg, keyPair);

@@ -75,7 +75,7 @@ public class PkiMessageTest {
 		final GetCert req = new GetCert(subject, BigInteger.ONE);
 		
 		generator.setMessageType(MessageType.GetCert);
-		generator.setMessageData(MessageData.getInstance(req.getMessageData()));
+		generator.setMessageData(MessageData.getInstance(req.getMessage()));
 		final PkiMessage generatedMsg = generator.generate();
 		final PkiMessage parsedMsg = parser.parse(generatedMsg.getEncoded());
 		
@@ -87,7 +87,7 @@ public class PkiMessageTest {
 		final GetCertInitial req = new GetCertInitial(new X509Name("CN=example.org"), new X509Name("CN=example.org"));
 		
 		generator.setMessageType(MessageType.GetCertInitial);
-		generator.setMessageData(MessageData.getInstance(req.getMessageData()));
+		generator.setMessageData(MessageData.getInstance(req.getMessage()));
 		final PkiMessage generatedMsg = generator.generate();
 		final PkiMessage parsedMsg = parser.parse(generatedMsg.getEncoded());
 		
@@ -99,7 +99,7 @@ public class PkiMessageTest {
 		final GetCRL req = new GetCRL(subject, BigInteger.ONE);
 		
 		generator.setMessageType(MessageType.GetCRL);
-		generator.setMessageData(MessageData.getInstance(req.getMessageData()));
+		generator.setMessageData(MessageData.getInstance(req.getMessage()));
 		final PkiMessage generatedMsg = generator.generate();
 		final PkiMessage parsedMsg = parser.parse(generatedMsg.getEncoded());
 		
@@ -111,7 +111,7 @@ public class PkiMessageTest {
 		final PKCSReq req = new PKCSReq(keyPair, identity, "SHA", new char[0]);
 		
 		generator.setMessageType(MessageType.PKCSReq);
-		generator.setMessageData(MessageData.getInstance(req.getMessageData()));
+		generator.setMessageData(MessageData.getInstance(req.getMessage()));
 		final PkiMessage generatedMsg = generator.generate();
 		final PkiMessage parsedMsg = parser.parse(generatedMsg.getEncoded());
 		

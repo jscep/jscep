@@ -60,7 +60,7 @@ public class GetCert implements PKIOperation<IssuerAndSerialNumber> {
      * @return the IssuerAndSerialNumber
      * @see <a href="http://tools.ietf.org/html/rfc2315#section-6.7">SCEP Internet-Draft Reference</a>
      */
-	public IssuerAndSerialNumber getMessageData() throws IOException {
+	public IssuerAndSerialNumber getMessage() throws IOException {
         X509Name issuerName = new X509Principal(issuer.getEncoded());
         
         return new IssuerAndSerialNumber(issuerName, serial);
