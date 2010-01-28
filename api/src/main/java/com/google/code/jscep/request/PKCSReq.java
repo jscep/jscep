@@ -28,15 +28,15 @@ import com.google.code.jscep.content.CertRepContentHandler;
 import com.google.code.jscep.pkcs7.PkiMessage;
 
 /**
- * This class represents a <code>PkiRequest</code> request.
+ * This class represents a <code>PKCSReq</code> request.
  * 
  * @author David Grant
  */
-public class PkiRequest implements Request<PkiMessage> {
+public class PKCSReq implements Request<PkiMessage> {
 	private final PkiMessage signedData;
 	private final KeyPair keyPair;
 
-	public PkiRequest(PkiMessage msgData, KeyPair keyPair) {
+	public PKCSReq(PkiMessage msgData, KeyPair keyPair) {
 		this.signedData = msgData;
 		this.keyPair = keyPair;
 	}

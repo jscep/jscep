@@ -14,7 +14,7 @@ import com.google.code.jscep.pkcs7.PkiMessage;
 
 public class PkiRequestTest {
 	private PkiMessage message;
-	private PkiRequest fixture;
+	private PKCSReq fixture;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -24,7 +24,7 @@ public class PkiRequestTest {
 		
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
 		
-		fixture = new PkiRequest(message, keyPair);
+		fixture = new PKCSReq(message, keyPair);
 	}
 	
 	@Test

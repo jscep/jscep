@@ -37,7 +37,7 @@ import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
 import com.google.code.jscep.pkcs7.MessageData;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
-import com.google.code.jscep.request.PkiRequest;
+import com.google.code.jscep.request.PKCSReq;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
 import com.google.code.jscep.util.SignedDataUtil;
@@ -83,7 +83,7 @@ public class Transaction {
 		msgGenerator.setMessageData(MessageData.getInstance(op.getMessage()));
 		
 		final PkiMessage msg = msgGenerator.generate();
-		PkiRequest request = new PkiRequest(msg, keyPair);
+		PKCSReq request = new PKCSReq(msg, keyPair);
 		PkiMessage response = transport.sendMessage(request);
 
 		if (response.getTransactionId().equals(this.transId) == false) {
