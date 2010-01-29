@@ -44,7 +44,7 @@ import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class is used for generating degenerate (certificates and CRLs only) 
- * SignedData instances.
+ * {@link org.bouncycastle.asn1.cms.SignedData instances.
  * <p>
  * Example usage:
  * <pre>
