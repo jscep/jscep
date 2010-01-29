@@ -35,6 +35,7 @@ public class ClientTest {
 		ClientConfiguration config = new ClientConfiguration(url);
 		config.setCaDigest(new byte[] {-93, -44, 23, 25, -106, 116, 80, -113, 36, 23, 76, -89, -36, -18, 89, -59});
 		config.setSubject(new X500Principal("CN=example.org"));
+		config.setCaIdentifier("foo");
 		Client client = new Client(config);
 		client.enroll("INBOUND_TLSuscl99".toCharArray());
 	}

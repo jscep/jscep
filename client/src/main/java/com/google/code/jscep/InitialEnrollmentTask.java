@@ -34,7 +34,7 @@ import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.x509.X509CertStoreSelector;
 
 import com.google.code.jscep.operations.PKCSReq;
-import com.google.code.jscep.operations.PkiOperation;
+import com.google.code.jscep.operations.PKIOperation;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
@@ -78,7 +78,7 @@ public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 	@Override
 	public EnrollmentResult call() throws IOException {
 		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, digestAlgorithm);
-		PkiOperation<CertificationRequest> req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
+		PKIOperation<CertificationRequest> req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
 		try {
 			CertStore store = trans.performOperation(req);
 			
