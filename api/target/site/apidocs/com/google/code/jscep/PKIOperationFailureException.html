@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-EnrollmentFailureException (jSCEP API 0.20.2 API)
+PKIOperationFailureException (jSCEP API 0.20.2 API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ EnrollmentFailureException (jSCEP API 0.20.2 API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="EnrollmentFailureException (jSCEP API 0.20.2 API)";
+        parent.document.title="PKIOperationFailureException (jSCEP API 0.20.2 API)";
     }
 }
 </SCRIPT>
@@ -39,7 +39,7 @@ function windowTitle()
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/EnrollmentFailureException.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/PKIOperationFailureException.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
@@ -54,11 +54,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../../com/google/code/jscep/EnrollmentResult.html" title="class in com.google.code.jscep"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../com/google/code/jscep/EnrollmentResult.html" title="class in com.google.code.jscep"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../com/google/code/jscep/RequestPendingException.html" title="class in com.google.code.jscep"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../../index.html?com/google/code/jscep/EnrollmentFailureException.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="EnrollmentFailureException.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../../index.html?com/google/code/jscep/PKIOperationFailureException.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PKIOperationFailureException.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -89,26 +89,30 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&n
 <FONT SIZE="-1">
 com.google.code.jscep</FONT>
 <BR>
-Class EnrollmentFailureException</H2>
+Class PKIOperationFailureException</H2>
 <PRE>
 <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
   <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">java.lang.Throwable</A>
       <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">java.lang.Exception</A>
-          <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>com.google.code.jscep.EnrollmentFailureException</B>
+          <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>com.google.code.jscep.PKIOperationFailureException</B>
 </PRE>
 <DL>
 <DT><B>All Implemented Interfaces:</B> <DD><A HREF="http://java.sun.com/javase/6/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>EnrollmentFailureException</B><DT>extends <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</A></DL>
+<DT><PRE>public class <B>PKIOperationFailureException</B><DT>extends <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</A></DL>
 </PRE>
+
+<P>
+This class represents the situation where a PKI operation has failed.
+<P>
 
 <P>
 <DL>
 <DT><B>Author:</B></DT>
   <DD>David Grant</DD>
-<DT><B>See Also:</B><DD><A HREF="../../../../serialized-form.html#com.google.code.jscep.EnrollmentFailureException">Serialized Form</A></DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../serialized-form.html#com.google.code.jscep.PKIOperationFailureException">Serialized Form</A></DL>
 <HR>
 
 <P>
@@ -122,29 +126,11 @@ Class EnrollmentFailureException</H2>
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../com/google/code/jscep/EnrollmentFailureException.html#EnrollmentFailureException()">EnrollmentFailureException</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../../../com/google/code/jscep/PKIOperationFailureException.html#PKIOperationFailureException(com.google.code.jscep.transaction.FailInfo)">PKIOperationFailureException</A></B>(<A HREF="../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction">FailInfo</A>&nbsp;failInfo)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../com/google/code/jscep/EnrollmentFailureException.html#EnrollmentFailureException(java.lang.String)">EnrollmentFailureException</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;message)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../com/google/code/jscep/EnrollmentFailureException.html#EnrollmentFailureException(java.lang.String, java.lang.Throwable)">EnrollmentFailureException</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;message,
-                           <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</A>&nbsp;cause)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../com/google/code/jscep/EnrollmentFailureException.html#EnrollmentFailureException(java.lang.Throwable)">EnrollmentFailureException</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</A>&nbsp;cause)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new instance of <code>PKIOperationFailureException</code> from
+ the provided <A HREF="../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A>.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -188,36 +174,17 @@ Class EnrollmentFailureException</H2>
 </TR>
 </TABLE>
 
-<A NAME="EnrollmentFailureException()"><!-- --></A><H3>
-EnrollmentFailureException</H3>
+<A NAME="PKIOperationFailureException(com.google.code.jscep.transaction.FailInfo)"><!-- --></A><H3>
+PKIOperationFailureException</H3>
 <PRE>
-public <B>EnrollmentFailureException</B>()</PRE>
+public <B>PKIOperationFailureException</B>(<A HREF="../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction">FailInfo</A>&nbsp;failInfo)</PRE>
 <DL>
-</DL>
-<HR>
-
-<A NAME="EnrollmentFailureException(java.lang.String)"><!-- --></A><H3>
-EnrollmentFailureException</H3>
-<PRE>
-public <B>EnrollmentFailureException</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;message)</PRE>
+<DD>Creates a new instance of <code>PKIOperationFailureException</code> from
+ the provided <A HREF="../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A>.
+ <p>
+<P>
 <DL>
-</DL>
-<HR>
-
-<A NAME="EnrollmentFailureException(java.lang.String, java.lang.Throwable)"><!-- --></A><H3>
-EnrollmentFailureException</H3>
-<PRE>
-public <B>EnrollmentFailureException</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;message,
-                                  <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</A>&nbsp;cause)</PRE>
-<DL>
-</DL>
-<HR>
-
-<A NAME="EnrollmentFailureException(java.lang.Throwable)"><!-- --></A><H3>
-EnrollmentFailureException</H3>
-<PRE>
-public <B>EnrollmentFailureException</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang">Throwable</A>&nbsp;cause)</PRE>
-<DL>
+<DT><B>Parameters:</B><DD><CODE>failInfo</CODE> - the failure reason.</DL>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
@@ -235,7 +202,7 @@ public <B>EnrollmentFailureException</B>(<A HREF="http://java.sun.com/javase/6/d
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/EnrollmentFailureException.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/PKIOperationFailureException.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
@@ -250,11 +217,11 @@ public <B>EnrollmentFailureException</B>(<A HREF="http://java.sun.com/javase/6/d
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../../com/google/code/jscep/EnrollmentResult.html" title="class in com.google.code.jscep"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../com/google/code/jscep/EnrollmentResult.html" title="class in com.google.code.jscep"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../com/google/code/jscep/RequestPendingException.html" title="class in com.google.code.jscep"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../../index.html?com/google/code/jscep/EnrollmentFailureException.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="EnrollmentFailureException.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../../index.html?com/google/code/jscep/PKIOperationFailureException.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PKIOperationFailureException.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {

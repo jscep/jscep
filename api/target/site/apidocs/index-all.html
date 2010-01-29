@@ -144,7 +144,7 @@ Static method in class com.google.code.jscep.transport.<A HREF="./com/google/cod
 Constructor for class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/DegenerateSignedDataGenerator.html" title="class in com.google.code.jscep.pkcs7">DegenerateSignedDataGenerator</A>
 <DD>Creates a new instance of <code>DegenerateSignedDataGenerator</code>
 <DT><A HREF="./com/google/code/jscep/pkcs7/DegenerateSignedDataParser.html" title="class in com.google.code.jscep.pkcs7"><B>DegenerateSignedDataParser</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>This class parses a ASN1 structure and extracts a degenerate (certificates
- and CRLs only) SignedData instance.<DT><A HREF="./com/google/code/jscep/pkcs7/DegenerateSignedDataParser.html#DegenerateSignedDataParser()"><B>DegenerateSignedDataParser()</B></A> - 
+ and CRLs only) <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A> instance.<DT><A HREF="./com/google/code/jscep/pkcs7/DegenerateSignedDataParser.html#DegenerateSignedDataParser()"><B>DegenerateSignedDataParser()</B></A> - 
 Constructor for class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/DegenerateSignedDataParser.html" title="class in com.google.code.jscep.pkcs7">DegenerateSignedDataParser</A>
 <DD>&nbsp;
 </DL>
@@ -152,18 +152,6 @@ Constructor for class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jsc
 <A NAME="_E_"><!-- --></A><H2>
 <B>E</B></H2>
 <DL>
-<DT><A HREF="./com/google/code/jscep/EnrollmentFailureException.html" title="class in com.google.code.jscep"><B>EnrollmentFailureException</B></A> - Exception in <A HREF="./com/google/code/jscep/package-summary.html">com.google.code.jscep</A><DD>&nbsp;<DT><A HREF="./com/google/code/jscep/EnrollmentFailureException.html#EnrollmentFailureException()"><B>EnrollmentFailureException()</B></A> - 
-Constructor for exception com.google.code.jscep.<A HREF="./com/google/code/jscep/EnrollmentFailureException.html" title="class in com.google.code.jscep">EnrollmentFailureException</A>
-<DD>&nbsp;
-<DT><A HREF="./com/google/code/jscep/EnrollmentFailureException.html#EnrollmentFailureException(java.lang.String)"><B>EnrollmentFailureException(String)</B></A> - 
-Constructor for exception com.google.code.jscep.<A HREF="./com/google/code/jscep/EnrollmentFailureException.html" title="class in com.google.code.jscep">EnrollmentFailureException</A>
-<DD>&nbsp;
-<DT><A HREF="./com/google/code/jscep/EnrollmentFailureException.html#EnrollmentFailureException(java.lang.String, java.lang.Throwable)"><B>EnrollmentFailureException(String, Throwable)</B></A> - 
-Constructor for exception com.google.code.jscep.<A HREF="./com/google/code/jscep/EnrollmentFailureException.html" title="class in com.google.code.jscep">EnrollmentFailureException</A>
-<DD>&nbsp;
-<DT><A HREF="./com/google/code/jscep/EnrollmentFailureException.html#EnrollmentFailureException(java.lang.Throwable)"><B>EnrollmentFailureException(Throwable)</B></A> - 
-Constructor for exception com.google.code.jscep.<A HREF="./com/google/code/jscep/EnrollmentFailureException.html" title="class in com.google.code.jscep">EnrollmentFailureException</A>
-<DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/EnrollmentResult.html" title="class in com.google.code.jscep"><B>EnrollmentResult</B></A> - Class in <A HREF="./com/google/code/jscep/package-summary.html">com.google.code.jscep</A><DD>This class represents the outcome of a enrolment request.<DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
 <DD>&nbsp;
@@ -537,7 +525,11 @@ Constructor for class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jsc
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageParser.html" title="class in com.google.code.jscep.pkcs7"><B>PkiMessageParser</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>&nbsp;<DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageParser.html#PkiMessageParser()"><B>PkiMessageParser()</B></A> - 
 Constructor for class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessageParser.html" title="class in com.google.code.jscep.pkcs7">PkiMessageParser</A>
 <DD>&nbsp;
-<DT><A HREF="./com/google/code/jscep/operations/PKIOperation.html" title="interface in com.google.code.jscep.operations"><B>PKIOperation</B></A>&lt;<A HREF="./com/google/code/jscep/operations/PKIOperation.html" title="type parameter in PKIOperation">T</A> extends <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DEREncodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DEREncodable</A>&gt; - Interface in <A HREF="./com/google/code/jscep/operations/package-summary.html">com.google.code.jscep.operations</A><DD>This interface defines the common structure of a SCEP operation.<DT><A HREF="./com/google/code/jscep/asn1/SCEPObjectIdentifiers.html#pkiStatus"><B>pkiStatus</B></A> - 
+<DT><A HREF="./com/google/code/jscep/operations/PKIOperation.html" title="interface in com.google.code.jscep.operations"><B>PKIOperation</B></A>&lt;<A HREF="./com/google/code/jscep/operations/PKIOperation.html" title="type parameter in PKIOperation">T</A> extends <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DEREncodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DEREncodable</A>&gt; - Interface in <A HREF="./com/google/code/jscep/operations/package-summary.html">com.google.code.jscep.operations</A><DD>This interface defines the common structure of a SCEP operation.<DT><A HREF="./com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep"><B>PKIOperationFailureException</B></A> - Exception in <A HREF="./com/google/code/jscep/package-summary.html">com.google.code.jscep</A><DD>This class represents the situation where a PKI operation has failed.<DT><A HREF="./com/google/code/jscep/PKIOperationFailureException.html#PKIOperationFailureException(com.google.code.jscep.transaction.FailInfo)"><B>PKIOperationFailureException(FailInfo)</B></A> - 
+Constructor for exception com.google.code.jscep.<A HREF="./com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A>
+<DD>Creates a new instance of <code>PKIOperationFailureException</code> from
+ the provided <A HREF="./com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A>.
+<DT><A HREF="./com/google/code/jscep/asn1/SCEPObjectIdentifiers.html#pkiStatus"><B>pkiStatus</B></A> - 
 Static variable in interface com.google.code.jscep.asn1.<A HREF="./com/google/code/jscep/asn1/SCEPObjectIdentifiers.html" title="interface in com.google.code.jscep.asn1">SCEPObjectIdentifiers</A>
 <DD>2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) pkiStatus(3)
 <DT><A HREF="./com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><B>PkiStatus</B></A> - Enum in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>This class represents the <tt>SCEP</tt> <tt>pkiStatus</tt> attribute.<DT><A HREF="./com/google/code/jscep/transaction/NonceQueue.html#poll()"><B>poll()</B></A> - 
