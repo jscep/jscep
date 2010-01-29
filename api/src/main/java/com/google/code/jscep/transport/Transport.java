@@ -32,22 +32,31 @@ import com.google.code.jscep.request.Request;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * This class represents the transport for sending a message to the SCEP server.
+ * This class represents a transport for sending a message to the SCEP server.
+ * <p>
+ * Example usage:
+ * <pre>
+ * Request&lt;?&gt; req = ...;
+ * URL url = new URL("http://www.example.org/scep/pki-client.exe");
+ * Proxy proxy = Proxy.NO_PROXY;
+ * Transport trans = Transport.createTransport(Transport.Method.POST, url, proxy);
+ * Object res = trans.setMessage(req);
+ * </pre>
  * 
  * @author David Grant
  */
 public abstract class Transport {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transport");
 	/**
-	 * Represents the <tt>HTTP</tt> method to be used for transport. 
+	 * Represents the <code>HTTP</code> method to be used for transport. 
 	 */
 	public enum Method {
 		/**
-		 * The <tt>HTTP</tt> <tt>GET</tt> method.
+		 * The <code>HTTP GET</code> method.
 		 */
 		GET,
 		/**
-		 * The <tt>HTTP</tt> <tt>POST</tt> method.
+		 * The <code>HTTP POST</code> method.
 		 */
 		POST
 	}
@@ -69,7 +78,10 @@ public abstract class Transport {
 	}
 	
 	/**
-	 * Returns the proxy configured for use by this transport.
+	 * Returns the proxy configured for use by this <code>Transport</code>.
+	 * <p>
+	 * If no proxy was used to construct this <code>Transport</code>, this
+	 * method returns <code>Proxy.NO_PROXY</code>.
 	 * 
 	 * @return the proxy.
 	 */
@@ -78,8 +90,8 @@ public abstract class Transport {
 	}
 	
 	/**
-	 * This method sends the given request to the URL provided in the constructor and
-	 * uses the request's content handler to parse the response.  
+	 * Sends the given request to the URL provided in the constructor and
+	 * uses the {@link Request}'s content handler to parse the response.  
 	 * 
 	 * @param <T> the response type.
 	 * @param msg the message to send.
@@ -89,23 +101,41 @@ public abstract class Transport {
 	abstract public <T> T sendMessage(Request<T> msg) throws IOException;
 	
 	/**
-	 * Create a new transport of type <tt>method</tt>.
+	 * Creates a new <code>Transport</code> of type <code>method</code> with the 
+	 * provided URL over the provided proxy.
 	 * 
 	 * @param method the transport type.
-	 * @param url the url.
+	 * @param url the URL.
 	 * @param proxy the proxy.
 	 * @return a new Transport instance.
 	 */
 	public static Transport createTransport(Method method, URL url, Proxy proxy) {
 		LOGGER.entering(Transport.class.getName(), "createTransport", new Object[] { method, url, proxy });
 		
-		Transport t;
+		final Transport t;
 		
 		if (method.equals(Method.GET)) {
 			t = new HttpGetTransport(url, proxy);
 		} else {
 			t = new HttpPostTransport(url, proxy);
 		}
+		
+		LOGGER.exiting(Transport.class.getName(), "createTransport", t);
+		return t;
+	}
+	
+	/**
+	 * Creates a new <code>Transport</code> of type <code>method</code> with the 
+	 * provided URL.
+	 * 
+	 * @param method the transport type.
+	 * @param url the url.
+	 * @return a new Transport instance.
+	 */
+	public static Transport createTransport(Method method, URL url) {
+		LOGGER.entering(Transport.class.getName(), "createTransport", new Object[] {method, url});
+		
+		final Transport t = createTransport(method, url, Proxy.NO_PROXY);
 		
 		LOGGER.exiting(Transport.class.getName(), "createTransport", t);
 		return t;

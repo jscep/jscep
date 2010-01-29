@@ -72,6 +72,9 @@ public class HttpPostTransport extends Transport {
         return response;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		if (proxy == Proxy.NO_PROXY) {

@@ -22,11 +22,15 @@
 package com.google.code.jscep.transport;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.logging.Logger;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.net.URLCodec;
 
 import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.request.Request;
@@ -64,16 +68,32 @@ public class HttpGetTransport extends Transport {
 		return response;
 	}
 
-	private URL getUrl(Operation op, Object message)
-			throws MalformedURLException {
+	private URL getUrl(Operation op, Object message) throws MalformedURLException {
+		return new URL(getUrl(op).toExternalForm() + "&message=" + asParameter(message));
+	}
+	
+	private String asParameter(Object message) {
 		if (message == null) {
-			return new URL(getUrl(op).toExternalForm() + "&message=");
+			return "";
+		} else if (message instanceof String) {
+			return (String) message;
+		} else if (message instanceof byte[]) {
+			final Base64 base64codec = new Base64(); 
+			final String base64 = base64codec.encodeToString((byte[]) message);
+			final URLCodec urlCodec = new URLCodec();
+			try {
+				return urlCodec.encode(base64, "ASCII");
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e);
+			}
 		} else {
-			// TODO: Does this encode bytes?
-			return new URL(getUrl(op).toExternalForm() + "&message=" + message);
+			throw new RuntimeException("Unknown Message Type");
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		if (proxy == Proxy.NO_PROXY) {
