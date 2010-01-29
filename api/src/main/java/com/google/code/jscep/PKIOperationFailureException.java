@@ -21,28 +21,27 @@
  */
 package com.google.code.jscep;
 
+import com.google.code.jscep.transaction.FailInfo;
+
 /**
+ * This class represents the situation where a PKI operation has failed.
  * 
  * @author David Grant
  */
-public class EnrollmentFailureException extends Exception {
+public class PKIOperationFailureException extends Exception {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 747055232323410404L;
 
-	public EnrollmentFailureException() {
-	}
-	
-	public EnrollmentFailureException(String message) {
-		super(message);
-	}
-	
-	public EnrollmentFailureException(String message, Throwable cause) {
-		super(message, cause);
-	}
-	
-	public EnrollmentFailureException(Throwable cause) {
-		super(cause);
+	/**
+	 * Creates a new instance of <code>PKIOperationFailureException</code> from
+	 * the provided {@link FailInfo}.
+	 * <p>
+	 * 
+	 * @param failInfo the failure reason.
+	 */
+	public PKIOperationFailureException(FailInfo failInfo) {
+		super(failInfo.toString());
 	}
 }

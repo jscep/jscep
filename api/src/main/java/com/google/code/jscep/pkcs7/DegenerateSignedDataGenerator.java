@@ -44,7 +44,7 @@ import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class is used for generating degenerate (certificates and CRLs only) 
- * {@link org.bouncycastle.asn1.cms.SignedData instances.
+ * {@link org.bouncycastle.asn1.cms.SignedData} instances.
  * <p>
  * Example usage:
  * <pre>
@@ -71,7 +71,7 @@ public class DegenerateSignedDataGenerator {
 	}
 	
 	/**
-	 * Adds the provided certificate to the resulting SignedData.
+	 * Adds the provided certificate to the resulting {@link org.bouncycastle.asn1.cms.SignedData}.
 	 * 
 	 * @param cert the certificate to add.
 	 */
@@ -80,7 +80,7 @@ public class DegenerateSignedDataGenerator {
 	}
 	
 	/**
-	 * Adds the provided CRL to the resulting SignedData.
+	 * Adds the provided CRL to the resulting {@link org.bouncycastle.asn1.cms.SignedData}.
 	 * 
 	 * @param crl the CRL to add.
 	 */
@@ -89,9 +89,9 @@ public class DegenerateSignedDataGenerator {
 	}
 	
 	/**
-	 * Generates a new degenerate SignedData instance.
+	 * Generates a new degenerate {@link org.bouncycastle.asn1.cms.SignedData} instance.
 	 * 
-	 * @return a new degenerate SignedData instance.
+	 * @return a new degenerate <code>SignedData</code> instance.
 	 * @throws IOException if any I/O error occurs.
 	 */
 	public SignedData generate() throws IOException {

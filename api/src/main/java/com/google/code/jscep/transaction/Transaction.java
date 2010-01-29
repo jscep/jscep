@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.cms.SignedData;
 
-import com.google.code.jscep.EnrollmentFailureException;
+import com.google.code.jscep.PKIOperationFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.operations.PKIOperation;
 import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
@@ -72,9 +72,9 @@ public class Transaction {
 	 * @return a certificate store, containing either certificates or CRLs.
 	 * @throws IOException if any I/O error occurs.
 	 * @throws RequestPendingException if manual intervention is required.
-	 * @throws EnrollmentFailureException if the request could not be serviced.
+	 * @throws PKIOperationFailureException if the request could not be serviced.
 	 */
-	public <T extends DEREncodable> CertStore performOperation(PKIOperation<T> op) throws IOException, EnrollmentFailureException, RequestPendingException {
+	public <T extends DEREncodable> CertStore performOperation(PKIOperation<T> op) throws IOException, PKIOperationFailureException, RequestPendingException {
 		LOGGER.entering(getClass().getName(), "performOperation", op);
 		
 		msgGenerator.setMessageType(op.getMessageType());
@@ -112,7 +112,7 @@ public class Transaction {
 		// TODO: Need to add some tests here to ensure that
 		// the response has no envelope (see section 3). 
 		if (response.getPkiStatus().equals(PkiStatus.FAILURE)) {
-			EnrollmentFailureException efe = new EnrollmentFailureException(response.getFailInfo().toString());
+			PKIOperationFailureException efe = new PKIOperationFailureException(response.getFailInfo());
 			
 			LOGGER.throwing(getClass().getName(), "performOperation", efe);
 			throw efe;

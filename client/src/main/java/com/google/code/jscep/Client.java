@@ -341,7 +341,7 @@ public class Client {
 				store = createTransaction().performOperation(req);
 			} catch (RequestPendingException e) {
 				throw new RuntimeException(e);
-			} catch (EnrollmentFailureException e) {
+			} catch (PKIOperationFailureException e) {
 				throw new RuntimeException(e);
 			}
 	        
@@ -393,7 +393,7 @@ public class Client {
 			store = createTransaction().performOperation(req);
 		} catch (RequestPendingException e) {
 			throw new RuntimeException(e);
-		} catch (EnrollmentFailureException e) {
+		} catch (PKIOperationFailureException e) {
 			throw new RuntimeException(e);
 		}
 

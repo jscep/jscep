@@ -34,7 +34,7 @@ import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class parses a ASN1 structure and extracts a degenerate (certificates
- * and CRLs only) SignedData instance.
+ * and CRLs only) {@link org.bouncycastle.asn1.cms.SignedData} instance.
  *  
  * @author David Grant
  */
