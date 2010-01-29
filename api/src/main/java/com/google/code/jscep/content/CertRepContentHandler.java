@@ -40,6 +40,11 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
 	private final KeyPair keyPair;
 	
+	/**
+	 * Constructs a new instance of <code>CertRepContentHandler</code>.
+	 * 
+	 * @param keyPair the keyPair used to decode the {@link CertRep}.
+	 */
 	public CertRepContentHandler(KeyPair keyPair) {
 		this.keyPair = keyPair;
 	}
