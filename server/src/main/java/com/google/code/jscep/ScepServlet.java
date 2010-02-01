@@ -45,6 +45,7 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import com.google.code.jscep.asn1.IssuerAndSubject;
+import com.google.code.jscep.pkcs7.MessageData;
 import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeParser;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageParser;
@@ -142,34 +143,33 @@ public abstract class ScepServlet extends HttpServlet {
 			List<X509Certificate> certs = getNextCACertificate(req.getParameter(MSG_PARAM));
 		} else {
 			res.setHeader("Content-Type", "application/x-pki-message");
-			PkcsPkiEnvelopeParser envParser = new PkcsPkiEnvelopeParser(getPrivate());
-			PkiMessageParser msgParser = new PkiMessageParser(envParser);
+			PkiMessageParser msgParser = new PkiMessageParser();
 			PkiMessage msg = msgParser.parse(getBytes(req.getInputStream()));
 			
 			MessageType msgType = msg.getMessageType();
-			ASN1Encodable msgData = msg.getPkcsPkiEnvelope().getMessageData();
+			MessageData msgData = msg.getPkcsPkiEnvelope().getMessageData();
 			if (msgType == MessageType.GetCert) {
-				final ASN1Sequence seq = (ASN1Sequence) msgData;
+				final ASN1Sequence seq = (ASN1Sequence) msgData.getContent();
 				final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(seq);
 				final X509Name principal = iasn.getName();
 				final BigInteger serial = iasn.getCertificateSerialNumber().getValue();
 
 				final X509Certificate cert = getCertificate(principal, serial);
 			} else if (msgType == MessageType.GetCertInitial) {
-				final ASN1Sequence seq = (ASN1Sequence) msgData;
+				final ASN1Sequence seq = (ASN1Sequence) msgData.getContent();
 				final IssuerAndSubject ias = new IssuerAndSubject(seq);
 				final X509Name issuer = ias.getIssuer();
 				final X509Name subject = ias.getSubject();
 				
 				final X509Certificate cert = getCertificate(issuer, subject);
 			} else if (msgType == MessageType.GetCRL) {
-				final ASN1Sequence seq = (ASN1Sequence) msgData;
+				final ASN1Sequence seq = (ASN1Sequence) msgData.getContent();
 				final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(seq);
 				final X500Principal principal = new X500Principal(iasn.getName().getDEREncoded());
 				
 				final X509CRL cert = getCRL(principal, iasn.getCertificateSerialNumber().getValue());
 			} else if (msgType == MessageType.PKCSReq) {
-				final PKCS10CertificationRequest certReq = (PKCS10CertificationRequest) msgData;
+				final PKCS10CertificationRequest certReq = (PKCS10CertificationRequest) msgData.getContent();
 				final List<X509Certificate> certs = enrollCertificate(certReq);
 			}
 		}

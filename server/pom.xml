@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>jscep-api</artifactId>
-			<version>0.20.2-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

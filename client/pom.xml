@@ -17,9 +17,9 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>jscep-api</artifactId>
-			<version>0.20.2</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

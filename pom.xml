@@ -35,17 +35,17 @@
 	</scm>
 	<mailingLists>
 		<mailingList>
-			<name>jscep-announce</name>
+			<name>jSCEP Announce</name>
 			<post>jscep-announce@googlegroups.com</post>
 			<archive>http://groups.google.com/group/jscep-announce</archive>
 		</mailingList>
 		<mailingList>
-			<name>jscep-discuss</name>
+			<name>jSCEP Discuss</name>
 			<post>jscep-discuss@googlegroups.com</post>
 			<archive>http://groups.google.com/group/jscep-discuss</archive>
 		</mailingList>
 		<mailingList>
-			<name>jscep-support</name>
+			<name>jSCEP Support</name>
 			<post>jscep-support@googlegroups.com</post>
 			<archive>http://groups.google.com/group/jscep-support</archive>
 		</mailingList>
