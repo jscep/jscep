@@ -82,8 +82,8 @@ public final class TransactionFactory {
 		// TODO: Hardcoded Algoritm
 		// MD5 ->  (1.2.840.113549.2.5)
 		// SHA-1 -> (1.3.14.3.2.26)
-		// SHA-256 -> NISTObjectIdentifiers.id_sha256
-		// SHA-512 -> NISTObjectIdentifiers.id_sha512
+		// SHA-256 -> NISTObjectIdentifiers.id_sha256 (2.16.840.1.101.3.4.2.1)
+		// SHA-512 -> NISTObjectIdentifiers.id_sha512 (2.16.840.1.101.3.4.2.3)
 		return new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.26"));
 	}
 }

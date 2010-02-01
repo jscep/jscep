@@ -116,6 +116,10 @@ This class is used to generate a new instance of <A HREF="../../../../../com/goo
  gen.setSenderNonce(Nonce.nextNonce());
  gen.setRecipient(recipient);
  gen.setKeyPair(pair);
+ gen.setMessageDigest(...);
+ gen.setCipherAlgorithm(...);
+ 
+ PkiMessage message = gen.generate();
  </pre>
 <P>
 
