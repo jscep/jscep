@@ -202,7 +202,8 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html#generate()"><B>generate()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html" title="class in com.google.code.jscep.pkcs7">PkiMessageGenerator</A>
-<DD>&nbsp;
+<DD>Generates a new <A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7"><CODE>PkiMessage</CODE></A> according to the options specified by the 
+ caller.
 <DT><A HREF="./com/google/code/jscep/transaction/Nonce.html#getBytes()"><B>getBytes()</B></A> - 
 Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction">Nonce</A>
 <DD>Returns the nonce byte array.
@@ -273,7 +274,8 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getFailInfo()"><B>getFailInfo()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
-<DD>&nbsp;
+<DD>Returns the <A HREF="./com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A> associated with this <code>pkiMessage</code>
+ or <code>null</code> if no <A HREF="./com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A> attribute was found.
 <DT><A HREF="./com/google/code/jscep/pkcs7/MessageData.html#getInstance(org.bouncycastle.asn1.DEREncodable)"><B>getInstance(DEREncodable)</B></A> - 
 Static method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7">MessageData</A>
 <DD>Provides a new instance of MessageData by wrapping the provided object.
@@ -339,7 +341,7 @@ Method in interface com.google.code.jscep.operations.<A HREF="./com/google/code/
 <DD>Returns the message type for this operation.
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getMessageType()"><B>getMessageType()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
-<DD>&nbsp;
+<DD>Returns the recipient <A HREF="./com/google/code/jscep/transaction/MessageType.html" title="enum in com.google.code.jscep.transaction"><CODE>MessageType</CODE></A> associated with this <code>pkiMessage</code>.
 <DT><A HREF="./com/google/code/jscep/request/GetNextCACert.html" title="class in com.google.code.jscep.request"><B>GetNextCACert</B></A> - Class in <A HREF="./com/google/code/jscep/request/package-summary.html">com.google.code.jscep.request</A><DD>This class represents a <code>GetNextCACert</code> request.<DT><A HREF="./com/google/code/jscep/request/GetNextCACert.html#GetNextCACert(java.security.cert.X509Certificate, java.lang.String)"><B>GetNextCACert(X509Certificate, String)</B></A> - 
 Constructor for class com.google.code.jscep.request.<A HREF="./com/google/code/jscep/request/GetNextCACert.html" title="class in com.google.code.jscep.request">GetNextCACert</A>
 <DD>Creates a new GetNextCACert request with the given CA identification string.
@@ -363,16 +365,18 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getPkiStatus()"><B>getPkiStatus()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
-<DD>&nbsp;
+<DD>Returns the <A HREF="./com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><CODE>PkiStatus</CODE></A> associated with this <code>pkiMessage</code>
+ or <code>null</code> if no <A HREF="./com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><CODE>PkiStatus</CODE></A> attribute was found.
 <DT><A HREF="./com/google/code/jscep/transport/Transport.html#getProxy()"><B>getProxy()</B></A> - 
 Method in class com.google.code.jscep.transport.<A HREF="./com/google/code/jscep/transport/Transport.html" title="class in com.google.code.jscep.transport">Transport</A>
 <DD>Returns the proxy configured for use by this <code>Transport</code>.
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getRecipientNonce()"><B>getRecipientNonce()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
-<DD>&nbsp;
+<DD>Returns the recipient <A HREF="./com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A> associated with this <code>pkiMessage</code>
+ or <code>null</code> if no recipient <A HREF="./com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A> attribute was found.
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getSenderNonce()"><B>getSenderNonce()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
-<DD>&nbsp;
+<DD>Returns the recipient <A HREF="./com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A> associated with this <code>pkiMessage</code>.
 <DT><A HREF="./com/google/code/jscep/EnrollmentResult.html#getStatus()"><B>getStatus()</B></A> - 
 Method in class com.google.code.jscep.<A HREF="./com/google/code/jscep/EnrollmentResult.html" title="class in com.google.code.jscep">EnrollmentResult</A>
 <DD>Returns the status of this result.
@@ -390,7 +394,7 @@ Method in class com.google.code.jscep.<A HREF="./com/google/code/jscep/Enrollmen
 <DD>Returns the task to be used for re-enrolling.
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getTransactionId()"><B>getTransactionId()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
-<DD>&nbsp;
+<DD>Returns the recipient <A HREF="./com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction"><CODE>TransactionId</CODE></A> associated with this <code>pkiMessage</code>.
 <DT><A HREF="./com/google/code/jscep/transport/Transport.html#getURL()"><B>getURL()</B></A> - 
 Method in class com.google.code.jscep.transport.<A HREF="./com/google/code/jscep/transport/Transport.html" title="class in com.google.code.jscep.transport">Transport</A>
 <DD>Returns the URL configured for use by this transport.
@@ -518,8 +522,9 @@ Constructor for class com.google.code.jscep.operations.<A HREF="./com/google/cod
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/request/PKCSReq.html" title="class in com.google.code.jscep.request"><B>PKCSReq</B></A> - Class in <A HREF="./com/google/code/jscep/request/package-summary.html">com.google.code.jscep.request</A><DD>This class represents a <code>PKCSReq</code> request.<DT><A HREF="./com/google/code/jscep/request/PKCSReq.html#PKCSReq(com.google.code.jscep.pkcs7.PkiMessage, java.security.KeyPair)"><B>PKCSReq(PkiMessage, KeyPair)</B></A> - 
 Constructor for class com.google.code.jscep.request.<A HREF="./com/google/code/jscep/request/PKCSReq.html" title="class in com.google.code.jscep.request">PKCSReq</A>
-<DD>&nbsp;
-<DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7"><B>PkiMessage</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>This interface represents the SCEP <code>pkiMessage</code> type.<DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html" title="class in com.google.code.jscep.pkcs7"><B>PkiMessageGenerator</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>&nbsp;<DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html#PkiMessageGenerator()"><B>PkiMessageGenerator()</B></A> - 
+<DD>Creates a new instance of this class using the provided pkiMessage
+ and <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security"><CODE>KeyPair</CODE></A>.
+<DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7"><B>PkiMessage</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>This class represents the SCEP <code>pkiMessage</code> type.<DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html" title="class in com.google.code.jscep.pkcs7"><B>PkiMessageGenerator</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>This class is used to generate a new instance of <A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7"><CODE>PkiMessage</CODE></A>.<DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html#PkiMessageGenerator()"><B>PkiMessageGenerator()</B></A> - 
 Constructor for class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html" title="class in com.google.code.jscep.pkcs7">PkiMessageGenerator</A>
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageParser.html" title="class in com.google.code.jscep.pkcs7"><B>PkiMessageParser</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>&nbsp;<DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageParser.html#PkiMessageParser()"><B>PkiMessageParser()</B></A> - 

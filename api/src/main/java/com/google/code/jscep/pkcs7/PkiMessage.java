@@ -44,7 +44,7 @@ import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.TransactionId;
 
 /**
- * This interface represents the SCEP <code>pkiMessage</code> type.
+ * This class represents the SCEP <code>pkiMessage</code> type.
  *
  * @author David Grant
  */
@@ -87,6 +87,12 @@ public class PkiMessage {
 		return pkcsPkiEnvelope;
 	}
 	
+	/**
+	 * Returns the {@link FailInfo} associated with this <code>pkiMessage</code>
+	 * or <code>null</code> if no {@link FailInfo} attribute was found.
+	 * 
+	 * @return the {@link FailInfo} value, or <code>null</code>.
+	 */
 	public FailInfo getFailInfo() {
 		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.failInfo);
 		if (attr == null) {
@@ -97,6 +103,12 @@ public class PkiMessage {
 		return FailInfo.valueOf(Integer.parseInt(failInfo.getString()));
 	}
 	
+	/**
+	 * Returns the {@link PkiStatus} associated with this <code>pkiMessage</code>
+	 * or <code>null</code> if no {@link PkiStatus} attribute was found.
+	 * 
+	 * @return the {@link PkiStatus} value, or <code>null</code>.
+	 */
 	public PkiStatus getPkiStatus() {
 		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.pkiStatus);
 		if (attr == null) {
@@ -117,14 +129,30 @@ public class PkiMessage {
 		return new Nonce(nonce.getOctets());
 	}
 	
+	/**
+	 * Returns the recipient {@link Nonce} associated with this <code>pkiMessage</code>
+	 * or <code>null</code> if no recipient {@link Nonce} attribute was found.
+	 * 
+	 * @return the recipient {@link Nonce}, or <code>null</code>.
+	 */
 	public Nonce getRecipientNonce() {
 		return getNonce(SCEPObjectIdentifiers.recipientNonce);
 	}
 	
+	/**
+	 * Returns the recipient {@link Nonce} associated with this <code>pkiMessage</code>.
+	 * 
+	 * @return the sender {@link Nonce}.
+	 */
 	public Nonce getSenderNonce() {
 		return getNonce(SCEPObjectIdentifiers.senderNonce);
 	}
 	
+	/**
+	 * Returns the recipient {@link TransactionId} associated with this <code>pkiMessage</code>.
+	 * 
+	 * @return the sender {@link TransactionId}.
+	 */
 	public TransactionId getTransactionId() {
 		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.transId);
 		DERPrintableString transId = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
@@ -136,6 +164,11 @@ public class PkiMessage {
 		return contentInfo.getEncoded();
 	}
 	
+	/**
+	 * Returns the recipient {@link MessageType} associated with this <code>pkiMessage</code>.
+	 * 
+	 * @return the sender {@link MessageType}.
+	 */
 	public MessageType getMessageType() {
 		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.messageType);
 		final DERPrintableString msgType = (DERPrintableString) attr.getAttrValues().getObjectAt(0);

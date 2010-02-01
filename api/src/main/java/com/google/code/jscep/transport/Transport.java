@@ -97,6 +97,7 @@ public abstract class Transport {
 	 * @param msg the message to send.
 	 * @return the response of type T.
 	 * @throws IOException if any I/O error occurs.
+	 * @see Request#getContentHandler()
 	 */
 	abstract public <T> T sendMessage(Request<T> msg) throws IOException;
 	

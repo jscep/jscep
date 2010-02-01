@@ -69,6 +69,27 @@ import com.google.code.jscep.transaction.TransactionId;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
+ * This class is used to generate a new instance of {@link PkiMessage}.
+ * <p>
+ * Callers should use the mutator methods to configure particular options, depending
+ * on the destination of the message.
+ * <p>
+ * Example usage:
+ * <pre>
+ * X509Certificate recipient = ...;
+ * KeyPair pair = ...;
+ * 
+ * PkiMessageGenerator gen = new PkiMessageGenerator();
+ * gen.setMessageType(MessageType.GetCert);
+ * gen.setTransactionId(TransactionId.createTransactionId(keyPair, "SHA-1"));
+ * gen.setSenderNonce(Nonce.nextNonce());
+ * gen.setRecipient(recipient);
+ * gen.setKeyPair(pair);
+ * gen.setMessageDigest(...);
+ * gen.setCipherAlgorithm(...);
+ * 
+ * PkiMessage message = gen.generate();
+ * </pre>
  * 
  * @author David Grant
  */
@@ -138,7 +159,15 @@ public class PkiMessageGenerator {
 		this.cipherAlgorithm = cipherAlgorithm;
 	}
 	
-	public PkiMessage generate() throws IOException {
+	/**
+	 * Generates a new {@link PkiMessage} according to the options specified by the 
+	 * caller.
+	 * 
+	 * @return a new instance of {@link PkiMessage}
+	 * @throws IOException if any I/O error occurs.
+	 * @throws IllegalStateException if this class has been incorrectly configured.
+	 */
+	public PkiMessage generate() throws IOException, IllegalStateException {
 		LOGGER.entering(getClass().getName(), "generate");
 		
 		// 3.1

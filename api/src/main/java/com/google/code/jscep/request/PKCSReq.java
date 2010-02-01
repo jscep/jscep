@@ -36,6 +36,13 @@ public class PKCSReq implements Request<PkiMessage> {
 	private final PkiMessage signedData;
 	private final KeyPair keyPair;
 
+	/**
+	 * Creates a new instance of this class using the provided pkiMessage
+	 * and {@link java.security.KeyPair}.
+	 * 
+	 * @param msgData the pkiMessage to use.
+	 * @param keyPair the KeyPair to use.
+	 */
 	public PKCSReq(PkiMessage msgData, KeyPair keyPair) {
 		this.signedData = msgData;
 		this.keyPair = keyPair;

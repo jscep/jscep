@@ -27,9 +27,14 @@ import com.google.code.jscep.content.SCEPContentHandler;
 
 /**
  * This interface represents a SCEP request.
+ * <p>
+ * Once an instance of a <code>Request</code> implementation has been obtained,
+ * it can be sent to a SCEP server by using an instance of 
+ * {@link com.google.code.jscep.transport.Transport}.
  * 
  * @author David Grant
  * @param <T> the response type associated with this request
+ * @see com.google.code.jscep.transport.Transport#sendMessage(Request)
  */
 public interface Request<T> {
 	/**

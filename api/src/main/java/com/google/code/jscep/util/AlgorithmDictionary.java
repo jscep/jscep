@@ -40,6 +40,20 @@ import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
  * @author David Grant
  */
 public final class AlgorithmDictionary {
+	// 1.2.840.113549.2.5 -> md5
+	// 1.3.14.3.2.26 -> sha
+	// 2.16.840.1.101.3.4.2.1 -> sha256
+	// 2.16.840.1.101.3.4.2.3 -> sha512
+	
+	// 1.2.840.113549.1.1.1 -> rsa
+	
+	// 1.3.14.3.2.7 -> des
+	// 1.2.840.113549.3.7 -> desede
+	
+	// 1.2.840.113549.1.1.4 -> md5withRSA
+	// 1.2.840.113549.1.1.5 -> shaWithRSA
+	// 1.2.840.113549.1.1.11 -> sha256withRSA
+	// 1.2.840.113549.1.1.13 -> sha512withRSA
 	private final static Map<DERObjectIdentifier, String> contents = new HashMap<DERObjectIdentifier, String>();
 	static {
 		contents.put(PKCSObjectIdentifiers.rsaEncryption, "RSA");

@@ -100,7 +100,7 @@ Class PkiMessage</H2>
 </PRE>
 
 <P>
-This interface represents the SCEP <code>pkiMessage</code> type.
+This class represents the SCEP <code>pkiMessage</code> type.
 <P>
 
 <P>
@@ -142,7 +142,8 @@ This interface represents the SCEP <code>pkiMessage</code> type.
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html#getFailInfo()">getFailInfo</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the <A HREF="../../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A> associated with this <code>pkiMessage</code>
+ or <code>null</code> if no <A HREF="../../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A> attribute was found.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -150,7 +151,7 @@ This interface represents the SCEP <code>pkiMessage</code> type.
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html#getMessageType()">getMessageType</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the recipient <A HREF="../../../../../com/google/code/jscep/transaction/MessageType.html" title="enum in com.google.code.jscep.transaction"><CODE>MessageType</CODE></A> associated with this <code>pkiMessage</code>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -166,7 +167,8 @@ This interface represents the SCEP <code>pkiMessage</code> type.
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html#getPkiStatus()">getPkiStatus</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the <A HREF="../../../../../com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><CODE>PkiStatus</CODE></A> associated with this <code>pkiMessage</code>
+ or <code>null</code> if no <A HREF="../../../../../com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><CODE>PkiStatus</CODE></A> attribute was found.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -174,7 +176,8 @@ This interface represents the SCEP <code>pkiMessage</code> type.
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html#getRecipientNonce()">getRecipientNonce</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the recipient <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A> associated with this <code>pkiMessage</code>
+ or <code>null</code> if no recipient <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A> attribute was found.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -182,7 +185,7 @@ This interface represents the SCEP <code>pkiMessage</code> type.
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html#getSenderNonce()">getSenderNonce</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the recipient <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A> associated with this <code>pkiMessage</code>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -190,7 +193,7 @@ This interface represents the SCEP <code>pkiMessage</code> type.
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html#getTransactionId()">getTransactionId</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the recipient <A HREF="../../../../../com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction"><CODE>TransactionId</CODE></A> associated with this <code>pkiMessage</code>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -258,8 +261,12 @@ getFailInfo</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction">FailInfo</A> <B>getFailInfo</B>()</PRE>
 <DL>
+<DD>Returns the <A HREF="../../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A> associated with this <code>pkiMessage</code>
+ or <code>null</code> if no <A HREF="../../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A> attribute was found.
+<P>
 <DD><DL>
-</DL>
+
+<DT><B>Returns:</B><DD>the <A HREF="../../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A> value, or <code>null</code>.</DL>
 </DD>
 </DL>
 <HR>
@@ -269,8 +276,12 @@ getPkiStatus</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction">PkiStatus</A> <B>getPkiStatus</B>()</PRE>
 <DL>
+<DD>Returns the <A HREF="../../../../../com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><CODE>PkiStatus</CODE></A> associated with this <code>pkiMessage</code>
+ or <code>null</code> if no <A HREF="../../../../../com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><CODE>PkiStatus</CODE></A> attribute was found.
+<P>
 <DD><DL>
-</DL>
+
+<DT><B>Returns:</B><DD>the <A HREF="../../../../../com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><CODE>PkiStatus</CODE></A> value, or <code>null</code>.</DL>
 </DD>
 </DL>
 <HR>
@@ -280,8 +291,12 @@ getRecipientNonce</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction">Nonce</A> <B>getRecipientNonce</B>()</PRE>
 <DL>
+<DD>Returns the recipient <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A> associated with this <code>pkiMessage</code>
+ or <code>null</code> if no recipient <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A> attribute was found.
+<P>
 <DD><DL>
-</DL>
+
+<DT><B>Returns:</B><DD>the recipient <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A>, or <code>null</code>.</DL>
 </DD>
 </DL>
 <HR>
@@ -291,8 +306,11 @@ getSenderNonce</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction">Nonce</A> <B>getSenderNonce</B>()</PRE>
 <DL>
+<DD>Returns the recipient <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A> associated with this <code>pkiMessage</code>.
+<P>
 <DD><DL>
-</DL>
+
+<DT><B>Returns:</B><DD>the sender <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction"><CODE>Nonce</CODE></A>.</DL>
 </DD>
 </DL>
 <HR>
@@ -302,8 +320,11 @@ getTransactionId</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction">TransactionId</A> <B>getTransactionId</B>()</PRE>
 <DL>
+<DD>Returns the recipient <A HREF="../../../../../com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction"><CODE>TransactionId</CODE></A> associated with this <code>pkiMessage</code>.
+<P>
 <DD><DL>
-</DL>
+
+<DT><B>Returns:</B><DD>the sender <A HREF="../../../../../com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction"><CODE>TransactionId</CODE></A>.</DL>
 </DD>
 </DL>
 <HR>
@@ -327,8 +348,11 @@ getMessageType</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/transaction/MessageType.html" title="enum in com.google.code.jscep.transaction">MessageType</A> <B>getMessageType</B>()</PRE>
 <DL>
+<DD>Returns the recipient <A HREF="../../../../../com/google/code/jscep/transaction/MessageType.html" title="enum in com.google.code.jscep.transaction"><CODE>MessageType</CODE></A> associated with this <code>pkiMessage</code>.
+<P>
 <DD><DL>
-</DL>
+
+<DT><B>Returns:</B><DD>the sender <A HREF="../../../../../com/google/code/jscep/transaction/MessageType.html" title="enum in com.google.code.jscep.transaction"><CODE>MessageType</CODE></A>.</DL>
 </DD>
 </DL>
 <HR>
