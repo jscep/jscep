@@ -66,6 +66,8 @@ import com.google.code.jscep.util.AlgorithmDictionary;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
+ * This class is used for generating {@link PkcsPkiEnvelope pkcsPkiEnvelope}
+ * instances.
  * 
  * @author David Grant
  */
@@ -75,14 +77,34 @@ public class PkcsPkiEnvelopeGenerator {
 	private AlgorithmIdentifier cipherAlgorithm;
 	private MessageData msgData;
 	
+	/**
+	 * Specifies the {@link MessageData messageData} that will be wrapped in the resulting
+	 * {@link PkcsPkiEnvelope pkcsPkiEnvelope}.
+	 * 
+	 * @param msgData the messageData to wrap.
+	 */
 	public void setMessageData(MessageData msgData) {
 		this.msgData = msgData;
 	}
 	
+	/**
+	 * Specifies the intended recipient of the resulting 
+	 * {@link PkcsPkiEnvelope pkcsPkiEnvelope}.
+	 * 
+	 * @param recipient the recipient's certificate.
+	 */
 	public void setRecipient(X509Certificate recipient) {
 		this.recipient = recipient;
 	}
 	
+	/**
+	 * Specifies the cipher algorithm to be used for encrypting
+	 * the {@link MessageData messageData}.
+	 * <p>
+	 * The algorithm should be either DES, or DES-EDE.
+	 * 
+	 * @param cipherAlgorithm the cipher algorithm.
+	 */
 	public void setCipherAlgorithm(AlgorithmIdentifier cipherAlgorithm) {
 		this.cipherAlgorithm = cipherAlgorithm;
 	}

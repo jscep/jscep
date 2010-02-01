@@ -100,6 +100,11 @@ Class PkcsPkiEnvelopeGenerator</H2>
 </PRE>
 
 <P>
+This class is used for generating <A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7"><CODE>pkcsPkiEnvelope</CODE></A>
+ instances.
+<P>
+
+<P>
 <DL>
 <DT><B>Author:</B></DT>
   <DD>David Grant</DD>
@@ -146,7 +151,8 @@ Class PkcsPkiEnvelopeGenerator</H2>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelopeGenerator.html#setCipherAlgorithm(org.bouncycastle.asn1.x509.AlgorithmIdentifier)">setCipherAlgorithm</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A>&nbsp;cipherAlgorithm)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the cipher algorithm to be used for encrypting
+ the <A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7"><CODE>messageData</CODE></A>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -154,7 +160,8 @@ Class PkcsPkiEnvelopeGenerator</H2>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelopeGenerator.html#setMessageData(com.google.code.jscep.pkcs7.MessageData)">setMessageData</A></B>(<A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7">MessageData</A>&nbsp;msgData)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the <A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7"><CODE>messageData</CODE></A> that will be wrapped in the resulting
+ <A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7"><CODE>pkcsPkiEnvelope</CODE></A>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -162,7 +169,8 @@ Class PkcsPkiEnvelopeGenerator</H2>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelopeGenerator.html#setRecipient(java.security.cert.X509Certificate)">setRecipient</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;recipient)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the intended recipient of the resulting 
+ <A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7"><CODE>pkcsPkiEnvelope</CODE></A>.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -209,8 +217,11 @@ setMessageData</H3>
 <PRE>
 public void <B>setMessageData</B>(<A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7">MessageData</A>&nbsp;msgData)</PRE>
 <DL>
+<DD>Specifies the <A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7"><CODE>messageData</CODE></A> that will be wrapped in the resulting
+ <A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7"><CODE>pkcsPkiEnvelope</CODE></A>.
+<P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>msgData</CODE> - the messageData to wrap.</DL>
 </DD>
 </DL>
 <HR>
@@ -220,8 +231,11 @@ setRecipient</H3>
 <PRE>
 public void <B>setRecipient</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;recipient)</PRE>
 <DL>
+<DD>Specifies the intended recipient of the resulting 
+ <A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7"><CODE>pkcsPkiEnvelope</CODE></A>.
+<P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>recipient</CODE> - the recipient's certificate.</DL>
 </DD>
 </DL>
 <HR>
@@ -231,8 +245,13 @@ setCipherAlgorithm</H3>
 <PRE>
 public void <B>setCipherAlgorithm</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A>&nbsp;cipherAlgorithm)</PRE>
 <DL>
+<DD>Specifies the cipher algorithm to be used for encrypting
+ the <A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7"><CODE>messageData</CODE></A>.
+ <p>
+ The algorithm should be either DES, or DES-EDE.
+<P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>cipherAlgorithm</CODE> - the cipher algorithm.</DL>
 </DD>
 </DL>
 <HR>
