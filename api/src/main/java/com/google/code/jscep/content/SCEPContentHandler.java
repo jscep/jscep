@@ -30,7 +30,7 @@ import java.io.InputStream;
  * @author David Grant
  * @param <T> the content handled by the handler implementation
  */
-public interface ScepContentHandler<T> {
+public interface SCEPContentHandler<T> {
 	/**
 	 * Read and interpret the content from the input stream.
 	 * 

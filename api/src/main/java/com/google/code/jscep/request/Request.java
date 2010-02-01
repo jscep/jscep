@@ -23,7 +23,7 @@ package com.google.code.jscep.request;
 
 import java.io.IOException;
 
-import com.google.code.jscep.content.ScepContentHandler;
+import com.google.code.jscep.content.SCEPContentHandler;
 
 /**
  * This interface represents a SCEP request.
@@ -50,5 +50,5 @@ public interface Request<T> {
      * 
      * @return the content handler.
      */
-    ScepContentHandler<T> getContentHandler();
+    SCEPContentHandler<T> getContentHandler();
 }

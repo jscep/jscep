@@ -37,7 +37,7 @@ import com.google.code.jscep.util.LoggingUtil;
  * 
  * @author David Grant
  */
-public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
+public class CaCapabilitiesContentHandler implements SCEPContentHandler<Capabilities> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
 
 	/**
