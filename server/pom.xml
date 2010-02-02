@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.google.code.jscep</groupId>
 		<artifactId>jscep</artifactId>
-		<version>0.20.3-SNAPSHOT</version>
+		<version>0.20.3</version>
 	</parent>
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep-server</artifactId>
