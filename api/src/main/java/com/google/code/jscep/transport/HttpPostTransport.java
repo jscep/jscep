@@ -53,11 +53,12 @@ public class HttpPostTransport extends Transport {
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
-        conn.addRequestProperty("Content-Length", Integer.toString(body.length));
-
-        final OutputStream stream = conn.getOutputStream();
-        stream.write(body);
-        stream.close();
+        if (body != null) {
+        	conn.addRequestProperty("Content-Length", Integer.toString(body.length));
+        	final OutputStream stream = conn.getOutputStream();
+            stream.write(body);
+            stream.close();
+        }
 
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
         	IOException ioe = new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
