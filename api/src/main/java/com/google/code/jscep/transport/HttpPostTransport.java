@@ -33,7 +33,7 @@ import com.google.code.jscep.request.Request;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * Transport representing the <tt>HTTP POST</tt> method
+ * Transport representing the <code>HTTP POST</code> method
  * 
  * @author David Grant
  */

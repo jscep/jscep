@@ -30,7 +30,8 @@ import com.google.code.jscep.util.HexUtil;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * This class represents the senderNonce and recipientNonce types.
+ * This class represents the <code>senderNonce</code> and <code>recipientNonce</code>
+ * types.
  * 
  * @author David Grant
  */

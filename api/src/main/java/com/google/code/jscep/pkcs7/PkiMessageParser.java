@@ -30,9 +30,13 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
 
@@ -40,6 +44,7 @@ import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
+ * This class is used for parsing SCEP pkiMessage instances.
  * 
  * @author David Grant
  */
@@ -63,8 +68,6 @@ public class PkiMessageParser {
 		
 		// 3.1 version MUST be 1
 		assert(signedData.getVersion().getValue().equals(BigInteger.ONE));
-		// 3.1 the contentType in contentInfo MUST be data
-		assert(signedData.getEncapContentInfo().getContentType().equals(CMSObjectIdentifiers.data));
 		
 		final Set<SignerInfo> signerInfoSet = getSignerInfo(signedData);
 
@@ -77,7 +80,13 @@ public class PkiMessageParser {
 		final PkiMessage msg = new PkiMessage(sdContentInfo);
 		if (msg.isRequest() || msg.getPkiStatus() == PkiStatus.SUCCESS) {
 			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(privateKey);
-			msg.setPkcsPkiEnvelope(envelopeParser.parse(signedData.getEncapContentInfo()));	
+			final ContentInfo envelopeContentInfo = signedData.getEncapContentInfo();
+			// 3.1 the contentType in contentInfo MUST be data
+			DERObjectIdentifier contentType = envelopeContentInfo.getContentType();
+			if (contentType.equals(CMSObjectIdentifiers.data) == false) {
+				LOGGER.severe("The contentType in contentInfo MUST be data, was: " + contentType);
+			}
+			msg.setPkcsPkiEnvelope(envelopeParser.parse(getEnvelopedData(envelopeContentInfo.getContent())));	
 		} else {
 			// TODO: Assert No ContentInfo
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-3
@@ -85,6 +94,20 @@ public class PkiMessageParser {
 		
 		LOGGER.exiting(getClass().getName(), "parse", msg);
 		return msg; 
+	}
+	
+	private EnvelopedData getEnvelopedData(DEREncodable content) throws IOException {
+		// According to PKCS #9, data consists of an octet string.
+		final ASN1OctetString octetString = (ASN1OctetString) content;
+		final byte[] octets = octetString.getOctets();
+		final ContentInfo contentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(octets));
+		final DERObjectIdentifier contentType = contentInfo.getContentType();
+		
+		if (contentType.equals(CMSObjectIdentifiers.envelopedData) == false) {
+			LOGGER.warning("Expected envelopedData ContentInfo, was " + contentType);
+		}
+		
+		return new EnvelopedData((ASN1Sequence) contentInfo.getContent());
 	}
 	
 	private Set<SignerInfo> getSignerInfo(SignedData signedData) {

@@ -32,7 +32,7 @@ import com.google.code.jscep.pkcs7.PkiMessageParser;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * This class handles responses to <tt>PKIRequest</tt> requests.
+ * This class handles responses to <code>PKIRequest</code> requests.
  * 
  * @author David Grant
  */

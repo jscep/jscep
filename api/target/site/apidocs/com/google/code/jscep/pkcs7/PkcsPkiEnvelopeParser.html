@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-PkcsPkiEnvelopeParser (jSCEP API 0.20.2 API)
+PkcsPkiEnvelopeParser (jSCEP API 0.20.3-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ PkcsPkiEnvelopeParser (jSCEP API 0.20.2 API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="PkcsPkiEnvelopeParser (jSCEP API 0.20.2 API)";
+        parent.document.title="PkcsPkiEnvelopeParser (jSCEP API 0.20.3-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -100,6 +100,14 @@ Class PkcsPkiEnvelopeParser</H2>
 </PRE>
 
 <P>
+This class is used for parsing SCEP <code>pkcsPKIEnvelope</code> structures.
+ <p>
+ The <code>pkcsPKIEnvelope</code> is a <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/EnvelopedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>EnvelopedData</CODE></A> with a 
+ <A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7"><CODE>messageData</CODE></A> content.  This class will decrypt the provided
+ <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/ContentInfo.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>ContentInfo</CODE></A>.
+<P>
+
+<P>
 <DL>
 <DT><B>Author:</B></DT>
   <DD>David Grant</DD>
@@ -135,10 +143,10 @@ Class PkcsPkiEnvelopeParser</H2>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7">PkcsPkiEnvelope</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelopeParser.html#parse(org.bouncycastle.asn1.cms.ContentInfo)">parse</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/ContentInfo.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">ContentInfo</A>&nbsp;envContentInfo)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelopeParser.html#parse(org.bouncycastle.asn1.cms.EnvelopedData)">parse</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/EnvelopedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">EnvelopedData</A>&nbsp;envelopedData)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parses the provided <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/ContentInfo.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>ContentInfo</CODE></A> to extract</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -180,14 +188,17 @@ public <B>PkcsPkiEnvelopeParser</B>(<A HREF="http://java.sun.com/javase/6/docs/a
 </TR>
 </TABLE>
 
-<A NAME="parse(org.bouncycastle.asn1.cms.ContentInfo)"><!-- --></A><H3>
+<A NAME="parse(org.bouncycastle.asn1.cms.EnvelopedData)"><!-- --></A><H3>
 parse</H3>
 <PRE>
-public <A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7">PkcsPkiEnvelope</A> <B>parse</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/ContentInfo.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">ContentInfo</A>&nbsp;envContentInfo)
+public <A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7">PkcsPkiEnvelope</A> <B>parse</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/EnvelopedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">EnvelopedData</A>&nbsp;envelopedData)
                       throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
 <DL>
+<DD>Parses the provided <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/ContentInfo.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>ContentInfo</CODE></A> to extract
+<P>
 <DD><DL>
-
+<DT><B>Parameters:</B><DD><CODE>envContentInfo</CODE> - 
+<DT><B>Returns:</B><DD>
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE></DL>
 </DD>

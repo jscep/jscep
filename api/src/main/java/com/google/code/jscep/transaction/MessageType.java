@@ -23,7 +23,7 @@ package com.google.code.jscep.transaction;
 
 
 /**
- * This class represents the <tt>SCEP</tt> <tt>messageType</tt> attribute.
+ * This class represents the SCEP <code>messageType</code> attribute.
  * 
  * @author David Grant
  */

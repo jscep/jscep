@@ -44,7 +44,7 @@ import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.TransactionId;
 
 /**
- * This class represents the SCEP <code>pkiMessage</code> type.
+ * This class represents the SCEP <code>pkiMessage</code> structure.
  *
  * @author David Grant
  */

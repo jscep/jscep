@@ -23,7 +23,7 @@ package com.google.code.jscep.transaction;
 
 
 /**
- * This class represents the <tt>SCEP</tt> <tt>failInfo</tt> attribute.
+ * This class represents the SCEP <code>failInfo</code> attribute.
  * 
  * @author David Grant
  */

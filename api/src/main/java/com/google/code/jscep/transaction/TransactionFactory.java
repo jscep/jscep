@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.transport.Transport;

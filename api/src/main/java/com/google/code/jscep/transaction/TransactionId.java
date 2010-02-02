@@ -32,7 +32,7 @@ import com.google.code.jscep.util.HexUtil;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * This class represents the <tt>SCEP</tt> <tt>transactionID</tt> attribute.
+ * This class represents the SCEP <code>transactionID</code> attribute.
  * 
  * @author David Grant
  */

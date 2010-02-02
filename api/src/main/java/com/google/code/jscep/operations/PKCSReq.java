@@ -46,7 +46,8 @@ import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.util.AlgorithmDictionary;
 
 /**
- * This class represents the SCEP <code>PKCSReq</code> <code>pkiMessage</code> type.
+ * This class represents the SCEP <code>PKCSReq</code> <code>pkiMessage</code>
+ * type.
  * 
  * @author David Grant
  */

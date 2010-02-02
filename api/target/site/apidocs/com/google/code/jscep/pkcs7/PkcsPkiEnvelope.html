@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-PkcsPkiEnvelope (jSCEP API 0.20.2 API)
+PkcsPkiEnvelope (jSCEP API 0.20.3-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ PkcsPkiEnvelope (jSCEP API 0.20.2 API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="PkcsPkiEnvelope (jSCEP API 0.20.2 API)";
+        parent.document.title="PkcsPkiEnvelope (jSCEP API 0.20.3-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -100,7 +100,7 @@ Class PkcsPkiEnvelope</H2>
 </PRE>
 
 <P>
-This class represents the SCEP <code>pkcsPKIEnvelope</code> type.
+This class represents the SCEP <code>pkcsPKIEnvelope</code> structure.
 <P>
 
 <P>
@@ -122,6 +122,12 @@ This class represents the SCEP <code>pkcsPKIEnvelope</code> type.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html#PkcsPkiEnvelope(org.bouncycastle.asn1.cms.ContentInfo)">PkcsPkiEnvelope</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/ContentInfo.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">ContentInfo</A>&nbsp;info)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html#PkcsPkiEnvelope(org.bouncycastle.asn1.cms.EnvelopedData)">PkcsPkiEnvelope</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/EnvelopedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">EnvelopedData</A>&nbsp;envelopedData)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -182,6 +188,14 @@ This class represents the SCEP <code>pkcsPKIEnvelope</code> type.
 <B>Constructor Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="PkcsPkiEnvelope(org.bouncycastle.asn1.cms.EnvelopedData)"><!-- --></A><H3>
+PkcsPkiEnvelope</H3>
+<PRE>
+public <B>PkcsPkiEnvelope</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/EnvelopedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">EnvelopedData</A>&nbsp;envelopedData)</PRE>
+<DL>
+</DL>
+<HR>
 
 <A NAME="PkcsPkiEnvelope(org.bouncycastle.asn1.cms.ContentInfo)"><!-- --></A><H3>
 PkcsPkiEnvelope</H3>

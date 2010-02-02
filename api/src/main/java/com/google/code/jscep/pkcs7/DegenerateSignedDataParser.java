@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 
@@ -54,7 +53,6 @@ public class DegenerateSignedDataParser {
 		
 		try {
 			ContentInfo ci = ContentInfo.getInstance(signedData);
-			assert(ci.getContentType().equals(CMSObjectIdentifiers.data));
 			ASN1Sequence seq = (ASN1Sequence) ci.getContent();
 			final SignedData sd = new SignedData(seq);
 

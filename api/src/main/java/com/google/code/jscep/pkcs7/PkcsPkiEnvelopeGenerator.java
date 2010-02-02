@@ -67,7 +67,7 @@ import com.google.code.jscep.util.LoggingUtil;
 
 /**
  * This class is used for generating {@link PkcsPkiEnvelope pkcsPkiEnvelope}
- * instances.
+ * structures.
  * 
  * @author David Grant
  */

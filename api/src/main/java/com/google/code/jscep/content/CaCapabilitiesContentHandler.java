@@ -33,7 +33,7 @@ import com.google.code.jscep.response.Capability;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * This class handles responses to <tt>GetCACaps</tt> requests.
+ * This class handles responses to <code>GetCACaps</code> requests.
  * 
  * @author David Grant
  */

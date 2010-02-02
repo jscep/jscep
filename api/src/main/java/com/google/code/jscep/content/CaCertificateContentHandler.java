@@ -45,7 +45,7 @@ import com.google.code.jscep.util.LoggingUtil;
 import com.google.code.jscep.util.SignedDataUtil;
 
 /**
- * This class handles responses to <tt>GetCACert</tt> requests.
+ * This class handles responses to <code>GetCACert</code> requests.
  * 
  * @author David Grant
  */

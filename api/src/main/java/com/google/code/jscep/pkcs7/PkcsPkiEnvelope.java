@@ -24,16 +24,21 @@ package com.google.code.jscep.pkcs7;
 import java.io.IOException;
 
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.EnvelopedData;
 
 
 /**
- * This class represents the SCEP <code>pkcsPKIEnvelope</code> type.
+ * This class represents the SCEP <code>pkcsPKIEnvelope</code> structure.
  * 
  * @author David Grant
  */
 public class PkcsPkiEnvelope {
 	private MessageData msgData;
 	private final ContentInfo info;
+	
+	public PkcsPkiEnvelope(EnvelopedData envelopedData) {
+		this.info = null;
+	}
 	
 	public PkcsPkiEnvelope(ContentInfo info) {
 		this.info = info;

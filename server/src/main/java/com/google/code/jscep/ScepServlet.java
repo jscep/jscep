@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.pkcs.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
@@ -46,7 +45,6 @@ import org.bouncycastle.jce.PKCS10CertificationRequest;
 
 import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.pkcs7.MessageData;
-import com.google.code.jscep.pkcs7.PkcsPkiEnvelopeParser;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageParser;
 import com.google.code.jscep.request.Operation;

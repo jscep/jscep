@@ -37,7 +37,7 @@ import com.google.code.jscep.request.Request;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * Transport representing the <tt>HTTP GET</tt> method
+ * Transport representing the <code>HTTP GET</code> method
  * 
  * @author David Grant
  */

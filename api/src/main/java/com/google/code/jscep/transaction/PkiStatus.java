@@ -23,7 +23,7 @@ package com.google.code.jscep.transaction;
 
 
 /**
- * This class represents the <tt>SCEP</tt> <tt>pkiStatus</tt> attribute.
+ * This class represents the SCEP <code>pkiStatus</code> attribute.
  * 
  * @author David Grant
  */

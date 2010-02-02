@@ -51,6 +51,11 @@ import com.google.code.jscep.util.AlgorithmDictionary;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
+ * This class is used for parsing SCEP <code>pkcsPKIEnvelope</code> structures.
+ * <p>
+ * The <code>pkcsPKIEnvelope</code> is a {@link EnvelopedData} with a 
+ * {@link MessageData messageData} content.  This class will decrypt the provided
+ * {@link ContentInfo}.
  * 
  * @author David Grant
  */
@@ -58,17 +63,25 @@ public class PkcsPkiEnvelopeParser {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private final PrivateKey privKey;
 	
+	
 	public PkcsPkiEnvelopeParser(PrivateKey keyPair) {
 		this.privKey = keyPair;
 	}
 	
-	public PkcsPkiEnvelope parse(ContentInfo envContentInfo) throws IOException {
-		LOGGER.entering(getClass().getName(), "parse", envContentInfo);
+	/**
+	 * Parses the provided {@link ContentInfo} to extract 
+	 * 
+	 * @param envContentInfo
+	 * @return
+	 * @throws IOException
+	 */
+	public PkcsPkiEnvelope parse(EnvelopedData envelopedData) throws IOException {
+		LOGGER.entering(getClass().getName(), "parse", envelopedData);
 
-		final DEROctetString octetString = (DEROctetString) envContentInfo.getContent();
-		
-		final ContentInfo envInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(octetString.getOctets()));
-		final EnvelopedData envelopedData = new EnvelopedData((ASN1Sequence) envInfo.getContent());
+//		final DEROctetString octetString = (DEROctetString) envContentInfo.getContent();
+//		
+//		final ContentInfo envInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(octetString.getOctets()));
+//		final EnvelopedData envelopedData = new EnvelopedData((ASN1Sequence) envInfo.getContent());
 		final EncryptedContentInfo eci = envelopedData.getEncryptedContentInfo();
 		// 3.1.2 version MUST be 0
 		assert(envelopedData.getVersion().getValue().equals(BigInteger.ZERO));		
@@ -108,7 +121,7 @@ public class PkcsPkiEnvelopeParser {
 			}
 		}
 
-    	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(envInfo);
+    	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(envelopedData);
     	envelope.setMessageData(MessageData.getInstance(msgData));
     	
     	LOGGER.exiting(getClass().getName(), "parse", envelope);
