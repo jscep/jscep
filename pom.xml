@@ -57,4 +57,21 @@
 			<name>Dave Grant</name>
 		</developer>
 	</developers>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.6.1</version>
+				<configuration>
+					<notimestamp>true</notimestamp>
+					<detectLinks/>
+					<links>
+						<link>http://java.sun.com/javase/6/docs/api/</link>
+						<link>http://www.bouncycastle.org/docs/docs1.6/</link>
+					</links>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>
