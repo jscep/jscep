@@ -20,38 +20,37 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.client;
 
-import java.io.IOException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.Callable;
-import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.x509.X509CertStoreSelector;
+import org.bouncycastle.asn1.x509.X509Name;
 
-import com.google.code.jscep.operations.PKCSReq;
+import com.google.code.jscep.EnrollmentResult;
+import com.google.code.jscep.RequestPendingException;
+import com.google.code.jscep.asn1.IssuerAndSubject;
+import com.google.code.jscep.operations.GetCertInitial;
 import com.google.code.jscep.operations.PKIOperation;
 import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
-import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * This class represents the initial attempt at enrolling a certificate in a PKI.
+ * This class represents a subsequent attempt to enrol a certificate in a PKI.
+ * <p>
+ * This class is usually created after the client has attempted an initial enrollment.
+ * 
+ * @see InitialEnrollmentTask
  */
-public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
-	private static Logger LOGGER = LoggingUtil.getLogger(Client.class);
+public final class PendingEnrollmentTask extends AbstractEnrollmentTask {
 	private final Transport transport;
 	private final X509Certificate ca;
 	private final KeyPair keyPair;
 	private final X509Certificate identity;
-	private final char[] password;
-	private final String digestAlgorithm;
-
+	private final String fingerprintAlgorithm;
+	
 	/**
 	 * Creates a new instance of this class.
 	 * 
@@ -59,40 +58,31 @@ public final class InitialEnrollmentTask extends AbstractEnrollmentTask {
 	 * @param ca the CA to sign our request.
 	 * @param keyPair the key pair used for creating a CSR.
 	 * @param identity the identity of the certificate to enrol.
-	 * @param password the password to authorise our request.
 	 * @param digestAlgorithm the message digest algorithm to use.
 	 */
-	InitialEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, char[] password, String digestAlgorithm) {
+	PendingEnrollmentTask(Transport transport, X509Certificate ca, KeyPair keyPair, X509Certificate identity, String fingerprintAlgorithm) {
 		this.transport = transport;
 		this.ca = ca;
 		this.keyPair = keyPair;
 		this.identity = identity;
-		this.password = password;
-		this.digestAlgorithm = digestAlgorithm;
+		this.fingerprintAlgorithm = fingerprintAlgorithm;
 	}
-	
+
 	/**
-	 * Attempts an enrolment.
-	 * @throws IOException 
+	 * Attempts to complete a previous enrolment.
 	 */
 	@Override
-	public EnrollmentResult call() throws IOException {
-		Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, digestAlgorithm);
-		PKIOperation<CertificationRequest> req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
+	public EnrollmentResult call() throws Exception {
+		final Transaction trans = TransactionFactory.createTransaction(transport, ca, identity, keyPair, fingerprintAlgorithm);
+		final X509Name issuer = new X509Name(ca.getIssuerX500Principal().getName());
+		final X509Name subject = new X509Name(identity.getSubjectX500Principal().getName());
+		final PKIOperation<IssuerAndSubject> req = new GetCertInitial(issuer, subject);
 		try {
-			CertStore store = trans.performOperation(req);
+			final CertStore store = trans.performOperation(req);
 			
-			return new EnrollmentResult(getCertificates(store.getCertificates(new X509CertStoreSelector())));
+			return new EnrollmentResult(getCertificates(store.getCertificates(null)));
 		} catch (RequestPendingException e) {
-			Callable<EnrollmentResult> task = new PendingEnrollmentTask(transport, ca, keyPair, identity, digestAlgorithm);
-			
-			return new EnrollmentResult(task);
-		} catch (PKIOperationFailureException e) {
-			return new EnrollmentResult(e.getMessage());
-		} catch (CertStoreException e) {
-			RuntimeException rt = new RuntimeException(e);
-			LOGGER.throwing(getClass().getName(), "parse", rt);
-			throw rt;
+			return new EnrollmentResult(this);
 		}
 	}
 }

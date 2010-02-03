@@ -43,7 +43,7 @@ public class EnrollmentResult {
 	 * 
 	 * @param certs the certificate list.
 	 */
-	EnrollmentResult(List<X509Certificate> certs) {
+	public EnrollmentResult(List<X509Certificate> certs) {
 		this.certs = certs;
 		this.status = PkiStatus.SUCCESS;
 	}
@@ -53,7 +53,7 @@ public class EnrollmentResult {
 	 * 
 	 * @param task the enrolment task.
 	 */
-	EnrollmentResult(Callable<EnrollmentResult> task) {
+	public EnrollmentResult(Callable<EnrollmentResult> task) {
 		this.task = task;
 		this.status = PkiStatus.PENDING;
 	}
@@ -63,7 +63,7 @@ public class EnrollmentResult {
 	 * 
 	 * @param message the failure message.
 	 */
-	EnrollmentResult(String message) {
+	public EnrollmentResult(String message) {
 		this.message = message;
 		this.status = PkiStatus.FAILURE;
 	}

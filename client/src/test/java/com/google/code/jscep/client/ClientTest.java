@@ -1,4 +1,4 @@
-package com.google.code.jscep;
+package com.google.code.jscep.client;
 
 import java.net.URL;
 import java.security.cert.CertificateException;
@@ -12,6 +12,9 @@ import javax.security.auth.x500.X500Principal;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.google.code.jscep.client.Client;
+import com.google.code.jscep.client.ClientConfiguration;
 
 @Ignore
 public class ClientTest {

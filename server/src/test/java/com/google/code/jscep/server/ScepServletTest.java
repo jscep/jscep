@@ -1,4 +1,4 @@
-package com.google.code.jscep;
+package com.google.code.jscep.server;
 
 import java.net.MalformedURLException;
 import java.net.URL;

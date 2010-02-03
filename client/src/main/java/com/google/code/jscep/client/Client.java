@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.client;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -51,6 +51,10 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 
+import com.google.code.jscep.EnrollmentResult;
+import com.google.code.jscep.PKIOperationFailureException;
+import com.google.code.jscep.RequestPendingException;
+import com.google.code.jscep.X509CertificateFactory;
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
 import com.google.code.jscep.operations.PKIOperation;

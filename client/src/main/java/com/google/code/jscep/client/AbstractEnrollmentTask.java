@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.client;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+
+import com.google.code.jscep.EnrollmentResult;
 
 abstract public class AbstractEnrollmentTask implements Callable<EnrollmentResult> {
 	AbstractEnrollmentTask()

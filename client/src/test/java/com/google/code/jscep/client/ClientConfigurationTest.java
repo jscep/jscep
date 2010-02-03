@@ -1,4 +1,4 @@
-package com.google.code.jscep;
+package com.google.code.jscep.client;
 
 import java.net.MalformedURLException;
 import java.net.Proxy;
@@ -14,6 +14,8 @@ import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.code.jscep.client.ClientConfiguration;
 
 public class ClientConfigurationTest {
 	private ClientConfiguration fixture;

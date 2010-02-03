@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.server;
 
 import java.io.IOException;
 import java.io.InputStream;

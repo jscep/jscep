@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep;
+package com.google.code.jscep.client;
 
 import java.net.Proxy;
 import java.net.URL;
