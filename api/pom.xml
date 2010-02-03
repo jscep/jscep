@@ -69,19 +69,6 @@
 				<artifactId>cobertura-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.6.1</version>
-				<configuration>
-					<notimestamp>true</notimestamp>
-					<detectLinks/>
-					<links>
-						<link>http://java.sun.com/javase/6/docs/api/</link>
-						<link>http://www.bouncycastle.org/docs/docs1.6/</link>
-					</links>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jxr-maven-plugin</artifactId>
 			</plugin>

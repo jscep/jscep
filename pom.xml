@@ -69,6 +69,7 @@
 					<links>
 						<link>http://java.sun.com/javase/6/docs/api/</link>
 						<link>http://www.bouncycastle.org/docs/docs1.6/</link>
+						<link>http://java.sun.com/javaee/5/docs/api/</link>
 					</links>
 				</configuration>
 			</plugin>
