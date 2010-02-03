@@ -10,9 +10,7 @@ import javax.security.auth.x500.X500Principal;
 
 import junit.framework.Assert;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.cms.SignedData;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +45,8 @@ public class PkiMessageTest {
 		generator.setSenderNonce(Nonce.nextNonce());
 		generator.setPkiStatus(PkiStatus.SUCCESS);
 		generator.setRecipientNonce(Nonce.nextNonce());
-		generator.setMessageDigest(new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.26")));
-		generator.setCipherAlgorithm(new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.7")));
+		generator.setMessageDigest("SHA-1");
+		generator.setCipherAlgorithm("DES");
 		generator.setKeyPair(keyPair);
 		generator.setRecipient(recipient);
 		generator.setIdentity(identity);
@@ -108,7 +106,7 @@ public class PkiMessageTest {
 	
 	@Test
 	public void testPKCSReqRequest() throws IOException {
-		final PKCSReq req = new PKCSReq(keyPair, identity, "SHA", new char[0]);
+		final PKCSReq req = new PKCSReq(keyPair, identity, "SHA-1", new char[0]);
 		
 		generator.setMessageType(MessageType.PKCSReq);
 		generator.setMessageData(MessageData.getInstance(req.getMessage()));

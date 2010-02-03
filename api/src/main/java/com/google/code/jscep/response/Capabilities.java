@@ -21,10 +21,12 @@
  */
 package com.google.code.jscep.response;
 
-import java.security.Security;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.util.EnumSet;
-import java.util.Set;
 import java.util.logging.Logger;
+
+import javax.crypto.Cipher;
 
 import com.google.code.jscep.util.LoggingUtil;
 
@@ -93,7 +95,7 @@ public class Capabilities {
 	 * <p>
 	 * The algorithms are ordered thus:
 	 * <ol>
-	 *     <li>Triple DES</li>
+	 *     <li>DESede</li>
 	 *     <li>DES</li>
 	 * </ol>
 	 * 
@@ -101,17 +103,25 @@ public class Capabilities {
 	 */
 	public String getStrongestCipher() {
 		LOGGER.entering(getClass().getName(), "getStrongestCipher");
-		final Set<String> ciphers = Security.getAlgorithms("Cipher");
-		
+
 		final String cipher;
-		if (ciphers.contains("DESEDE") && capabilities.contains(Capability.TRIPLE_DES)) {
-			cipher = "DESEDE";
+		if (cipherExists("DESede") && capabilities.contains(Capability.TRIPLE_DES)) {
+			cipher = "DESede";
 		} else {
 			cipher = "DES";
 		}
 		
 		LOGGER.exiting(getClass().getName(), "getStrongestCipher", cipher);
 		return cipher;
+	}
+	
+	private boolean cipherExists(String cipher) {
+		try {
+			Cipher.getInstance(cipher);
+			return true;
+		} catch (GeneralSecurityException e) {
+			return false;
+		}
 	}
 	
 	/**
@@ -128,22 +138,28 @@ public class Capabilities {
 	 * @return the strongest message digest algorithm supported by the server and client.
 	 */
 	public String getStrongestMessageDigest() {
-		
-		final Set<String> digests = Security.getAlgorithms("MessageDigest");
-		
 		final String digest;
-		if (digests.contains("SHA-512") && capabilities.contains(Capability.SHA_512)) {
+		if (digestExists("SHA-512") && capabilities.contains(Capability.SHA_512)) {
 			digest = "SHA-512";
-		} else if (digests.contains("SHA-256") && capabilities.contains(Capability.SHA_256)) {
+		} else if (digestExists("SHA-256") && capabilities.contains(Capability.SHA_256)) {
 			digest = "SHA-256";
-		} else if (digests.contains("SHA") && capabilities.contains(Capability.SHA_1)) {
-			digest = "SHA";
+		} else if (digestExists("SHA-1") && capabilities.contains(Capability.SHA_1)) {
+			digest = "SHA-1";
 		} else {
 			digest = "MD5";
 		}
 		
 		LOGGER.exiting(getClass().getName(), "getStrongestMessageDigest()", digest);
 		return digest;
+	}
+	
+	private boolean digestExists(String digest) {
+		try {
+			MessageDigest.getInstance(digest);
+			return true;
+		} catch (GeneralSecurityException e) {
+			return false;
+		}
 	}
 	
 	@Override

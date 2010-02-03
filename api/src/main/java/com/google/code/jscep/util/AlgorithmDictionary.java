@@ -23,8 +23,13 @@ package com.google.code.jscep.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.crypto.Cipher;
 
 import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.smime.SMIMECapabilities;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -38,29 +43,62 @@ import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
  * generally as and when they are required by changes to the SCEP specification.
  * 
  * @author David Grant
+ * @see http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html
  */
 public final class AlgorithmDictionary {
-	// 1.2.840.113549.2.5 -> md5
-	// 1.3.14.3.2.26 -> sha
-	// 2.16.840.1.101.3.4.2.1 -> sha256
-	// 2.16.840.1.101.3.4.2.3 -> sha512
-	
-	// 1.2.840.113549.1.1.1 -> rsa
-	
-	// 1.3.14.3.2.7 -> des
-	// 1.2.840.113549.3.7 -> desede
-	
-	// 1.2.840.113549.1.1.4 -> md5withRSA
-	// 1.2.840.113549.1.1.5 -> shaWithRSA
-	// 1.2.840.113549.1.1.11 -> sha256withRSA
-	// 1.2.840.113549.1.1.13 -> sha512withRSA
+	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.util");
+	/**
+	 * JCA standards RECOMMEND NoPadding and PKCS5Padding to Providers.
+	 * 
+	 * PKCS5Padding is more secure than NoPadding, so we use that.
+	 */
+	private static final String PADDING = "PKCS5Padding";
+	/**
+	 * JCA standards RECOMMEND CBC and ECB to Providers.
+	 * 
+	 * CBC is more secure than EBC, so we use that.
+	 */
+	private static final String MODE = "CBC";
 	private final static Map<DERObjectIdentifier, String> contents = new HashMap<DERObjectIdentifier, String>();
 	static {
+		// Asymmetric Ciphers
 		contents.put(PKCSObjectIdentifiers.rsaEncryption, "RSA");
+		// Digital Signatures
 		contents.put(PKCSObjectIdentifiers.sha1WithRSAEncryption, "SHA1withRSA");
-		contents.put(SMIMECapabilities.dES_CBC, "DES/CBC/PKCS5Padding");
-		contents.put(SMIMECapabilities.dES_EDE3_CBC, "3DES/CBC/PKCS5Padding");
+		contents.put(new DERObjectIdentifier("1.2.840.113549.1.1.4"), "md5withRSA");
+		contents.put(new DERObjectIdentifier("1.2.840.113549.1.1.11"), "sha256withRSA");
+		contents.put(new DERObjectIdentifier("1.2.840.113549.1.1.13"), "sha512withRSA");
+		// Symmetric Ciphers
+		contents.put(SMIMECapabilities.dES_CBC, "DES/CBC/PKCS5Padding"); // DES
+		contents.put(SMIMECapabilities.dES_EDE3_CBC, "3DES/CBC/PKCS5Padding"); // DESEDE
+		// Message Digests
 		contents.put(X509ObjectIdentifiers.id_SHA1, "SHA");
+		contents.put(new DERObjectIdentifier("1.2.840.113549.2.5"), "MD5");
+		contents.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.1"), "SHA-256");
+		contents.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.3"), "SHA-512");
+	}
+	
+	
+	private final static Map<String, DERObjectIdentifier> oids = new HashMap<String, DERObjectIdentifier>();
+	static {
+		// Cipher
+		oids.put("DES/CBC/PKCS5Padding", OIWObjectIdentifiers.desCBC);
+		oids.put("DESede/CBC/PKCS5Padding", PKCSObjectIdentifiers.des_EDE3_CBC);
+		// KeyFactory or KeyPairGenerator
+		oids.put("RSA", PKCSObjectIdentifiers.rsaEncryption);
+		// KeyGenerator, AlgorithmParameters or SecretKeyFactory
+		oids.put("DES", null);
+		oids.put("DESede", null);
+		// MessageDigest
+		oids.put("MD5", PKCSObjectIdentifiers.md5);
+		oids.put("SHA-1", X509ObjectIdentifiers.id_SHA1);
+		oids.put("SHA-256", NISTObjectIdentifiers.id_sha256);
+		oids.put("SHA-512", NISTObjectIdentifiers.id_sha512);
+		// Signature
+		oids.put("MD5withRSA", PKCSObjectIdentifiers.md5WithRSAEncryption);
+		oids.put("SHA1withRSA", PKCSObjectIdentifiers.sha1WithRSAEncryption);
+		oids.put("SHA256withRSA", PKCSObjectIdentifiers.sha256WithRSAEncryption);
+		oids.put("SHA512withRSA", PKCSObjectIdentifiers.sha512WithRSAEncryption);
 	}
 	
 	/**
@@ -76,6 +114,55 @@ public final class AlgorithmDictionary {
 	 */
 	public static String lookup(DERObjectIdentifier oid) {
 		return contents.get(oid);
+	}
+	
+	/**
+	 * Returns the OID for the provided algorithm name.
+	 * 
+	 * @param algorithm the algorithm name, e.g. "RSA"
+	 * @return the corresponding OID, or null.
+	 */
+	public static DERObjectIdentifier getOid(String algorithm) {
+		LOGGER.entering(AlgorithmDictionary.class.getName(), "getOid", new Object[] {algorithm});
+		
+		final DERObjectIdentifier oid = oids.get(algorithm);
+		
+		LOGGER.exiting(AlgorithmDictionary.class.getName(), "getOid");
+		
+		return oid;
+	}
+	
+	/**
+	 * Returns an AlgorithmIdentifier to represent the provider algorithm.
+	 * @param algorithm the algorithm name, e.g. "RSA"
+	 * @return the corresponding algorithm identifier, or null;
+	 */
+	public static AlgorithmIdentifier getAlgId(String algorithm) {
+		DERObjectIdentifier oid = getOid(algorithm);
+		if (oid == null) {
+			return null;
+		} else {
+			return new AlgorithmIdentifier(oid);
+		}
+	}
+	
+	/**
+	 * Returns an appropriate transformation name for the given cipher.
+	 * <p>
+	 * In the JCA, an instance of a {@link Cipher} may be obtained using just
+	 * the cipher algorithm (e.g. DES), but this is subject to defaults
+	 * specified by the provider, so we "fill out" the cipher name in this method. 
+	 * 
+	 * @param cipher the cipher algorithm name.
+	 * @return the transformation name
+	 * @throws IllegalArgumentException if the cipher algorithm is not appropriate.
+	 */
+	public static String getTransformation(String cipher) throws IllegalArgumentException {
+		if (cipher.equalsIgnoreCase("DES") || cipher.equalsIgnoreCase("DESede")) {
+			return cipher + "/" + MODE + "/" + PADDING;
+		} else {
+			throw new IllegalArgumentException(cipher + " is not an appropriate cipher name");
+		}
 	}
 	
 	/**

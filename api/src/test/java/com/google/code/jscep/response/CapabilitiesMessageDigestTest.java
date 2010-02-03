@@ -21,7 +21,7 @@ public class CapabilitiesMessageDigestTest {
 		capabilities = new Capabilities();
 		params.add(new Object[] {capabilities, "MD5"});
 		capabilities = new Capabilities(Capability.SHA_1);
-		params.add(new Object[] {capabilities, "SHA"});
+		params.add(new Object[] {capabilities, "SHA-1"});
 		capabilities = new Capabilities(Capability.SHA_1, Capability.SHA_256);
 		params.add(new Object[] {capabilities, "SHA-256"});
 		capabilities = new Capabilities(Capability.SHA_1, Capability.SHA_256, Capability.SHA_512);

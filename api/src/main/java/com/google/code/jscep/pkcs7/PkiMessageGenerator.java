@@ -66,6 +66,7 @@ import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.TransactionId;
+import com.google.code.jscep.util.AlgorithmDictionary;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
@@ -103,12 +104,12 @@ public class PkiMessageGenerator {
 	private FailInfo failInfo;
 	private KeyPair keyPair;
 	private X509Certificate identity;
-	private AlgorithmIdentifier digest;
+	private String digestAlgorithm;
 	private PkiStatus pkiStatus;
 	private ContentInfo content;
 	private byte[] hash;
 	private X509Certificate recipient;
-	private AlgorithmIdentifier cipherAlgorithm;
+	private String cipherAlgorithm;
 	private MessageData msgData;
 	
 	public void setKeyPair(KeyPair keyPair) {
@@ -127,8 +128,8 @@ public class PkiMessageGenerator {
 		this.recipientNonce = nonce;
 	}
 	
-	public void setMessageDigest(AlgorithmIdentifier digest) {
-		this.digest = digest;
+	public void setMessageDigest(String digest) {
+		this.digestAlgorithm = digest;
 	}
 	
 	public void setSenderNonce(Nonce nonce) {
@@ -155,7 +156,7 @@ public class PkiMessageGenerator {
 		this.recipient = recipient;
 	}
 	
-	public void setCipherAlgorithm(AlgorithmIdentifier cipherAlgorithm) {
+	public void setCipherAlgorithm(String cipherAlgorithm) {
 		this.cipherAlgorithm = cipherAlgorithm;
 	}
 	
@@ -194,7 +195,7 @@ public class PkiMessageGenerator {
 			}
 		}
 		
-		if (digest == null) {
+		if (digestAlgorithm == null) {
 			throw new IllegalStateException("Missing Message Digest Algorithm");
 		}
 		if (cipherAlgorithm == null) {
@@ -215,6 +216,7 @@ public class PkiMessageGenerator {
 			envelopeGenerator.setCipherAlgorithm(cipherAlgorithm);
 			envelopeGenerator.setRecipient(recipient);
 			envelopeGenerator.setMessageData(msgData);
+			envelopeGenerator.setKeyAlgorithm(cipherAlgorithm);
 			
 			envelope = envelopeGenerator.generate();
 			this.content = new ContentInfo((ASN1Sequence) ASN1Object.fromByteArray(envelope.getEncoded()));
@@ -291,7 +293,7 @@ public class PkiMessageGenerator {
 	
 	private SignerInfo getSignerInfo() throws IOException, GeneralSecurityException {
 		// TODO: Hardcoded Algorithm
-		final MessageDigest digest = MessageDigest.getInstance("SHA1");
+		final MessageDigest digest = MessageDigest.getInstance("SHA-1");
 		// TODO: Hardcoded Algorithm
 		final Signature sig = Signature.getInstance("SHA1withRSA");
 		
@@ -372,7 +374,7 @@ public class PkiMessageGenerator {
 	}
 	
 	private AlgorithmIdentifier getDigestAlgorithm() {
-		return digest;
+		return AlgorithmDictionary.getAlgId(digestAlgorithm);
 	}
 	
 	private AlgorithmIdentifier getDigestEncryptionAlgorithm() {

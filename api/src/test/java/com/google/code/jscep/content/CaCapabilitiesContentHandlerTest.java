@@ -25,14 +25,14 @@ public class CaCapabilitiesContentHandlerTest {
 	public void testContentTypeIgnored() throws IOException {
 		final InputStream is = getStreamForCapabilities("DES3");
 		final Capabilities caps = fixture.getContent(is, "foo/bar");
-		Assert.assertEquals("DESEDE", caps.getStrongestCipher());
+		Assert.assertEquals("DESede", caps.getStrongestCipher());
 	}
 	
 	@Test
 	public void testCorrectContentType() throws IOException {
 		final InputStream is = getStreamForCapabilities("DES3");
 		final Capabilities caps = fixture.getContent(is, "text/plain");
-		Assert.assertEquals("DESEDE", caps.getStrongestCipher());
+		Assert.assertEquals("DESede", caps.getStrongestCipher());
 	}
 	
 	private InputStream getStreamForCapabilities(String... capabilities) throws IOException {

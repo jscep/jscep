@@ -74,7 +74,9 @@ import com.google.code.jscep.util.LoggingUtil;
 public class PkcsPkiEnvelopeGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private X509Certificate recipient;
-	private AlgorithmIdentifier cipherAlgorithm;
+	private String cipherAlgorithm;
+	private String cipherTransformation;
+	private String keyAlgorithm;
 	private MessageData msgData;
 	
 	/**
@@ -85,6 +87,10 @@ public class PkcsPkiEnvelopeGenerator {
 	 */
 	public void setMessageData(MessageData msgData) {
 		this.msgData = msgData;
+	}
+	
+	public void setKeyAlgorithm(String keyAlgorithm) {
+		this.keyAlgorithm = keyAlgorithm;
 	}
 	
 	/**
@@ -105,8 +111,9 @@ public class PkcsPkiEnvelopeGenerator {
 	 * 
 	 * @param cipherAlgorithm the cipher algorithm.
 	 */
-	public void setCipherAlgorithm(AlgorithmIdentifier cipherAlgorithm) {
+	public void setCipherAlgorithm(String cipherAlgorithm) {
 		this.cipherAlgorithm = cipherAlgorithm;
+		this.cipherTransformation = AlgorithmDictionary.getTransformation(cipherAlgorithm);
 	}
 	
 	public PkcsPkiEnvelope generate() throws IOException {
@@ -114,11 +121,11 @@ public class PkcsPkiEnvelopeGenerator {
 
     	final ContentInfo contentInfo;
 		try {
-			final Cipher cipher = Cipher.getInstance(AlgorithmDictionary.lookup(cipherAlgorithm));
+			final Cipher cipher = Cipher.getInstance(cipherTransformation);
 			// TODO: Hardcoded Algorithm
-			final SecretKey encKey = KeyGenerator.getInstance("DES").generateKey();
+			final SecretKey encKey = KeyGenerator.getInstance(keyAlgorithm).generateKey();
 			final AlgorithmParameters params = generateParameters();
-			final AlgorithmIdentifier encAlgId = getAlgorithmIdentifier(cipherAlgorithm.getObjectId(), params);
+			final AlgorithmIdentifier encAlgId = getAlgorithmIdentifier(AlgorithmDictionary.getOid(cipherTransformation), params);
 			cipher.init(Cipher.ENCRYPT_MODE, encKey, params);
 						
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -158,7 +165,7 @@ public class PkcsPkiEnvelopeGenerator {
 		rnd.nextBytes(iv);
 		
 		// TODO: Hardcoded Algorithm
-		final AlgorithmParameters params = AlgorithmParameters.getInstance("DES");
+		final AlgorithmParameters params = AlgorithmParameters.getInstance(cipherAlgorithm);
 		params.init(new IvParameterSpec(iv));
 		
 		return params;

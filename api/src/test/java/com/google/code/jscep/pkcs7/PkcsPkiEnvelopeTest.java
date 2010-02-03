@@ -10,9 +10,7 @@ import java.security.cert.X509Certificate;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERUTF8String;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,16 +37,12 @@ public class PkcsPkiEnvelopeTest {
 		final X509Certificate cert = X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
 
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
-		envGenerator.setCipherAlgorithm(getCipherAlgorithm());
+		envGenerator.setCipherAlgorithm("DES");
 		envGenerator.setRecipient(cert);
 		envGenerator.setMessageData(MessageData.getInstance(msgData));
+		envGenerator.setKeyAlgorithm("DES");
 		
 		fixture = envGenerator.generate();
-	}
-	
-	private static AlgorithmIdentifier getCipherAlgorithm() {
-		// DES
-		return new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.7"));
 	}
 	
 	@Test
