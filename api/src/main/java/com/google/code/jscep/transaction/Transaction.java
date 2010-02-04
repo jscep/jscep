@@ -33,7 +33,7 @@ import org.bouncycastle.asn1.cms.SignedData;
 import com.google.code.jscep.PKIOperationFailureException;
 import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.operations.PKIOperation;
-import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
+import com.google.code.jscep.pkcs7.SignedDataParser;
 import com.google.code.jscep.pkcs7.MessageData;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
@@ -123,7 +123,7 @@ public class Transaction {
 			throw rpe;
 		} else {
 			final MessageData repMsgData = response.getPkcsPkiEnvelope().getMessageData();
-			final DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
+			final SignedDataParser parser = new SignedDataParser();
 			final SignedData signedData = parser.parse(repMsgData.getContent());
 			CertStore cs;
 			try {

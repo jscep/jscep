@@ -37,7 +37,7 @@ import com.google.code.jscep.util.LoggingUtil;
  *  
  * @author David Grant
  */
-public class DegenerateSignedDataParser {
+public class SignedDataParser {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 
 	/**

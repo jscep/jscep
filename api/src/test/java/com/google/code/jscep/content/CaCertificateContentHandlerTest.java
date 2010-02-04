@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.code.jscep.X509CertificateFactory;
-import com.google.code.jscep.pkcs7.DegenerateSignedDataGenerator;
+import com.google.code.jscep.pkcs7.SignedDataGenerator;
 import com.google.code.jscep.pkcs7.MessageData;
 
 public class CaCertificateContentHandlerTest {
@@ -43,7 +43,7 @@ public class CaCertificateContentHandlerTest {
 	
 	@Test(expected=IOException.class)
 	public void testSingleCertificateFail() throws Exception {
-		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
+		final SignedDataGenerator generator = new SignedDataGenerator();
 		generator.addCertificate(getCertificate());
 		SignedData dsd = generator.generate();
 		
@@ -61,7 +61,7 @@ public class CaCertificateContentHandlerTest {
 	
 	@Test
 	public void testMultipleCertificates() throws Exception {
-		final DegenerateSignedDataGenerator generator = new DegenerateSignedDataGenerator();
+		final SignedDataGenerator generator = new SignedDataGenerator();
 		generator.addCertificate(getCertificate());
 		SignedData sd = generator.generate();
 		MessageData md = MessageData.getInstance(sd);

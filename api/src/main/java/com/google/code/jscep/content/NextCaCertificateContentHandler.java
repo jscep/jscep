@@ -34,10 +34,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 
-import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
+import com.google.code.jscep.pkcs7.SignedDataParser;
 import com.google.code.jscep.util.LoggingUtil;
 import com.google.code.jscep.util.SignedDataUtil;
 
@@ -48,9 +51,10 @@ import com.google.code.jscep.util.SignedDataUtil;
  */
 public class NextCaCertificateContentHandler implements SCEPContentHandler<List<X509Certificate>> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
+	private final X509Certificate ca;
 	
 	public NextCaCertificateContentHandler(X509Certificate ca) {
-//		this.ca = ca;
+		this.ca = ca;
 	}
 	
 	/**
@@ -62,16 +66,26 @@ public class NextCaCertificateContentHandler implements SCEPContentHandler<List<
 		if (mimeType.equals("application/x-x509-next-ca-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 
-			// TODO: This must be signed by the current CA.
 			// The response consists of a SignedData PKCS#7 [RFC2315], 
 			// signed by the current CA (or RA) signing key.
 			final List<X509Certificate> certs = new ArrayList<X509Certificate>();
 			
 			Collection<? extends Certificate> collection;
 			try {
-				DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
-				SignedData sd = parser.parse(ASN1Object.fromByteArray(getBytes(in)));
-				CertStore store = SignedDataUtil.extractCertStore(sd);
+				ContentInfo ci = ContentInfo.getInstance(ASN1Object.fromByteArray(getBytes(in)));
+				ASN1Sequence seq = (ASN1Sequence) ci.getContent();
+				// TODO: This must be signed by the current CA.
+				final SignedData sd = new SignedData(seq);
+				if (SignedDataUtil.isSignedBy(sd, ca) == false) {
+					IOException ioe = new IOException();
+					
+					LOGGER.throwing(getClass().getName(), "getContent", ioe);
+					throw ioe;
+				}
+				ASN1Encodable sdContent = (ASN1Encodable) sd.getEncapContentInfo().getContent();
+				SignedDataParser parser = new SignedDataParser();
+				SignedData dsd = parser.parse(sdContent);
+				CertStore store = SignedDataUtil.extractCertStore(dsd);
 				collection = store.getCertificates(new X509CertSelector());
 			} catch (GeneralSecurityException e) {
 				final IOException ioe = new IOException(e);

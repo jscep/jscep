@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.SignedData;
 
-import com.google.code.jscep.pkcs7.DegenerateSignedDataParser;
+import com.google.code.jscep.pkcs7.SignedDataParser;
 import com.google.code.jscep.util.LoggingUtil;
 import com.google.code.jscep.util.SignedDataUtil;
 
@@ -93,7 +93,7 @@ public class CaCertificateContentHandler implements SCEPContentHandler<List<X509
 				baos.write(b);
 			}
 			
-			DegenerateSignedDataParser parser = new DegenerateSignedDataParser();
+			SignedDataParser parser = new SignedDataParser();
 			SignedData dsd = parser.parse(ASN1Object.fromByteArray(baos.toByteArray()));
 			CertStore store;
 			try {

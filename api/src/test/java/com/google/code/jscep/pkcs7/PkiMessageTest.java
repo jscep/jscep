@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
@@ -49,15 +50,15 @@ public class PkiMessageTest {
 		generator.setCipherAlgorithm("DES");
 		generator.setKeyPair(keyPair);
 		generator.setRecipient(recipient);
-		generator.setIdentity(identity);
+		generator.setSigner(identity);
 		
 		parser = new PkiMessageParser();
 		parser.setPrivateKey(keyPair.getPrivate());
 	}
 	
 	@Test
-	public void testCertRepResponse() throws IOException {
-		DegenerateSignedDataGenerator dsdGenerator = new DegenerateSignedDataGenerator();
+	public void testCertRepResponse() throws IOException, NoSuchAlgorithmException {
+		SignedDataGenerator dsdGenerator = new SignedDataGenerator();
 		SignedData sd = dsdGenerator.generate(); 
 		
 		generator.setMessageType(MessageType.CertRep);

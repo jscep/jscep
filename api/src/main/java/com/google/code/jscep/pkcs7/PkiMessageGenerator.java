@@ -116,7 +116,7 @@ public class PkiMessageGenerator {
 		this.keyPair = keyPair;
 	}
 	
-	public void setIdentity(X509Certificate identity) {
+	public void setSigner(X509Certificate identity) {
 		this.identity = identity;
 	}
 	

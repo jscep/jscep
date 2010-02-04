@@ -60,7 +60,7 @@ public final class TransactionFactory {
 
 		final PkiMessageGenerator msgGenerator = new PkiMessageGenerator();
 		msgGenerator.setMessageDigest("SHA-1");
-		msgGenerator.setIdentity(identity);
+		msgGenerator.setSigner(identity);
 		msgGenerator.setKeyPair(keyPair);
 		msgGenerator.setCipherAlgorithm("DES");
 		msgGenerator.setRecipient(ca);

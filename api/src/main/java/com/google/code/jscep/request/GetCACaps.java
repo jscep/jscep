@@ -30,8 +30,12 @@ import com.google.code.jscep.response.Capabilities;
  * @author David Grant
  */
 public final class GetCACaps implements Request<Capabilities> {
-	private String caIdentifier;
+	private final String caIdentifier;
 
+	public GetCACaps() {
+		this.caIdentifier = null;
+	}
+	
 	public GetCACaps(String caIdentifier) {
 		this.caIdentifier = caIdentifier;
 	}

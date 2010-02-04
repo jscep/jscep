@@ -45,6 +45,11 @@ public class GetNextCACert implements Request<List<X509Certificate>> {
     	this.issuer = issuer;
         this.caIdentifier = caIdentifier;
     }
+    
+    public GetNextCACert(X509Certificate issuer) {
+    	this.issuer = issuer;
+        this.caIdentifier = null;
+    }
 
     /**
      * {@inheritDoc}

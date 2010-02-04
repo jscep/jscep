@@ -29,6 +29,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.request.Request;
 import com.google.code.jscep.util.LoggingUtil;
 
@@ -47,6 +48,17 @@ public class HttpPostTransport extends Transport {
 	@Override
 	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException {
 		LOGGER.entering(getClass().getName(), "sendMessage", msg);
+		
+		if (msg.getOperation() != Operation.PKIOperation) {
+			// Appendix F
+			//
+			// This is allowed for any SCEP message except GetCACert, 
+			// GetNextCACert, or GetCACaps.
+			IllegalArgumentException e = new IllegalArgumentException("POST transport may not be used for " + msg.getOperation() + " messages.");
+			LOGGER.throwing(getClass().getName(), "sendMessage", e);
+			
+			throw e;
+		}
 		
 		final byte[] body = (byte[]) msg.getMessage();
         final URL url = getUrl(msg.getOperation());

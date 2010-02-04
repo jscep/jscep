@@ -29,6 +29,7 @@ import java.security.cert.CertStoreParameters;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -36,6 +37,8 @@ import java.util.HashSet;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.cms.SignerIdentifier;
+import org.bouncycastle.asn1.cms.SignerInfo;
 
 /**
  * This class contains utility methods for manipulating SingedData
@@ -82,5 +85,26 @@ public final class SignedDataUtil {
 		
 		final CertStoreParameters parameters = new CollectionCertStoreParameters(collection);
 		return CertStore.getInstance("Collection", parameters);
+	}
+	
+	/**
+	 * Checks if the provided signedData was signed by the entity represented
+	 * by the provided certificate.
+	 *  
+	 * @param signedData the signedData to verify.
+	 * @param signer the signing entity.
+	 * @return <code>true</code> if the signedData was signed by the entity, <code>false</code> otherwise.
+	 */
+	public static boolean isSignedBy(SignedData signedData, X509Certificate signer) {
+		final ASN1Set signerInfos = signedData.getSignerInfos();
+		@SuppressWarnings("unchecked")
+		Enumeration<SignerInfo> signerInfosEnum = signerInfos.getObjects();
+		while (signerInfosEnum.hasMoreElements()) {
+			SignerInfo signerInfo = signerInfosEnum.nextElement();
+			SignerIdentifier signerId = signerInfo.getSID();
+			System.out.println(signerId.getId());
+		}
+		
+		return false;
 	}
 }

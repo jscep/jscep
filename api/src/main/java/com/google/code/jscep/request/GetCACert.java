@@ -32,7 +32,7 @@ import com.google.code.jscep.content.CaCertificateContentHandler;
  * @author David Grant
  */
 public final class GetCACert implements Request<List<X509Certificate>> {
-	private String caIdentifier;
+	private final String caIdentifier;
 	/**
 	 * Creates a new GetCACert request with the given CA identification string.
 	 * 
@@ -40,6 +40,10 @@ public final class GetCACert implements Request<List<X509Certificate>> {
 	 */
 	public GetCACert(String caIdentifier) {
 		this.caIdentifier = caIdentifier;
+	}
+	
+	public GetCACert() {
+		this.caIdentifier = null;
 	}
 
 	/**
