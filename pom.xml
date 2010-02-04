@@ -15,6 +15,10 @@
 		<module>client</module>
 		<module>server</module>
 	</modules>
+	<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/jscep/issues/list</url>
+	</issueManagement>
 	<licenses>
 		<license>
 			<name>MIT License</name>
@@ -22,10 +26,6 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<issueManagement>
-		<system>Google Code</system>
-		<url>http://code.google.com/p/jscep/issues/list</url>
-	</issueManagement>
 	<scm>
 		<connection>scm:svn:http://jscep.googlecode.com/svn/trunk/</connection>
 		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/trunk/</developerConnection>
