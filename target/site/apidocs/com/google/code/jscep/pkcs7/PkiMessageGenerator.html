@@ -168,7 +168,7 @@ This class is used to generate a new instance of <A HREF="../../../../../com/goo
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#setCipherAlgorithm(org.bouncycastle.asn1.x509.AlgorithmIdentifier)">setCipherAlgorithm</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A>&nbsp;cipherAlgorithm)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#setCipherAlgorithm(java.lang.String)">setCipherAlgorithm</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;cipherAlgorithm)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -177,14 +177,6 @@ This class is used to generate a new instance of <A HREF="../../../../../com/goo
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#setFailInfo(com.google.code.jscep.transaction.FailInfo)">setFailInfo</A></B>(<A HREF="../../../../../com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction">FailInfo</A>&nbsp;failInfo)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#setIdentity(java.security.cert.X509Certificate)">setIdentity</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -208,7 +200,7 @@ This class is used to generate a new instance of <A HREF="../../../../../com/goo
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#setMessageDigest(org.bouncycastle.asn1.x509.AlgorithmIdentifier)">setMessageDigest</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A>&nbsp;digest)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#setMessageDigest(java.lang.String)">setMessageDigest</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digest)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -249,6 +241,14 @@ This class is used to generate a new instance of <A HREF="../../../../../com/goo
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#setSenderNonce(com.google.code.jscep.transaction.Nonce)">setSenderNonce</A></B>(<A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction">Nonce</A>&nbsp;nonce)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#setSigner(java.security.cert.X509Certificate)">setSigner</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -312,10 +312,10 @@ public void <B>setKeyPair</B>(<A HREF="http://java.sun.com/javase/6/docs/api/jav
 </DL>
 <HR>
 
-<A NAME="setIdentity(java.security.cert.X509Certificate)"><!-- --></A><H3>
-setIdentity</H3>
+<A NAME="setSigner(java.security.cert.X509Certificate)"><!-- --></A><H3>
+setSigner</H3>
 <PRE>
-public void <B>setIdentity</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity)</PRE>
+public void <B>setSigner</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -345,10 +345,10 @@ public void <B>setRecipientNonce</B>(<A HREF="../../../../../com/google/code/jsc
 </DL>
 <HR>
 
-<A NAME="setMessageDigest(org.bouncycastle.asn1.x509.AlgorithmIdentifier)"><!-- --></A><H3>
+<A NAME="setMessageDigest(java.lang.String)"><!-- --></A><H3>
 setMessageDigest</H3>
 <PRE>
-public void <B>setMessageDigest</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A>&nbsp;digest)</PRE>
+public void <B>setMessageDigest</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digest)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -422,10 +422,10 @@ public void <B>setRecipient</B>(<A HREF="http://java.sun.com/javase/6/docs/api/j
 </DL>
 <HR>
 
-<A NAME="setCipherAlgorithm(org.bouncycastle.asn1.x509.AlgorithmIdentifier)"><!-- --></A><H3>
+<A NAME="setCipherAlgorithm(java.lang.String)"><!-- --></A><H3>
 setCipherAlgorithm</H3>
 <PRE>
-public void <B>setCipherAlgorithm</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A>&nbsp;cipherAlgorithm)</PRE>
+public void <B>setCipherAlgorithm</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;cipherAlgorithm)</PRE>
 <DL>
 <DD><DL>
 </DL>

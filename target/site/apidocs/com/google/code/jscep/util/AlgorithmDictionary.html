@@ -111,7 +111,7 @@ This class provides a utility to lookup a friendly name for an algorithm given
 <DL>
 <DT><B>Author:</B></DT>
   <DD>David Grant</DD>
-</DL>
+<DT><B>See Also:</B><DD><CODE>http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html</CODE></DL>
 <HR>
 
 <P>
@@ -123,6 +123,30 @@ This class provides a utility to lookup a friendly name for an algorithm given
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/util/AlgorithmDictionary.html#getAlgId(java.lang.String)">getAlgId</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;algorithm)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an AlgorithmIdentifier to represent the provider algorithm.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DERObjectIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DERObjectIdentifier</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/util/AlgorithmDictionary.html#getOid(java.lang.String)">getOid</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;algorithm)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the OID for the provided algorithm name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/util/AlgorithmDictionary.html#getTransformation(java.lang.String)">getTransformation</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;cipher)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an appropriate transformation name for the given cipher.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -173,6 +197,55 @@ public static <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.ht
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>oid</CODE> - the Object Identifier.
 <DT><B>Returns:</B><DD>the algorithm name.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOid(java.lang.String)"><!-- --></A><H3>
+getOid</H3>
+<PRE>
+public static <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DERObjectIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DERObjectIdentifier</A> <B>getOid</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;algorithm)</PRE>
+<DL>
+<DD>Returns the OID for the provided algorithm name.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>algorithm</CODE> - the algorithm name, e.g. "RSA"
+<DT><B>Returns:</B><DD>the corresponding OID, or null.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAlgId(java.lang.String)"><!-- --></A><H3>
+getAlgId</H3>
+<PRE>
+public static <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A> <B>getAlgId</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;algorithm)</PRE>
+<DL>
+<DD>Returns an AlgorithmIdentifier to represent the provider algorithm.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>algorithm</CODE> - the algorithm name, e.g. "RSA"
+<DT><B>Returns:</B><DD>the corresponding algorithm identifier, or null;</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTransformation(java.lang.String)"><!-- --></A><H3>
+getTransformation</H3>
+<PRE>
+public static <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getTransformation</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;cipher)
+                                throws <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></PRE>
+<DL>
+<DD>Returns an appropriate transformation name for the given cipher.
+ <p>
+ In the JCA, an instance of a <A HREF="http://java.sun.com/javase/6/docs/api/javax/crypto/Cipher.html?is-external=true" title="class or interface in javax.crypto"><CODE>Cipher</CODE></A> may be obtained using just
+ the cipher algorithm (e.g. DES), but this is subject to defaults
+ specified by the provider, so we "fill out" the cipher name in this method.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cipher</CODE> - the cipher algorithm name.
+<DT><B>Returns:</B><DD>the transformation name
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the cipher algorithm is not appropriate.</DL>
 </DD>
 </DL>
 <HR>

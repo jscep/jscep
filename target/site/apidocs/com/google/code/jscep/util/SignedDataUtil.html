@@ -129,6 +129,16 @@ This class contains utility methods for manipulating SingedData
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extracts a CertStore from the provided PKCS #7 SignedData object.</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/util/SignedDataUtil.html#isSignedBy(org.bouncycastle.asn1.cms.SignedData, java.security.cert.X509Certificate)">isSignedBy</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A>&nbsp;signedData,
+           <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;signer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks if the provided signedData was signed by the entity represented
+ by the provided certificate.</TD>
+</TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -165,6 +175,22 @@ public static <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/
 <DT><B>Returns:</B><DD>the CertStore.
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</A></CODE> - if any security error is encountered.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isSignedBy(org.bouncycastle.asn1.cms.SignedData, java.security.cert.X509Certificate)"><!-- --></A><H3>
+isSignedBy</H3>
+<PRE>
+public static boolean <B>isSignedBy</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A>&nbsp;signedData,
+                                 <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;signer)</PRE>
+<DL>
+<DD>Checks if the provided signedData was signed by the entity represented
+ by the provided certificate.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>signedData</CODE> - the signedData to verify.<DD><CODE>signer</CODE> - the signing entity.
+<DT><B>Returns:</B><DD><code>true</code> if the signedData was signed by the entity, <code>false</code> otherwise.</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

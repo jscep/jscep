@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-DegenerateSignedDataGenerator (jSCEP 0.20.4-SNAPSHOT API)
+SignedDataParser (jSCEP 0.20.4-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ DegenerateSignedDataGenerator (jSCEP 0.20.4-SNAPSHOT API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="DegenerateSignedDataGenerator (jSCEP 0.20.4-SNAPSHOT API)";
+        parent.document.title="SignedDataParser (jSCEP 0.20.4-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -39,7 +39,7 @@ function windowTitle()
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/DegenerateSignedDataGenerator.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/SignedDataParser.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
@@ -54,11 +54,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../../../com/google/code/jscep/pkcs7/DegenerateSignedDataParser.html" title="class in com.google.code.jscep.pkcs7"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../com/google/code/jscep/pkcs7/SignedDataGenerator.html" title="class in com.google.code.jscep.pkcs7"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../../../index.html?com/google/code/jscep/pkcs7/DegenerateSignedDataGenerator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="DegenerateSignedDataGenerator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../../../index.html?com/google/code/jscep/pkcs7/SignedDataParser.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SignedDataParser.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -89,28 +89,19 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&n
 <FONT SIZE="-1">
 com.google.code.jscep.pkcs7</FONT>
 <BR>
-Class DegenerateSignedDataGenerator</H2>
+Class SignedDataParser</H2>
 <PRE>
 <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
-  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.google.code.jscep.pkcs7.DegenerateSignedDataGenerator</B>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.google.code.jscep.pkcs7.SignedDataParser</B>
 </PRE>
 <HR>
 <DL>
-<DT><PRE>public class <B>DegenerateSignedDataGenerator</B><DT>extends <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></DL>
+<DT><PRE>public class <B>SignedDataParser</B><DT>extends <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></DL>
 </PRE>
 
 <P>
-This class is used for generating degenerate (certificates and CRLs only) 
- <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A> instances.
- <p>
- Example usage:
- <pre>
- X509Certificate cert = ...;
- 
- DegenerateSignedDataGenerator gen = new DegenerateSignedDataGenerator();
- gen.addCertificate(cert);
- SignedData signedData = gen.generate();
- </pre>
+This class parses a ASN1 structure and extracts a degenerate (certificates
+ and CRLs only) <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A> instance.
 <P>
 
 <P>
@@ -131,10 +122,10 @@ This class is used for generating degenerate (certificates and CRLs only)
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/DegenerateSignedDataGenerator.html#DegenerateSignedDataGenerator()">DegenerateSignedDataGenerator</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/SignedDataParser.html#SignedDataParser()">SignedDataParser</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new instance of <code>DegenerateSignedDataGenerator</code></TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -148,27 +139,12 @@ This class is used for generating degenerate (certificates and CRLs only)
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/DegenerateSignedDataGenerator.html#addCertificate(java.security.cert.X509Certificate)">addCertificate</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;cert)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds the provided certificate to the resulting <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A>.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/DegenerateSignedDataGenerator.html#addCRL(java.security.cert.X509CRL)">addCRL</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509CRL.html?is-external=true" title="class or interface in java.security.cert">X509CRL</A>&nbsp;crl)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds the provided CRL to the resulting <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A>.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/DegenerateSignedDataGenerator.html#generate()">generate</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/SignedDataParser.html#parse(org.bouncycastle.asn1.ASN1Encodable)">parse</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/ASN1Encodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">ASN1Encodable</A>&nbsp;signedData)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generates a new degenerate <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A> instance.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parses the provided ASN1 object and extracts a degenerate SignedData
+ instance.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -193,13 +169,11 @@ This class is used for generating degenerate (certificates and CRLs only)
 </TR>
 </TABLE>
 
-<A NAME="DegenerateSignedDataGenerator()"><!-- --></A><H3>
-DegenerateSignedDataGenerator</H3>
+<A NAME="SignedDataParser()"><!-- --></A><H3>
+SignedDataParser</H3>
 <PRE>
-public <B>DegenerateSignedDataGenerator</B>()</PRE>
+public <B>SignedDataParser</B>()</PRE>
 <DL>
-<DD>Creates a new instance of <code>DegenerateSignedDataGenerator</code>
-<P>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -212,43 +186,18 @@ public <B>DegenerateSignedDataGenerator</B>()</PRE>
 </TR>
 </TABLE>
 
-<A NAME="addCertificate(java.security.cert.X509Certificate)"><!-- --></A><H3>
-addCertificate</H3>
+<A NAME="parse(org.bouncycastle.asn1.ASN1Encodable)"><!-- --></A><H3>
+parse</H3>
 <PRE>
-public void <B>addCertificate</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;cert)</PRE>
+public <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A> <B>parse</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/ASN1Encodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">ASN1Encodable</A>&nbsp;signedData)
+                 throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
 <DL>
-<DD>Adds the provided certificate to the resulting <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A>.
+<DD>Parses the provided ASN1 object and extracts a degenerate SignedData
+ instance.
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>cert</CODE> - the certificate to add.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="addCRL(java.security.cert.X509CRL)"><!-- --></A><H3>
-addCRL</H3>
-<PRE>
-public void <B>addCRL</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509CRL.html?is-external=true" title="class or interface in java.security.cert">X509CRL</A>&nbsp;crl)</PRE>
-<DL>
-<DD>Adds the provided CRL to the resulting <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A>.
-<P>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>crl</CODE> - the CRL to add.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="generate()"><!-- --></A><H3>
-generate</H3>
-<PRE>
-public <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A> <B>generate</B>()
-                    throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
-<DL>
-<DD>Generates a new degenerate <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A> instance.
-<P>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>a new degenerate <code>SignedData</code> instance.
+<DT><B>Parameters:</B><DD><CODE>signedData</CODE> - the ASN1 object to parse.
+<DT><B>Returns:</B><DD>a new degenerate SignedData instance.
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.</DL>
 </DD>
@@ -269,7 +218,7 @@ public <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/c
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/DegenerateSignedDataGenerator.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="class-use/SignedDataParser.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
@@ -284,11 +233,11 @@ public <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/c
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../../../com/google/code/jscep/pkcs7/DegenerateSignedDataParser.html" title="class in com.google.code.jscep.pkcs7"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../com/google/code/jscep/pkcs7/SignedDataGenerator.html" title="class in com.google.code.jscep.pkcs7"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../../../index.html?com/google/code/jscep/pkcs7/DegenerateSignedDataGenerator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="DegenerateSignedDataGenerator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../../../index.html?com/google/code/jscep/pkcs7/SignedDataParser.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SignedDataParser.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {

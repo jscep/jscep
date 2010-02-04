@@ -148,11 +148,19 @@ This class is used for generating <A HREF="../../../../../com/google/code/jscep/
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelopeGenerator.html#setCipherAlgorithm(org.bouncycastle.asn1.x509.AlgorithmIdentifier)">setCipherAlgorithm</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A>&nbsp;cipherAlgorithm)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelopeGenerator.html#setCipherAlgorithm(java.lang.String)">setCipherAlgorithm</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;cipherAlgorithm)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the cipher algorithm to be used for encrypting
  the <A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7"><CODE>messageData</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkcsPkiEnvelopeGenerator.html#setKeyAlgorithm(java.lang.String)">setKeyAlgorithm</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;keyAlgorithm)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -226,6 +234,17 @@ public void <B>setMessageData</B>(<A HREF="../../../../../com/google/code/jscep/
 </DL>
 <HR>
 
+<A NAME="setKeyAlgorithm(java.lang.String)"><!-- --></A><H3>
+setKeyAlgorithm</H3>
+<PRE>
+public void <B>setKeyAlgorithm</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;keyAlgorithm)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="setRecipient(java.security.cert.X509Certificate)"><!-- --></A><H3>
 setRecipient</H3>
 <PRE>
@@ -240,10 +259,10 @@ public void <B>setRecipient</B>(<A HREF="http://java.sun.com/javase/6/docs/api/j
 </DL>
 <HR>
 
-<A NAME="setCipherAlgorithm(org.bouncycastle.asn1.x509.AlgorithmIdentifier)"><!-- --></A><H3>
+<A NAME="setCipherAlgorithm(java.lang.String)"><!-- --></A><H3>
 setCipherAlgorithm</H3>
 <PRE>
-public void <B>setCipherAlgorithm</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A>&nbsp;cipherAlgorithm)</PRE>
+public void <B>setCipherAlgorithm</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;cipherAlgorithm)</PRE>
 <DL>
 <DD>Specifies the cipher algorithm to be used for encrypting
  the <A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7"><CODE>messageData</CODE></A>.
