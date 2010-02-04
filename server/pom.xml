@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.google.code.jscep</groupId>
 		<artifactId>jscep</artifactId>
-		<version>0.20.4-SNAPSHOT</version>
+		<version>0.20.6</version>
 	</parent>
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep-server</artifactId>
@@ -15,6 +14,18 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://jscep.googlecode.com/svn/trunk/LICENCE.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-0.20.6</connection>
+		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-0.20.6</developerConnection>
+		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-0.20.6</url>
+	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
@@ -85,7 +96,7 @@
 				<version>2.6.1</version>
 				<configuration>
 					<notimestamp>true</notimestamp>
-					<detectLinks/>
+					<detectLinks />
 					<links>
 						<link>http://java.sun.com/javase/6/docs/api/</link>
 						<link>http://www.bouncycastle.org/docs/docs1.6/</link>

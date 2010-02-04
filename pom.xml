@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep</artifactId>
 	<packaging>pom</packaging>
-	<version>0.20.4-SNAPSHOT</version>
+	<version>0.20.6</version>
 	<name>jSCEP</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>
@@ -16,6 +15,10 @@
 		<module>client</module>
 		<module>server</module>
 	</modules>
+	<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/jscep/issues/list</url>
+	</issueManagement>
 	<licenses>
 		<license>
 			<name>MIT License</name>
@@ -23,15 +26,10 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<issueManagement>
-		<system>Google Code</system>
-		<url>http://code.google.com/p/jscep/issues/list</url>
-	</issueManagement>
 	<scm>
-		<connection>scm:svn:http://jscep.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/trunk/</developerConnection>
-		<tag>HEAD</tag>
-		<url>http://code.google.com/p/jscep/source/browse/</url>
+		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-0.20.6</connection>
+		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-0.20.6</developerConnection>
+		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-0.20.6</url>
 	</scm>
 	<mailingLists>
 		<mailingList>
@@ -65,7 +63,7 @@
 				<version>2.6.1</version>
 				<configuration>
 					<notimestamp>true</notimestamp>
-					<detectLinks/>
+					<detectLinks />
 					<reportOutputDirectory>.</reportOutputDirectory>
 					<destDir>documentation</destDir>
 					<links>
