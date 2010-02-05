@@ -57,19 +57,17 @@ import com.google.code.jscep.util.SignedDataUtil;
 public class Transaction {
 	private static NonceQueue QUEUE = new NonceQueue(20);
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
-	private final TransactionId transId;
-	private Nonce senderNonce;
 	private final KeyPair keyPair;
 	private final Transport transport;
 	private final PkiMessageGenerator msgGenerator;
 	private final X509Certificate issuer;
 	private final X509Certificate subject;
+	private final String digestAlgorithm;
 
 	Transaction(Transport transport, KeyPair keyPair, PkiMessageGenerator msgGenerator, String digestAlgorithm, X509Certificate issuer, X509Certificate subject) {
 		this.transport = transport;
 		this.keyPair = keyPair;
-		this.transId = TransactionId.createTransactionId(keyPair, digestAlgorithm);
-		this.senderNonce = Nonce.nextNonce();
+		this.digestAlgorithm = digestAlgorithm;
 		this.msgGenerator = msgGenerator;
 		this.issuer = issuer;
 		this.subject = subject;
@@ -87,7 +85,7 @@ public class Transaction {
 		
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(Nonce.nextNonce());
-		msgGenerator.setTransactionId(transId);
+		msgGenerator.setTransactionId(TransactionId.createTransactionId(keyPair, digestAlgorithm));
 		msgGenerator.setMessageData(MessageData.getInstance(op.getMessage()));
 		
 		final PkiMessage req = msgGenerator.generate();
@@ -127,7 +125,7 @@ public class Transaction {
 		
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(Nonce.nextNonce());
-		msgGenerator.setTransactionId(transId);
+		msgGenerator.setTransactionId(TransactionId.createTransactionId(keyPair, digestAlgorithm));
 		msgGenerator.setMessageData(MessageData.getInstance(op.getMessage()));
 		
 		final PkiMessage req = msgGenerator.generate();
@@ -190,7 +188,7 @@ public class Transaction {
 		final StringBuilder sb = new StringBuilder();
 		
 		sb.append("Transaction [\n");
-		sb.append("\ttransactionId: " + transId + "\n");
+//		sb.append("\ttransactionId: " + transId + "\n");
 		sb.append("]");
 		
 		return sb.toString();
@@ -232,6 +230,7 @@ public class Transaction {
 				} else if (res.getPkiStatus() == PkiStatus.FAILURE) {
 					callback.onFailure(res.getFailInfo());
 				} else {
+					// Repeat
 					lastDelay = callback.onPending(lastDelay);
 					// Reschedule this task.
 					timer.schedule(this, lastDelay);
