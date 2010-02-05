@@ -51,18 +51,18 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 
-import com.google.code.jscep.EnrollmentResult;
 import com.google.code.jscep.PKIOperationFailureException;
-import com.google.code.jscep.RequestPendingException;
 import com.google.code.jscep.X509CertificateFactory;
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
+import com.google.code.jscep.operations.PKCSReq;
 import com.google.code.jscep.operations.PKIOperation;
 import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetNextCACert;
 import com.google.code.jscep.response.Capabilities;
 import com.google.code.jscep.transaction.Transaction;
+import com.google.code.jscep.transaction.TransactionCallback;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
@@ -332,7 +332,7 @@ public class Client {
      * @throws GeneralSecurityException if any security error occurs.
      * @throws CMSException 
      */
-    public List<X509CRL> getCrl() throws IOException {
+    public List<X509CRL> getCrl(TransactionCallback callback) throws IOException {
         X509Certificate ca = retrieveCA();
         
         if (supportsDistributionPoints()) {
@@ -343,8 +343,6 @@ public class Client {
 	        CertStore store;
 			try {
 				store = createTransaction().performOperation(req);
-			} catch (RequestPendingException e) {
-				throw new RuntimeException(e);
 			} catch (PKIOperationFailureException e) {
 				throw new RuntimeException(e);
 			}
@@ -372,10 +370,9 @@ public class Client {
      * @return the enrolled certificate.
      * @throws IOException if any I/O error occurs.
      */
-    public EnrollmentResult enroll(char[] password) throws IOException {
-        final X509Certificate signer = retrieveSigningCertificate();
-        
-        return new InitialEnrollmentTask(createTransport(), signer, keyPair, identity, password, getCapabilities().getStrongestMessageDigest()).call();
+    public void enroll(char[] password, TransactionCallback callback) throws IOException {
+    	final PKCSReq req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
+    	createTransaction().performOperation(req, callback);
     }
 
     /**
@@ -388,15 +385,13 @@ public class Client {
      * @throws GeneralSecurityException
      * @throws CMSException 
      */
-    public X509Certificate getCert(BigInteger serial) throws IOException {
+    public X509Certificate getCert(BigInteger serial, TransactionCallback callback) throws IOException {
     	final X509Certificate ca = retrieveCA();
 
         PKIOperation<IssuerAndSerialNumber> req = new GetCert(ca.getIssuerX500Principal(), serial);
         CertStore store;
 		try {
 			store = createTransaction().performOperation(req);
-		} catch (RequestPendingException e) {
-			throw new RuntimeException(e);
 		} catch (PKIOperationFailureException e) {
 			throw new RuntimeException(e);
 		}

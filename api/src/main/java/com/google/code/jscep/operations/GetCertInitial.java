@@ -23,7 +23,10 @@ package com.google.code.jscep.operations;
 
 import java.io.IOException;
 
+import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.X509Name;
+
+import sun.security.x509.X500Name;
 
 import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.transaction.MessageType;
@@ -34,10 +37,10 @@ import com.google.code.jscep.transaction.MessageType;
  * 
  * @author David Grant
  */
-public class GetCertInitial implements PKIOperation<IssuerAndSubject> {
+public class GetCertInitial implements DelayablePKIOperation<IssuerAndSubject> {
 	private final X509Name issuer;
     private final X509Name subject;
-
+    
     public GetCertInitial(X509Name issuer, X509Name subject) {
         this.issuer = issuer;
         this.subject = subject;

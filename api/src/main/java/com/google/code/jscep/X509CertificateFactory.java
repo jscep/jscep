@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.x509.X509V1CertificateGenerator;
 
 import com.google.code.jscep.util.LoggingUtil;
@@ -78,5 +79,9 @@ public final class X509CertificateFactory {
 		
 		LOGGER.exiting(X509CertificateFactory.class.getName(), "createEphemeralCertificate", cert);
 		return cert;
+	}
+	
+	public static X509Name toX509Name(X500Principal principal) {
+		return new X509Name(principal.getName());
 	}
 }

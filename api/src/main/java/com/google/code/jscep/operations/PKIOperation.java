@@ -32,6 +32,7 @@ import com.google.code.jscep.transaction.MessageType;
  * This interface defines the common structure of a SCEP operation.
  * 
  * @author David Grant
+ * @param <T> the type message data for this operation.
  */
 public interface PKIOperation<T extends DEREncodable> {
 	/**

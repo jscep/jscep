@@ -49,23 +49,23 @@ public final class TransactionFactory {
 	 * Create a new SCEP transaction.
 	 * 
 	 * @param transport the transport to use.
-	 * @param ca the CA certificate.
-	 * @param identity the certificate to enroll.
+	 * @param issuer the CA certificate.
+	 * @param subject the certificate to enroll.
 	 * @param keyPair the key pair to use.
 	 * @param digestAlgorithm the finger print algorithm.
 	 * @return the new transaction.
 	 */
-	public static Transaction createTransaction(Transport transport, X509Certificate ca, X509Certificate identity, KeyPair keyPair, String digestAlgorithm) {
+	public static Transaction createTransaction(Transport transport, X509Certificate issuer, X509Certificate subject, KeyPair keyPair, String digestAlgorithm) {
 		LOGGER.entering(TransactionFactory.class.getName(), "createTransaction");
 
 		final PkiMessageGenerator msgGenerator = new PkiMessageGenerator();
 		msgGenerator.setMessageDigest("SHA-1");
-		msgGenerator.setSigner(identity);
+		msgGenerator.setSigner(subject);
 		msgGenerator.setKeyPair(keyPair);
 		msgGenerator.setCipherAlgorithm("DES");
-		msgGenerator.setRecipient(ca);
+		msgGenerator.setRecipient(issuer);
 		
-		Transaction t = new Transaction(transport, keyPair, msgGenerator, digestAlgorithm);
+		Transaction t = new Transaction(transport, keyPair, msgGenerator, digestAlgorithm, issuer, subject);
 		
 		LOGGER.exiting (TransactionFactory.class.getName(), "createTransaction", t);
 		return t;

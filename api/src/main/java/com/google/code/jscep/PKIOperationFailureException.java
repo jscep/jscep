@@ -33,6 +33,7 @@ public class PKIOperationFailureException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = 747055232323410404L;
+	private final FailInfo failInfo;
 
 	/**
 	 * Creates a new instance of <code>PKIOperationFailureException</code> from
@@ -43,5 +44,11 @@ public class PKIOperationFailureException extends Exception {
 	 */
 	public PKIOperationFailureException(FailInfo failInfo) {
 		super(failInfo.toString());
+		
+		this.failInfo = failInfo;
+	}
+	
+	public FailInfo getFailInfo() {
+		return failInfo;
 	}
 }

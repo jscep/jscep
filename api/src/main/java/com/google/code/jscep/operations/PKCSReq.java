@@ -51,7 +51,7 @@ import com.google.code.jscep.util.AlgorithmDictionary;
  * 
  * @author David Grant
  */
-public class PKCSReq implements PKIOperation<CertificationRequest> {
+public class PKCSReq implements DelayablePKIOperation<CertificationRequest> {
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;

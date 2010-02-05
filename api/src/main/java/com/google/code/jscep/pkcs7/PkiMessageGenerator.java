@@ -94,7 +94,7 @@ import com.google.code.jscep.util.LoggingUtil;
  * 
  * @author David Grant
  */
-public class PkiMessageGenerator {
+public class PkiMessageGenerator implements Cloneable {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	
 	private MessageType msgType;
@@ -130,6 +130,10 @@ public class PkiMessageGenerator {
 	
 	public void setMessageDigest(String digest) {
 		this.digestAlgorithm = digest;
+	}
+	
+	public Nonce getSenderNonce() {
+		return senderNonce;
 	}
 	
 	public void setSenderNonce(Nonce nonce) {
@@ -303,7 +307,7 @@ public class PkiMessageGenerator {
 		final Hashtable<DERObjectIdentifier, Attribute> table = new Hashtable<DERObjectIdentifier, Attribute>();
 		table.put(getTransactionId().getAttrType(), getTransactionId());
 		table.put(getMessageType().getAttrType(), getMessageType());
-		table.put(getSenderNonce().getAttrType(), getSenderNonce());
+		table.put(getSenderNonceAttribute().getAttrType(), getSenderNonceAttribute());
 		table.put(getContentType().getAttrType(), getContentType());
 		table.put(getSigningTime().getAttrType(), getSigningTime());
 		table.put(getMessageDigest().getAttrType(), getMessageDigest());
@@ -355,7 +359,7 @@ public class PkiMessageGenerator {
 		return new Attribute(CMSAttributes.signingTime, new DERSet(new Time(new Date())));
 	}
 	
-	private Attribute getSenderNonce() {
+	private Attribute getSenderNonceAttribute() {
 		final DERObjectIdentifier attrType = SCEPObjectIdentifiers.senderNonce;
     	final ASN1Set attr = new DERSet(new DEROctetString(senderNonce.getBytes()));
     	
@@ -409,7 +413,16 @@ public class PkiMessageGenerator {
 		return new Attribute(SCEPObjectIdentifiers.pkiStatus, new DERSet(attr));
 	}
 	
-	 private Attribute getRecipientNonce() {
-		 return new Attribute(SCEPObjectIdentifiers.recipientNonce, new DERSet(new DEROctetString(recipientNonce.getBytes())));
-	 }
+	private Attribute getRecipientNonce() {
+		return new Attribute(SCEPObjectIdentifiers.recipientNonce, new DERSet(new DEROctetString(recipientNonce.getBytes())));
+	}
+
+	@Override
+	public PkiMessageGenerator clone() {
+		try {
+			return (PkiMessageGenerator) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
