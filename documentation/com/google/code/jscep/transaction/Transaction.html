@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-Transaction (jSCEP 0.20.4-SNAPSHOT API)
+Transaction (jSCEP 0.20.7-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ Transaction (jSCEP 0.20.4-SNAPSHOT API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="Transaction (jSCEP 0.20.4-SNAPSHOT API)";
+        parent.document.title="Transaction (jSCEP 0.20.7-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -55,7 +55,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/TransactionFactory.html" title="class in com.google.code.jscep.transaction"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/TransactionCallback.html" title="interface in com.google.code.jscep.transaction"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?com/google/code/jscep/transaction/Transaction.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Transaction.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -129,6 +129,24 @@ This class represents a SCEP transaction, and provides a framework for
 <TD NOWRAP><FONT SIZE="-1">
 <CODE>&lt;T extends <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DEREncodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DEREncodable</A>&gt; 
 <BR>
+void</CODE></FONT></TD>
+</TR>
+</TABLE>
+</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/Transaction.html#performOperation(com.google.code.jscep.operations.DelayablePKIOperation, com.google.code.jscep.transaction.TransactionCallback)">performOperation</A></B>(<A HREF="../../../../../com/google/code/jscep/operations/DelayablePKIOperation.html" title="interface in com.google.code.jscep.operations">DelayablePKIOperation</A>&lt;T&gt;&nbsp;op,
+                 <A HREF="../../../../../com/google/code/jscep/transaction/TransactionCallback.html" title="interface in com.google.code.jscep.transaction">TransactionCallback</A>&nbsp;callback)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Performs the given operation inside this transaction.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR ALIGN="right" VALIGN="">
+<TD NOWRAP><FONT SIZE="-1">
+<CODE>&lt;T extends <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DEREncodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DEREncodable</A>&gt; 
+<BR>
 <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/CertStore.html?is-external=true" title="class or interface in java.security.cert">CertStore</A></CODE></FONT></TD>
 </TR>
 </TABLE>
@@ -169,13 +187,29 @@ This class represents a SCEP transaction, and provides a framework for
 </TR>
 </TABLE>
 
+<A NAME="performOperation(com.google.code.jscep.operations.DelayablePKIOperation, com.google.code.jscep.transaction.TransactionCallback)"><!-- --></A><H3>
+performOperation</H3>
+<PRE>
+public &lt;T extends <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DEREncodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DEREncodable</A>&gt; void <B>performOperation</B>(<A HREF="../../../../../com/google/code/jscep/operations/DelayablePKIOperation.html" title="interface in com.google.code.jscep.operations">DelayablePKIOperation</A>&lt;T&gt;&nbsp;op,
+                                                      <A HREF="../../../../../com/google/code/jscep/transaction/TransactionCallback.html" title="interface in com.google.code.jscep.transaction">TransactionCallback</A>&nbsp;callback)
+                      throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
+<DL>
+<DD>Performs the given operation inside this transaction.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>op</CODE> - the operation to perform.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="performOperation(com.google.code.jscep.operations.PKIOperation)"><!-- --></A><H3>
 performOperation</H3>
 <PRE>
 public &lt;T extends <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DEREncodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DEREncodable</A>&gt; <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/CertStore.html?is-external=true" title="class or interface in java.security.cert">CertStore</A> <B>performOperation</B>(<A HREF="../../../../../com/google/code/jscep/operations/PKIOperation.html" title="interface in com.google.code.jscep.operations">PKIOperation</A>&lt;T&gt;&nbsp;op)
                            throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A>,
-                                  <A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A>,
-                                  <A HREF="../../../../../com/google/code/jscep/RequestPendingException.html" title="class in com.google.code.jscep">RequestPendingException</A></PRE>
+                                  <A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></PRE>
 <DL>
 <DD>Performs the given operation inside this transaction.
 <P>
@@ -184,8 +218,7 @@ public &lt;T extends <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bounc
 <DT><B>Returns:</B><DD>a certificate store, containing either certificates or CRLs.
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
-<DD><CODE><A HREF="../../../../../com/google/code/jscep/RequestPendingException.html" title="class in com.google.code.jscep">RequestPendingException</A></CODE> - if manual intervention is required.
-<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE> - if the request could not be serviced.</DL>
+<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE> - if the operation fails.</DL>
 </DD>
 </DL>
 <HR>
@@ -234,7 +267,7 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-e
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/TransactionFactory.html" title="class in com.google.code.jscep.transaction"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/TransactionCallback.html" title="interface in com.google.code.jscep.transaction"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?com/google/code/jscep/transaction/Transaction.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Transaction.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

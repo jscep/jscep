@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-X509CertificateFactory (jSCEP 0.20.4-SNAPSHOT API)
+X509CertificateFactory (jSCEP 0.20.7-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ X509CertificateFactory (jSCEP 0.20.4-SNAPSHOT API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="X509CertificateFactory (jSCEP 0.20.4-SNAPSHOT API)";
+        parent.document.title="X509CertificateFactory (jSCEP 0.20.7-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -129,6 +129,14 @@ This class is used for generating ephemeral certificates.
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a self-signed ephemeral certificate.</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/X509Name.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">X509Name</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/google/code/jscep/X509CertificateFactory.html#toX509Name(javax.security.auth.x500.X500Principal)">toX509Name</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/x500/X500Principal.html?is-external=true" title="class or interface in javax.security.auth.x500">X500Principal</A>&nbsp;principal)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -169,6 +177,17 @@ public static <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/
 <DT><B>Returns:</B><DD>new certificate.
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toX509Name(javax.security.auth.x500.X500Principal)"><!-- --></A><H3>
+toX509Name</H3>
+<PRE>
+public static <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/X509Name.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">X509Name</A> <B>toX509Name</B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/x500/X500Principal.html?is-external=true" title="class or interface in javax.security.auth.x500">X500Principal</A>&nbsp;principal)</PRE>
+<DL>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

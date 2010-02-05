@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-TransactionFactory (jSCEP 0.20.4-SNAPSHOT API)
+TransactionFactory (jSCEP 0.20.7-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ TransactionFactory (jSCEP 0.20.4-SNAPSHOT API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="TransactionFactory (jSCEP 0.20.4-SNAPSHOT API)";
+        parent.document.title="TransactionFactory (jSCEP 0.20.7-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -54,7 +54,7 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/TransactionCallback.html" title="interface in com.google.code.jscep.transaction"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?com/google/code/jscep/transaction/TransactionFactory.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -124,8 +124,8 @@ Factory for generating new Transactions.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/TransactionFactory.html#createTransaction(com.google.code.jscep.transport.Transport, java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.security.KeyPair, java.lang.String)">createTransaction</A></B>(<A HREF="../../../../../com/google/code/jscep/transport/Transport.html" title="class in com.google.code.jscep.transport">Transport</A>&nbsp;transport,
-                  <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;ca,
-                  <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity,
+                  <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;issuer,
+                  <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;subject,
                   <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;keyPair,
                   <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm)</CODE>
 
@@ -159,15 +159,15 @@ Factory for generating new Transactions.
 createTransaction</H3>
 <PRE>
 public static <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A> <B>createTransaction</B>(<A HREF="../../../../../com/google/code/jscep/transport/Transport.html" title="class in com.google.code.jscep.transport">Transport</A>&nbsp;transport,
-                                            <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;ca,
-                                            <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity,
+                                            <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;issuer,
+                                            <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;subject,
                                             <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;keyPair,
                                             <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm)</PRE>
 <DL>
 <DD>Create a new SCEP transaction.
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>transport</CODE> - the transport to use.<DD><CODE>ca</CODE> - the CA certificate.<DD><CODE>identity</CODE> - the certificate to enroll.<DD><CODE>keyPair</CODE> - the key pair to use.<DD><CODE>digestAlgorithm</CODE> - the finger print algorithm.
+<DT><B>Parameters:</B><DD><CODE>transport</CODE> - the transport to use.<DD><CODE>issuer</CODE> - the CA certificate.<DD><CODE>subject</CODE> - the certificate to enroll.<DD><CODE>keyPair</CODE> - the key pair to use.<DD><CODE>digestAlgorithm</CODE> - the finger print algorithm.
 <DT><B>Returns:</B><DD>the new transaction.</DL>
 </DD>
 </DL>
@@ -202,7 +202,7 @@ public static <A HREF="../../../../../com/google/code/jscep/transaction/Transact
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/TransactionCallback.html" title="interface in com.google.code.jscep.transaction"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?com/google/code/jscep/transaction/TransactionFactory.html" target="_top"><B>FRAMES</B></A>  &nbsp;

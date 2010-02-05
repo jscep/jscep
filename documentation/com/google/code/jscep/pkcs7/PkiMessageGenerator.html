@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-PkiMessageGenerator (jSCEP 0.20.4-SNAPSHOT API)
+PkiMessageGenerator (jSCEP 0.20.7-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ PkiMessageGenerator (jSCEP 0.20.4-SNAPSHOT API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="PkiMessageGenerator (jSCEP 0.20.4-SNAPSHOT API)";
+        parent.document.title="PkiMessageGenerator (jSCEP 0.20.7-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -94,9 +94,12 @@ Class PkiMessageGenerator</H2>
 <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
   <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.google.code.jscep.pkcs7.PkiMessageGenerator</B>
 </PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Cloneable.html?is-external=true" title="class or interface in java.lang">Cloneable</A></DD>
+</DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>PkiMessageGenerator</B><DT>extends <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></DL>
+<DT><PRE>public class <B>PkiMessageGenerator</B><DT>extends <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A><DT>implements <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Cloneable.html?is-external=true" title="class or interface in java.lang">Cloneable</A></DL>
 </PRE>
 
 <P>
@@ -158,12 +161,28 @@ This class is used to generate a new instance of <A HREF="../../../../../com/goo
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html" title="class in com.google.code.jscep.pkcs7">PkiMessageGenerator</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#clone()">clone</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#generate()">generate</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generates a new <A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7"><CODE>PkiMessage</CODE></A> according to the options specified by the 
  caller.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction">Nonce</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html#getSenderNonce()">getSenderNonce</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -268,7 +287,7 @@ This class is used to generate a new instance of <A HREF="../../../../../com/goo
 <TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+<TD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -309,6 +328,9 @@ public void <B>setKeyPair</B>(<A HREF="http://java.sun.com/javase/6/docs/api/jav
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -317,6 +339,9 @@ setSigner</H3>
 <PRE>
 public void <B>setSigner</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -331,6 +356,9 @@ public void <B>setFailInfo</B>(<A HREF="../../../../../com/google/code/jscep/tra
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -339,6 +367,9 @@ setRecipientNonce</H3>
 <PRE>
 public void <B>setRecipientNonce</B>(<A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction">Nonce</A>&nbsp;nonce)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -353,6 +384,23 @@ public void <B>setMessageDigest</B>(<A HREF="http://java.sun.com/javase/6/docs/a
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSenderNonce()"><!-- --></A><H3>
+getSenderNonce</H3>
+<PRE>
+public <A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction">Nonce</A> <B>getSenderNonce</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -361,6 +409,9 @@ setSenderNonce</H3>
 <PRE>
 public void <B>setSenderNonce</B>(<A HREF="../../../../../com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction">Nonce</A>&nbsp;nonce)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -375,6 +426,9 @@ public void <B>setPkiStatus</B>(<A HREF="../../../../../com/google/code/jscep/tr
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -383,6 +437,9 @@ setMessageData</H3>
 <PRE>
 public void <B>setMessageData</B>(<A HREF="../../../../../com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7">MessageData</A>&nbsp;msgData)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -397,6 +454,9 @@ public void <B>setMessageType</B>(<A HREF="../../../../../com/google/code/jscep/
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -405,6 +465,9 @@ setTransactionId</H3>
 <PRE>
 public void <B>setTransactionId</B>(<A HREF="../../../../../com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction">TransactionId</A>&nbsp;transId)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -419,6 +482,9 @@ public void <B>setRecipient</B>(<A HREF="http://java.sun.com/javase/6/docs/api/j
 <DD><DL>
 </DL>
 </DD>
+<DD><DL>
+</DL>
+</DD>
 </DL>
 <HR>
 
@@ -427,6 +493,9 @@ setCipherAlgorithm</H3>
 <PRE>
 public void <B>setCipherAlgorithm</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;cipherAlgorithm)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -444,11 +513,28 @@ public <A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html" titl
  caller.
 <P>
 <DD><DL>
+</DL>
+</DD>
+<DD><DL>
 
 <DT><B>Returns:</B><DD>a new instance of <A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7"><CODE>PkiMessage</CODE></A>
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang">IllegalStateException</A></CODE> - if this class has been incorrectly configured.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clone()"><!-- --></A><H3>
+clone</H3>
+<PRE>
+public <A HREF="../../../../../com/google/code/jscep/pkcs7/PkiMessageGenerator.html" title="class in com.google.code.jscep.pkcs7">PkiMessageGenerator</A> <B>clone</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A></CODE> in class <CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

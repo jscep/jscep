@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-ScepServlet (jSCEP 0.20.4-SNAPSHOT API)
+ScepServlet (jSCEP 0.20.7-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ ScepServlet (jSCEP 0.20.4-SNAPSHOT API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="ScepServlet (jSCEP 0.20.4-SNAPSHOT API)";
+        parent.document.title="ScepServlet (jSCEP 0.20.7-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -92,21 +92,15 @@ com.google.code.jscep.server</FONT>
 Class ScepServlet</H2>
 <PRE>
 <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
-  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true" title="class or interface in javax.servlet">javax.servlet.GenericServlet</A>
-      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true" title="class or interface in javax.servlet.http">javax.servlet.http.HttpServlet</A>
-          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.google.code.jscep.server.ScepServlet</B>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by ">HttpServlet
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.google.code.jscep.server.ScepServlet</B>
 </PRE>
-<DL>
-<DT><B>All Implemented Interfaces:</B> <DD><A HREF="http://java.sun.com/javase/6/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/Servlet.html?is-external=true" title="class or interface in javax.servlet">Servlet</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/ServletConfig.html?is-external=true" title="class or interface in javax.servlet">ServletConfig</A></DD>
-</DL>
 <HR>
 <DL>
-<DT><PRE>public abstract class <B>ScepServlet</B><DT>extends <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true" title="class or interface in javax.servlet.http">HttpServlet</A></DL>
+<DT><PRE>public abstract class <B>ScepServlet</B><DT>extends HttpServlet</DL>
 </PRE>
 
 <P>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../../../../serialized-form.html#com.google.code.jscep.server.ScepServlet">Serialized Form</A></DL>
 <HR>
 
 <P>
@@ -206,29 +200,11 @@ Class ScepServlet</H2>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/server/ScepServlet.html#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)">service</A></B>(<A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServletRequest.html?is-external=true" title="class or interface in javax.servlet.http">HttpServletRequest</A>&nbsp;req,
-        <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServletResponse.html?is-external=true" title="class or interface in javax.servlet.http">HttpServletResponse</A>&nbsp;res)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/server/ScepServlet.html#service(HttpServletRequest, HttpServletResponse)">service</A></B>(HttpServletRequest&nbsp;req,
+        HttpServletResponse&nbsp;res)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-</TABLE>
-&nbsp;<A NAME="methods_inherited_from_class_javax.servlet.http.HttpServlet"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class javax.servlet.http.<A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true" title="class or interface in javax.servlet.http">HttpServlet</A></B></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#doDelete(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)" title="class or interface in javax.servlet.http">doDelete</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)" title="class or interface in javax.servlet.http">doGet</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#doHead(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)" title="class or interface in javax.servlet.http">doHead</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#doOptions(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)" title="class or interface in javax.servlet.http">doOptions</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)" title="class or interface in javax.servlet.http">doPost</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#doPut(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)" title="class or interface in javax.servlet.http">doPut</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#doTrace(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)" title="class or interface in javax.servlet.http">doTrace</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#getLastModified(javax.servlet.http.HttpServletRequest)" title="class or interface in javax.servlet.http">getLastModified</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse)" title="class or interface in javax.servlet.http">service</A></CODE></TD>
-</TR>
-</TABLE>
-&nbsp;<A NAME="methods_inherited_from_class_javax.servlet.GenericServlet"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class javax.servlet.<A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true" title="class or interface in javax.servlet">GenericServlet</A></B></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#destroy()" title="class or interface in javax.servlet">destroy</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#getInitParameter(java.lang.String)" title="class or interface in javax.servlet">getInitParameter</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#getInitParameterNames()" title="class or interface in javax.servlet">getInitParameterNames</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#getServletConfig()" title="class or interface in javax.servlet">getServletConfig</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#getServletContext()" title="class or interface in javax.servlet">getServletContext</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#getServletInfo()" title="class or interface in javax.servlet">getServletInfo</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#getServletName()" title="class or interface in javax.servlet">getServletName</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#init()" title="class or interface in javax.servlet">init</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#init(javax.servlet.ServletConfig)" title="class or interface in javax.servlet">init</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#log(java.lang.String)" title="class or interface in javax.servlet">log</A>, <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/GenericServlet.html?is-external=true#log(java.lang.String, java.lang.Throwable)" title="class or interface in javax.servlet">log</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -270,18 +246,15 @@ public <B>ScepServlet</B>()</PRE>
 </TR>
 </TABLE>
 
-<A NAME="service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)"><!-- --></A><H3>
+<A NAME="service(HttpServletRequest, HttpServletResponse)"><!-- --></A><H3>
 service</H3>
 <PRE>
-public void <B>service</B>(<A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServletRequest.html?is-external=true" title="class or interface in javax.servlet.http">HttpServletRequest</A>&nbsp;req,
-                    <A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServletResponse.html?is-external=true" title="class or interface in javax.servlet.http">HttpServletResponse</A>&nbsp;res)
+public void <B>service</B>(HttpServletRequest&nbsp;req,
+                    HttpServletResponse&nbsp;res)
              throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
 <DL>
 <DD>
 <P>
-<DD><DL>
-<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)" title="class or interface in javax.servlet.http">service</A></CODE> in class <CODE><A HREF="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServlet.html?is-external=true" title="class or interface in javax.servlet.http">HttpServlet</A></CODE></DL>
-</DD>
 <DD><DL>
 
 <DT><B>Throws:</B>
