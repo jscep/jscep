@@ -1,7 +1,6 @@
 package com.google.code.jscep.client;
 
 import java.net.URL;
-import java.security.cert.CertStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -11,15 +10,10 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
-import com.google.code.jscep.transaction.FailInfo;
-import com.google.code.jscep.transaction.TransactionCallback;
-
 //@Ignore
-public class ClientTest implements TransactionCallback {
+public class ClientTest {
 
 	@Test
 	public void testEnroll() throws Exception {
@@ -45,21 +39,4 @@ public class ClientTest implements TransactionCallback {
 		Client client = new Client(config);
 		client.enroll("INBOUND_TLSuscl99".toCharArray(), 60L);
 	}
-
-	public void onException(Exception e) {
-		Assert.fail();
-	}
-
-	public void onFailure(FailInfo failInfo) {
-		Assert.fail();		
-	}
-
-	public long onPending(long previousDelay) {
-		return 0;
-	}
-
-	public void onSuccess(CertStore certStore) {
-		return;
-	}
-
 }
