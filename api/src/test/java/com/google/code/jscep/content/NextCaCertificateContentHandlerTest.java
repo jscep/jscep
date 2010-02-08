@@ -14,9 +14,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.code.jscep.X509CertificateFactory;
 import com.google.code.jscep.pkcs7.SignedDataGenerator;
 import com.google.code.jscep.pkcs7.MessageData;
+import com.google.code.jscep.x509.X509Util;
 
 public class NextCaCertificateContentHandlerTest {
 	private NextCaCertificateContentHandler fixture;
@@ -59,7 +59,7 @@ public class NextCaCertificateContentHandlerTest {
 		X500Principal subject = new X500Principal("CN=example.org");
 		// TODO: Hardcoded Algorithm
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
-		X509Certificate cert = X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
+		X509Certificate cert = X509Util.createEphemeralCertificate(subject, keyPair);
 		
 		return cert;
 	}

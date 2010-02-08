@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.google.code.jscep;
+package com.google.code.jscep.x509;
 
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -41,10 +41,10 @@ import com.google.code.jscep.util.LoggingUtil;
  * 
  * @author David Grant
  */
-public final class X509CertificateFactory {
+public final class X509Util {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	
-	private X509CertificateFactory() {
+	private X509Util() {
 	}
 
 	/**
@@ -59,7 +59,7 @@ public final class X509CertificateFactory {
 	 * @throws GeneralSecurityException
 	 */
 	public static X509Certificate createEphemeralCertificate(X500Principal subject, KeyPair keyPair) throws GeneralSecurityException {
-		LOGGER.entering(X509CertificateFactory.class.getName(), "createEphemeralCertificate", new Object[] {subject, keyPair});
+		LOGGER.entering(X509Util.class.getName(), "createEphemeralCertificate", new Object[] {subject, keyPair});
 		final Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
 		final Date notBefore = cal.getTime();
@@ -77,7 +77,7 @@ public final class X509CertificateFactory {
 
 		X509Certificate cert = gen.generate(keyPair.getPrivate());
 		
-		LOGGER.exiting(X509CertificateFactory.class.getName(), "createEphemeralCertificate", cert);
+		LOGGER.exiting(X509Util.class.getName(), "createEphemeralCertificate", cert);
 		return cert;
 	}
 	

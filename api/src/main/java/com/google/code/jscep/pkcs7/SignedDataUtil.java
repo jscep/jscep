@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.google.code.jscep.util;
+package com.google.code.jscep.pkcs7;
 
 import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;

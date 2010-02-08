@@ -41,8 +41,8 @@ import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.SignedData;
 
 import com.google.code.jscep.pkcs7.SignedDataParser;
+import com.google.code.jscep.pkcs7.SignedDataUtil;
 import com.google.code.jscep.util.LoggingUtil;
-import com.google.code.jscep.util.SignedDataUtil;
 
 /**
  * This class handles responses to <code>GetCACert</code> requests.

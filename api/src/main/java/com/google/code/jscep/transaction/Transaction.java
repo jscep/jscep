@@ -33,7 +33,6 @@ import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.X509Name;
 
 import com.google.code.jscep.PKIOperationFailureException;
-import com.google.code.jscep.X509CertificateFactory;
 import com.google.code.jscep.operations.DelayablePKIOperation;
 import com.google.code.jscep.operations.GetCertInitial;
 import com.google.code.jscep.operations.PKIOperation;
@@ -41,10 +40,11 @@ import com.google.code.jscep.pkcs7.MessageData;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.pkcs7.SignedDataParser;
+import com.google.code.jscep.pkcs7.SignedDataUtil;
 import com.google.code.jscep.request.PKCSReq;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
-import com.google.code.jscep.util.SignedDataUtil;
+import com.google.code.jscep.x509.X509Util;
 
 /**
  * This class represents a SCEP transaction, and provides a framework for 
@@ -91,8 +91,8 @@ public class Transaction {
 
 		validateResponse(req, res);
 
-		final X509Name issuerName = X509CertificateFactory.toX509Name(issuer.getIssuerX500Principal());
-		final X509Name subjectName = X509CertificateFactory.toX509Name(subject.getSubjectX500Principal());
+		final X509Name issuerName = X509Util.toX509Name(issuer.getIssuerX500Principal());
+		final X509Name subjectName = X509Util.toX509Name(subject.getSubjectX500Principal());
 		final GetCertInitial getCert = new GetCertInitial(issuerName, subjectName);
 		final PkiMessageGenerator generator = msgGenerator.clone();
 		generator.setMessageType(MessageType.GetCertInitial);

@@ -52,7 +52,6 @@ import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 
 import com.google.code.jscep.PKIOperationFailureException;
-import com.google.code.jscep.X509CertificateFactory;
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
 import com.google.code.jscep.operations.PKCSReq;
@@ -65,6 +64,7 @@ import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
+import com.google.code.jscep.x509.X509Util;
 
 /**
  * SCEP Client
@@ -213,7 +213,7 @@ public class Client {
     	LOGGER.fine("Creating Self-Signed Certificate for " + subject);
     	
     	try {
-    		return X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
+    		return X509Util.createEphemeralCertificate(subject, keyPair);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

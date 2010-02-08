@@ -15,11 +15,11 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.X509CertificateFactory;
 import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetNextCACert;
 import com.google.code.jscep.transport.Transport.Method;
+import com.google.code.jscep.x509.X509Util;
 
 public class HttpPostTransportTest {
 	private URL url;
@@ -57,7 +57,7 @@ public class HttpPostTransportTest {
 	public void testGetNextCACert() throws IOException, GeneralSecurityException {
 		X500Principal subject = new X500Principal("CN=example.org");
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-		X509Certificate cert = X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
+		X509Certificate cert = X509Util.createEphemeralCertificate(subject, keyPair);
 		
 		transport.sendMessage(new GetNextCACert(cert));
 	}

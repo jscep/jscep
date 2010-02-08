@@ -16,7 +16,6 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.X509CertificateFactory;
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
 import com.google.code.jscep.operations.GetCertInitial;
@@ -25,6 +24,7 @@ import com.google.code.jscep.transaction.MessageType;
 import com.google.code.jscep.transaction.Nonce;
 import com.google.code.jscep.transaction.PkiStatus;
 import com.google.code.jscep.transaction.TransactionId;
+import com.google.code.jscep.x509.X509Util;
 
 public class PkiMessageTest {
 	private PkiMessageGenerator generator;
@@ -38,8 +38,8 @@ public class PkiMessageTest {
 	public void setUp() throws Exception {
 		keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 		subject = new X500Principal("CN=example.org");
-		recipient = X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
-		identity = X509CertificateFactory.createEphemeralCertificate(subject, keyPair);
+		recipient = X509Util.createEphemeralCertificate(subject, keyPair);
+		identity = X509Util.createEphemeralCertificate(subject, keyPair);
 		
 		generator = new PkiMessageGenerator();
 		generator.setTransactionId(TransactionId.createTransactionId());
