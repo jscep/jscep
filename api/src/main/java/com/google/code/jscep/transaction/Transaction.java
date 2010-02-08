@@ -100,7 +100,8 @@ public class Transaction {
 		
 		while (res.getPkiStatus() == PkiStatus.PENDING) {
 			try {
-				Thread.sleep(interval);
+				// Convert to milliseconds.
+				Thread.sleep(interval * 1000L);
 			} catch (InterruptedException e) {
 				// TODO
 				throw new RuntimeException(e);

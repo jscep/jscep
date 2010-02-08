@@ -13,11 +13,8 @@ import javax.security.auth.x500.X500Principal;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.code.jscep.client.Client;
-import com.google.code.jscep.client.ClientConfiguration;
 import com.google.code.jscep.transaction.FailInfo;
 import com.google.code.jscep.transaction.TransactionCallback;
 
@@ -46,7 +43,7 @@ public class ClientTest implements TransactionCallback {
 		config.setSubject(new X500Principal("CN=example.org"));
 		config.setCaIdentifier("foo");
 		Client client = new Client(config);
-		client.enroll("INBOUND_TLSuscl99".toCharArray(), this);
+		client.enroll("INBOUND_TLSuscl99".toCharArray(), 60L);
 	}
 
 	public void onException(Exception e) {

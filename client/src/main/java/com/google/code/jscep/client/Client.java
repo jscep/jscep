@@ -62,7 +62,6 @@ import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetNextCACert;
 import com.google.code.jscep.response.Capabilities;
 import com.google.code.jscep.transaction.Transaction;
-import com.google.code.jscep.transaction.TransactionCallback;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
@@ -248,20 +247,44 @@ public class Client {
     	return keyPair;
     }
 
-    private Capabilities getCapabilities() throws IOException {
+    /**
+     * Retrieves the set of SCEP capabilities from the CA.
+     * 
+     * @return the capabilities of the server.
+     * @throws IOException if any I/O error occurs.
+     */
+    public Capabilities getCapabilities() throws IOException {
     	GetCACaps req = new GetCACaps(caIdentifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
         return trans.sendMessage(req);
     }
 
-    private List<X509Certificate> getCaCertificate() throws IOException {
+    /**
+     * Retrieves the CA certificate.
+     * <p>
+     * If the CA has an RA certificate, the RA certificate will also
+     * be present in the returned list.
+     * 
+     * @return the list of certificates.
+     * @throws IOException if any I/O error occurs.
+     */
+    public List<X509Certificate> getCaCertificate() throws IOException {
     	GetCACert req = new GetCACert(caIdentifier);
         Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
         return trans.sendMessage(req);
     }
     
+    /**
+     * Retrieves the "rollover" certificate to be used by the CA.
+     * <p>
+     * If the CA uses an RA certificate, the RA certificate will be present
+     * in the returned list.
+     * 
+     * @return the list of certificates.
+     * @throws IOException if any I/O error occurs.
+     */
     public List<X509Certificate> getNextCA() throws IOException {
     	X509Certificate ca = retrieveCA();
     	
@@ -328,11 +351,8 @@ public class Client {
      * 
      * @return the certificate revocation list.
      * @throws IOException if any I/O error occurs.
-     * @throws ScepException if any SCEP error occurs.
-     * @throws GeneralSecurityException if any security error occurs.
-     * @throws CMSException 
      */
-    public List<X509CRL> getCrl(TransactionCallback callback) throws IOException {
+    public List<X509CRL> getCrl() throws IOException {
         X509Certificate ca = retrieveCA();
         
         if (supportsDistributionPoints()) {
@@ -365,15 +385,32 @@ public class Client {
 
     /**
      * Enrolls an identity into a PKI domain.
+     * <p>
+     * If the CA uses a manual process, this method will block until the
+     * CA administrator either accepts or rejects the request.
+     * <p>
      * 
      * @param password the enrollment password.
+     * @param interval the period to wait between polls.
      * @return the enrolled certificate.
      * @throws IOException if any I/O error occurs.
      * @throws PKIOperationFailureException 
      */
-    public void enroll(char[] password, TransactionCallback callback) throws IOException, PKIOperationFailureException {
+    public List<X509Certificate> enroll(char[] password, long interval) throws IOException, PKIOperationFailureException {
+    	LOGGER.entering(getClass().getName(), "enroll", new Object[] {password, interval});
+    	
     	final PKCSReq req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
-    	createTransaction().performOperation(req, 20L);
+    	final CertStore store = createTransaction().performOperation(req, interval);
+    	List<X509Certificate> certs;
+		try {
+			certs = getCertificates(store.getCertificates(null));
+		} catch (CertStoreException e) {
+			// TODO
+			throw new RuntimeException(e);
+		}
+    	
+    	LOGGER.exiting(getClass().getName(), "enroll", certs);
+    	return certs;
     }
 
     /**
@@ -382,11 +419,8 @@ public class Client {
      * @param serial the serial number of the certificate.
      * @return the certificate.
      * @throws IOException if any I/O error occurs.
-     * @throws ScepException
-     * @throws GeneralSecurityException
-     * @throws CMSException 
      */
-    public X509Certificate getCert(BigInteger serial, TransactionCallback callback) throws IOException {
+    public X509Certificate getCert(BigInteger serial) throws IOException {
     	final X509Certificate ca = retrieveCA();
 
         PKIOperation<IssuerAndSerialNumber> req = new GetCert(ca.getIssuerX500Principal(), serial);
