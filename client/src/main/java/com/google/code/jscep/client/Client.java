@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.net.Proxy;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -263,7 +264,7 @@ public class Client {
     /**
      * Retrieves the CA certificate.
      * <p>
-     * If the CA has an RA certificate, the RA certificate will also
+     * If the CA is using an RA, the RA certificate will also
      * be present in the returned list.
      * 
      * @return the list of certificates.
@@ -279,7 +280,7 @@ public class Client {
     /**
      * Retrieves the "rollover" certificate to be used by the CA.
      * <p>
-     * If the CA uses an RA certificate, the RA certificate will be present
+     * If the CA is using an RA, the RA certificate will be present
      * in the returned list.
      * 
      * @return the list of certificates.
@@ -319,6 +320,8 @@ public class Client {
     
     private X509Certificate retrieveSigningCertificate() throws IOException {
     	List<X509Certificate> certs = getCaCertificate();
+    	X509Certificate recipient = getRecipient(certs);
+    	X509Certificate ca = pickCA(certs);
     	
     	// Validate
     	MessageDigest md;
@@ -329,7 +332,7 @@ public class Client {
 		}
 		byte[] certBytes;
 		try {
-			certBytes = certs.get(0).getEncoded();
+			certBytes = ca.getEncoded();
 		} catch (CertificateEncodingException e) {
 			throw new IOException(e);
 		}
@@ -337,13 +340,53 @@ public class Client {
         	throw new IOException("CA Fingerprint Error");
         }
     	
-    	if (certs.size() > 1) {
-    		// RA
-    		return certs.get(1);
-    	} else {
-    		// CA
+    	return recipient;
+    }
+    
+    private X509Certificate getRecipient(List<X509Certificate> certs) {
+    	int numCerts = certs.size();
+    	if (numCerts == 2) {
+    		final X509Certificate ca = pickCA(certs);
+    		// The RA certificate is the other one.
+    		int caIndex = certs.indexOf(ca);
+    		int raIndex = 1 - caIndex;
+    		
+    		return certs.get(raIndex);
+    	} else if (numCerts == 1) {
     		return certs.get(0);
+    	} else {
+    		// We've either got NO certificates here, or more than 2.
+    		// Whatever the case, the server is in error. 
+    		throw new IllegalStateException();
     	}
+    }
+    
+    private X509Certificate pickCA(List<X509Certificate> certs) {
+    	// We don't know the order here, but we know the RA certificate MUST
+		// have been issued by the CA certificate.
+		final X509Certificate first = certs.get(0);
+		final X509Certificate second = certs.get(1);
+		try {
+			// First, let's check if the second certificate is the CA.
+			first.verify(second.getPublicKey());
+			
+			return second;
+		} catch (InvalidKeyException e) {
+			// Do nothing here, as we're going to try the reverse now.
+		} catch (Exception e) {
+			// Something else went wrong.
+			throw new RuntimeException(e);
+		}
+		try {
+			// OK, that didn't work out, so let's try the first instead.
+			second.verify(first.getPublicKey());
+			
+			return first;
+		} catch (Exception e) {
+			// Neither certificate was the CA.
+			// TODO
+			throw new RuntimeException(e);
+		}
     }
     
     /**
