@@ -26,8 +26,6 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.DEREncodable;
@@ -80,35 +78,42 @@ public class Transaction {
 	 * @return a certificate store, containing either certificates or CRLs.
 	 * @throws IOException if any I/O error occurs.
 	 */
-	public <T extends DEREncodable> void performOperation(DelayablePKIOperation<T> op, TransactionCallback callback) throws IOException {
-		LOGGER.entering(getClass().getName(), "performOperation", new Object[] {op, callback});
+	public <T extends DEREncodable> CertStore performOperation(DelayablePKIOperation<T> op, long interval) throws IOException, PKIOperationFailureException {
+		LOGGER.entering(getClass().getName(), "performOperation", new Object[] {op, interval});
 		
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(Nonce.nextNonce());
 		msgGenerator.setTransactionId(TransactionId.createTransactionId(keyPair, digestAlgorithm));
 		msgGenerator.setMessageData(MessageData.getInstance(op.getMessage()));
 		
-		final PkiMessage req = msgGenerator.generate();
-		final PkiMessage res = transport.sendMessage(new PKCSReq(req, keyPair));
+		PkiMessage req = msgGenerator.generate();
+		PkiMessage res = transport.sendMessage(new PKCSReq(req, keyPair));
 
 		validateResponse(req, res);
+
+		final X509Name issuerName = X509CertificateFactory.toX509Name(issuer.getIssuerX500Principal());
+		final X509Name subjectName = X509CertificateFactory.toX509Name(subject.getSubjectX500Principal());
+		final GetCertInitial getCert = new GetCertInitial(issuerName, subjectName);
+		final PkiMessageGenerator generator = msgGenerator.clone();
+		generator.setMessageType(MessageType.GetCertInitial);
+		generator.setMessageData(MessageData.getInstance(getCert.getMessage()));
 		
+		while (res.getPkiStatus() == PkiStatus.PENDING) {
+			try {
+				Thread.sleep(interval);
+			} catch (InterruptedException e) {
+				// TODO
+				throw new RuntimeException(e);
+			}
+			
+			generator.setSenderNonce(Nonce.nextNonce());
+			req = generator.generate();
+			res = transport.sendMessage(new PKCSReq(req, keyPair));
+		}
 		if (res.getPkiStatus() == PkiStatus.FAILURE) {
-			callback.onFailure(res.getFailInfo());
-		} else if (res.getPkiStatus() == PkiStatus.SUCCESS) {
-			callback.onSuccess(extractCertStore(res));
+			throw new PKIOperationFailureException(res.getFailInfo());
 		} else {
-			// PENDING
-			
-			// We only need one GetCertInitial, as it won't change.
-			final X509Name issuerName = X509CertificateFactory.toX509Name(issuer.getIssuerX500Principal());
-			final X509Name subjectName = X509CertificateFactory.toX509Name(subject.getSubjectX500Principal());
-			final GetCertInitial getCert = new GetCertInitial(issuerName, subjectName);
-			final Timer timer = new Timer();
-			
-			long delay = callback.onPending(0L);
-			TimerTask task = new EnrollmentTask(getCert, delay, callback, timer);
-			timer.schedule(task, delay);
+			return extractCertStore(res);
 		}
 	}
 	
@@ -192,52 +197,5 @@ public class Transaction {
 		sb.append("]");
 		
 		return sb.toString();
-	}
-	
-	private class EnrollmentTask extends TimerTask {
-		private final TransactionCallback callback;
-		private final Timer timer;
-		private long lastDelay = 0L;
-		private final GetCertInitial getCert; 
-		
-		public EnrollmentTask(GetCertInitial getCert, long lastDelay, TransactionCallback callback, Timer timer) {
-			this.getCert = getCert;
-			this.timer = timer;
-			this.callback = callback;
-			this.lastDelay = lastDelay;
-		}
-		
-		public void run() {
-			try {
-				// Clone the old generator.
-				PkiMessageGenerator generator = msgGenerator.clone();
-				// We need a new nonce.
-				generator.setSenderNonce(Nonce.nextNonce());
-				// Set the message type.
-				generator.setMessageType(MessageType.GetCertInitial);
-				// Set the message data
-				generator.setMessageData(MessageData.getInstance(getCert.getMessage()));
-				
-				// Create the request and send it.
-				final PkiMessage req = generator.generate();
-				final PkiMessage res = transport.sendMessage(new PKCSReq(req, keyPair));
-				
-				// Make sure our response is OK.
-				validateResponse(req, res);
-				
-				if (res.getPkiStatus() == PkiStatus.SUCCESS) {
-					callback.onSuccess(extractCertStore(res));
-				} else if (res.getPkiStatus() == PkiStatus.FAILURE) {
-					callback.onFailure(res.getFailInfo());
-				} else {
-					// Repeat
-					lastDelay = callback.onPending(lastDelay);
-					// Reschedule this task.
-					timer.schedule(this, lastDelay);
-				}
-			} catch (Exception e) {
-				callback.onException(e);
-			}
-		}
 	}
 }

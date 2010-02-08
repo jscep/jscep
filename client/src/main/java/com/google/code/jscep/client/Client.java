@@ -369,10 +369,11 @@ public class Client {
      * @param password the enrollment password.
      * @return the enrolled certificate.
      * @throws IOException if any I/O error occurs.
+     * @throws PKIOperationFailureException 
      */
-    public void enroll(char[] password, TransactionCallback callback) throws IOException {
+    public void enroll(char[] password, TransactionCallback callback) throws IOException, PKIOperationFailureException {
     	final PKCSReq req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
-    	createTransaction().performOperation(req, callback);
+    	createTransaction().performOperation(req, 20L);
     }
 
     /**

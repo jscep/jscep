@@ -25,9 +25,6 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-
 import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
@@ -59,7 +56,7 @@ public final class TransactionFactory {
 		LOGGER.entering(TransactionFactory.class.getName(), "createTransaction");
 
 		final PkiMessageGenerator msgGenerator = new PkiMessageGenerator();
-		msgGenerator.setMessageDigest("SHA-1");
+		msgGenerator.setMessageDigest(digestAlgorithm);
 		msgGenerator.setSigner(subject);
 		msgGenerator.setKeyPair(keyPair);
 		msgGenerator.setCipherAlgorithm("DES");
@@ -69,20 +66,5 @@ public final class TransactionFactory {
 		
 		LOGGER.exiting (TransactionFactory.class.getName(), "createTransaction", t);
 		return t;
-	}
-	
-	private static AlgorithmIdentifier getCipherAlgorithm() {
-		// desCBC is 1.3.14.3.2.7 / "DES"
-		// 3DES is 1.2.840.113549.3.7 / des-ede3-cbc
-		return new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.7"));
-	}
-	
-	private static AlgorithmIdentifier getDigestAlgorithm() {
-		// TODO: Hardcoded Algoritm
-		// MD5 ->  (1.2.840.113549.2.5)
-		// SHA-1 -> (1.3.14.3.2.26)
-		// SHA-256 -> NISTObjectIdentifiers.id_sha256 (2.16.840.1.101.3.4.2.1)
-		// SHA-512 -> NISTObjectIdentifiers.id_sha512 (2.16.840.1.101.3.4.2.3)
-		return new AlgorithmIdentifier(new DERObjectIdentifier("1.3.14.3.2.26"));
 	}
 }
