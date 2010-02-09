@@ -74,7 +74,7 @@ public class Client {
     private X500Principal subject;
     private X509Certificate ca;
     
-    public Client(Builder builder) throws IllegalStateException {
+    private Client(Builder builder) throws IllegalStateException {
     	url = builder.url;
     	proxy = builder.proxy;
     	caDigest = builder.caDigest;
