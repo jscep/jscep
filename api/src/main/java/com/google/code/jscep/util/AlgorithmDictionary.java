@@ -101,10 +101,9 @@ public final class AlgorithmDictionary {
 		oids.put("SHA512withRSA", PKCSObjectIdentifiers.sha512WithRSAEncryption);
 	}
 	
-	/**
-	 * Private constructor to prevent instantiation.
-	 */
-	private AlgorithmDictionary() {}
+	private AlgorithmDictionary() {
+		// This constructor will never be invoked.
+	}
 	
 	/**
 	 * Returns the name of the provided OID.

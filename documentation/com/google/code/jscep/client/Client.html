@@ -55,7 +55,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../../../com/google/code/jscep/client/ClientConfiguration.html" title="class in com.google.code.jscep.client"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?com/google/code/jscep/client/Client.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Client.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -75,7 +75,7 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
 DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
@@ -107,7 +107,24 @@ SCEP Client
 <HR>
 
 <P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
 
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See Effective Java, Item 2</TD>
+</TR>
+</TABLE>
+&nbsp;
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 <A NAME="constructor_summary"><!-- --></A>
@@ -117,7 +134,7 @@ SCEP Client
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#Client(com.google.code.jscep.client.ClientConfiguration)">Client</A></B>(<A HREF="../../../../../com/google/code/jscep/client/ClientConfiguration.html" title="class in com.google.code.jscep.client">ClientConfiguration</A>&nbsp;config)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#Client(com.google.code.jscep.client.Client.Builder)">Client</A></B>(<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>&nbsp;builder)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -212,20 +229,16 @@ SCEP Client
 </TR>
 </TABLE>
 
-<A NAME="Client(com.google.code.jscep.client.ClientConfiguration)"><!-- --></A><H3>
+<A NAME="Client(com.google.code.jscep.client.Client.Builder)"><!-- --></A><H3>
 Client</H3>
 <PRE>
-public <B>Client</B>(<A HREF="../../../../../com/google/code/jscep/client/ClientConfiguration.html" title="class in com.google.code.jscep.client">ClientConfiguration</A>&nbsp;config)
-       throws <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang">IllegalStateException</A>,
-              <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A>,
-              <A HREF="http://java.sun.com/javase/6/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</A></PRE>
+public <B>Client</B>(<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>&nbsp;builder)
+       throws <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang">IllegalStateException</A></PRE>
 <DL>
 <DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang">IllegalStateException</A></CODE>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</A></CODE></DL>
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang">IllegalStateException</A></CODE></DL>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -277,7 +290,7 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
 <DL>
 <DD>Retrieves the CA certificate.
  <p>
- If the CA has an RA certificate, the RA certificate will also
+ If the CA is using an RA, the RA certificate will also
  be present in the returned list.
 <P>
 <DD><DL>
@@ -297,7 +310,7 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
 <DL>
 <DD>Retrieves the "rollover" certificate to be used by the CA.
  <p>
- If the CA uses an RA certificate, the RA certificate will be present
+ If the CA is using an RA, the RA certificate will be present
  in the returned list.
 <P>
 <DD><DL>
@@ -313,7 +326,8 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
 getCrl</H3>
 <PRE>
 public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509CRL.html?is-external=true" title="class or interface in java.security.cert">X509CRL</A>&gt; <B>getCrl</B>()
-                     throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
+                     throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A>,
+                            <A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></PRE>
 <DL>
 <DD>Retrieves the certificate revocation list for the current CA.
 <P>
@@ -321,7 +335,8 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
 
 <DT><B>Returns:</B><DD>the certificate revocation list.
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.</DL>
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
+<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE></DL>
 </DD>
 </DL>
 <HR>
@@ -354,7 +369,8 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
 getCert</H3>
 <PRE>
 public <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A> <B>getCert</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</A>&nbsp;serial)
-                        throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
+                        throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A>,
+                               <A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></PRE>
 <DL>
 <DD>Retrieves the certificate corresponding to the given serial number.
 <P>
@@ -362,7 +378,8 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Cer
 <DT><B>Parameters:</B><DD><CODE>serial</CODE> - the serial number of the certificate.
 <DT><B>Returns:</B><DD>the certificate.
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.</DL>
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
+<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -397,7 +414,7 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Cer
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../../../com/google/code/jscep/client/ClientConfiguration.html" title="class in com.google.code.jscep.client"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?com/google/code/jscep/client/Client.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Client.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -417,7 +434,7 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Cer
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
 DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>

@@ -45,6 +45,7 @@ public final class X509Util {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
 	
 	private X509Util() {
+		// This constructor will never be invoked.
 	}
 
 	/**

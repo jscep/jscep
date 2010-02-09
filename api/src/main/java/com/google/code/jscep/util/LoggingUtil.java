@@ -36,7 +36,9 @@ public final class LoggingUtil {
 	/**
 	 * Private constructor to prevent instantiation.
 	 */
-	private LoggingUtil() {}
+	private LoggingUtil() {
+		// This constructor will never be invoked.
+	}
 	
 	/**
 	 * Returns a logger for the given class.

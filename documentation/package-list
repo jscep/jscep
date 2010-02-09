@@ -11,3 +11,4 @@ com.google.code.jscep.server
 com.google.code.jscep.transaction
 com.google.code.jscep.transport
 com.google.code.jscep.util
+com.google.code.jscep.x509

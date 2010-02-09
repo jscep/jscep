@@ -35,10 +35,9 @@ public final class HexUtil {
 	    (byte)'c', (byte)'d', (byte)'e', (byte)'f'
 	  };
 	
-	/**
-	 * Private constructor to prevent instantiation.
-	 */
-	private HexUtil() {}
+	private HexUtil() {
+		// This constructor will never be invoked.
+	}
 	
 	/**
 	 * Converts the given byte array to an array of hex characters.
