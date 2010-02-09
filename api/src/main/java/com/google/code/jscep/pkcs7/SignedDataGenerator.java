@@ -108,12 +108,17 @@ public class SignedDataGenerator {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws NoSuchAlgorithmException 
 	 */
-	public SignedData generate() throws IOException, NoSuchAlgorithmException {
+	public SignedData generate() throws IOException {
 		LOGGER.entering(getClass().getName(), "generate");
 		
 		final DERSet digestAlgorithms = getDigestAlgorithmIdentifiers();
 		final ContentInfo contentInfo = getContentInfo();
-		final DERSet signerInfos = getSignerInfos();
+		DERSet signerInfos;
+		try {
+			signerInfos = getSignerInfos();
+		} catch (NoSuchAlgorithmException e) {
+			throw new IOException(e);
+		}
 		final DERSet certificates = getCertificates();
 		final DERSet crls = getCRLs();
 		

@@ -26,11 +26,9 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.Proxy;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -38,13 +36,10 @@ import java.security.cert.CRL;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -79,18 +74,19 @@ public class Client {
     private String caIdentifier;			// Optional
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
+    private X500Principal subject;
+    private X509Certificate ca;
     
-    public Client(ClientConfiguration config) throws IllegalStateException, IOException, GeneralSecurityException {
-    	url = config.getUrl();
-    	proxy = config.getProxy();
-    	caDigest = config.getCaDigest();
-    	caIdentifier = config.getCaIdentifier();
-    	keyPair = config.getKeyPair();
-    	identity = config.getIdentity();
-    	digestAlgorithm = config.getDigestAlgorithm();
-
-    	X500Principal subject = config.getSubject();
-    	X509Certificate ca = config.getCaCertificate();
+    public Client(Builder builder) throws IllegalStateException {
+    	url = builder.url;
+    	proxy = builder.proxy;
+    	caDigest = builder.caDigest;
+    	digestAlgorithm = builder.digestAlgorithm;
+    	caIdentifier = builder.caIdentifier;
+    	keyPair = builder.keyPair;
+    	identity = builder.identity;
+    	subject = builder.subject;
+    	ca = builder.ca;
     	
     	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-5.1
     	if (isValid(url) == false) {
@@ -132,25 +128,10 @@ public class Client {
 		if (identity.getPublicKey().equals(keyPair.getPublic()) == false) {
 			throw new IllegalStateException("Public Key Mismatch");
 		}
-		List<String> algorithms = new LinkedList<String>();
-		algorithms.add("MD5");
-		algorithms.add("SHA-1");
-		algorithms.add("SHA-256");
-		algorithms.add("SHA-512");
-		if (algorithms.contains(digestAlgorithm) == false) {
-			throw new IllegalStateException(digestAlgorithm + " is not a valid digest algorithm");
-		}
-		
-		if (ca != null) {
-			MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
-			caDigest = digest.digest(ca.getTBSCertificate());
-		} else {
-			ca = retrieveCA();
-		}
 		
 		// Check renewal
 		if (subject == null) {
-			if (isSelfSigned(identity) == false) {
+			if (X509Util.isSelfSigned(identity) == false) {
 				if (identity.getIssuerX500Principal().equals(ca.getSubjectX500Principal())) {
 					LOGGER.fine("Certificate is signed by CA, so this is a renewal.");
 				} else {
@@ -169,10 +150,7 @@ public class Client {
 			}
 		}
     }
-    
-    private boolean isSelfSigned(X509Certificate cert) {
-    	return cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal());
-    }
+
     
     private boolean isValid(KeyPair keyPair) {
     	PrivateKey pri = keyPair.getPrivate();
@@ -221,7 +199,7 @@ public class Client {
     }
     
     private Transaction createTransaction() throws IOException {
-    	return TransactionFactory.createTransaction(createTransport(), retrieveSigningCertificate(), identity, keyPair, getCapabilities().getStrongestMessageDigest());
+    	return TransactionFactory.createTransaction(createTransport(), getRecipientCertificate(), identity, keyPair, getCapabilities().getStrongestMessageDigest());
     }
     
     private Transport createTransport() throws IOException {
@@ -287,10 +265,10 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public List<X509Certificate> getNextCA() throws IOException {
-    	X509Certificate ca = retrieveCA();
+    	X509Certificate issuer = retrieveCA();
     	
     	Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-    	GetNextCACert req = new GetNextCACert(ca, caIdentifier);
+    	GetNextCACert req = new GetNextCACert(issuer, caIdentifier);
     	
     	return trans.sendMessage(req);
     }
@@ -298,55 +276,19 @@ public class Client {
     private X509Certificate retrieveCA() throws IOException {
     	final List<X509Certificate> certs = getCaCertificate();
     	
-    	// Validate
-    	MessageDigest md;
-		try {
-			md = MessageDigest.getInstance(digestAlgorithm);
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
-		byte[] certBytes;
-		try {
-			certBytes = certs.get(0).getEncoded();
-		} catch (CertificateEncodingException e) {
-			throw new IOException(e);
-		}
-        if (Arrays.equals(caDigest, md.digest(certBytes)) == false) {
-        	throw new IOException("CA Fingerprint Error");
-        }
-    	
-    	return certs.get(0);
+    	return selectCA(certs);
     }
     
-    private X509Certificate retrieveSigningCertificate() throws IOException {
-    	List<X509Certificate> certs = getCaCertificate();
-    	X509Certificate recipient = getRecipient(certs);
-    	X509Certificate ca = pickCA(certs);
-    	
-    	// Validate
-    	MessageDigest md;
-		try {
-			md = MessageDigest.getInstance(digestAlgorithm);
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
-		byte[] certBytes;
-		try {
-			certBytes = ca.getEncoded();
-		} catch (CertificateEncodingException e) {
-			throw new IOException(e);
-		}
-        if (Arrays.equals(caDigest, md.digest(certBytes)) == false) {
-        	throw new IOException("CA Fingerprint Error");
-        }
-    	
-    	return recipient;
+    private X509Certificate getRecipientCertificate() throws IOException {
+    	final List<X509Certificate> certs = getCaCertificate();
+    	// The CA or RA
+    	return selectRecipient(certs);
     }
     
-    private X509Certificate getRecipient(List<X509Certificate> certs) {
+    private X509Certificate selectRecipient(List<X509Certificate> certs) {
     	int numCerts = certs.size();
     	if (numCerts == 2) {
-    		final X509Certificate ca = pickCA(certs);
+    		final X509Certificate ca = selectCA(certs);
     		// The RA certificate is the other one.
     		int caIndex = certs.indexOf(ca);
     		int raIndex = 1 - caIndex;
@@ -361,7 +303,10 @@ public class Client {
     	}
     }
     
-    private X509Certificate pickCA(List<X509Certificate> certs) {
+    private X509Certificate selectCA(List<X509Certificate> certs) {
+    	if (certs.size() == 1) {
+    		return certs.get(0);
+    	}
     	// We don't know the order here, but we know the RA certificate MUST
 		// have been issued by the CA certificate.
 		final X509Certificate first = certs.get(0);
@@ -402,7 +347,7 @@ public class Client {
         	return null;
         } else {
 	        // PKI Operation
-	        PKIOperation<IssuerAndSerialNumber> req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
+	        GetCRL req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
 	        CertStore store;
 			try {
 				store = createTransaction().performOperation(req);
@@ -499,5 +444,75 @@ public class Client {
         }
         
         return x509;
+    }
+    
+    /**
+     * See Effective Java, Item 2
+     * 
+     * @author David Grant
+     */
+    public static class Builder {
+    	private URL url;
+    	private Proxy proxy = Proxy.NO_PROXY;
+    	private byte[] caDigest;
+    	private String digestAlgorithm;
+    	private String caIdentifier;
+    	private X500Principal subject;
+    	private X509Certificate identity;
+    	private KeyPair keyPair;
+    	private X509Certificate ca;
+    	
+    	public Builder url(URL url) {
+    		this.url = url;
+    		
+    		return this;
+    	}
+    	
+    	public Builder proxy(Proxy proxy) {
+    		this.proxy = proxy;
+    		
+    		return this;
+    	}
+    	
+    	public Builder ca(X509Certificate ca) {
+    		this.ca = ca;
+    		
+    		return this;
+    	}
+    	
+    	public Builder caDigest(byte[] caDigest, String digestAlgorithm) {
+    		this.caDigest = caDigest;
+    		this.digestAlgorithm = digestAlgorithm;
+    		
+    		return this;
+    	}
+    	
+    	public Builder caIdentifier(String caIdentifier) {
+    		this.caIdentifier = caIdentifier;
+    		
+    		return this;
+    	}
+    	
+    	public Builder subject(X500Principal subject) {
+    		this.subject = subject;
+    		
+    		return this;
+    	}
+    	
+    	public Builder identity(X509Certificate identity) {
+    		this.identity = identity;
+    		
+    		return this;
+    	}
+    	
+    	public Builder keyPair(KeyPair keyPair) {
+    		this.keyPair = keyPair;
+    		
+    		return this;
+    	}
+    	
+    	public Client build() throws IllegalStateException {
+    		return new Client(this);
+    	}
     }
 }

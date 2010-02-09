@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.pkcs.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
@@ -47,6 +48,7 @@ import com.google.code.jscep.asn1.IssuerAndSubject;
 import com.google.code.jscep.pkcs7.MessageData;
 import com.google.code.jscep.pkcs7.PkiMessage;
 import com.google.code.jscep.pkcs7.PkiMessageParser;
+import com.google.code.jscep.pkcs7.SignedDataGenerator;
 import com.google.code.jscep.request.Operation;
 import com.google.code.jscep.response.Capability;
 import com.google.code.jscep.transaction.MessageType;
@@ -121,24 +123,11 @@ public abstract class ScepServlet extends HttpServlet {
 		LOGGER.fine("Method " + reqMethod + " Allowed for Operation: " + op);
 		
 		if (op == Operation.GetCACaps) {
-			res.setHeader("Content-Type", "text/plain");
-			final Set<Capability> caps = getCapabilities(req.getParameter("message"));
-			for (Capability cap : caps) {
-				res.getWriter().write(cap.toString());
-				res.getWriter().write('\n');
-			}
-			res.getWriter().close();
+			doGetCACaps(req, res);
 		} else if (op == Operation.GetCACert) {
-			List<X509Certificate> certs = getCACertificate(req.getParameter(MSG_PARAM));
-			if (certs.size() == 1) {
-				res.setHeader("Content-Type", "application/x-x509-ca-cert");
-			} else {
-				res.setHeader("Content-Type", "application/x-x509-ca-ra-cert");
-			}
+			doGetCACert(req, res);
 		} else if (op == Operation.GetNextCACert) {
-			res.setHeader("Content-Type", "application/x-x509-next-ca-cert");
-			
-			List<X509Certificate> certs = getNextCACertificate(req.getParameter(MSG_PARAM));
+			doGetNextCACert(req, res);
 		} else {
 			res.setHeader("Content-Type", "application/x-pki-message");
 			PkiMessageParser msgParser = new PkiMessageParser();
@@ -160,18 +149,41 @@ public abstract class ScepServlet extends HttpServlet {
 				final X509Name subject = ias.getSubject();
 				
 				final X509Certificate cert = getCertificate(issuer, subject);
+				final SignedDataGenerator generator = new SignedDataGenerator();
+				generator.addCertificate(cert);
+				final SignedData signedData = generator.generate();
+				res.getOutputStream().write(signedData.getDEREncoded());
 			} else if (msgType == MessageType.GetCRL) {
 				final ASN1Sequence seq = (ASN1Sequence) msgData.getContent();
 				final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(seq);
 				final X500Principal principal = new X500Principal(iasn.getName().getDEREncoded());
 				
-				final X509CRL cert = getCRL(principal, iasn.getCertificateSerialNumber().getValue());
+				final X509CRL crl = getCRL(principal, iasn.getCertificateSerialNumber().getValue());
+				final SignedDataGenerator generator = new SignedDataGenerator();
+				generator.addCRL(crl);
+				final SignedData signedData = generator.generate();
+				res.getOutputStream().write(signedData.getDEREncoded());
 			} else if (msgType == MessageType.PKCSReq) {
 				final PKCS10CertificationRequest certReq = (PKCS10CertificationRequest) msgData.getContent();
 				final List<X509Certificate> certs = enrollCertificate(certReq);
 			}
 		}
 		LOGGER.exiting(getClass().getName(), "service");
+	}
+
+	private void doGetNextCACert(HttpServletRequest req, HttpServletResponse res) {
+		res.setHeader("Content-Type", "application/x-x509-next-ca-cert");
+		
+		final List<X509Certificate> certs = getNextCACertificate(req.getParameter(MSG_PARAM));
+	}
+
+	private void doGetCACert(HttpServletRequest req, HttpServletResponse res) {
+		final List<X509Certificate> certs = getCACertificate(req.getParameter(MSG_PARAM));
+		if (certs.size() == 1) {
+			res.setHeader("Content-Type", "application/x-x509-ca-cert");
+		} else {
+			res.setHeader("Content-Type", "application/x-x509-ca-ra-cert");
+		}
 	}
 	
 	private byte[] getBytes(InputStream in) {
@@ -185,6 +197,16 @@ public abstract class ScepServlet extends HttpServlet {
 			return null;
 		}
 		return Operation.valueOf(req.getParameter(OP_PARAM));
+	}
+	
+	private void doGetCACaps(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		res.setHeader("Content-Type", "text/plain");
+		final Set<Capability> caps = getCapabilities(req.getParameter("message"));
+		for (Capability cap : caps) {
+			res.getWriter().write(cap.toString());
+			res.getWriter().write('\n');
+		}
+		res.getWriter().close();
 	}
 	
 	/**

@@ -84,4 +84,14 @@ public final class X509Util {
 	public static X509Name toX509Name(X500Principal principal) {
 		return new X509Name(principal.getName());
 	}
+	
+	public static boolean isSelfSigned(X509Certificate cert) {
+		try {
+    		cert.verify(cert.getPublicKey());
+    		
+    		return true;
+    	} catch (Exception e) {
+    		return false;
+    	}
+	}
 }

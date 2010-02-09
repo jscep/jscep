@@ -30,13 +30,14 @@ public class ClientTest {
 			}
 		}}, null);
 		HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
+
+		final Client.Builder builder = new Client.Builder();
+		builder.url(new URL("https://engtest66-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe"));
+		builder.caDigest(new byte[] {-93, -44, 23, 25, -106, 116, 80, -113, 36, 23, 76, -89, -36, -18, 89, -59}, "MD5");
+		builder.subject(new X500Principal("CN=example.org"));
+		builder.caIdentifier("foo");
 		
-		URL url = new URL("https://engtest66-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe");
-		ClientConfiguration config = new ClientConfiguration(url);
-		config.setCaDigest(new byte[] {-93, -44, 23, 25, -106, 116, 80, -113, 36, 23, 76, -89, -36, -18, 89, -59});
-		config.setSubject(new X500Principal("CN=example.org"));
-		config.setCaIdentifier("foo");
-		Client client = new Client(config);
-		client.enroll("INBOUND_TLSuscl99".toCharArray(), 60L);
+		final Client client = builder.build();
+		System.out.println(client.enroll("INBOUND_TLSuscl99".toCharArray(), 60L));
 	}
 }
