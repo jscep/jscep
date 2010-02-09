@@ -29,7 +29,7 @@ import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
 /**
- * This class represents a PKCS #9 challengePassword.
+ * This class represents a PKCS #9 challengePassword attribute.
  * 
  * @author David Grant
  */
@@ -55,5 +55,17 @@ public class ChallengePassword extends Attribute {
 		v.add(new DERPrintableString(password));
 		
 		return new DERSet(v);
+	}
+	
+	/**
+	 * Returns the password contained in this challengePassword attribute.
+	 * 
+	 * @return the password.
+	 */
+	public String getPassword() {
+		final DERPrintableString passwordString = (DERPrintableString) getAttrValues().getObjectAt(0);
+		
+		return passwordString.getString();
+		
 	}
 }

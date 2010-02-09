@@ -55,7 +55,7 @@ public class Capabilities {
 	}
 	
 	/**
-	 * Add the specified capability to this capabilities set.
+	 * Add the provided capability to this capabilities set.
 	 * 
 	 * @param capability the capability to add.
 	 */
@@ -95,7 +95,7 @@ public class Capabilities {
 	 * <p>
 	 * The algorithms are ordered thus:
 	 * <ol>
-	 *     <li>DESede</li>
+	 *     <li>DESede ("Triple DES")</li>
 	 *     <li>DES</li>
 	 * </ol>
 	 * 
@@ -162,6 +162,9 @@ public class Capabilities {
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return capabilities.toString();

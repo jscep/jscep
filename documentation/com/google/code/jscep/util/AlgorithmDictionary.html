@@ -156,14 +156,6 @@ This class provides a utility to lookup a friendly name for an algorithm given
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the name of the given algorithm.</TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/util/AlgorithmDictionary.html#lookup(org.bouncycastle.asn1.DERObjectIdentifier)">lookup</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DERObjectIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DERObjectIdentifier</A>&nbsp;oid)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the name of the provided OID.</TD>
-</TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -186,20 +178,6 @@ This class provides a utility to lookup a friendly name for an algorithm given
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
-
-<A NAME="lookup(org.bouncycastle.asn1.DERObjectIdentifier)"><!-- --></A><H3>
-lookup</H3>
-<PRE>
-public static <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>lookup</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DERObjectIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DERObjectIdentifier</A>&nbsp;oid)</PRE>
-<DL>
-<DD>Returns the name of the provided OID.
-<P>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>oid</CODE> - the Object Identifier.
-<DT><B>Returns:</B><DD>the algorithm name.</DL>
-</DD>
-</DL>
-<HR>
 
 <A NAME="getOid(java.lang.String)"><!-- --></A><H3>
 getOid</H3>
@@ -239,7 +217,8 @@ public static <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.ht
  <p>
  In the JCA, an instance of a <A HREF="http://java.sun.com/javase/6/docs/api/javax/crypto/Cipher.html?is-external=true" title="class or interface in javax.crypto"><CODE>Cipher</CODE></A> may be obtained using just
  the cipher algorithm (e.g. DES), but this is subject to defaults
- specified by the provider, so we "fill out" the cipher name in this method.
+ specified by the provider, so we "fill out" the cipher name in this method, so
+ that <code>DES</code> becomes <code>DES/CBC/PKC5Padding</code>
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>cipher</CODE> - the cipher algorithm name.

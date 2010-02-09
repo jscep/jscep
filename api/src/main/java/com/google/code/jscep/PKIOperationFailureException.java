@@ -24,7 +24,7 @@ package com.google.code.jscep;
 import com.google.code.jscep.transaction.FailInfo;
 
 /**
- * This class represents the situation where a PKI operation has failed.
+ * This exception represents the situation where a PKI operation has failed.
  * 
  * @author David Grant
  */

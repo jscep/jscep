@@ -106,16 +106,6 @@ public final class AlgorithmDictionary {
 	}
 	
 	/**
-	 * Returns the name of the provided OID.
-	 * 
-	 * @param oid the Object Identifier.
-	 * @return the algorithm name.
-	 */
-	public static String lookup(DERObjectIdentifier oid) {
-		return contents.get(oid);
-	}
-	
-	/**
 	 * Returns the OID for the provided algorithm name.
 	 * 
 	 * @param algorithm the algorithm name, e.g. "RSA"
@@ -150,7 +140,8 @@ public final class AlgorithmDictionary {
 	 * <p>
 	 * In the JCA, an instance of a {@link Cipher} may be obtained using just
 	 * the cipher algorithm (e.g. DES), but this is subject to defaults
-	 * specified by the provider, so we "fill out" the cipher name in this method. 
+	 * specified by the provider, so we "fill out" the cipher name in this method, so
+	 * that <code>DES</code> becomes <code>DES/CBC/PKC5Padding</code> 
 	 * 
 	 * @param cipher the cipher algorithm name.
 	 * @return the transformation name
