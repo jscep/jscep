@@ -1,5 +1,6 @@
 package com.google.code.jscep.client;
 
+import java.math.BigInteger;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -38,6 +39,10 @@ public class ClientTest {
 		builder.caIdentifier("foo");
 		
 		final Client client = builder.build();
-		System.out.println(client.enroll("INBOUND_TLSuscl99".toCharArray(), 60L));
+		System.out.println(client.getCaCertificate());
+		System.out.println(client.getCapabilities());
+		System.out.println(client.getCrl());
+		System.out.println(client.getNextCA());
+//		System.out.println(client.enroll("INBOUND_TLSuscl99".toCharArray(), 60L));
 	}
 }

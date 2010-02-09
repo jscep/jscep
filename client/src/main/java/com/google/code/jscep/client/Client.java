@@ -45,13 +45,10 @@ import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-
 import com.google.code.jscep.PKIOperationFailureException;
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
 import com.google.code.jscep.operations.PKCSReq;
-import com.google.code.jscep.operations.PKIOperation;
 import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetNextCACert;
@@ -233,8 +230,8 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public Capabilities getCapabilities() throws IOException {
-    	GetCACaps req = new GetCACaps(caIdentifier);
-        Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
+    	final GetCACaps req = new GetCACaps(caIdentifier);
+        final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
         return trans.sendMessage(req);
     }
@@ -249,8 +246,8 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public List<X509Certificate> getCaCertificate() throws IOException {
-    	GetCACert req = new GetCACert(caIdentifier);
-        Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
+    	final GetCACert req = new GetCACert(caIdentifier);
+        final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
         return trans.sendMessage(req);
     }
@@ -265,10 +262,13 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public List<X509Certificate> getNextCA() throws IOException {
-    	X509Certificate issuer = retrieveCA();
+    	if (getCapabilities().isNextCASupported() == false) {
+    		throw new UnsupportedOperationException();
+    	}
+    	final X509Certificate issuer = retrieveCA();
     	
-    	Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-    	GetNextCACert req = new GetNextCACert(issuer, caIdentifier);
+    	final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
+    	final GetNextCACert req = new GetNextCACert(issuer, caIdentifier);
     	
     	return trans.sendMessage(req);
     }
@@ -339,21 +339,17 @@ public class Client {
      * 
      * @return the certificate revocation list.
      * @throws IOException if any I/O error occurs.
+     * @throws PKIOperationFailureException 
      */
-    public List<X509CRL> getCrl() throws IOException {
-        X509Certificate ca = retrieveCA();
+    public List<X509CRL> getCrl() throws IOException, PKIOperationFailureException {
+        final X509Certificate ca = retrieveCA();
         
         if (supportsDistributionPoints()) {
         	return null;
         } else {
 	        // PKI Operation
-	        GetCRL req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
-	        CertStore store;
-			try {
-				store = createTransaction().performOperation(req);
-			} catch (PKIOperationFailureException e) {
-				throw new RuntimeException(e);
-			}
+	        final GetCRL req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
+	        final CertStore store = createTransaction().performOperation(req);
 	        
 	        try {
 				return getCRLs(store.getCRLs(null));
@@ -389,7 +385,7 @@ public class Client {
     	
     	final PKCSReq req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
     	final CertStore store = createTransaction().performOperation(req, interval);
-    	List<X509Certificate> certs;
+    	final List<X509Certificate> certs;
 		try {
 			certs = getCertificates(store.getCertificates(null));
 		} catch (CertStoreException e) {
@@ -407,17 +403,13 @@ public class Client {
      * @param serial the serial number of the certificate.
      * @return the certificate.
      * @throws IOException if any I/O error occurs.
+     * @throws PKIOperationFailureException 
      */
-    public X509Certificate getCert(BigInteger serial) throws IOException {
+    public X509Certificate getCert(BigInteger serial) throws IOException, PKIOperationFailureException {
     	final X509Certificate ca = retrieveCA();
 
-        PKIOperation<IssuerAndSerialNumber> req = new GetCert(ca.getIssuerX500Principal(), serial);
-        CertStore store;
-		try {
-			store = createTransaction().performOperation(req);
-		} catch (PKIOperationFailureException e) {
-			throw new RuntimeException(e);
-		}
+        final GetCert req = new GetCert(ca.getIssuerX500Principal(), serial);
+        final CertStore store = createTransaction().performOperation(req);
 
         try {
 			return getCertificates(store.getCertificates(null)).get(0);
@@ -427,7 +419,7 @@ public class Client {
     }
     
     private List<X509Certificate> getCertificates(Collection<? extends Certificate> certs) {
-    	List<X509Certificate> x509 = new ArrayList<X509Certificate>();
+    	final List<X509Certificate> x509 = new ArrayList<X509Certificate>();
     	
     	for (Certificate cert : certs) {
     		x509.add((X509Certificate) cert);
@@ -437,7 +429,7 @@ public class Client {
     }
     
     private List<X509CRL> getCRLs(Collection<? extends CRL> crls) {
-    	List<X509CRL> x509 = new ArrayList<X509CRL>();
+    	final List<X509CRL> x509 = new ArrayList<X509CRL>();
         
         for (CRL crl : crls) {
         	x509.add((X509CRL) crl);
