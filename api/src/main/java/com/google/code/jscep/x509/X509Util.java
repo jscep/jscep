@@ -23,12 +23,7 @@ package com.google.code.jscep.x509;
 
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SignatureException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
