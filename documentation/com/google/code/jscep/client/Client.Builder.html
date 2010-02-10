@@ -158,8 +158,8 @@ See Effective Java, Item 2
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#caDigest(byte[], java.lang.String)">caDigest</A></B>(byte[]&nbsp;caDigest,
-         <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#caFingerprint(byte[], java.lang.String)">caFingerprint</A></B>(byte[]&nbsp;fingerprint,
+              <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;hashAlgorithm)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -175,15 +175,16 @@ See Effective Java, Item 2
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#identity(java.security.cert.X509Certificate)">identity</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#callbackHandler(javax.security.auth.callback.CallbackHandler)">callbackHandler</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback">CallbackHandler</A>&nbsp;callbackHandler)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CallbackHandler to take FingerprintVerificationCallback</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#keyPair(java.security.KeyPair)">keyPair</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;keyPair)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#identity(java.security.cert.X509Certificate, java.security.KeyPair)">identity</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity,
+         <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;keyPair)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -192,14 +193,6 @@ See Effective Java, Item 2
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#proxy(java.net.Proxy)">proxy</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/net/Proxy.html?is-external=true" title="class or interface in java.net">Proxy</A>&nbsp;proxy)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#subject(javax.security.auth.x500.X500Principal)">subject</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/x500/X500Principal.html?is-external=true" title="class or interface in javax.security.auth.x500">X500Principal</A>&nbsp;subject)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -285,11 +278,11 @@ public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html"
 </DL>
 <HR>
 
-<A NAME="caDigest(byte[], java.lang.String)"><!-- --></A><H3>
-caDigest</H3>
+<A NAME="caFingerprint(byte[], java.lang.String)"><!-- --></A><H3>
+caFingerprint</H3>
 <PRE>
-public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>caDigest</B>(byte[]&nbsp;caDigest,
-                               <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm)</PRE>
+public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>caFingerprint</B>(byte[]&nbsp;fingerprint,
+                                    <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;hashAlgorithm)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -308,21 +301,11 @@ public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html"
 </DL>
 <HR>
 
-<A NAME="subject(javax.security.auth.x500.X500Principal)"><!-- --></A><H3>
-subject</H3>
-<PRE>
-public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>subject</B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/x500/X500Principal.html?is-external=true" title="class or interface in javax.security.auth.x500">X500Principal</A>&nbsp;subject)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="identity(java.security.cert.X509Certificate)"><!-- --></A><H3>
+<A NAME="identity(java.security.cert.X509Certificate, java.security.KeyPair)"><!-- --></A><H3>
 identity</H3>
 <PRE>
-public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>identity</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity)</PRE>
+public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>identity</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity,
+                               <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;keyPair)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -330,13 +313,18 @@ public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html"
 </DL>
 <HR>
 
-<A NAME="keyPair(java.security.KeyPair)"><!-- --></A><H3>
-keyPair</H3>
+<A NAME="callbackHandler(javax.security.auth.callback.CallbackHandler)"><!-- --></A><H3>
+callbackHandler</H3>
 <PRE>
-public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>keyPair</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;keyPair)</PRE>
+public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>callbackHandler</B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback">CallbackHandler</A>&nbsp;callbackHandler)</PRE>
 <DL>
+<DD>CallbackHandler to take FingerprintVerificationCallback
+ <p>
+ Used for Manual Authorization
+<P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>callbackHandler</CODE> - the callback handler.
+<DT><B>Returns:</B><DD></DL>
 </DD>
 </DL>
 <HR>
@@ -349,6 +337,7 @@ public <A HREF="../../../../../com/google/code/jscep/client/Client.html" title="
 <DL>
 <DD><DL>
 
+<DT><B>Returns:</B><DD>
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang">IllegalStateException</A></CODE></DL>
 </DD>

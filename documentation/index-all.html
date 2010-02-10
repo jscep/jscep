@@ -77,7 +77,7 @@ function windowTitle()
 <A NAME="skip-navbar_top"></A>
 <!-- ========= END OF TOP NAVBAR ========= -->
 
-<A HREF="#_A_">A</A> <A HREF="#_B_">B</A> <A HREF="#_C_">C</A> <A HREF="#_D_">D</A> <A HREF="#_E_">E</A> <A HREF="#_F_">F</A> <A HREF="#_G_">G</A> <A HREF="#_H_">H</A> <A HREF="#_I_">I</A> <A HREF="#_K_">K</A> <A HREF="#_L_">L</A> <A HREF="#_M_">M</A> <A HREF="#_N_">N</A> <A HREF="#_O_">O</A> <A HREF="#_P_">P</A> <A HREF="#_R_">R</A> <A HREF="#_S_">S</A> <A HREF="#_T_">T</A> <A HREF="#_U_">U</A> <A HREF="#_V_">V</A> <A HREF="#_X_">X</A> <HR>
+<A HREF="#_A_">A</A> <A HREF="#_B_">B</A> <A HREF="#_C_">C</A> <A HREF="#_D_">D</A> <A HREF="#_E_">E</A> <A HREF="#_F_">F</A> <A HREF="#_G_">G</A> <A HREF="#_H_">H</A> <A HREF="#_I_">I</A> <A HREF="#_L_">L</A> <A HREF="#_M_">M</A> <A HREF="#_N_">N</A> <A HREF="#_O_">O</A> <A HREF="#_P_">P</A> <A HREF="#_R_">R</A> <A HREF="#_S_">S</A> <A HREF="#_T_">T</A> <A HREF="#_U_">U</A> <A HREF="#_V_">V</A> <A HREF="#_X_">X</A> <HR>
 <A NAME="_A_"><!-- --></A><H2>
 <B>A</B></H2>
 <DL>
@@ -113,12 +113,15 @@ Constructor for class com.google.code.jscep.content.<A HREF="./com/google/code/j
 <DT><A HREF="./com/google/code/jscep/content/CaCertificateContentHandler.html" title="class in com.google.code.jscep.content"><B>CaCertificateContentHandler</B></A> - Class in <A HREF="./com/google/code/jscep/content/package-summary.html">com.google.code.jscep.content</A><DD>This class handles responses to <code>GetCACert</code> requests.<DT><A HREF="./com/google/code/jscep/content/CaCertificateContentHandler.html#CaCertificateContentHandler()"><B>CaCertificateContentHandler()</B></A> - 
 Constructor for class com.google.code.jscep.content.<A HREF="./com/google/code/jscep/content/CaCertificateContentHandler.html" title="class in com.google.code.jscep.content">CaCertificateContentHandler</A>
 <DD>&nbsp;
-<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#caDigest(byte[], java.lang.String)"><B>caDigest(byte[], String)</B></A> - 
+<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#caFingerprint(byte[], java.lang.String)"><B>caFingerprint(byte[], String)</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#caIdentifier(java.lang.String)"><B>caIdentifier(String)</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#callbackHandler(javax.security.auth.callback.CallbackHandler)"><B>callbackHandler(CallbackHandler)</B></A> - 
+Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
+<DD>CallbackHandler to take FingerprintVerificationCallback
 <DT><A HREF="./com/google/code/jscep/response/Capabilities.html" title="class in com.google.code.jscep.response"><B>Capabilities</B></A> - Class in <A HREF="./com/google/code/jscep/response/package-summary.html">com.google.code.jscep.response</A><DD>This class represents a set of capabilities for a particular
  SCEP server.<DT><A HREF="./com/google/code/jscep/response/Capabilities.html#Capabilities(com.google.code.jscep.response.Capability...)"><B>Capabilities(Capability...)</B></A> - 
 Constructor for class com.google.code.jscep.response.<A HREF="./com/google/code/jscep/response/Capabilities.html" title="class in com.google.code.jscep.response">Capabilities</A>
@@ -168,7 +171,7 @@ Static method in class com.google.code.jscep.transport.<A HREF="./com/google/cod
 <A NAME="_E_"><!-- --></A><H2>
 <B>E</B></H2>
 <DL>
-<DT><A HREF="./com/google/code/jscep/client/Client.html#enroll(char[], long)"><B>enroll(char[], long)</B></A> - 
+<DT><A HREF="./com/google/code/jscep/client/Client.html#enroll(char[])"><B>enroll(char[])</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
 <DD>Enrolls an identity into a PKI domain.
 <DT><A HREF="./com/google/code/jscep/server/ScepServlet.html#enrollCertificate(org.bouncycastle.jce.PKCS10CertificationRequest)"><B>enrollCertificate(PKCS10CertificationRequest)</B></A> - 
@@ -197,7 +200,12 @@ Static method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/js
 <DT><A HREF="./com/google/code/jscep/asn1/SCEPObjectIdentifiers.html#failInfo"><B>failInfo</B></A> - 
 Static variable in interface com.google.code.jscep.asn1.<A HREF="./com/google/code/jscep/asn1/SCEPObjectIdentifiers.html" title="interface in com.google.code.jscep.asn1">SCEPObjectIdentifiers</A>
 <DD>2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) failInfo(4)
-<DT><A HREF="./com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><B>FailInfo</B></A> - Enum in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>This class represents the SCEP <code>failInfo</code> attribute.<DT><A HREF="./com/google/code/jscep/util/HexUtil.html#format(byte[])"><B>format(byte[])</B></A> - 
+<DT><A HREF="./com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><B>FailInfo</B></A> - Enum in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>This class represents the SCEP <code>failInfo</code> attribute.<DT><A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html" title="class in com.google.code.jscep"><B>FingerprintVerificationCallback</B></A> - Class in <A HREF="./com/google/code/jscep/package-summary.html">com.google.code.jscep</A><DD>This class is used to obtain verification of the fingerprint of a CA
+ certificate.<DT><A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html#FingerprintVerificationCallback(byte[], java.lang.String)"><B>FingerprintVerificationCallback(byte[], String)</B></A> - 
+Constructor for class com.google.code.jscep.<A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html" title="class in com.google.code.jscep">FingerprintVerificationCallback</A>
+<DD>Construct a <code>FingerprintVerificationCallback</code> with the CA
+ fingerprint and hash algorithm used to generate it.
+<DT><A HREF="./com/google/code/jscep/util/HexUtil.html#format(byte[])"><B>format(byte[])</B></A> - 
 Static method in class com.google.code.jscep.util.<A HREF="./com/google/code/jscep/util/HexUtil.html" title="class in com.google.code.jscep.util">HexUtil</A>
 <DD>Converts the given byte array to a formatted hex
  string.
@@ -229,6 +237,9 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DT><A HREF="./com/google/code/jscep/util/AlgorithmDictionary.html#getAlgId(java.lang.String)"><B>getAlgId(String)</B></A> - 
 Static method in class com.google.code.jscep.util.<A HREF="./com/google/code/jscep/util/AlgorithmDictionary.html" title="class in com.google.code.jscep.util">AlgorithmDictionary</A>
 <DD>Returns an AlgorithmIdentifier to represent the provider algorithm.
+<DT><A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html#getAlgorithm()"><B>getAlgorithm()</B></A> - 
+Method in class com.google.code.jscep.<A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html" title="class in com.google.code.jscep">FingerprintVerificationCallback</A>
+<DD>Returns the hash algorithm used to construct the fingerprint.
 <DT><A HREF="./com/google/code/jscep/transaction/Nonce.html#getBytes()"><B>getBytes()</B></A> - 
 Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Nonce.html" title="class in com.google.code.jscep.transaction">Nonce</A>
 <DD>Returns the nonce byte array.
@@ -333,6 +344,12 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
  or <code>null</code> if no <A HREF="./com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A> attribute was found.
 <DT><A HREF="./com/google/code/jscep/PKIOperationFailureException.html#getFailInfo()"><B>getFailInfo()</B></A> - 
 Method in exception com.google.code.jscep.<A HREF="./com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A>
+<DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html#getFingerprint()"><B>getFingerprint()</B></A> - 
+Method in class com.google.code.jscep.<A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html" title="class in com.google.code.jscep">FingerprintVerificationCallback</A>
+<DD>Returns the fingerprint of the CA certificate.
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#getId()"><B>getId()</B></A> - 
+Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/pkcs7/MessageData.html#getInstance(org.bouncycastle.asn1.DEREncodable)"><B>getInstance(DEREncodable)</B></A> - 
 Static method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7">MessageData</A>
@@ -495,7 +512,7 @@ Method in enum com.google.code.jscep.transaction.<A HREF="./com/google/code/jsce
 <A NAME="_I_"><!-- --></A><H2>
 <B>I</B></H2>
 <DL>
-<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#identity(java.security.cert.X509Certificate)"><B>identity(X509Certificate)</B></A> - 
+<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#identity(java.security.cert.X509Certificate, java.security.KeyPair)"><B>identity(X509Certificate, KeyPair)</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/transaction/InvalidNonceException.html" title="class in com.google.code.jscep.transaction"><B>InvalidNonceException</B></A> - Exception in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>This class represents the error condition when an invalid
@@ -527,16 +544,11 @@ Constructor for class com.google.code.jscep.asn1.<A HREF="./com/google/code/jsce
 <DT><A HREF="./com/google/code/jscep/asn1/IssuerAndSubject.html#IssuerAndSubject(org.bouncycastle.asn1.x509.X509Name, org.bouncycastle.asn1.x509.X509Name)"><B>IssuerAndSubject(X509Name, X509Name)</B></A> - 
 Constructor for class com.google.code.jscep.asn1.<A HREF="./com/google/code/jscep/asn1/IssuerAndSubject.html" title="class in com.google.code.jscep.asn1">IssuerAndSubject</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html#isVerified()"><B>isVerified()</B></A> - 
+Method in class com.google.code.jscep.<A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html" title="class in com.google.code.jscep">FingerprintVerificationCallback</A>
+<DD>Returns the outcome of the callback.
 <DT><A HREF="./com/google/code/jscep/transaction/NonceQueue.html#iterator()"><B>iterator()</B></A> - 
 Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/NonceQueue.html" title="class in com.google.code.jscep.transaction">NonceQueue</A>
-<DD>&nbsp;
-</DL>
-<HR>
-<A NAME="_K_"><!-- --></A><H2>
-<B>K</B></H2>
-<DL>
-<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#keyPair(java.security.KeyPair)"><B>keyPair(KeyPair)</B></A> - 
-Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
 <DD>&nbsp;
 </DL>
 <HR>
@@ -730,6 +742,9 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html#setTransactionId(com.google.code.jscep.transaction.TransactionId)"><B>setTransactionId(TransactionId)</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html" title="class in com.google.code.jscep.pkcs7">PkiMessageGenerator</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html#setVerified(boolean)"><B>setVerified(boolean)</B></A> - 
+Method in class com.google.code.jscep.<A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html" title="class in com.google.code.jscep">FingerprintVerificationCallback</A>
+<DD>Sets the outcome of the callback.
 <DT><A HREF="./com/google/code/jscep/pkcs7/SignedDataGenerator.html" title="class in com.google.code.jscep.pkcs7"><B>SignedDataGenerator</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>This class is used for generating degenerate (certificates and CRLs only) 
  <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A> instances.<DT><A HREF="./com/google/code/jscep/pkcs7/SignedDataGenerator.html#SignedDataGenerator()"><B>SignedDataGenerator()</B></A> - 
 Constructor for class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/SignedDataGenerator.html" title="class in com.google.code.jscep.pkcs7">SignedDataGenerator</A>
@@ -741,9 +756,6 @@ Constructor for class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jsc
 <DT><A HREF="./com/google/code/jscep/pkcs7/SignedDataUtil.html" title="class in com.google.code.jscep.pkcs7"><B>SignedDataUtil</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>This class contains utility methods for manipulating SingedData
  objects.<DT><A HREF="./com/google/code/jscep/transaction/NonceQueue.html#size()"><B>size()</B></A> - 
 Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/NonceQueue.html" title="class in com.google.code.jscep.transaction">NonceQueue</A>
-<DD>&nbsp;
-<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#subject(javax.security.auth.x500.X500Principal)"><B>subject(X500Principal)</B></A> - 
-Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
 <DD>&nbsp;
 </DL>
 <HR>
@@ -898,7 +910,7 @@ the order they are declared.
 <DL>
 <DT><A HREF="./com/google/code/jscep/x509/X509Util.html" title="class in com.google.code.jscep.x509"><B>X509Util</B></A> - Class in <A HREF="./com/google/code/jscep/x509/package-summary.html">com.google.code.jscep.x509</A><DD>This class is used for generating ephemeral certificates.</DL>
 <HR>
-<A HREF="#_A_">A</A> <A HREF="#_B_">B</A> <A HREF="#_C_">C</A> <A HREF="#_D_">D</A> <A HREF="#_E_">E</A> <A HREF="#_F_">F</A> <A HREF="#_G_">G</A> <A HREF="#_H_">H</A> <A HREF="#_I_">I</A> <A HREF="#_K_">K</A> <A HREF="#_L_">L</A> <A HREF="#_M_">M</A> <A HREF="#_N_">N</A> <A HREF="#_O_">O</A> <A HREF="#_P_">P</A> <A HREF="#_R_">R</A> <A HREF="#_S_">S</A> <A HREF="#_T_">T</A> <A HREF="#_U_">U</A> <A HREF="#_V_">V</A> <A HREF="#_X_">X</A> 
+<A HREF="#_A_">A</A> <A HREF="#_B_">B</A> <A HREF="#_C_">C</A> <A HREF="#_D_">D</A> <A HREF="#_E_">E</A> <A HREF="#_F_">F</A> <A HREF="#_G_">G</A> <A HREF="#_H_">H</A> <A HREF="#_I_">I</A> <A HREF="#_L_">L</A> <A HREF="#_M_">M</A> <A HREF="#_N_">N</A> <A HREF="#_O_">O</A> <A HREF="#_P_">P</A> <A HREF="#_R_">R</A> <A HREF="#_S_">S</A> <A HREF="#_T_">T</A> <A HREF="#_U_">U</A> <A HREF="#_V_">V</A> <A HREF="#_X_">X</A> 
 
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
 <A NAME="navbar_bottom"><!-- --></A>
