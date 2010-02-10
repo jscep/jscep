@@ -526,6 +526,11 @@ public class Client {
     	}
     }
     
+    /**
+     * Basic CallbackHandler
+     * 
+     * @author David Grant
+     */
     private static class FingerprintCallbackHandler implements CallbackHandler {
 		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 			for (int i = 0; i < callbacks.length; i++) {
