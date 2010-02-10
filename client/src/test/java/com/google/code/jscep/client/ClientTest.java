@@ -40,7 +40,7 @@ public class ClientTest {
 
 		final Client.Builder builder = new Client.Builder();
 		builder.url(new URL("https://engtest66-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe"));
-		builder.caDigest(new byte[] {-93, -44, 23, 25, -106, 116, 80, -113, 36, 23, 76, -89, -36, -18, 89, -59}, "MD5");
+		builder.caFingerprint(new byte[] {-93, -44, 23, 25, -106, 116, 80, -113, 36, 23, 76, -89, -36, -18, 89, -59}, "MD5");
 		builder.identity(identity, keyPair);
 		builder.caIdentifier("foo");
 		

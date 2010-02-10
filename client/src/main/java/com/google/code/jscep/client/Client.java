@@ -41,15 +41,14 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.x500.X500Principal;
 
 import com.google.code.jscep.FingerprintVerificationCallback;
 import com.google.code.jscep.PKIOperationFailureException;
@@ -64,7 +63,6 @@ import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
-import com.google.code.jscep.x509.X509Util;
 
 /**
  * SCEP Client
@@ -78,24 +76,37 @@ public class Client {
     private X509Certificate identity;		// Optional
     private X509Certificate ca;
     
-    private byte[] caDigest;				// Required
-    private String digestAlgorithm;			// Required
+    private byte[] fingerprint;				// Required
+    private String hashAlgorithm;			// Required
     // OR
     private CallbackHandler callbackHandler; // Optional
     
     private Client(Builder builder) throws IllegalStateException {
     	url = builder.url;
     	proxy = builder.proxy;
-    	caDigest = builder.caDigest;
-    	digestAlgorithm = builder.digestAlgorithm;
     	caIdentifier = builder.caIdentifier;
-    	callbackHandler = builder.callbackHandler;
+    	// This is used for communicating with the SCEP server.  It SHOULD
+    	// NOT necessarily correspond to what we're going to enroll.
     	keyPair = builder.keyPair;
     	identity = builder.identity;
+    	// These fields are used for CA authentication
+    	// We can either directly use the CA certificate...
     	ca = builder.ca;
+    	// or we can use the fingerprints (pre-provisioning)
+    	fingerprint = builder.fingerprint;
+    	hashAlgorithm = builder.hashAlgorithm;
+    	// Used to present to the end-user (out-of-band)
+    	callbackHandler = builder.callbackHandler;
     	
-    	if (callbackHandler == null) {
-    		callbackHandler = new FingerprintCallbackHandler();
+    	// Offering the use of multiple hash algorithms for the
+    	// certificate fingerprint just makes things more complicated for
+    	// pre-provisioning.  Perhaps we should settle on a definite hash?
+
+    	if (callbackHandler != null) {
+    		// Manual Authorization
+    	} else {
+    		// Automatic Authorization
+    		callbackHandler = new FingerprintCallbackHandler(fingerprint, hashAlgorithm);
     	}
     	
     	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-5.1
@@ -103,16 +114,16 @@ public class Client {
     		throw new IllegalStateException("Invalid URL");
     	}
     	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
-    	if (ca == null && caDigest == null) {
+    	if (ca == null && fingerprint == null) {
     		throw new IllegalStateException("Need CA OR CA Digest.");
     	}
-    	if (ca != null && caDigest != null) {
+    	if (ca != null && fingerprint != null) {
     		throw new IllegalStateException("Need CA OR CA Digest.");
     	}
     	
     	// Set Defaults
-    	if (digestAlgorithm == null) {
-    		digestAlgorithm = "MD5";
+    	if (hashAlgorithm == null) {
+    		hashAlgorithm = "MD5";
     	}
     	if (proxy == null) {
     		proxy = Proxy.NO_PROXY;
@@ -163,16 +174,6 @@ public class Client {
     	try {
 			return KeyPairGenerator.getInstance("RSA").genKeyPair();
 		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
-    }
-    
-    private X509Certificate createCertificate(X500Principal subject) {
-    	LOGGER.fine("Creating Self-Signed Certificate for " + subject);
-    	
-    	try {
-    		return X509Util.createEphemeralCertificate(subject, keyPair);
-		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
     }
@@ -228,17 +229,14 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public List<X509Certificate> getCaCertificate() throws IOException {
+    	LOGGER.entering(getClass().getName(), "getCaCertificate");
     	final GetCACert req = new GetCACert(caIdentifier);
         final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
-        List<X509Certificate> certs = trans.sendMessage(req);
-        try {
-			verifyCA(selectCA(certs));
-		} catch (CertificateEncodingException e) {
-			// TODO
-			throw new RuntimeException(e);
-		}
+        final List<X509Certificate> certs = trans.sendMessage(req);
+        verifyCA(selectCA(certs));
         
+        LOGGER.exiting(getClass().getName(), "getCaCertificate", certs);
         return certs;
     }
     
@@ -247,21 +245,27 @@ public class Client {
     	return md.digest(cert.getEncoded());
     }
     
-    private boolean verifyCA(X509Certificate cert) throws CertificateEncodingException {
-    	byte[] fingerprint;
+    private void verifyCA(X509Certificate cert) throws IOException {
+    	final String hashAlgorithm = "MD5";
+    	final byte[] fingerprint;
     	try {
-			fingerprint = createFingerprint(cert, "MD5");
+			fingerprint = createFingerprint(cert, hashAlgorithm);
 		} catch (NoSuchAlgorithmException e) {
 			// TODO
 			throw new RuntimeException(e);
-		}
-		FingerprintVerificationCallback callback = new FingerprintVerificationCallback(fingerprint, "MD5");
-		try {
-			callbackHandler.handle(new Callback[] {callback});
-		} catch (Exception e) {
+		} catch (CertificateEncodingException e) {
+			// TODO
 			throw new RuntimeException(e);
 		}
-		return callback.isVerified();
+		FingerprintVerificationCallback callback = new FingerprintVerificationCallback(fingerprint, hashAlgorithm);
+		try {
+			callbackHandler.handle(new Callback[] {callback});
+		} catch (UnsupportedCallbackException e) {
+			throw new RuntimeException(e);
+		}
+		if (callback.isVerified() == false) {
+			throw new IOException("CA certificate fingerprint could not be verified (using " + hashAlgorithm + ").");
+		}
     }
     
     /**
@@ -399,7 +403,7 @@ public class Client {
     		
     	}
     	
-    	final PKCSReq req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
+    	final PKCSReq req = new PKCSReq(keyPair, identity, hashAlgorithm, password);
     	final CertStore store = createTransaction().performOperation(req, 20L);
     	final List<X509Certificate> certs;
 		try {
@@ -462,10 +466,9 @@ public class Client {
     public static class Builder {
     	private URL url;
     	private Proxy proxy = Proxy.NO_PROXY;
-    	private byte[] caDigest;
-    	private String digestAlgorithm;
+    	private byte[] fingerprint;
+    	private String hashAlgorithm;
     	private String caIdentifier;
-    	private X500Principal subject;
     	private X509Certificate identity;
     	private KeyPair keyPair;
     	private X509Certificate ca;
@@ -489,9 +492,9 @@ public class Client {
     		return this;
     	}
     	
-    	public Builder caDigest(byte[] caDigest, String digestAlgorithm) {
-    		this.caDigest = caDigest;
-    		this.digestAlgorithm = digestAlgorithm;
+    	public Builder caFingerprint(byte[] fingerprint, String hashAlgorithm) {
+    		this.fingerprint = fingerprint;
+    		this.hashAlgorithm = hashAlgorithm;
     		
     		return this;
     	}
@@ -511,6 +514,8 @@ public class Client {
     	
     	/**
     	 * CallbackHandler to take FingerprintVerificationCallback
+    	 * <p>
+    	 * Used for Manual Authorization
     	 * 
     	 * @param callbackHandler the callback handler.
     	 * @return
@@ -521,6 +526,11 @@ public class Client {
     		return this;
     	}
     	
+    	/**
+    	 * 
+    	 * @return
+    	 * @throws IllegalStateException
+    	 */
     	public Client build() throws IllegalStateException {
     		return new Client(this);
     	}
@@ -532,12 +542,29 @@ public class Client {
      * @author David Grant
      */
     private static class FingerprintCallbackHandler implements CallbackHandler {
+    	private final byte[] fingerprint;
+    	private final String hashAlgorithm;
+    	
+    	public FingerprintCallbackHandler(byte[] fingerprint, String hashAlgorithm) {
+    		this.fingerprint = fingerprint;
+    		this.hashAlgorithm = hashAlgorithm;
+    	}
+    	
 		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 			for (int i = 0; i < callbacks.length; i++) {
 				if (callbacks[i] instanceof FingerprintVerificationCallback) {
-					// TODO
 					final FingerprintVerificationCallback callback = (FingerprintVerificationCallback) callbacks[i];
-					callback.setVerified(true);
+					
+					if (callback.getAlgorithm().equals(hashAlgorithm) == false) {
+						// We didn't supply this algorithm.
+						callback.setVerified(false);
+					} else if (Arrays.equals(callback.getFingerprint(), fingerprint) == false) {
+						// The fingerprints don't match.
+						callback.setVerified(false);
+					} else {
+						// OK!
+						callback.setVerified(true);
+					}
 				} else {
 					throw new UnsupportedCallbackException(callbacks[i]);
 				}
