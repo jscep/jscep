@@ -61,6 +61,7 @@ public class Transaction {
 	private final X509Certificate issuer;
 	private final X509Certificate subject;
 	private final String digestAlgorithm;
+	private final TransactionId transId;
 
 	Transaction(Transport transport, KeyPair keyPair, PkiMessageGenerator msgGenerator, String digestAlgorithm, X509Certificate issuer, X509Certificate subject) {
 		this.transport = transport;
@@ -69,6 +70,11 @@ public class Transaction {
 		this.msgGenerator = msgGenerator;
 		this.issuer = issuer;
 		this.subject = subject;
+		this.transId = TransactionId.createTransactionId(keyPair, digestAlgorithm);
+	}
+	
+	public TransactionId getId() {
+		return transId;
 	}
 
 	/**
@@ -83,7 +89,7 @@ public class Transaction {
 		
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(Nonce.nextNonce());
-		msgGenerator.setTransactionId(TransactionId.createTransactionId(keyPair, digestAlgorithm));
+		msgGenerator.setTransactionId(transId);
 		msgGenerator.setMessageData(MessageData.getInstance(op.getMessage()));
 		
 		PkiMessage req = msgGenerator.generate();

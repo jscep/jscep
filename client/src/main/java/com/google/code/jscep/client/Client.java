@@ -29,6 +29,7 @@ import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -36,6 +37,7 @@ import java.security.cert.CRL;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -43,8 +45,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.ConfirmationCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 
+import com.google.code.jscep.FingerprintVerificationCallback;
 import com.google.code.jscep.PKIOperationFailureException;
 import com.google.code.jscep.operations.GetCRL;
 import com.google.code.jscep.operations.GetCert;
@@ -65,14 +72,16 @@ import com.google.code.jscep.x509.X509Util;
 public class Client {
 	private static Logger LOGGER = LoggingUtil.getLogger(Client.class);
     private URL url;						// Required
-    private byte[] caDigest;				// Required
-    private String digestAlgorithm;			// Optional
     private Proxy proxy;					// Optional
     private String caIdentifier;			// Optional
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
-    private X500Principal subject;
     private X509Certificate ca;
+    
+    private byte[] caDigest;				// Required
+    private String digestAlgorithm;			// Required
+    // OR
+    private CallbackHandler callbackHandler; // Optional
     
     private Client(Builder builder) throws IllegalStateException {
     	url = builder.url;
@@ -80,10 +89,14 @@ public class Client {
     	caDigest = builder.caDigest;
     	digestAlgorithm = builder.digestAlgorithm;
     	caIdentifier = builder.caIdentifier;
+    	callbackHandler = builder.callbackHandler;
     	keyPair = builder.keyPair;
     	identity = builder.identity;
-    	subject = builder.subject;
     	ca = builder.ca;
+    	
+    	if (callbackHandler == null) {
+    		callbackHandler = new FingerprintCallbackHandler();
+    	}
     	
     	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-5.1
     	if (isValid(url) == false) {
@@ -95,13 +108,6 @@ public class Client {
     	}
     	if (ca != null && caDigest != null) {
     		throw new IllegalStateException("Need CA OR CA Digest.");
-    	}
-    	// Must have only one way of obtaining an identity.
-    	if (identity == null && subject == null) {
-    		throw new IllegalStateException("Need Identity OR Subject");
-    	}
-    	if (identity != null && subject != null) {
-    		throw new IllegalStateException("Need Identity OR Subject");
     	}
     	
     	// Set Defaults
@@ -117,34 +123,10 @@ public class Client {
     	if (isValid(keyPair) == false) {
     		throw new IllegalStateException("Invalid KeyPair");
     	}
-    	if (identity == null) {
-    		identity = createCertificate(subject);
-    	}
     	
 		// If we're replacing a certificate, we must have the same key pair.
 		if (identity.getPublicKey().equals(keyPair.getPublic()) == false) {
 			throw new IllegalStateException("Public Key Mismatch");
-		}
-		
-		// Check renewal
-		if (subject == null) {
-			if (X509Util.isSelfSigned(identity) == false) {
-				if (identity.getIssuerX500Principal().equals(ca.getSubjectX500Principal())) {
-					LOGGER.fine("Certificate is signed by CA, so this is a renewal.");
-				} else {
-					LOGGER.fine("Certificate is signed by another CA, bit this is still a renewal.");
-				}
-				try {
-					LOGGER.fine("Checking if the CA supports certificate renewal...");
-					if (getCapabilities().isRenewalSupported() == false) {
-						throw new IllegalStateException("Your CA does not support renewal");
-					}
-				} catch (IOException e) {
-					throw new IllegalStateException("Your CA does not support renewal");
-				}
-			} else {
-				LOGGER.fine("Certificate is self-signed.  This is not a renewal.");
-			}
 		}
     }
 
@@ -249,7 +231,37 @@ public class Client {
     	final GetCACert req = new GetCACert(caIdentifier);
         final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
-        return trans.sendMessage(req);
+        List<X509Certificate> certs = trans.sendMessage(req);
+        try {
+			verifyCA(selectCA(certs));
+		} catch (CertificateEncodingException e) {
+			// TODO
+			throw new RuntimeException(e);
+		}
+        
+        return certs;
+    }
+    
+    private byte[] createFingerprint(X509Certificate cert, String hashAlgorithm) throws NoSuchAlgorithmException, CertificateEncodingException {
+    	MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
+    	return md.digest(cert.getEncoded());
+    }
+    
+    private boolean verifyCA(X509Certificate cert) throws CertificateEncodingException {
+    	byte[] fingerprint;
+    	try {
+			fingerprint = createFingerprint(cert, "MD5");
+		} catch (NoSuchAlgorithmException e) {
+			// TODO
+			throw new RuntimeException(e);
+		}
+		FingerprintVerificationCallback callback = new FingerprintVerificationCallback(fingerprint, "MD5");
+		try {
+			callbackHandler.handle(new Callback[] {callback});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return callback.isVerified();
     }
     
     /**
@@ -380,11 +392,15 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      * @throws PKIOperationFailureException 
      */
-    public List<X509Certificate> enroll(char[] password, long interval) throws IOException, PKIOperationFailureException {
-    	LOGGER.entering(getClass().getName(), "enroll", new Object[] {password, interval});
+    public List<X509Certificate> enroll(char[] password) throws IOException, PKIOperationFailureException {
+    	LOGGER.entering(getClass().getName(), "enroll", new Object[] {password});
+    	
+    	if (getCapabilities().isRenewalSupported() == false) {
+    		
+    	}
     	
     	final PKCSReq req = new PKCSReq(keyPair, identity, digestAlgorithm, password);
-    	final CertStore store = createTransaction().performOperation(req, interval);
+    	final CertStore store = createTransaction().performOperation(req, 20L);
     	final List<X509Certificate> certs;
 		try {
 			certs = getCertificates(store.getCertificates(null));
@@ -453,6 +469,7 @@ public class Client {
     	private X509Certificate identity;
     	private KeyPair keyPair;
     	private X509Certificate ca;
+    	private CallbackHandler callbackHandler;
     	
     	public Builder url(URL url) {
     		this.url = url;
@@ -485,20 +502,21 @@ public class Client {
     		return this;
     	}
     	
-    	public Builder subject(X500Principal subject) {
-    		this.subject = subject;
-    		
-    		return this;
-    	}
-    	
-    	public Builder identity(X509Certificate identity) {
+    	public Builder identity(X509Certificate identity, KeyPair keyPair) {
     		this.identity = identity;
+    		this.keyPair = keyPair;
     		
     		return this;
     	}
     	
-    	public Builder keyPair(KeyPair keyPair) {
-    		this.keyPair = keyPair;
+    	/**
+    	 * CallbackHandler to take FingerprintVerificationCallback
+    	 * 
+    	 * @param callbackHandler the callback handler.
+    	 * @return
+    	 */
+    	public Builder callbackHandler(CallbackHandler callbackHandler) {
+    		this.callbackHandler = callbackHandler;
     		
     		return this;
     	}
@@ -506,5 +524,19 @@ public class Client {
     	public Client build() throws IllegalStateException {
     		return new Client(this);
     	}
+    }
+    
+    private static class FingerprintCallbackHandler implements CallbackHandler {
+		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+			for (int i = 0; i < callbacks.length; i++) {
+				if (callbacks[i] instanceof FingerprintVerificationCallback) {
+					// TODO
+					final FingerprintVerificationCallback callback = (FingerprintVerificationCallback) callbacks[i];
+					callback.setVerified(true);
+				} else {
+					throw new UnsupportedCallbackException(callbacks[i]);
+				}
+			}
+		}
     }
 }
