@@ -276,7 +276,8 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
 <DT><B>Returns:</B><DD>the certificate revocation list.
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
-<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE></DL>
+<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE>
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/UnsupportedOperationException.html?is-external=true" title="class or interface in java.lang">UnsupportedOperationException</A></CODE> - if the CA certificate supports CRL distribution points.</DL>
 </DD>
 </DL>
 <HR>
@@ -295,11 +296,12 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
  <p>
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>password</CODE> - the enrollment password.<DD><CODE>interval</CODE> - the period to wait between polls.
+<DT><B>Parameters:</B><DD><CODE>password</CODE> - the enrollment password.
 <DT><B>Returns:</B><DD>the enrolled certificate.
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
-<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE></DL>
+<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE> - if the operation failed.
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/UnsupportedOperationException.html?is-external=true" title="class or interface in java.lang">UnsupportedOperationException</A></CODE> - if the server does not support renewal and the certificate is not self-signed.</DL>
 </DD>
 </DL>
 <HR>

@@ -65,6 +65,7 @@ import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
+import com.google.code.jscep.x509.X509Util;
 
 /**
  * This class represents a SCEP client, or Requester.
@@ -346,6 +347,7 @@ public class Client {
      * @return the certificate revocation list.
      * @throws IOException if any I/O error occurs.
      * @throws PKIOperationFailureException 
+     * @throws UnsupportedOperationException if the CA certificate supports CRL distribution points.
      */
     public List<X509CRL> getCrl() throws IOException, PKIOperationFailureException {
         final X509Certificate ca = retrieveCA();
@@ -382,16 +384,18 @@ public class Client {
      * <p>
      * 
      * @param password the enrollment password.
-     * @param interval the period to wait between polls.
      * @return the enrolled certificate.
      * @throws IOException if any I/O error occurs.
-     * @throws PKIOperationFailureException 
+     * @throws PKIOperationFailureException if the operation failed.
+     * @throws UnsupportedOperationException if the server does not support renewal and the certificate is not self-signed. 
      */
     public List<X509Certificate> enroll(char[] password) throws IOException, PKIOperationFailureException {
     	LOGGER.entering(getClass().getName(), "enroll", new Object[] {password});
     	
     	if (getCapabilities().isRenewalSupported() == false) {
-    		
+    		if (X509Util.isSelfSigned(identity) == false) {
+    			throw new UnsupportedOperationException("Server does not support renewal.");
+    		}
     	}
     	
     	final PKCSReq req = new PKCSReq(keyPair, identity, hashAlgorithm, password);
