@@ -103,7 +103,49 @@ Class Client.Builder</H2>
 </PRE>
 
 <P>
-See Effective Java, Item 2
+This class is used for building immutable instances of the <code>Client</code>
+ class.  
+ <p>
+ Instances of this class can be configured by invoking the methods
+ declared below.  Following configuration, the <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#build()"><CODE>build()</CODE></A> method should
+ be invoked to retrieve the new <code>Client</code> instance.
+ <p>
+ In order to create a valid <code>Client</code>, adopters must adhere to the
+ following pre-conditions.  The client must be able to...
+ <ul>
+     <li>communicate with the SCEP server using:
+         <ul>
+             <li><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#url(java.net.URL)"><CODE>url(URL)</CODE></A>
+             <li><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#proxy(java.net.Proxy)"><CODE>proxy(Proxy)</CODE></A> (if required)
+         </ul>
+     <li>identify itself using:
+         <ul>
+             <li><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#identity(java.security.cert.X509Certificate, java.security.KeyPair)"><CODE>identity(X509Certificate, KeyPair)</CODE></A>
+         </ul>
+     <li>verify the CA certificate fingerprint using either:
+         <ul>
+             <li><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#callbackHandler(javax.security.auth.callback.CallbackHandler)"><CODE>callbackHandler(CallbackHandler)</CODE></A> OR
+             <li><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#caFingerprint(byte[], java.lang.String)"><CODE>caFingerprint(byte[], String)</CODE></A>
+         </ul>
+     <li>select the correct CA profile, if supported, using:
+         <ul>
+             <li><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#caIdentifier(java.lang.String)"><CODE>caIdentifier(String)</CODE></A>
+         </ul>
+ </ul>
+ <p>
+ If an instance of this class is not correctly configured according to the
+ above pre-conditions, the <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#build()"><CODE>build()</CODE></A> method will throw an 
+ <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang"><CODE>IllegalStateException</CODE></A>.
+ <p>
+ Example Usage:
+ <pre>
+ URL url = new URL("http://www.example.org/scep/pkiclient.exe");
+ X509Certificate id = ...;
+ KeyPair pair = ...;
+ CallbackHandler handler = ...;
+ 
+ Client client = new Client.Builder().url(<b>url</b>).identity(<b>id</b>, <b>pair</b>).callbackHandler(<b>handler</b>).build();
+ </pre>
 <P>
 
 <P>
@@ -145,15 +187,7 @@ See Effective Java, Item 2
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#build()">build</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#ca(java.security.cert.X509Certificate)">ca</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;ca)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructs a new immutable instance of <code>Client</code>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -162,7 +196,7 @@ See Effective Java, Item 2
               <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;hashAlgorithm)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the expected CA fingerprint.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -170,7 +204,7 @@ See Effective Java, Item 2
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#caIdentifier(java.lang.String)">caIdentifier</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;caIdentifier)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the CA identity string.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -178,7 +212,8 @@ See Effective Java, Item 2
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#callbackHandler(javax.security.auth.callback.CallbackHandler)">callbackHandler</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback">CallbackHandler</A>&nbsp;callbackHandler)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CallbackHandler to take FingerprintVerificationCallback</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets a <A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback"><CODE>CallbackHandler</CODE></A> to use for handling the fingerprint
+ verification callback.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -187,7 +222,7 @@ See Effective Java, Item 2
          <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;keyPair)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the identity of the SCEP client.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -195,7 +230,7 @@ See Effective Java, Item 2
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#proxy(java.net.Proxy)">proxy</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/net/Proxy.html?is-external=true" title="class or interface in java.net">Proxy</A>&nbsp;proxy)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the <A HREF="http://java.sun.com/javase/6/docs/api/java/net/Proxy.html?is-external=true" title="class or interface in java.net"><CODE>Proxy</CODE></A> needed to access the SCEP server, if any.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -203,7 +238,7 @@ See Effective Java, Item 2
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#url(java.net.URL)">url</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</A>&nbsp;url)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the <A HREF="http://java.sun.com/javase/6/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net"><CODE>URL</CODE></A> of the SCEP server.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -250,8 +285,16 @@ url</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>url</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</A>&nbsp;url)</PRE>
 <DL>
+<DD>Sets the <A HREF="http://java.sun.com/javase/6/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net"><CODE>URL</CODE></A> of the SCEP server.
+ <p>
+ The URL should be of the following form:
+ <pre>
+ http(s?)://&lt;host&gt;[:&lt;port&gt;]/[&lt;path&gt;]pkiclient.exe
+ </pre>
+<P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>url</CODE> - the URL.
+<DT><B>Returns:</B><DD>the builder.</DL>
 </DD>
 </DL>
 <HR>
@@ -261,19 +304,11 @@ proxy</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>proxy</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/net/Proxy.html?is-external=true" title="class or interface in java.net">Proxy</A>&nbsp;proxy)</PRE>
 <DL>
+<DD>Sets the <A HREF="http://java.sun.com/javase/6/docs/api/java/net/Proxy.html?is-external=true" title="class or interface in java.net"><CODE>Proxy</CODE></A> needed to access the SCEP server, if any.
+<P>
 <DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="ca(java.security.cert.X509Certificate)"><!-- --></A><H3>
-ca</H3>
-<PRE>
-public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>ca</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;ca)</PRE>
-<DL>
-<DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>proxy</CODE> - the Proxy.
+<DT><B>Returns:</B><DD>the builder.</DL>
 </DD>
 </DL>
 <HR>
@@ -284,8 +319,14 @@ caFingerprint</H3>
 public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>caFingerprint</B>(byte[]&nbsp;fingerprint,
                                     <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;hashAlgorithm)</PRE>
 <DL>
+<DD>Sets the expected CA fingerprint.
+ <p>
+ If the fingerprint is not known, the <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#callbackHandler(javax.security.auth.callback.CallbackHandler)"><CODE>callbackHandler(CallbackHandler)</CODE></A> 
+ method MUST be used instead.
+<P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>fingerprint</CODE> - the expected fingerprint.<DD><CODE>hashAlgorithm</CODE> - the algorithm used to create the fingerprint.
+<DT><B>Returns:</B><DD>the builder.</DL>
 </DD>
 </DL>
 <HR>
@@ -295,8 +336,13 @@ caIdentifier</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>caIdentifier</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;caIdentifier)</PRE>
 <DL>
+<DD>Sets the CA identity string.
+ <p>
+ This property should be set if the CA supports multiple profiles.
+<P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>caIdentifier</CODE> - the CA identity string.
+<DT><B>Returns:</B><DD>the builder.</DL>
 </DD>
 </DL>
 <HR>
@@ -307,8 +353,14 @@ identity</H3>
 public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>identity</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;identity,
                                <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;keyPair)</PRE>
 <DL>
+<DD>Sets the identity of the SCEP client.
+ <p>
+ The arguments provided to this method represent the identity of the
+ SCEP client, and not necessarily the entity to be enrolled.
+<P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>identity</CODE> - the client identity.<DD><CODE>keyPair</CODE> - the RSA keypair of the client.
+<DT><B>Returns:</B><DD>the builder.</DL>
 </DD>
 </DL>
 <HR>
@@ -318,13 +370,19 @@ callbackHandler</H3>
 <PRE>
 public <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A> <B>callbackHandler</B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback">CallbackHandler</A>&nbsp;callbackHandler)</PRE>
 <DL>
-<DD>CallbackHandler to take FingerprintVerificationCallback
+<DD>Sets a <A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback"><CODE>CallbackHandler</CODE></A> to use for handling the fingerprint
+ verification callback.
  <p>
- Used for Manual Authorization
+ This method should be used if the CA fingerprint is not known at the 
+ time of client creation.  If a fingerprint is already known, the
+ <A HREF="../../../../../com/google/code/jscep/client/Client.Builder.html#caFingerprint(byte[], java.lang.String)"><CODE>caFingerprint(byte[], String)</CODE></A> method should be used instead.
+ <p>
+ The provided <A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback"><CODE>CallbackHandler</CODE></A> MUST be able to handle the 
+ <A HREF="../../../../../com/google/code/jscep/FingerprintVerificationCallback.html" title="class in com.google.code.jscep"><CODE>FingerprintVerificationCallback</CODE></A> callback.
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>callbackHandler</CODE> - the callback handler.
-<DT><B>Returns:</B><DD></DL>
+<DT><B>Returns:</B><DD>the builder.</DL>
 </DD>
 </DL>
 <HR>
@@ -335,11 +393,13 @@ build</H3>
 public <A HREF="../../../../../com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A> <B>build</B>()
              throws <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang">IllegalStateException</A></PRE>
 <DL>
+<DD>Constructs a new immutable instance of <code>Client</code>.
+<P>
 <DD><DL>
 
-<DT><B>Returns:</B><DD>
+<DT><B>Returns:</B><DD>a new instance of <code>Client</code>
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang">IllegalStateException</A></CODE></DL>
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/IllegalStateException.html?is-external=true" title="class or interface in java.lang">IllegalStateException</A></CODE> - if any pre-conditions have been violated.</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

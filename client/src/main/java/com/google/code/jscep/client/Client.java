@@ -43,7 +43,9 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
@@ -65,16 +67,16 @@ import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * SCEP Client
+ * This class represents a SCEP client, or Requester.
  */
 public class Client {
 	private static Logger LOGGER = LoggingUtil.getLogger(Client.class);
+	private Set<X509Certificate> verified = new HashSet<X509Certificate>(1);
     private URL url;						// Required
     private Proxy proxy;					// Optional
     private String caIdentifier;			// Optional
     private KeyPair keyPair;				// Optional
     private X509Certificate identity;		// Optional
-    private X509Certificate ca;
     
     private byte[] fingerprint;				// Required
     private String hashAlgorithm;			// Required
@@ -89,9 +91,6 @@ public class Client {
     	// NOT necessarily correspond to what we're going to enroll.
     	keyPair = builder.keyPair;
     	identity = builder.identity;
-    	// These fields are used for CA authentication
-    	// We can either directly use the CA certificate...
-    	ca = builder.ca;
     	// or we can use the fingerprints (pre-provisioning)
     	fingerprint = builder.fingerprint;
     	hashAlgorithm = builder.hashAlgorithm;
@@ -113,24 +112,11 @@ public class Client {
     	if (isValid(url) == false) {
     		throw new IllegalStateException("Invalid URL");
     	}
-    	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-2.1.2.1
-    	if (ca == null && fingerprint == null) {
-    		throw new IllegalStateException("Need CA OR CA Digest.");
-    	}
-    	if (ca != null && fingerprint != null) {
-    		throw new IllegalStateException("Need CA OR CA Digest.");
-    	}
     	
-    	// Set Defaults
-    	if (hashAlgorithm == null) {
-    		hashAlgorithm = "MD5";
-    	}
     	if (proxy == null) {
     		proxy = Proxy.NO_PROXY;
     	}
-    	if (keyPair == null) {
-    		keyPair = createKeyPair();		
-    	}
+
     	if (isValid(keyPair) == false) {
     		throw new IllegalStateException("Invalid KeyPair");
     	}
@@ -196,15 +182,6 @@ public class Client {
     	
     	return t;
     }
-    
-    /**
-     * Retrieve the generated {@link KeyPair}.
-     * 
-     * @return the key pair.
-     */
-    public KeyPair getKeyPair() {
-    	return keyPair;
-    }
 
     /**
      * Retrieves the set of SCEP capabilities from the CA.
@@ -241,12 +218,25 @@ public class Client {
     }
     
     private byte[] createFingerprint(X509Certificate cert, String hashAlgorithm) throws NoSuchAlgorithmException, CertificateEncodingException {
-    	MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
+    	final MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
     	return md.digest(cert.getEncoded());
     }
     
     private void verifyCA(X509Certificate cert) throws IOException {
-    	final String hashAlgorithm = "MD5";
+    	// Cache
+    	if (verified.contains(cert)) {
+    		LOGGER.finer("Verification Cache Hit.");
+    		return;
+    	} else {
+    		LOGGER.finer("Verification Cache Missed.");
+    	}
+    	
+    	final String hashAlgorithm;
+    	if (this.hashAlgorithm != null) {
+    		hashAlgorithm = this.hashAlgorithm;
+    	} else {
+    		hashAlgorithm = "SHA-512";
+    	}
     	final byte[] fingerprint;
     	try {
 			fingerprint = createFingerprint(cert, hashAlgorithm);
@@ -265,6 +255,8 @@ public class Client {
 		}
 		if (callback.isVerified() == false) {
 			throw new IOException("CA certificate fingerprint could not be verified (using " + hashAlgorithm + ").");
+		} else {
+			verified.add(cert);
 		}
     }
     
@@ -290,9 +282,7 @@ public class Client {
     }
     
     private X509Certificate retrieveCA() throws IOException {
-    	final List<X509Certificate> certs = getCaCertificate();
-    	
-    	return selectCA(certs);
+    	return selectCA(getCaCertificate());
     }
     
     private X509Certificate getRecipientCertificate() throws IOException {
@@ -301,17 +291,17 @@ public class Client {
     	return selectRecipient(certs);
     }
     
-    private X509Certificate selectRecipient(List<X509Certificate> certs) {
-    	int numCerts = certs.size();
+    private X509Certificate selectRecipient(List<X509Certificate> chain) {
+    	int numCerts = chain.size();
     	if (numCerts == 2) {
-    		final X509Certificate ca = selectCA(certs);
+    		final X509Certificate ca = selectCA(chain);
     		// The RA certificate is the other one.
-    		int caIndex = certs.indexOf(ca);
+    		int caIndex = chain.indexOf(ca);
     		int raIndex = 1 - caIndex;
     		
-    		return certs.get(raIndex);
+    		return chain.get(raIndex);
     	} else if (numCerts == 1) {
-    		return certs.get(0);
+    		return chain.get(0);
     	} else {
     		// We've either got NO certificates here, or more than 2.
     		// Whatever the case, the server is in error. 
@@ -360,8 +350,10 @@ public class Client {
     public List<X509CRL> getCrl() throws IOException, PKIOperationFailureException {
         final X509Certificate ca = retrieveCA();
         
-        if (supportsDistributionPoints()) {
-        	return null;
+        if (supportsDistributionPoints(ca)) {
+        	// TODO
+        	// http://tools.ietf.org/html/rfc5280#section-4.2.1.13
+        	throw new UnsupportedOperationException();
         } else {
 	        // PKI Operation
 	        final GetCRL req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
@@ -378,9 +370,8 @@ public class Client {
     /**
      * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
      */
-    private boolean supportsDistributionPoints() {
-    	// TODO Implement CDP
-    	return false;
+    private boolean supportsDistributionPoints(X509Certificate ca) {
+    	return ca.getExtensionValue("2.5.29.31") != null;
     }
 
     /**
@@ -434,6 +425,7 @@ public class Client {
         try {
 			return getCertificates(store.getCertificates(null)).get(0);
 		} catch (CertStoreException e) {
+			// TODO
 			throw new RuntimeException(e);
 		}
     }
@@ -459,7 +451,49 @@ public class Client {
     }
     
     /**
-     * See Effective Java, Item 2
+     * This class is used for building immutable instances of the <code>Client</code>
+     * class.  
+     * <p>
+     * Instances of this class can be configured by invoking the methods
+     * declared below.  Following configuration, the {@see #build()} method should
+     * be invoked to retrieve the new <code>Client</code> instance.
+     * <p>
+     * In order to create a valid <code>Client</code>, adopters must adhere to the
+     * following pre-conditions.  The client must be able to...
+     * <ul>
+     *     <li>communicate with the SCEP server using:
+     *         <ul>
+     *             <li>{@see #url(URL)}
+     *             <li>{@see #proxy(Proxy)} (if required)
+     *         </ul>
+     *     <li>identify itself using:
+     *         <ul>
+     *             <li>{@see #identity(X509Certificate, KeyPair)}
+     *         </ul>
+     *     <li>verify the CA certificate fingerprint using either:
+     *         <ul>
+     *             <li>{@see #callbackHandler(CallbackHandler)} OR
+     *             <li>{@see #caFingerprint(byte[], String)}
+     *         </ul>
+     *     <li>select the correct CA profile, if supported, using:
+     *         <ul>
+     *             <li>{@see #caIdentifier(String)}
+     *         </ul>
+     * </ul>
+     * <p>
+     * If an instance of this class is not correctly configured according to the
+     * above pre-conditions, the {@see #build()} method will throw an 
+     * {@see IllegalStateException}.
+     * <p>
+     * Example Usage:
+     * <pre>
+     * URL url = new URL("http://www.example.org/scep/pkiclient.exe");
+     * X509Certificate id = ...;
+     * KeyPair pair = ...;
+     * CallbackHandler handler = ...;
+     * 
+     * Client client = new Client.Builder().url(<b>url</b>).identity(<b>id</b>, <b>pair</b>).callbackHandler(<b>handler</b>).build();
+     * </pre>
      * 
      * @author David Grant
      */
@@ -471,27 +505,47 @@ public class Client {
     	private String caIdentifier;
     	private X509Certificate identity;
     	private KeyPair keyPair;
-    	private X509Certificate ca;
     	private CallbackHandler callbackHandler;
     	
+    	/**
+    	 * Sets the {@see URL} of the SCEP server.
+    	 * <p>
+    	 * The URL should be of the following form:
+    	 * <pre>
+    	 * http(s?)://&lt;host&gt;[:&lt;port&gt;]/[&lt;path&gt;]pkiclient.exe
+    	 * </pre>
+    	 * 
+    	 * @param url the URL.
+    	 * @return the builder.
+    	 */
     	public Builder url(URL url) {
     		this.url = url;
     		
     		return this;
     	}
     	
+    	/**
+    	 * Sets the {@see Proxy} needed to access the SCEP server, if any.
+    	 * 
+    	 * @param proxy the Proxy.
+    	 * @return the builder.
+    	 */
     	public Builder proxy(Proxy proxy) {
     		this.proxy = proxy;
     		
     		return this;
     	}
     	
-    	public Builder ca(X509Certificate ca) {
-    		this.ca = ca;
-    		
-    		return this;
-    	}
-    	
+    	/**
+    	 * Sets the expected CA fingerprint.
+    	 * <p>
+    	 * If the fingerprint is not known, the {@see #callbackHandler(CallbackHandler)} 
+    	 * method MUST be used instead. 
+    	 * 
+    	 * @param fingerprint the expected fingerprint.
+    	 * @param hashAlgorithm the algorithm used to create the fingerprint.
+    	 * @return the builder.
+    	 */
     	public Builder caFingerprint(byte[] fingerprint, String hashAlgorithm) {
     		this.fingerprint = fingerprint;
     		this.hashAlgorithm = hashAlgorithm;
@@ -499,12 +553,30 @@ public class Client {
     		return this;
     	}
     	
+    	/**
+    	 * Sets the CA identity string.
+    	 * <p>
+    	 * This property should be set if the CA supports multiple profiles.
+    	 * 
+    	 * @param caIdentifier the CA identity string.
+    	 * @return the builder.
+    	 */
     	public Builder caIdentifier(String caIdentifier) {
     		this.caIdentifier = caIdentifier;
     		
     		return this;
     	}
     	
+    	/**
+    	 * Sets the identity of the SCEP client.
+    	 * <p>
+    	 * The arguments provided to this method represent the identity of the
+    	 * SCEP client, and not necessarily the entity to be enrolled. 
+    	 * 
+    	 * @param identity the client identity.
+    	 * @param keyPair the RSA keypair of the client.
+    	 * @return the builder.
+    	 */
     	public Builder identity(X509Certificate identity, KeyPair keyPair) {
     		this.identity = identity;
     		this.keyPair = keyPair;
@@ -513,12 +585,18 @@ public class Client {
     	}
     	
     	/**
-    	 * CallbackHandler to take FingerprintVerificationCallback
+    	 * Sets a {@link CallbackHandler} to use for handling the fingerprint
+    	 * verification callback.
     	 * <p>
-    	 * Used for Manual Authorization
+    	 * This method should be used if the CA fingerprint is not known at the 
+    	 * time of client creation.  If a fingerprint is already known, the
+    	 * {@see #caFingerprint(byte[], String)} method should be used instead.
+    	 * <p>
+    	 * The provided {@see CallbackHandler} MUST be able to handle the 
+    	 * {@see FingerprintVerificationCallback} callback.
     	 * 
     	 * @param callbackHandler the callback handler.
-    	 * @return
+    	 * @return the builder.
     	 */
     	public Builder callbackHandler(CallbackHandler callbackHandler) {
     		this.callbackHandler = callbackHandler;
@@ -527,9 +605,10 @@ public class Client {
     	}
     	
     	/**
+    	 * Constructs a new immutable instance of <code>Client</code>.
     	 * 
-    	 * @return
-    	 * @throws IllegalStateException
+    	 * @return a new instance of <code>Client</code>
+    	 * @throws IllegalStateException if any pre-conditions have been violated.
     	 */
     	public Client build() throws IllegalStateException {
     		return new Client(this);

@@ -112,19 +112,11 @@ Uses of <A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.h
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A></CODE></FONT></TD>
-<TD><CODE><B>Client.Builder.</B><B><A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.html#ca(java.security.cert.X509Certificate)">ca</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;ca)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A></CODE></FONT></TD>
 <TD><CODE><B>Client.Builder.</B><B><A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.html#caFingerprint(byte[], java.lang.String)">caFingerprint</A></B>(byte[]&nbsp;fingerprint,
               <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;hashAlgorithm)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the expected CA fingerprint.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -132,7 +124,7 @@ Uses of <A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.h
 <TD><CODE><B>Client.Builder.</B><B><A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.html#caIdentifier(java.lang.String)">caIdentifier</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;caIdentifier)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the CA identity string.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -140,7 +132,8 @@ Uses of <A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.h
 <TD><CODE><B>Client.Builder.</B><B><A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.html#callbackHandler(javax.security.auth.callback.CallbackHandler)">callbackHandler</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback">CallbackHandler</A>&nbsp;callbackHandler)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CallbackHandler to take FingerprintVerificationCallback</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets a <A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback"><CODE>CallbackHandler</CODE></A> to use for handling the fingerprint
+ verification callback.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -149,7 +142,7 @@ Uses of <A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.h
          <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;keyPair)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the identity of the SCEP client.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -157,7 +150,7 @@ Uses of <A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.h
 <TD><CODE><B>Client.Builder.</B><B><A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.html#proxy(java.net.Proxy)">proxy</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/net/Proxy.html?is-external=true" title="class or interface in java.net">Proxy</A>&nbsp;proxy)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the <A HREF="http://java.sun.com/javase/6/docs/api/java/net/Proxy.html?is-external=true" title="class or interface in java.net"><CODE>Proxy</CODE></A> needed to access the SCEP server, if any.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -165,7 +158,7 @@ Uses of <A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.h
 <TD><CODE><B>Client.Builder.</B><B><A HREF="../../../../../../com/google/code/jscep/client/Client.Builder.html#url(java.net.URL)">url</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</A>&nbsp;url)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the <A HREF="http://java.sun.com/javase/6/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net"><CODE>URL</CODE></A> of the SCEP server.</TD>
 </TR>
 </TABLE>
 &nbsp;

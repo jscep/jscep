@@ -98,15 +98,12 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DL>
 <DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#build()"><B>build()</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
-<DD>&nbsp;
+<DD>Constructs a new immutable instance of <code>Client</code>.
 </DL>
 <HR>
 <A NAME="_C_"><!-- --></A><H2>
 <B>C</B></H2>
 <DL>
-<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#ca(java.security.cert.X509Certificate)"><B>ca(X509Certificate)</B></A> - 
-Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
-<DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/content/CaCapabilitiesContentHandler.html" title="class in com.google.code.jscep.content"><B>CaCapabilitiesContentHandler</B></A> - Class in <A HREF="./com/google/code/jscep/content/package-summary.html">com.google.code.jscep.content</A><DD>This class handles responses to <code>GetCACaps</code> requests.<DT><A HREF="./com/google/code/jscep/content/CaCapabilitiesContentHandler.html#CaCapabilitiesContentHandler()"><B>CaCapabilitiesContentHandler()</B></A> - 
 Constructor for class com.google.code.jscep.content.<A HREF="./com/google/code/jscep/content/CaCapabilitiesContentHandler.html" title="class in com.google.code.jscep.content">CaCapabilitiesContentHandler</A>
 <DD>&nbsp;
@@ -115,13 +112,14 @@ Constructor for class com.google.code.jscep.content.<A HREF="./com/google/code/j
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#caFingerprint(byte[], java.lang.String)"><B>caFingerprint(byte[], String)</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
-<DD>&nbsp;
+<DD>Sets the expected CA fingerprint.
 <DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#caIdentifier(java.lang.String)"><B>caIdentifier(String)</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
-<DD>&nbsp;
+<DD>Sets the CA identity string.
 <DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#callbackHandler(javax.security.auth.callback.CallbackHandler)"><B>callbackHandler(CallbackHandler)</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
-<DD>CallbackHandler to take FingerprintVerificationCallback
+<DD>Sets a <A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/callback/CallbackHandler.html?is-external=true" title="class or interface in javax.security.auth.callback"><CODE>CallbackHandler</CODE></A> to use for handling the fingerprint
+ verification callback.
 <DT><A HREF="./com/google/code/jscep/response/Capabilities.html" title="class in com.google.code.jscep.response"><B>Capabilities</B></A> - Class in <A HREF="./com/google/code/jscep/response/package-summary.html">com.google.code.jscep.response</A><DD>This class represents a set of capabilities for a particular
  SCEP server.<DT><A HREF="./com/google/code/jscep/response/Capabilities.html#Capabilities(com.google.code.jscep.response.Capability...)"><B>Capabilities(Capability...)</B></A> - 
 Constructor for class com.google.code.jscep.response.<A HREF="./com/google/code/jscep/response/Capabilities.html" title="class in com.google.code.jscep.response">Capabilities</A>
@@ -134,7 +132,8 @@ Constructor for class com.google.code.jscep.content.<A HREF="./com/google/code/j
 Constructor for class com.google.code.jscep.pkcs9.<A HREF="./com/google/code/jscep/pkcs9/ChallengePassword.html" title="class in com.google.code.jscep.pkcs9">ChallengePassword</A>
 <DD>Creates a new instance of <code>ChallengePassword</code> using the provided
  password.
-<DT><A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client"><B>Client</B></A> - Class in <A HREF="./com/google/code/jscep/client/package-summary.html">com.google.code.jscep.client</A><DD>SCEP Client<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client"><B>Client.Builder</B></A> - Class in <A HREF="./com/google/code/jscep/client/package-summary.html">com.google.code.jscep.client</A><DD>See Effective Java, Item 2<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#Client.Builder()"><B>Client.Builder()</B></A> - 
+<DT><A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client"><B>Client</B></A> - Class in <A HREF="./com/google/code/jscep/client/package-summary.html">com.google.code.jscep.client</A><DD>This class represents a SCEP client, or Requester.<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client"><B>Client.Builder</B></A> - Class in <A HREF="./com/google/code/jscep/client/package-summary.html">com.google.code.jscep.client</A><DD>This class is used for building immutable instances of the <code>Client</code>
+ class.<DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#Client.Builder()"><B>Client.Builder()</B></A> - 
 Constructor for class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html#clone()"><B>clone()</B></A> - 
@@ -357,9 +356,6 @@ Static method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/js
 <DT><A HREF="./com/google/code/jscep/asn1/IssuerAndSubject.html#getIssuer()"><B>getIssuer()</B></A> - 
 Method in class com.google.code.jscep.asn1.<A HREF="./com/google/code/jscep/asn1/IssuerAndSubject.html" title="class in com.google.code.jscep.asn1">IssuerAndSubject</A>
 <DD>&nbsp;
-<DT><A HREF="./com/google/code/jscep/client/Client.html#getKeyPair()"><B>getKeyPair()</B></A> - 
-Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
-<DD>Retrieve the generated <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security"><CODE>KeyPair</CODE></A>.
 <DT><A HREF="./com/google/code/jscep/util/LoggingUtil.html#getLogger(java.lang.Class)"><B>getLogger(Class&lt;?&gt;)</B></A> - 
 Static method in class com.google.code.jscep.util.<A HREF="./com/google/code/jscep/util/LoggingUtil.html" title="class in com.google.code.jscep.util">LoggingUtil</A>
 <DD>Returns a logger for the given class.
@@ -514,7 +510,7 @@ Method in enum com.google.code.jscep.transaction.<A HREF="./com/google/code/jsce
 <DL>
 <DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#identity(java.security.cert.X509Certificate, java.security.KeyPair)"><B>identity(X509Certificate, KeyPair)</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
-<DD>&nbsp;
+<DD>Sets the identity of the SCEP client.
 <DT><A HREF="./com/google/code/jscep/transaction/InvalidNonceException.html" title="class in com.google.code.jscep.transaction"><B>InvalidNonceException</B></A> - Exception in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>This class represents the error condition when an invalid
  Nonce is received by a SCEP peer.<DT><A HREF="./com/google/code/jscep/transaction/InvalidNonceException.html#InvalidNonceException(java.lang.String)"><B>InvalidNonceException(String)</B></A> - 
 Constructor for exception com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/InvalidNonceException.html" title="class in com.google.code.jscep.transaction">InvalidNonceException</A>
@@ -655,7 +651,7 @@ Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jsc
 <DD>
 <DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#proxy(java.net.Proxy)"><B>proxy(Proxy)</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
-<DD>&nbsp;
+<DD>Sets the <A HREF="http://java.sun.com/javase/6/docs/api/java/net/Proxy.html?is-external=true" title="class or interface in java.net"><CODE>Proxy</CODE></A> needed to access the SCEP server, if any.
 </DL>
 <HR>
 <A NAME="_R_"><!-- --></A><H2>
@@ -771,6 +767,9 @@ Static method in class com.google.code.jscep.util.<A HREF="./com/google/code/jsc
 <DT><A HREF="./com/google/code/jscep/util/HexUtil.html#toHexString(byte[])"><B>toHexString(byte[])</B></A> - 
 Static method in class com.google.code.jscep.util.<A HREF="./com/google/code/jscep/util/HexUtil.html" title="class in com.google.code.jscep.util">HexUtil</A>
 <DD>Converts the provided byte array to a string of hex characters.
+<DT><A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html#toString()"><B>toString()</B></A> - 
+Method in class com.google.code.jscep.<A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html" title="class in com.google.code.jscep">FingerprintVerificationCallback</A>
+<DD>
 <DT><A HREF="./com/google/code/jscep/operations/GetCert.html#toString()"><B>toString()</B></A> - 
 Method in class com.google.code.jscep.operations.<A HREF="./com/google/code/jscep/operations/GetCert.html" title="class in com.google.code.jscep.operations">GetCert</A>
 <DD>
@@ -846,7 +845,7 @@ Static variable in interface com.google.code.jscep.asn1.<A HREF="./com/google/co
 <DL>
 <DT><A HREF="./com/google/code/jscep/client/Client.Builder.html#url(java.net.URL)"><B>url(URL)</B></A> - 
 Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.Builder.html" title="class in com.google.code.jscep.client">Client.Builder</A>
-<DD>&nbsp;
+<DD>Sets the <A HREF="http://java.sun.com/javase/6/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net"><CODE>URL</CODE></A> of the SCEP server.
 </DL>
 <HR>
 <A NAME="_V_"><!-- --></A><H2>

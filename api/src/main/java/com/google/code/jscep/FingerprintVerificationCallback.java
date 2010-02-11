@@ -2,6 +2,8 @@ package com.google.code.jscep;
 
 import javax.security.auth.callback.Callback;
 
+import com.google.code.jscep.util.HexUtil;
+
 /**
  * This class is used to obtain verification of the fingerprint of a CA
  * certificate. 
@@ -67,5 +69,23 @@ public class FingerprintVerificationCallback implements Callback {
 	 */
 	public void setVerified(boolean verified) {
 		this.verified = verified;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder(algorithm);
+		builder.append(' ');
+		builder.append(HexUtil.toHexString(fingerprint));
+		builder.append(' ');
+		if (verified) {
+			builder.append("(Verified)");
+		} else {
+			builder.append("(Unverified)");
+		}
+		
+		return builder.toString();
 	}
 }
