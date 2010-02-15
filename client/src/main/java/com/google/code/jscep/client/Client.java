@@ -388,7 +388,7 @@ public class Client {
     	}
     	
     	final PKCSReq req = new PKCSReq(keyPair, identity, hashAlgorithm, password);
-    	final CertStore store = createTransaction().performOperation(req, 20L);
+    	final CertStore store = createTransaction().performOperation(req, 30000L);
     	final List<X509Certificate> certs;
 		try {
 			certs = getCertificates(store.getCertificates(null));
