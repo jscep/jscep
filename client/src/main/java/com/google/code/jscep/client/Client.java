@@ -28,7 +28,6 @@ import java.net.Proxy;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -153,16 +152,6 @@ public class Client {
     		return false;
     	}
     	return true;
-    }
-    
-    private KeyPair createKeyPair() {
-    	LOGGER.fine("Creating RSA Key Pair");
-    	
-    	try {
-			return KeyPairGenerator.getInstance("RSA").genKeyPair();
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
     }
     
     private Transaction createTransaction() throws IOException {
