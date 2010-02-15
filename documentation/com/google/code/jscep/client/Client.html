@@ -137,7 +137,9 @@ This class represents a SCEP client, or Requester.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#enroll(char[])">enroll</A></B>(char[]&nbsp;password)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#enroll(java.security.cert.X509Certificate, java.security.KeyPair, char[])">enroll</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;subject,
+       <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;subjectKeyPair,
+       char[]&nbsp;password)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enrolls an identity into a PKI domain.</TD>
@@ -282,10 +284,12 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
 </DL>
 <HR>
 
-<A NAME="enroll(char[])"><!-- --></A><H3>
+<A NAME="enroll(java.security.cert.X509Certificate, java.security.KeyPair, char[])"><!-- --></A><H3>
 enroll</H3>
 <PRE>
-public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt; <B>enroll</B>(char[]&nbsp;password)
+public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt; <B>enroll</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;subject,
+                                    <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;subjectKeyPair,
+                                    char[]&nbsp;password)
                              throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A>,
                                     <A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></PRE>
 <DL>
@@ -296,7 +300,7 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
  <p>
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>password</CODE> - the enrollment password.
+<DT><B>Parameters:</B><DD><CODE>subject</CODE> - the certificate to enroll.<DD><CODE>subjectKeyPair</CODE> - the key pair of the certificate to enroll.<DD><CODE>password</CODE> - the enrollment password.
 <DT><B>Returns:</B><DD>the enrolled certificate.
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.

@@ -28,7 +28,6 @@ import java.net.Proxy;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -153,16 +152,6 @@ public class Client {
     		return false;
     	}
     	return true;
-    }
-    
-    private KeyPair createKeyPair() {
-    	LOGGER.fine("Creating RSA Key Pair");
-    	
-    	try {
-			return KeyPairGenerator.getInstance("RSA").genKeyPair();
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
     }
     
     private Transaction createTransaction() throws IOException {
@@ -383,23 +372,25 @@ public class Client {
      * CA administrator either accepts or rejects the request.
      * <p>
      * 
+     * @param subject the certificate to enroll.
+     * @param subjectKeyPair the key pair of the certificate to enroll.
      * @param password the enrollment password.
      * @return the enrolled certificate.
      * @throws IOException if any I/O error occurs.
      * @throws PKIOperationFailureException if the operation failed.
      * @throws UnsupportedOperationException if the server does not support renewal and the certificate is not self-signed. 
      */
-    public List<X509Certificate> enroll(char[] password) throws IOException, PKIOperationFailureException {
+    public List<X509Certificate> enroll(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException, PKIOperationFailureException {
     	LOGGER.entering(getClass().getName(), "enroll", new Object[] {password});
     	
     	if (getCapabilities().isRenewalSupported() == false) {
-    		if (X509Util.isSelfSigned(identity) == false) {
+    		if (X509Util.isSelfSigned(subject) == false) {
     			throw new UnsupportedOperationException("Server does not support renewal.");
     		}
     	}
     	
-    	final PKCSReq req = new PKCSReq(keyPair, identity, hashAlgorithm, password);
-    	final CertStore store = createTransaction().performOperation(req, 20L);
+    	final PKCSReq req = new PKCSReq(subjectKeyPair, subject, hashAlgorithm, password);
+    	final CertStore store = createTransaction().performOperation(req, 30000L);
     	final List<X509Certificate> certs;
 		try {
 			certs = getCertificates(store.getCertificates(null));

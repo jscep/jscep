@@ -51,6 +51,6 @@ public class ClientTest {
 //		System.out.println(client.getNextCA());
 		
 		final char[] password = "INBOUND_TLSuscl99".toCharArray();
-		System.out.println(client.enroll(password));
+		System.out.println(client.enroll(identity, keyPair, password));
 	}
 }
