@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-Client (jSCEP 0.20.7-SNAPSHOT API)
+Client (jSCEP 0.20.8-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ Client (jSCEP 0.20.7-SNAPSHOT API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="Client (jSCEP 0.20.7-SNAPSHOT API)";
+        parent.document.title="Client (jSCEP 0.20.8-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -136,13 +136,19 @@ This class represents a SCEP client, or Requester.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#enroll(java.security.cert.X509Certificate, java.security.KeyPair, char[])">enroll</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;subject,
-       <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;subjectKeyPair,
-       char[]&nbsp;password)</CODE>
+<CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#createTransaction()">createTransaction</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enrolls an identity into a PKI domain.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new transaction for a PKIOperation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/response/Capabilities.html" title="class in com.google.code.jscep.response">Capabilities</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#getCaCapabilities()">getCaCapabilities</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the set of SCEP capabilities from the CA.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -154,32 +160,8 @@ This class represents a SCEP client, or Requester.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../../../com/google/code/jscep/response/Capabilities.html" title="class in com.google.code.jscep.response">Capabilities</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#getCapabilities()">getCapabilities</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the set of SCEP capabilities from the CA.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#getCert(java.math.BigInteger)">getCert</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</A>&nbsp;serial)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the certificate corresponding to the given serial number.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509CRL.html?is-external=true" title="class or interface in java.security.cert">X509CRL</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#getCrl()">getCrl</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the certificate revocation list for the current CA.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#getNextCA()">getNextCA</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/client/Client.html#getNextCaCertificate()">getNextCaCertificate</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the "rollover" certificate to be used by the CA.</TD>
@@ -207,11 +189,28 @@ This class represents a SCEP client, or Requester.
 </TR>
 </TABLE>
 
-<A NAME="getCapabilities()"><!-- --></A><H3>
-getCapabilities</H3>
+<A NAME="createTransaction()"><!-- --></A><H3>
+createTransaction</H3>
 <PRE>
-public <A HREF="../../../../../com/google/code/jscep/response/Capabilities.html" title="class in com.google.code.jscep.response">Capabilities</A> <B>getCapabilities</B>()
-                             throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
+public <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A> <B>createTransaction</B>()
+                              throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
+<DL>
+<DD>Creates a new transaction for a PKIOperation.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a new transaction.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCaCapabilities()"><!-- --></A><H3>
+getCaCapabilities</H3>
+<PRE>
+public <A HREF="../../../../../com/google/code/jscep/response/Capabilities.html" title="class in com.google.code.jscep.response">Capabilities</A> <B>getCaCapabilities</B>()
+                               throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
 <DL>
 <DD>Retrieves the set of SCEP capabilities from the CA.
 <P>
@@ -244,11 +243,11 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
 </DL>
 <HR>
 
-<A NAME="getNextCA()"><!-- --></A><H3>
-getNextCA</H3>
+<A NAME="getNextCaCertificate()"><!-- --></A><H3>
+getNextCaCertificate</H3>
 <PRE>
-public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt; <B>getNextCA</B>()
-                                throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
+public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt; <B>getNextCaCertificate</B>()
+                                           throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
 <DL>
 <DD>Retrieves the "rollover" certificate to be used by the CA.
  <p>
@@ -260,71 +259,6 @@ public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-ext
 <DT><B>Returns:</B><DD>the list of certificates.
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getCrl()"><!-- --></A><H3>
-getCrl</H3>
-<PRE>
-public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509CRL.html?is-external=true" title="class or interface in java.security.cert">X509CRL</A>&gt; <B>getCrl</B>()
-                     throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A>,
-                            <A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></PRE>
-<DL>
-<DD>Retrieves the certificate revocation list for the current CA.
-<P>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>the certificate revocation list.
-<DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
-<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/UnsupportedOperationException.html?is-external=true" title="class or interface in java.lang">UnsupportedOperationException</A></CODE> - if the CA certificate supports CRL distribution points.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="enroll(java.security.cert.X509Certificate, java.security.KeyPair, char[])"><!-- --></A><H3>
-enroll</H3>
-<PRE>
-public <A HREF="http://java.sun.com/javase/6/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt; <B>enroll</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;subject,
-                                    <A HREF="http://java.sun.com/javase/6/docs/api/java/security/KeyPair.html?is-external=true" title="class or interface in java.security">KeyPair</A>&nbsp;subjectKeyPair,
-                                    char[]&nbsp;password)
-                             throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A>,
-                                    <A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></PRE>
-<DL>
-<DD>Enrolls an identity into a PKI domain.
- <p>
- If the CA uses a manual process, this method will block until the
- CA administrator either accepts or rejects the request.
- <p>
-<P>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>subject</CODE> - the certificate to enroll.<DD><CODE>subjectKeyPair</CODE> - the key pair of the certificate to enroll.<DD><CODE>password</CODE> - the enrollment password.
-<DT><B>Returns:</B><DD>the enrolled certificate.
-<DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
-<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE> - if the operation failed.
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/lang/UnsupportedOperationException.html?is-external=true" title="class or interface in java.lang">UnsupportedOperationException</A></CODE> - if the server does not support renewal and the certificate is not self-signed.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getCert(java.math.BigInteger)"><!-- --></A><H3>
-getCert</H3>
-<PRE>
-public <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A> <B>getCert</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</A>&nbsp;serial)
-                        throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A>,
-                               <A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></PRE>
-<DL>
-<DD>Retrieves the certificate corresponding to the given serial number.
-<P>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>serial</CODE> - the serial number of the certificate.
-<DT><B>Returns:</B><DD>the certificate.
-<DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
-<DD><CODE><A HREF="../../../../../com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A></CODE></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

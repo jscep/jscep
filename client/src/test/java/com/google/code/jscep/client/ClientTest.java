@@ -14,6 +14,7 @@ import javax.security.auth.x500.X500Principal;
 
 import org.junit.Test;
 
+import com.google.code.jscep.transaction.Transaction;
 import com.google.code.jscep.x509.X509Util;
 
 //@Ignore
@@ -46,11 +47,15 @@ public class ClientTest {
 		
 		final Client client = builder.build();
 		System.out.println(client.getCaCertificate());
-		System.out.println(client.getCapabilities());
-		System.out.println(client.getCrl());
-//		System.out.println(client.getNextCA());
+		System.out.println(client.getCaCapabilities());
+//		System.out.println(client.getNextCaCertificate());
+		
+		Transaction crlTrans = client.createTransaction();
+		System.out.println(crlTrans.getCRL());
+		
+		Transaction enrollTrans = client.createTransaction();
 		
 		final char[] password = "INBOUND_TLSuscl99".toCharArray();
-		System.out.println(client.enroll(identity, keyPair, password));
+		enrollTrans.enrollCertificate(identity, keyPair, password);
 	}
 }

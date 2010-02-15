@@ -4,7 +4,7 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <TITLE>
-Index (jSCEP 0.20.7-SNAPSHOT API)
+Index (jSCEP 0.20.8-SNAPSHOT API)
 </TITLE>
 
 
@@ -14,7 +14,7 @@ Index (jSCEP 0.20.7-SNAPSHOT API)
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="Index (jSCEP 0.20.7-SNAPSHOT API)";
+        parent.document.title="Index (jSCEP 0.20.8-SNAPSHOT API)";
     }
 }
 </SCRIPT>
@@ -142,9 +142,12 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DT><A HREF="./com/google/code/jscep/package-summary.html"><B>com.google.code.jscep</B></A> - package com.google.code.jscep<DD>Provides classes and interfaces to represent SCEP types.<DT><A HREF="./com/google/code/jscep/asn1/package-summary.html"><B>com.google.code.jscep.asn1</B></A> - package com.google.code.jscep.asn1<DD>Provides classes and interfaces to represent ASN.1 objects specific to SCEP.<DT><A HREF="./com/google/code/jscep/client/package-summary.html"><B>com.google.code.jscep.client</B></A> - package com.google.code.jscep.client<DD>&nbsp;<DT><A HREF="./com/google/code/jscep/content/package-summary.html"><B>com.google.code.jscep.content</B></A> - package com.google.code.jscep.content<DD>Provides classes and interfaces to handle SCEP response messages.<DT><A HREF="./com/google/code/jscep/operations/package-summary.html"><B>com.google.code.jscep.operations</B></A> - package com.google.code.jscep.operations<DD>Provides classes and interfaces to represent SCEP PKI operations.<DT><A HREF="./com/google/code/jscep/pkcs7/package-summary.html"><B>com.google.code.jscep.pkcs7</B></A> - package com.google.code.jscep.pkcs7<DD>Provides classes and interfaces to represent PKCS #7 types.<DT><A HREF="./com/google/code/jscep/pkcs9/package-summary.html"><B>com.google.code.jscep.pkcs9</B></A> - package com.google.code.jscep.pkcs9<DD>Provides classes and interfaces to represent PKCS #9 types.<DT><A HREF="./com/google/code/jscep/request/package-summary.html"><B>com.google.code.jscep.request</B></A> - package com.google.code.jscep.request<DD>Provides classes and interfaces to represent SCEP request messages.<DT><A HREF="./com/google/code/jscep/response/package-summary.html"><B>com.google.code.jscep.response</B></A> - package com.google.code.jscep.response<DD>Provides classes to represent SCEP responses.<DT><A HREF="./com/google/code/jscep/server/package-summary.html"><B>com.google.code.jscep.server</B></A> - package com.google.code.jscep.server<DD>&nbsp;<DT><A HREF="./com/google/code/jscep/transaction/package-summary.html"><B>com.google.code.jscep.transaction</B></A> - package com.google.code.jscep.transaction<DD>Provides classes and interfaces to manipulate SCEP transactions.<DT><A HREF="./com/google/code/jscep/transport/package-summary.html"><B>com.google.code.jscep.transport</B></A> - package com.google.code.jscep.transport<DD>Provides classes for providing HTTP transport to SCEP messages.<DT><A HREF="./com/google/code/jscep/util/package-summary.html"><B>com.google.code.jscep.util</B></A> - package com.google.code.jscep.util<DD>Provides classes for performing miscellaneous functions.<DT><A HREF="./com/google/code/jscep/x509/package-summary.html"><B>com.google.code.jscep.x509</B></A> - package com.google.code.jscep.x509<DD>&nbsp;<DT><A HREF="./com/google/code/jscep/x509/X509Util.html#createEphemeralCertificate(javax.security.auth.x500.X500Principal, java.security.KeyPair)"><B>createEphemeralCertificate(X500Principal, KeyPair)</B></A> - 
 Static method in class com.google.code.jscep.x509.<A HREF="./com/google/code/jscep/x509/X509Util.html" title="class in com.google.code.jscep.x509">X509Util</A>
 <DD>Creates a self-signed ephemeral certificate.
-<DT><A HREF="./com/google/code/jscep/transaction/TransactionFactory.html#createTransaction(com.google.code.jscep.transport.Transport, java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.security.KeyPair, java.lang.String)"><B>createTransaction(Transport, X509Certificate, X509Certificate, KeyPair, String)</B></A> - 
-Static method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/TransactionFactory.html" title="class in com.google.code.jscep.transaction">TransactionFactory</A>
-<DD>Create a new SCEP transaction.
+<DT><A HREF="./com/google/code/jscep/client/Client.html#createTransaction()"><B>createTransaction()</B></A> - 
+Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
+<DD>Creates a new transaction for a PKIOperation.
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#createTransaction(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.security.KeyPair, com.google.code.jscep.response.Capabilities, com.google.code.jscep.transport.Transport)"><B>createTransaction(X509Certificate, X509Certificate, X509Certificate, KeyPair, Capabilities, Transport)</B></A> - 
+Static method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
+<DD>Creates a new transaction.
 <DT><A HREF="./com/google/code/jscep/transaction/TransactionId.html#createTransactionId(java.security.KeyPair, java.lang.String)"><B>createTransactionId(KeyPair, String)</B></A> - 
 Static method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction">TransactionId</A>
 <DD>Creates a new Transaction Id
@@ -170,12 +173,12 @@ Static method in class com.google.code.jscep.transport.<A HREF="./com/google/cod
 <A NAME="_E_"><!-- --></A><H2>
 <B>E</B></H2>
 <DL>
-<DT><A HREF="./com/google/code/jscep/client/Client.html#enroll(java.security.cert.X509Certificate, java.security.KeyPair, char[])"><B>enroll(X509Certificate, KeyPair, char[])</B></A> - 
-Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
-<DD>Enrolls an identity into a PKI domain.
 <DT><A HREF="./com/google/code/jscep/server/ScepServlet.html#enrollCertificate(org.bouncycastle.jce.PKCS10CertificationRequest)"><B>enrollCertificate(PKCS10CertificationRequest)</B></A> - 
 Method in class com.google.code.jscep.server.<A HREF="./com/google/code/jscep/server/ScepServlet.html" title="class in com.google.code.jscep.server">ScepServlet</A>
 <DD>Enroll a certificate into the PKI
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#enrollCertificate(java.security.cert.X509Certificate, java.security.KeyPair, char[])"><B>enrollCertificate(X509Certificate, KeyPair, char[])</B></A> - 
+Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
+<DD>Attempts to enroll the provided certificate using the server CA.
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
 <DD>&nbsp;
@@ -245,6 +248,9 @@ Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jsc
 <DT><A HREF="./com/google/code/jscep/transaction/TransactionId.html#getBytes()"><B>getBytes()</B></A> - 
 Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction">TransactionId</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/client/Client.html#getCaCapabilities()"><B>getCaCapabilities()</B></A> - 
+Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
+<DD>Retrieves the set of SCEP capabilities from the CA.
 <DT><A HREF="./com/google/code/jscep/request/GetCACaps.html" title="class in com.google.code.jscep.request"><B>GetCACaps</B></A> - Class in <A HREF="./com/google/code/jscep/request/package-summary.html">com.google.code.jscep.request</A><DD>This class represents a <code>GetCACaps</code> request.<DT><A HREF="./com/google/code/jscep/request/GetCACaps.html#GetCACaps()"><B>GetCACaps()</B></A> - 
 Constructor for class com.google.code.jscep.request.<A HREF="./com/google/code/jscep/request/GetCACaps.html" title="class in com.google.code.jscep.request">GetCACaps</A>
 <DD>&nbsp;
@@ -263,15 +269,9 @@ Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/cl
 <DT><A HREF="./com/google/code/jscep/server/ScepServlet.html#getCACertificate(java.lang.String)"><B>getCACertificate(String)</B></A> - 
 Method in class com.google.code.jscep.server.<A HREF="./com/google/code/jscep/server/ScepServlet.html" title="class in com.google.code.jscep.server">ScepServlet</A>
 <DD>Returns the certificate of the specified CA.
-<DT><A HREF="./com/google/code/jscep/client/Client.html#getCapabilities()"><B>getCapabilities()</B></A> - 
-Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
-<DD>Retrieves the set of SCEP capabilities from the CA.
 <DT><A HREF="./com/google/code/jscep/server/ScepServlet.html#getCapabilities(java.lang.String)"><B>getCapabilities(String)</B></A> - 
 Method in class com.google.code.jscep.server.<A HREF="./com/google/code/jscep/server/ScepServlet.html" title="class in com.google.code.jscep.server">ScepServlet</A>
 <DD>Returns the capabilities of the specified CA.
-<DT><A HREF="./com/google/code/jscep/client/Client.html#getCert(java.math.BigInteger)"><B>getCert(BigInteger)</B></A> - 
-Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
-<DD>Retrieves the certificate corresponding to the given serial number.
 <DT><A HREF="./com/google/code/jscep/operations/GetCert.html" title="class in com.google.code.jscep.operations"><B>GetCert</B></A> - Class in <A HREF="./com/google/code/jscep/operations/package-summary.html">com.google.code.jscep.operations</A><DD>This class represents the SCEP <code>GetCert</code> <code>pkiMessage</code> 
  type.<DT><A HREF="./com/google/code/jscep/operations/GetCert.html#GetCert(javax.security.auth.x500.X500Principal, java.math.BigInteger)"><B>GetCert(X500Principal, BigInteger)</B></A> - 
 Constructor for class com.google.code.jscep.operations.<A HREF="./com/google/code/jscep/operations/GetCert.html" title="class in com.google.code.jscep.operations">GetCert</A>
@@ -282,10 +282,17 @@ Method in class com.google.code.jscep.server.<A HREF="./com/google/code/jscep/se
 <DT><A HREF="./com/google/code/jscep/server/ScepServlet.html#getCertificate(org.bouncycastle.asn1.x509.X509Name, org.bouncycastle.asn1.x509.X509Name)"><B>getCertificate(X509Name, X509Name)</B></A> - 
 Method in class com.google.code.jscep.server.<A HREF="./com/google/code/jscep/server/ScepServlet.html" title="class in com.google.code.jscep.server">ScepServlet</A>
 <DD>Get Cert Initial
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#getCertificate(java.math.BigInteger)"><B>getCertificate(BigInteger)</B></A> - 
+Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
+<DD>Retrieves the certificate with the provided serial number as issued by the
+ server CA.
 <DT><A HREF="./com/google/code/jscep/operations/GetCertInitial.html" title="class in com.google.code.jscep.operations"><B>GetCertInitial</B></A> - Class in <A HREF="./com/google/code/jscep/operations/package-summary.html">com.google.code.jscep.operations</A><DD>This class represents the SCEP <code>GetCertInitial</code> 
  <code>pkiMessage</code> type.<DT><A HREF="./com/google/code/jscep/operations/GetCertInitial.html#GetCertInitial(org.bouncycastle.asn1.x509.X509Name, org.bouncycastle.asn1.x509.X509Name)"><B>GetCertInitial(X509Name, X509Name)</B></A> - 
 Constructor for class com.google.code.jscep.operations.<A HREF="./com/google/code/jscep/operations/GetCertInitial.html" title="class in com.google.code.jscep.operations">GetCertInitial</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#getCertStore()"><B>getCertStore()</B></A> - 
+Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
+<DD>Returns the CertStore that was the outcome of this transaction.
 <DT><A HREF="./com/google/code/jscep/content/CaCapabilitiesContentHandler.html#getContent(java.io.InputStream, java.lang.String)"><B>getContent(InputStream, String)</B></A> - 
 Method in class com.google.code.jscep.content.<A HREF="./com/google/code/jscep/content/CaCapabilitiesContentHandler.html" title="class in com.google.code.jscep.content">CaCapabilitiesContentHandler</A>
 <DD>Read and interpret the content from the input stream.
@@ -319,15 +326,15 @@ Method in class com.google.code.jscep.request.<A HREF="./com/google/code/jscep/r
 <DT><A HREF="./com/google/code/jscep/request/Request.html#getContentHandler()"><B>getContentHandler()</B></A> - 
 Method in interface com.google.code.jscep.request.<A HREF="./com/google/code/jscep/request/Request.html" title="interface in com.google.code.jscep.request">Request</A>
 <DD>Returns the ScepContentHandler for the given response type.
-<DT><A HREF="./com/google/code/jscep/client/Client.html#getCrl()"><B>getCrl()</B></A> - 
-Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
-<DD>Retrieves the certificate revocation list for the current CA.
 <DT><A HREF="./com/google/code/jscep/operations/GetCRL.html" title="class in com.google.code.jscep.operations"><B>GetCRL</B></A> - Class in <A HREF="./com/google/code/jscep/operations/package-summary.html">com.google.code.jscep.operations</A><DD>This class represents the SCEP <code>GetCRL</code> <code>pkiMessage</code> type.<DT><A HREF="./com/google/code/jscep/operations/GetCRL.html#GetCRL(javax.security.auth.x500.X500Principal, java.math.BigInteger)"><B>GetCRL(X500Principal, BigInteger)</B></A> - 
 Constructor for class com.google.code.jscep.operations.<A HREF="./com/google/code/jscep/operations/GetCRL.html" title="class in com.google.code.jscep.operations">GetCRL</A>
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/server/ScepServlet.html#getCRL(javax.security.auth.x500.X500Principal, java.math.BigInteger)"><B>getCRL(X500Principal, BigInteger)</B></A> - 
 Method in class com.google.code.jscep.server.<A HREF="./com/google/code/jscep/server/ScepServlet.html" title="class in com.google.code.jscep.server">ScepServlet</A>
 <DD>Retrieve the CRL covering the given certificate identifiers.
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#getCRL()"><B>getCRL()</B></A> - 
+Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
+<DD>Retrieves the Certificate Revocation List for the server CA.
 <DT><A HREF="./com/google/code/jscep/pkcs7/MessageData.html#getEncoded()"><B>getEncoded()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7">MessageData</A>
 <DD>Returns a BER-encoded byte array representation of this instance.
@@ -337,6 +344,9 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getEncoded()"><B>getEncoded()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#getException()"><B>getException()</B></A> - 
+Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
+<DD>Returns the exception last encountered by this transaction.
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getFailInfo()"><B>getFailInfo()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
 <DD>Returns the <A HREF="./com/google/code/jscep/transaction/FailInfo.html" title="enum in com.google.code.jscep.transaction"><CODE>FailInfo</CODE></A> associated with this <code>pkiMessage</code>
@@ -344,12 +354,12 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DT><A HREF="./com/google/code/jscep/PKIOperationFailureException.html#getFailInfo()"><B>getFailInfo()</B></A> - 
 Method in exception com.google.code.jscep.<A HREF="./com/google/code/jscep/PKIOperationFailureException.html" title="class in com.google.code.jscep">PKIOperationFailureException</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#getFailureReason()"><B>getFailureReason()</B></A> - 
+Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
+<DD>Returns the failure reason explaining why the server rejected this transaction.
 <DT><A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html#getFingerprint()"><B>getFingerprint()</B></A> - 
 Method in class com.google.code.jscep.<A HREF="./com/google/code/jscep/FingerprintVerificationCallback.html" title="class in com.google.code.jscep">FingerprintVerificationCallback</A>
 <DD>Returns the fingerprint of the CA certificate.
-<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#getId()"><B>getId()</B></A> - 
-Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
-<DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/pkcs7/MessageData.html#getInstance(org.bouncycastle.asn1.DEREncodable)"><B>getInstance(DEREncodable)</B></A> - 
 Static method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/MessageData.html" title="class in com.google.code.jscep.pkcs7">MessageData</A>
 <DD>Provides a new instance of MessageData by wrapping the provided object.
@@ -413,15 +423,15 @@ Method in interface com.google.code.jscep.operations.<A HREF="./com/google/code/
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getMessageType()"><B>getMessageType()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
 <DD>Returns the recipient <A HREF="./com/google/code/jscep/transaction/MessageType.html" title="enum in com.google.code.jscep.transaction"><CODE>MessageType</CODE></A> associated with this <code>pkiMessage</code>.
-<DT><A HREF="./com/google/code/jscep/client/Client.html#getNextCA()"><B>getNextCA()</B></A> - 
-Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
-<DD>Retrieves the "rollover" certificate to be used by the CA.
 <DT><A HREF="./com/google/code/jscep/request/GetNextCACert.html" title="class in com.google.code.jscep.request"><B>GetNextCACert</B></A> - Class in <A HREF="./com/google/code/jscep/request/package-summary.html">com.google.code.jscep.request</A><DD>This class represents a <code>GetNextCACert</code> request.<DT><A HREF="./com/google/code/jscep/request/GetNextCACert.html#GetNextCACert(java.security.cert.X509Certificate, java.lang.String)"><B>GetNextCACert(X509Certificate, String)</B></A> - 
 Constructor for class com.google.code.jscep.request.<A HREF="./com/google/code/jscep/request/GetNextCACert.html" title="class in com.google.code.jscep.request">GetNextCACert</A>
 <DD>Creates a new GetNextCACert request with the given CA identification string.
 <DT><A HREF="./com/google/code/jscep/request/GetNextCACert.html#GetNextCACert(java.security.cert.X509Certificate)"><B>GetNextCACert(X509Certificate)</B></A> - 
 Constructor for class com.google.code.jscep.request.<A HREF="./com/google/code/jscep/request/GetNextCACert.html" title="class in com.google.code.jscep.request">GetNextCACert</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/client/Client.html#getNextCaCertificate()"><B>getNextCaCertificate()</B></A> - 
+Method in class com.google.code.jscep.client.<A HREF="./com/google/code/jscep/client/Client.html" title="class in com.google.code.jscep.client">Client</A>
+<DD>Retrieves the "rollover" certificate to be used by the CA.
 <DT><A HREF="./com/google/code/jscep/server/ScepServlet.html#getNextCACertificate(java.lang.String)"><B>getNextCACertificate(String)</B></A> - 
 Method in class com.google.code.jscep.server.<A HREF="./com/google/code/jscep/server/ScepServlet.html" title="class in com.google.code.jscep.server">ScepServlet</A>
 <DD>Return the next X.509 certificate which will be used by
@@ -470,6 +480,9 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html#getSenderNonce()"><B>getSenderNonce()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessageGenerator.html" title="class in com.google.code.jscep.pkcs7">PkiMessageGenerator</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#getState()"><B>getState()</B></A> - 
+Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
+<DD>Returns the current state of this transaction.
 <DT><A HREF="./com/google/code/jscep/response/Capabilities.html#getStrongestCipher()"><B>getStrongestCipher()</B></A> - 
 Method in class com.google.code.jscep.response.<A HREF="./com/google/code/jscep/response/Capabilities.html" title="class in com.google.code.jscep.response">Capabilities</A>
 <DD>Returns the strongest cipher algorithm supported by the server and client.
@@ -479,6 +492,9 @@ Method in class com.google.code.jscep.response.<A HREF="./com/google/code/jscep/
 <DT><A HREF="./com/google/code/jscep/asn1/IssuerAndSubject.html#getSubject()"><B>getSubject()</B></A> - 
 Method in class com.google.code.jscep.asn1.<A HREF="./com/google/code/jscep/asn1/IssuerAndSubject.html" title="class in com.google.code.jscep.asn1">IssuerAndSubject</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#getTask()"><B>getTask()</B></A> - 
+Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
+<DD>Returns the task that may be used to advance this transaction.
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html#getTransactionId()"><B>getTransactionId()</B></A> - 
 Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkiMessage.html" title="class in com.google.code.jscep.pkcs7">PkiMessage</A>
 <DD>Returns the recipient <A HREF="./com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction"><CODE>TransactionId</CODE></A> associated with this <code>pkiMessage</code>.
@@ -606,12 +622,6 @@ Method in class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkc
 <DT><A HREF="./com/google/code/jscep/transaction/NonceQueue.html#peek()"><B>peek()</B></A> - 
 Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/NonceQueue.html" title="class in com.google.code.jscep.transaction">NonceQueue</A>
 <DD>
-<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#performOperation(com.google.code.jscep.operations.DelayablePKIOperation, long)"><B>performOperation(DelayablePKIOperation&lt;T&gt;, long)</B></A> - 
-Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
-<DD>Performs the given operation inside this transaction.
-<DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#performOperation(com.google.code.jscep.operations.PKIOperation)"><B>performOperation(PKIOperation&lt;T&gt;)</B></A> - 
-Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
-<DD>Performs the given operation inside this transaction.
 <DT><A HREF="./com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7"><B>PkcsPkiEnvelope</B></A> - Class in <A HREF="./com/google/code/jscep/pkcs7/package-summary.html">com.google.code.jscep.pkcs7</A><DD>This class represents the SCEP <code>pkcsPKIEnvelope</code> structure.<DT><A HREF="./com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html#PkcsPkiEnvelope(org.bouncycastle.asn1.cms.EnvelopedData)"><B>PkcsPkiEnvelope(EnvelopedData)</B></A> - 
 Constructor for class com.google.code.jscep.pkcs7.<A HREF="./com/google/code/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in com.google.code.jscep.pkcs7">PkcsPkiEnvelope</A>
 <DD>&nbsp;
@@ -818,7 +828,7 @@ Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jsc
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/transaction/Transaction.html#toString()"><B>toString()</B></A> - 
 Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction">Transaction</A>
-<DD>&nbsp;
+<DD>
 <DT><A HREF="./com/google/code/jscep/transaction/TransactionId.html#toString()"><B>toString()</B></A> - 
 Method in class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction">TransactionId</A>
 <DD>&nbsp;
@@ -832,7 +842,7 @@ Method in class com.google.code.jscep.transport.<A HREF="./com/google/code/jscep
 Static method in class com.google.code.jscep.x509.<A HREF="./com/google/code/jscep/x509/X509Util.html" title="class in com.google.code.jscep.x509">X509Util</A>
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/transaction/Transaction.html" title="class in com.google.code.jscep.transaction"><B>Transaction</B></A> - Class in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>This class represents a SCEP transaction, and provides a framework for 
- performing operations.<DT><A HREF="./com/google/code/jscep/transaction/TransactionFactory.html" title="class in com.google.code.jscep.transaction"><B>TransactionFactory</B></A> - Class in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>Factory for generating new Transactions.<DT><A HREF="./com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction"><B>TransactionId</B></A> - Class in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>This class represents the SCEP <code>transactionID</code> attribute.<DT><A HREF="./com/google/code/jscep/transaction/TransactionId.html#TransactionId(byte[])"><B>TransactionId(byte[])</B></A> - 
+ performing operations.<DT><A HREF="./com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction"><B>Transaction.State</B></A> - Enum in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>This class represents the state of a transaction.<DT><A HREF="./com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction"><B>TransactionId</B></A> - Class in <A HREF="./com/google/code/jscep/transaction/package-summary.html">com.google.code.jscep.transaction</A><DD>This class represents the SCEP <code>transactionID</code> attribute.<DT><A HREF="./com/google/code/jscep/transaction/TransactionId.html#TransactionId(byte[])"><B>TransactionId(byte[])</B></A> - 
 Constructor for class com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/TransactionId.html" title="class in com.google.code.jscep.transaction">TransactionId</A>
 <DD>&nbsp;
 <DT><A HREF="./com/google/code/jscep/asn1/SCEPObjectIdentifiers.html#transId"><B>transId</B></A> - 
@@ -875,6 +885,9 @@ Static method in enum com.google.code.jscep.transaction.<A HREF="./com/google/co
 <DT><A HREF="./com/google/code/jscep/transaction/PkiStatus.html#valueOf(int)"><B>valueOf(int)</B></A> - 
 Static method in enum com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction">PkiStatus</A>
 <DD>&nbsp;
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.State.html#valueOf(java.lang.String)"><B>valueOf(String)</B></A> - 
+Static method in enum com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A>
+<DD>Returns the enum constant of this type with the specified name.
 <DT><A HREF="./com/google/code/jscep/transport/Transport.Method.html#valueOf(java.lang.String)"><B>valueOf(String)</B></A> - 
 Static method in enum com.google.code.jscep.transport.<A HREF="./com/google/code/jscep/transport/Transport.Method.html" title="enum in com.google.code.jscep.transport">Transport.Method</A>
 <DD>Returns the enum constant of this type with the specified name.
@@ -896,6 +909,10 @@ Static method in enum com.google.code.jscep.transaction.<A HREF="./com/google/co
 the order they are declared.
 <DT><A HREF="./com/google/code/jscep/transaction/PkiStatus.html#values()"><B>values()</B></A> - 
 Static method in enum com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/PkiStatus.html" title="enum in com.google.code.jscep.transaction">PkiStatus</A>
+<DD>Returns an array containing the constants of this enum type, in
+the order they are declared.
+<DT><A HREF="./com/google/code/jscep/transaction/Transaction.State.html#values()"><B>values()</B></A> - 
+Static method in enum com.google.code.jscep.transaction.<A HREF="./com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A>
 <DD>Returns an array containing the constants of this enum type, in
 the order they are declared.
 <DT><A HREF="./com/google/code/jscep/transport/Transport.Method.html#values()"><B>values()</B></A> - 

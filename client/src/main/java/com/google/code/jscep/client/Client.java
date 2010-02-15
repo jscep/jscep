@@ -23,7 +23,6 @@
 package com.google.code.jscep.client;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.Proxy;
 import java.net.URL;
 import java.security.InvalidKeyException;
@@ -32,16 +31,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.CRL;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,19 +44,13 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import com.google.code.jscep.FingerprintVerificationCallback;
-import com.google.code.jscep.PKIOperationFailureException;
-import com.google.code.jscep.operations.GetCRL;
-import com.google.code.jscep.operations.GetCert;
-import com.google.code.jscep.operations.PKCSReq;
 import com.google.code.jscep.request.GetCACaps;
 import com.google.code.jscep.request.GetCACert;
 import com.google.code.jscep.request.GetNextCACert;
 import com.google.code.jscep.response.Capabilities;
 import com.google.code.jscep.transaction.Transaction;
-import com.google.code.jscep.transaction.TransactionFactory;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
-import com.google.code.jscep.x509.X509Util;
 
 /**
  * This class represents a SCEP client, or Requester.
@@ -154,15 +140,25 @@ public class Client {
     	return true;
     }
     
-    private Transaction createTransaction() throws IOException {
-    	return TransactionFactory.createTransaction(createTransport(), getRecipientCertificate(), identity, keyPair, getCapabilities().getStrongestMessageDigest());
+    /**
+     * Creates a new transaction for a PKIOperation.
+     * 
+     * @return a new transaction.
+     * @throws IOException 
+     */
+    public Transaction createTransaction() throws IOException {
+    	X509Certificate ca = retrieveCA();
+    	Transport transport = createTransport();
+    	Capabilities capabilities = getCaCapabilities();
+    	
+    	return Transaction.createTransaction(ca, getRecipientCertificate(), identity, keyPair, capabilities, transport);
     }
     
     private Transport createTransport() throws IOException {
     	LOGGER.entering(getClass().getName(), "createTransport");
     	
     	final Transport t;
-    	if (getCapabilities().isPostSupported()) {
+    	if (getCaCapabilities().isPostSupported()) {
     		t = Transport.createTransport(Transport.Method.POST, url, proxy);
     	} else {
     		t = Transport.createTransport(Transport.Method.GET, url, proxy);
@@ -179,7 +175,7 @@ public class Client {
      * @return the capabilities of the server.
      * @throws IOException if any I/O error occurs.
      */
-    public Capabilities getCapabilities() throws IOException {
+    public Capabilities getCaCapabilities() throws IOException {
     	final GetCACaps req = new GetCACaps(caIdentifier);
         final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 
@@ -259,8 +255,8 @@ public class Client {
      * @return the list of certificates.
      * @throws IOException if any I/O error occurs.
      */
-    public List<X509Certificate> getNextCA() throws IOException {
-    	if (getCapabilities().isNextCASupported() == false) {
+    public List<X509Certificate> getNextCaCertificate() throws IOException {
+    	if (getCaCapabilities().isNextCASupported() == false) {
     		throw new UnsupportedOperationException();
     	}
     	final X509Certificate issuer = retrieveCA();
@@ -328,121 +324,6 @@ public class Client {
 			// TODO
 			throw new RuntimeException(e);
 		}
-    }
-    
-    /**
-     * Retrieves the certificate revocation list for the current CA.
-     * 
-     * @return the certificate revocation list.
-     * @throws IOException if any I/O error occurs.
-     * @throws PKIOperationFailureException 
-     * @throws UnsupportedOperationException if the CA certificate supports CRL distribution points.
-     */
-    public List<X509CRL> getCrl() throws IOException, PKIOperationFailureException {
-        final X509Certificate ca = retrieveCA();
-        
-        if (supportsDistributionPoints(ca)) {
-        	// TODO
-        	// http://tools.ietf.org/html/rfc5280#section-4.2.1.13
-        	throw new UnsupportedOperationException();
-        } else {
-	        // PKI Operation
-	        final GetCRL req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
-	        final CertStore store = createTransaction().performOperation(req);
-	        
-	        try {
-				return getCRLs(store.getCRLs(null));
-			} catch (CertStoreException e) {
-				throw new IOException(e);
-			}
-        }
-    }
-    
-    /**
-     * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
-     */
-    private boolean supportsDistributionPoints(X509Certificate ca) {
-    	return ca.getExtensionValue("2.5.29.31") != null;
-    }
-
-    /**
-     * Enrolls an identity into a PKI domain.
-     * <p>
-     * If the CA uses a manual process, this method will block until the
-     * CA administrator either accepts or rejects the request.
-     * <p>
-     * 
-     * @param subject the certificate to enroll.
-     * @param subjectKeyPair the key pair of the certificate to enroll.
-     * @param password the enrollment password.
-     * @return the enrolled certificate.
-     * @throws IOException if any I/O error occurs.
-     * @throws PKIOperationFailureException if the operation failed.
-     * @throws UnsupportedOperationException if the server does not support renewal and the certificate is not self-signed. 
-     */
-    public List<X509Certificate> enroll(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException, PKIOperationFailureException {
-    	LOGGER.entering(getClass().getName(), "enroll", new Object[] {password});
-    	
-    	if (getCapabilities().isRenewalSupported() == false) {
-    		if (X509Util.isSelfSigned(subject) == false) {
-    			throw new UnsupportedOperationException("Server does not support renewal.");
-    		}
-    	}
-    	
-    	final PKCSReq req = new PKCSReq(subjectKeyPair, subject, hashAlgorithm, password);
-    	final CertStore store = createTransaction().performOperation(req, 30000L);
-    	final List<X509Certificate> certs;
-		try {
-			certs = getCertificates(store.getCertificates(null));
-		} catch (CertStoreException e) {
-			// TODO
-			throw new RuntimeException(e);
-		}
-    	
-    	LOGGER.exiting(getClass().getName(), "enroll", certs);
-    	return certs;
-    }
-
-    /**
-     * Retrieves the certificate corresponding to the given serial number.
-     * 
-     * @param serial the serial number of the certificate.
-     * @return the certificate.
-     * @throws IOException if any I/O error occurs.
-     * @throws PKIOperationFailureException 
-     */
-    public X509Certificate getCert(BigInteger serial) throws IOException, PKIOperationFailureException {
-    	final X509Certificate ca = retrieveCA();
-
-        final GetCert req = new GetCert(ca.getIssuerX500Principal(), serial);
-        final CertStore store = createTransaction().performOperation(req);
-
-        try {
-			return getCertificates(store.getCertificates(null)).get(0);
-		} catch (CertStoreException e) {
-			// TODO
-			throw new RuntimeException(e);
-		}
-    }
-    
-    private List<X509Certificate> getCertificates(Collection<? extends Certificate> certs) {
-    	final List<X509Certificate> x509 = new ArrayList<X509Certificate>();
-    	
-    	for (Certificate cert : certs) {
-    		x509.add((X509Certificate) cert);
-    	}
-    	
-    	return x509;
-    }
-    
-    private List<X509CRL> getCRLs(Collection<? extends CRL> crls) {
-    	final List<X509CRL> x509 = new ArrayList<X509CRL>();
-        
-        for (CRL crl : crls) {
-        	x509.add((X509CRL) crl);
-        }
-        
-        return x509;
     }
     
     /**
