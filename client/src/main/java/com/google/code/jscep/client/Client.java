@@ -255,7 +255,7 @@ public class Client {
      * @return the list of certificates.
      * @throws IOException if any I/O error occurs.
      */
-    public List<X509Certificate> getNextCaCertificate() throws IOException {
+    public List<X509Certificate> getRolloverCertificate() throws IOException {
     	if (getCaCapabilities().isRolloverSupported() == false) {
     		throw new UnsupportedOperationException();
     	}
