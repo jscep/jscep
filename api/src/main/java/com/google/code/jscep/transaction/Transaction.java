@@ -34,7 +34,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.DEREncodable;
@@ -83,7 +83,7 @@ public class Transaction {
 	private final X509Certificate issuerCertificate;
 	private FailInfo failInfo;
 	private CertStore certStore;
-	private TimerTask task;
+	private Callable<State> task;
 	private IOException exception;
 	private State state = State.READY;
 
@@ -96,7 +96,8 @@ public class Transaction {
 		this.clientKeyPair = clientKeyPair;
 		this.transId = TransactionId.createTransactionId(clientKeyPair, capabilities.getStrongestMessageDigest());
 		
-		this.msgGenerator = new PkiMessageGenerator();
+		msgGenerator = new PkiMessageGenerator();
+		msgGenerator.setTransactionId(transId);
 		msgGenerator.setMessageDigest(capabilities.getStrongestMessageDigest());
 		msgGenerator.setSigner(clientCertificate);
 		msgGenerator.setKeyPair(clientKeyPair);
@@ -170,7 +171,7 @@ public class Transaction {
 	 * @return the task.
 	 * @throws IllegalStateException
 	 */
-	public TimerTask getTask() {
+	public Callable<State> getTask() {
 		if (state != State.PENDING) {
 			throw new IllegalStateException();
 		}
@@ -296,7 +297,7 @@ public class Transaction {
 		} else if (res.getPkiStatus() == PkiStatus.PENDING) {
 			if (op instanceof DelayablePKIOperation<?>) {
 				state = State.PENDING;
-				task = new InitialCertTimerTask();
+				task = new InitialCertTask();
 			} else {
 				throw new IllegalStateException(PkiStatus.PENDING + " not expected.");
 			}
@@ -365,9 +366,9 @@ public class Transaction {
 		return sb.toString();
 	}
 	
-	private class InitialCertTimerTask extends TimerTask {
-		@Override
-		public void run() {
+	private class InitialCertTask implements Callable<State> {
+
+		public State call() throws IOException {
 			if (state != State.PENDING) {
 				throw new IllegalStateException();
 			}
@@ -375,12 +376,9 @@ public class Transaction {
 			final X509Name subjectName = X509Util.toX509Name(clientCertificate.getSubjectX500Principal());
 			final GetCertInitial getCert = new GetCertInitial(issuerName, subjectName);
 			
-			try {
-				performOperation(getCert);
-			} catch (IOException e) {
-				state = State.EXCEPTION;
-				exception = e;
-			}
+			performOperation(getCert);
+			
+			return state;
 		}
 	}
 	
