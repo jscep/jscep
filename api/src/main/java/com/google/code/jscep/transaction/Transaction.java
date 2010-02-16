@@ -84,8 +84,7 @@ public class Transaction {
 	private FailInfo failInfo;
 	private CertStore certStore;
 	private Callable<State> task;
-	private IOException exception;
-	private State state = State.READY;
+	private State state = State.CERT_NON_EXISTANT;
 
 	Transaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, KeyPair clientKeyPair, Capabilities capabilities, Transport transport) {
 		this.issuerCertificate = issuerCertificate;
@@ -114,21 +113,6 @@ public class Transaction {
 		return state;
 	}
 	
-	/**
-	 * Returns the exception last encountered by this transaction.
-	 * <p>
-	 * If the state of this transaction is not {@see Transaction.State.EXCEPTION},
-	 * this method will throw an IllegalStateException.
-	 * 
-	 * @return the exception.
-	 * @throws IllegalStateException
-	 */
-	public IOException getException() {
-		if (state != State.EXCEPTION) {
-			throw new IllegalStateException();
-		}
-		return exception;
-	}
 	
 	/**
 	 * Returns the failure reason explaining why the server rejected this transaction.
@@ -140,7 +124,7 @@ public class Transaction {
 	 * @throws IllegalStateException
 	 */
 	public FailInfo getFailureReason() {
-		if (state != State.FAILED) {
+		if (state != State.CERT_NON_EXISTANT) {
 			throw new IllegalStateException();
 		}
 		return failInfo;
@@ -156,7 +140,7 @@ public class Transaction {
 	 * @throws IllegalStateException
 	 */
 	public CertStore getCertStore() {
-		if (state != State.SUCCEEDED) {
+		if (state != State.CERT_ISSUED) {
 			throw new IllegalStateException();
 		}
 		return certStore;
@@ -172,7 +156,7 @@ public class Transaction {
 	 * @throws IllegalStateException
 	 */
 	public Callable<State> getTask() {
-		if (state != State.PENDING) {
+		if (state != State.CERT_REQ_PENDING) {
 			throw new IllegalStateException();
 		}
 		return task;
@@ -191,13 +175,13 @@ public class Transaction {
 		final GetCert req = new GetCert(ca.getIssuerX500Principal(), serial);
 		performOperation(req);
 		
-		if (getState() == State.SUCCEEDED) {
+		if (getState() == State.CERT_ISSUED) {
 			try {
 				return getCertificates(getCertStore().getCertificates(null));
 			} catch (CertStoreException e) {
 				throw new RuntimeException(e);
 			}
-		} else if (getState() == State.PENDING) {
+		} else if (getState() == State.CERT_REQ_PENDING) {
 			throw new IllegalStateException();
 		} else {
 			throw new PKIOperationFailureException(getFailureReason());
@@ -238,13 +222,13 @@ public class Transaction {
 		final GetCRL req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
 		performOperation(req);
 		
-		if (getState() == State.SUCCEEDED) {
+		if (getState() == State.CERT_ISSUED) {
 			try {
 				return getCRLs(getCertStore().getCRLs(null));
 			} catch (CertStoreException e) {
 				throw new RuntimeException(e);
 			}
-		} else if (getState() == State.PENDING) {
+		} else if (getState() == State.CERT_REQ_PENDING) {
 			throw new IllegalStateException();
 		} else {
 			throw new PKIOperationFailureException(getFailureReason());
@@ -292,17 +276,17 @@ public class Transaction {
 		validateExchange(req, res);
 		
 		if (res.getPkiStatus() == PkiStatus.FAILURE) {
-			state = State.FAILED;
+			state = State.CERT_NON_EXISTANT;
 			failInfo = res.getFailInfo();
 		} else if (res.getPkiStatus() == PkiStatus.PENDING) {
 			if (op instanceof DelayablePKIOperation<?>) {
-				state = State.PENDING;
+				state = State.CERT_REQ_PENDING;
 				task = new InitialCertTask();
 			} else {
 				throw new IllegalStateException(PkiStatus.PENDING + " not expected.");
 			}
 		} else {
-			state = State.SUCCEEDED;
+			state = State.CERT_ISSUED;
 			certStore = extractCertStore(res);
 		}
 	}
@@ -369,7 +353,7 @@ public class Transaction {
 	private class InitialCertTask implements Callable<State> {
 
 		public State call() throws IOException {
-			if (state != State.PENDING) {
+			if (state != State.CERT_REQ_PENDING) {
 				throw new IllegalStateException();
 			}
 			final X509Name issuerName = X509Util.toX509Name(serverCertificate.getIssuerX500Principal());
@@ -389,37 +373,26 @@ public class Transaction {
 	 */
 	public enum State {
 		/**
-		 * The transaction is ready to be used.
-		 */
-		READY,
-		/**
 		 * The transaction is a pending state.  Clients should obtain
 		 * a task to execute to proceed.
 		 * <p>
 		 * See {@link Transaction#getTask()}
 		 */
-		PENDING,
+		CERT_REQ_PENDING,
 		/**
 		 * The transaction is in a failed state.  Clients should obtain
 		 * the failure reason.
 		 * <p>
 		 * See {@link Transaction#getFailureReason()}
 		 */
-		FAILED,
+		CERT_NON_EXISTANT,
 		/**
 		 * The transaction has succeeded.  Clients should obtain the certificate
 		 * store.
 		 * <p>
 		 * See {@link Transaction#getCertStore()}
 		 */
-		SUCCEEDED,
-		/**
-		 * The transaction encountered an I/O exception.  Clients should obtain
-		 * the exception.
-		 * <p>
-		 * See {@link Transaction#getException()}
-		 */
-		EXCEPTION
+		CERT_ISSUED,
 	}
 	
 	/**

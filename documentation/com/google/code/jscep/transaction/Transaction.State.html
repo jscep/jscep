@@ -127,34 +127,22 @@ This class represents the state of a transaction.
 <B>Enum Constant Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html#EXCEPTION">EXCEPTION</A></B></CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html#CERT_ISSUED">CERT_ISSUED</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The transaction encountered an I/O exception.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The transaction has succeeded.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html#FAILED">FAILED</A></B></CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html#CERT_NON_EXISTANT">CERT_NON_EXISTANT</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The transaction is in a failed state.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html#PENDING">PENDING</A></B></CODE>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html#CERT_REQ_PENDING">CERT_REQ_PENDING</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The transaction is a pending state.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html#READY">READY</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The transaction is ready to be used.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html#SUCCEEDED">SUCCEEDED</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The transaction has succeeded.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -215,22 +203,10 @@ the order they are declared.</TD>
 </TR>
 </TABLE>
 
-<A NAME="READY"><!-- --></A><H3>
-READY</H3>
+<A NAME="CERT_REQ_PENDING"><!-- --></A><H3>
+CERT_REQ_PENDING</H3>
 <PRE>
-public static final <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A> <B>READY</B></PRE>
-<DL>
-<DD>The transaction is ready to be used.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="PENDING"><!-- --></A><H3>
-PENDING</H3>
-<PRE>
-public static final <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A> <B>PENDING</B></PRE>
+public static final <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A> <B>CERT_REQ_PENDING</B></PRE>
 <DL>
 <DD>The transaction is a pending state.  Clients should obtain
  a task to execute to proceed.
@@ -242,10 +218,10 @@ public static final <A HREF="../../../../../com/google/code/jscep/transaction/Tr
 </DL>
 <HR>
 
-<A NAME="FAILED"><!-- --></A><H3>
-FAILED</H3>
+<A NAME="CERT_NON_EXISTANT"><!-- --></A><H3>
+CERT_NON_EXISTANT</H3>
 <PRE>
-public static final <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A> <B>FAILED</B></PRE>
+public static final <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A> <B>CERT_NON_EXISTANT</B></PRE>
 <DL>
 <DD>The transaction is in a failed state.  Clients should obtain
  the failure reason.
@@ -257,30 +233,15 @@ public static final <A HREF="../../../../../com/google/code/jscep/transaction/Tr
 </DL>
 <HR>
 
-<A NAME="SUCCEEDED"><!-- --></A><H3>
-SUCCEEDED</H3>
+<A NAME="CERT_ISSUED"><!-- --></A><H3>
+CERT_ISSUED</H3>
 <PRE>
-public static final <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A> <B>SUCCEEDED</B></PRE>
+public static final <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A> <B>CERT_ISSUED</B></PRE>
 <DL>
 <DD>The transaction has succeeded.  Clients should obtain the certificate
  store.
  <p>
  See <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.html#getCertStore()"><CODE>Transaction.getCertStore()</CODE></A>
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXCEPTION"><!-- --></A><H3>
-EXCEPTION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.State.html" title="enum in com.google.code.jscep.transaction">Transaction.State</A> <B>EXCEPTION</B></PRE>
-<DL>
-<DD>The transaction encountered an I/O exception.  Clients should obtain
- the exception.
- <p>
- See <A HREF="../../../../../com/google/code/jscep/transaction/Transaction.html#getException()"><CODE>Transaction.getException()</CODE></A>
 <P>
 <DL>
 </DL>
