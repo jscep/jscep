@@ -31,12 +31,12 @@ public class CapabilitiesTest {
 	@Test
 	public void testNextCANotSupported() {
 		Capabilities caps = new Capabilities();
-		Assert.assertFalse(caps.isNextCASupported());
+		Assert.assertFalse(caps.isRolloverSupported());
 	}
 	
 	@Test
 	public void testNextCASupported() {
 		Capabilities caps = new Capabilities(Capability.GET_NEXT_CA_CERT);
-		Assert.assertTrue(caps.isNextCASupported());
+		Assert.assertTrue(caps.isRolloverSupported());
 	}
 }

@@ -77,7 +77,7 @@ public class Capabilities {
 	 *  
 	 * @return <tt>true</tt> if retrieval of the next CA is supported, <tt>false</tt> otherwise.
 	 */
-	public boolean isNextCASupported() {
+	public boolean isRolloverSupported() {
 		return capabilities.contains(Capability.GET_NEXT_CA_CERT);
 	}
 	
