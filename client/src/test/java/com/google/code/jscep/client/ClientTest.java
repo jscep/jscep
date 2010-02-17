@@ -15,6 +15,7 @@ import javax.security.auth.x500.X500Principal;
 import org.junit.Test;
 
 import com.google.code.jscep.transaction.Transaction;
+import com.google.code.jscep.transaction.Transaction.State;
 import com.google.code.jscep.x509.X509Util;
 
 //@Ignore
@@ -56,6 +57,9 @@ public class ClientTest {
 		Transaction enrollTrans = client.createTransaction();
 		
 		final char[] password = "INBOUND_TLSuscl99".toCharArray();
-		enrollTrans.enrollCertificate(identity, keyPair, password);
+		State state = enrollTrans.enrollCertificate(identity, keyPair, password);
+		if (state == State.CERT_ISSUED) {
+			System.out.println(enrollTrans.getCertStore());
+		}
 	}
 }
