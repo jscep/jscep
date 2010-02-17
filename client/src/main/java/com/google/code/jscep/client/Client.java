@@ -34,8 +34,10 @@ import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -57,6 +59,7 @@ import com.google.code.jscep.util.LoggingUtil;
  */
 public class Client {
 	private static Logger LOGGER = LoggingUtil.getLogger(Client.class);
+	private Map<String, Capabilities> capabilitiesCache = new HashMap<String, Capabilities>();
 	private Set<X509Certificate> verified = new HashSet<X509Certificate>(1);
     private URL url;						// Required
     private Proxy proxy;					// Optional
@@ -149,7 +152,7 @@ public class Client {
     public Transaction createTransaction() throws IOException {
     	X509Certificate ca = retrieveCA();
     	Transport transport = createTransport();
-    	Capabilities capabilities = getCaCapabilities();
+    	Capabilities capabilities = getCaCapabilities(true);
     	
     	return Transaction.createTransaction(ca, getRecipientCertificate(), identity, keyPair, capabilities, transport);
     }
@@ -158,7 +161,7 @@ public class Client {
     	LOGGER.entering(getClass().getName(), "createTransport");
     	
     	final Transport t;
-    	if (getCaCapabilities().isPostSupported()) {
+    	if (getCaCapabilities(true).isPostSupported()) {
     		t = Transport.createTransport(Transport.Method.POST, url, proxy);
     	} else {
     		t = Transport.createTransport(Transport.Method.GET, url, proxy);
@@ -176,10 +179,25 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public Capabilities getCaCapabilities() throws IOException {
-    	final GetCACaps req = new GetCACaps(caIdentifier);
-        final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-
-        return trans.sendMessage(req);
+    	return getCaCapabilities(false);
+    }
+    
+    private Capabilities getCaCapabilities(boolean useCache) throws IOException {
+    	LOGGER.entering(getClass().getName(), "getCaCapabilities", useCache);
+    	
+    	Capabilities caps = null;
+    	if (useCache == true) {
+    		caps = capabilitiesCache.get(caIdentifier);
+    	}
+    	if (caps == null) {
+	    	final GetCACaps req = new GetCACaps(caIdentifier);
+	        final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
+	        caps = trans.sendMessage(req);
+	        capabilitiesCache.put(caIdentifier, caps);
+    	}
+        
+        LOGGER.exiting(getClass().getName(), "getCaCapabilities", caps);
+        return caps;
     }
 
     /**

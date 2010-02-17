@@ -244,15 +244,19 @@ public class Transaction {
         
         return x509;
     }
-	
+
 	/**
-     * Attempts to enroll the provided certificate using the server CA.
-     *  
-     * @throws IOException if any I/O error occurs.
-     */
-	public void enrollCertificate(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException {
+	 * Attempts to enroll the provided subject certificate with the configured CA server.
+	 * 
+	 * @param subject the subject certificate.
+	 * @param subjectKeyPair the subject key pair.
+	 * @param password the password to authenticate the operation.
+	 * @return the resulting state.
+	 * @throws IOException if any I/O error occurs.
+	 */
+	public State enrollCertificate(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException {
 		final com.google.code.jscep.operations.PKCSReq req = new com.google.code.jscep.operations.PKCSReq(subjectKeyPair, subject, "MD5", password);
-		performOperation(req);
+		return performOperation(req);
 	}
 	
 	/**
@@ -263,7 +267,7 @@ public class Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws PKIOperationFailureException if the operation fails.
 	 */
-	private <T extends DEREncodable> void performOperation(PKIOperation<T> op) throws IOException {
+	private <T extends DEREncodable> State performOperation(PKIOperation<T> op) throws IOException {
 		LOGGER.entering(getClass().getName(), "performOperation", op);
 		
 		msgGenerator.setMessageType(op.getMessageType());
@@ -276,19 +280,21 @@ public class Transaction {
 		validateExchange(req, res);
 		
 		if (res.getPkiStatus() == PkiStatus.FAILURE) {
-			state = State.CERT_NON_EXISTANT;
 			failInfo = res.getFailInfo();
+			state = State.CERT_NON_EXISTANT;
 		} else if (res.getPkiStatus() == PkiStatus.PENDING) {
 			if (op instanceof DelayablePKIOperation<?>) {
-				state = State.CERT_REQ_PENDING;
 				task = new InitialCertTask();
+				state = State.CERT_REQ_PENDING;
 			} else {
 				throw new IllegalStateException(PkiStatus.PENDING + " not expected.");
 			}
 		} else {
-			state = State.CERT_ISSUED;
 			certStore = extractCertStore(res);
+			state = State.CERT_ISSUED;
 		}
+		
+		return state;
 	}
 
 	private CertStore extractCertStore(PkiMessage response) throws IOException {
@@ -351,7 +357,6 @@ public class Transaction {
 	}
 	
 	private class InitialCertTask implements Callable<State> {
-
 		public State call() throws IOException {
 			if (state != State.CERT_REQ_PENDING) {
 				throw new IllegalStateException();
@@ -362,7 +367,7 @@ public class Transaction {
 			
 			performOperation(getCert);
 			
-			return state;
+			return State.CERT_REQ_PENDING;
 		}
 	}
 	
