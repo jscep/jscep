@@ -53,7 +53,6 @@ import com.google.code.jscep.pkcs7.PkiMessageGenerator;
 import com.google.code.jscep.pkcs7.SignedDataParser;
 import com.google.code.jscep.pkcs7.SignedDataUtil;
 import com.google.code.jscep.request.PKCSReq;
-import com.google.code.jscep.response.Capabilities;
 import com.google.code.jscep.transport.Transport;
 import com.google.code.jscep.util.LoggingUtil;
 import com.google.code.jscep.x509.X509Util;
@@ -81,26 +80,28 @@ public class Transaction {
 	private final X509Certificate clientCertificate;
 	private final TransactionId transId;
 	private final X509Certificate issuerCertificate;
+	private String digestAlg;
 	private FailInfo failInfo;
 	private CertStore certStore;
 	private Callable<State> task;
 	private State state = State.CERT_NON_EXISTANT;
 
-	Transaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, KeyPair clientKeyPair, Capabilities capabilities, Transport transport) {
+	Transaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, KeyPair clientKeyPair, String digestAlg, String cipherAlg, Transport transport) {
 		this.issuerCertificate = issuerCertificate;
 		this.transport = transport;
 		
 		this.serverCertificate = serverCertificate;
 		this.clientCertificate = clientCertificate;
 		this.clientKeyPair = clientKeyPair;
-		this.transId = TransactionId.createTransactionId(clientKeyPair, capabilities.getStrongestMessageDigest());
+		this.transId = TransactionId.createTransactionId(clientKeyPair, digestAlg);
+		this.digestAlg = digestAlg;
 		
 		msgGenerator = new PkiMessageGenerator();
 		msgGenerator.setTransactionId(transId);
-		msgGenerator.setMessageDigest(capabilities.getStrongestMessageDigest());
+		msgGenerator.setMessageDigest(digestAlg);
 		msgGenerator.setSigner(clientCertificate);
 		msgGenerator.setKeyPair(clientKeyPair);
-		msgGenerator.setCipherAlgorithm(capabilities.getStrongestCipher());
+		msgGenerator.setCipherAlgorithm(cipherAlg);
 		msgGenerator.setRecipient(serverCertificate);
 	}
 	
@@ -255,7 +256,7 @@ public class Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 */
 	public State enrollCertificate(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException {
-		final com.google.code.jscep.operations.PKCSReq req = new com.google.code.jscep.operations.PKCSReq(subjectKeyPair, subject, "MD5", password);
+		final com.google.code.jscep.operations.PKCSReq req = new com.google.code.jscep.operations.PKCSReq(subjectKeyPair, subject, digestAlg, password);
 		return performOperation(req);
 	}
 	
@@ -411,10 +412,10 @@ public class Transaction {
 	 * @param transport the transport to use for this transaction.
 	 * @return a new transaction.
 	 */
-	public static Transaction createTransaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, KeyPair clientKeyPair, Capabilities capabilities, Transport transport) {
+	public static Transaction createTransaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, KeyPair clientKeyPair, String digestAlg, String cipherAlg, Transport transport) {
 		LOGGER.entering(Transaction.class.getName(), "createTransaction");
 		
-		Transaction t = new Transaction(issuerCertificate, serverCertificate, clientCertificate, clientKeyPair, capabilities, transport);
+		Transaction t = new Transaction(issuerCertificate, serverCertificate, clientCertificate, clientKeyPair, digestAlg, cipherAlg, transport);
 		
 		LOGGER.exiting (Transaction.class.getName(), "createTransaction", t);
 		return t;

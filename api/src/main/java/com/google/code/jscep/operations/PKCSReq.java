@@ -32,11 +32,9 @@ import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.X509Name;
@@ -55,14 +53,13 @@ public class PKCSReq implements DelayablePKIOperation<CertificationRequest> {
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;
-    private final DERObjectIdentifier signatureAlgorithm;
+    private final String digestAlgorithm;
 
     public PKCSReq(KeyPair keyPair, X509Certificate identity, String digestAlgorithm, char[] password) {
         this.keyPair = keyPair;
         this.identity = identity;
         this.password = password;
-        // TODO: Hardcoded Algoritm
-        this.signatureAlgorithm = PKCSObjectIdentifiers.sha1WithRSAEncryption;
+        this.digestAlgorithm = digestAlgorithm;
     }
 
     /**
@@ -119,7 +116,7 @@ public class PKCSReq implements DelayablePKIOperation<CertificationRequest> {
     }
     
     private AlgorithmIdentifier getSignatureAlgorithm() {
-    	return new AlgorithmIdentifier(signatureAlgorithm);
+    	return new AlgorithmIdentifier(AlgorithmDictionary.getOid(AlgorithmDictionary.getRSASignatureAlgorithm(digestAlgorithm)));
     }
     
     /**

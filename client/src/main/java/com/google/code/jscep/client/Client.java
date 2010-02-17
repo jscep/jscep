@@ -61,6 +61,8 @@ public class Client {
 	private static Logger LOGGER = LoggingUtil.getLogger(Client.class);
 	private Map<String, Capabilities> capabilitiesCache = new HashMap<String, Capabilities>();
 	private Set<X509Certificate> verified = new HashSet<X509Certificate>(1);
+	private String preferredDigestAlg;
+	private String preferredCipherAlg;
     private URL url;						// Required
     private Proxy proxy;					// Optional
     private String caIdentifier;			// Optional
@@ -153,8 +155,16 @@ public class Client {
     	X509Certificate ca = retrieveCA();
     	Transport transport = createTransport();
     	Capabilities capabilities = getCaCapabilities(true);
+    	String cipherAlg = preferredCipherAlg;
+    	if (cipherAlg == null) {
+    		cipherAlg = capabilities.getStrongestCipher();
+    	}
+    	String digestAlg = preferredDigestAlg;
+    	if (digestAlg == null) {
+    		digestAlg = capabilities.getStrongestMessageDigest();
+    	}
     	
-    	return Transaction.createTransaction(ca, getRecipientCertificate(), identity, keyPair, capabilities, transport);
+    	return Transaction.createTransaction(ca, getRecipientCertificate(), identity, keyPair, digestAlg, cipherAlg, transport);
     }
     
     private Transport createTransport() throws IOException {
@@ -342,6 +352,14 @@ public class Client {
 			// TODO
 			throw new RuntimeException(e);
 		}
+    }
+    
+    void setPreferredCipherAlgorithm(String algorithm) {
+    	preferredCipherAlg = algorithm;
+    }
+    
+    void setPreferredDigestAlgorithm(String algorithm) {
+    	preferredDigestAlg = algorithm;
     }
     
     /**

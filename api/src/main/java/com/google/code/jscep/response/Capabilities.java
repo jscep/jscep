@@ -64,6 +64,18 @@ public class Capabilities {
 	}
 	
 	/**
+	 * Returns <code>true</code> if the server supports the provided
+	 * Capability, <code>false</code> otherwise.
+	 * 
+	 * @param capability the capability to test for.
+	 * @return <code>true</code> if the server supports the provided
+	 * 	Capability, <code>false</code> otherwise.
+	 */
+	public boolean contains(Capability capability) {
+		return capabilities.contains(capability);
+	}
+	
+	/**
 	 * Returns <tt>true</tt> if POST is supported, <tt>false</tt> otherwise.
 	 *  
 	 * @return <tt>true</tt> if POST is supported, <tt>false</tt> otherwise.

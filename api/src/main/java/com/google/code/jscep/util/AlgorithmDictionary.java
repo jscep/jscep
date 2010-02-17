@@ -156,6 +156,16 @@ public final class AlgorithmDictionary {
 	}
 	
 	/**
+	 * Returns the cipher part of the provided transformation.
+	 * 
+	 * @param transformation the transformation, e.g. "DES/CBC/PKCS5Padding"
+	 * @return the cipher, e.g. "DES"
+	 */
+	public static String fromTransformation(String transformation) {
+		return transformation.split("/")[0];
+	}
+	
+	/**
 	 * Returns the name of the given algorithm.
 	 * 
 	 * @param alg the algorithm to look up.
@@ -163,5 +173,13 @@ public final class AlgorithmDictionary {
 	 */
 	public static String lookup(AlgorithmIdentifier alg) {
 		return contents.get(alg.getObjectId());
+	}
+	
+	public static String getRSASignatureAlgorithm(String digestAlgorithm) {
+		if (digestAlgorithm.startsWith("SHA")) {
+			return digestAlgorithm.replace("-", "") + "withRSA";
+		} else {
+			return digestAlgorithm + "withRSA";
+		}
 	}
 }

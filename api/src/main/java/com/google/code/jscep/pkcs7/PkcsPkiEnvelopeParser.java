@@ -88,6 +88,7 @@ public class PkcsPkiEnvelopeParser {
 		assert(eci.getContentType().equals(CMSObjectIdentifiers.data));
 		final ASN1OctetString ec = eci.getEncryptedContent();
 		final AlgorithmIdentifier algId = eci.getContentEncryptionAlgorithm();
+		final String secretKeyAlg = AlgorithmDictionary.fromTransformation(AlgorithmDictionary.lookup(algId));
 		
 		ASN1Set recipientInfoSet = envelopedData.getRecipientInfos();
 		Enumeration<?> riEnum = recipientInfoSet.getObjects();
@@ -102,12 +103,10 @@ public class PkcsPkiEnvelopeParser {
 			try {
 				final Cipher cipher = Cipher.getInstance(AlgorithmDictionary.lookup(keyTransInfo.getKeyEncryptionAlgorithm()));
 				cipher.init(Cipher.UNWRAP_MODE, privKey);
-				// TODO: Hardcoded Algorithm
-				final Key secretKey = cipher.unwrap(key.getOctets(), "DES", Cipher.SECRET_KEY);
+				final Key secretKey = cipher.unwrap(key.getOctets(), secretKeyAlg, Cipher.SECRET_KEY);
 				
 				final ASN1Object params = (ASN1Object) algId.getParameters();
-				// TODO: Hardcoded Algorithm
-				AlgorithmParameters algParams = AlgorithmParameters.getInstance("DES");
+				AlgorithmParameters algParams = AlgorithmParameters.getInstance(secretKeyAlg);
 				algParams.init(params.getEncoded());
 				
 				final Cipher msgCipher = Cipher.getInstance(AlgorithmDictionary.lookup(algId));

@@ -296,10 +296,9 @@ public class PkiMessageGenerator implements Cloneable {
 	}
 	
 	private SignerInfo getSignerInfo() throws IOException, GeneralSecurityException {
+		final MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
 		// TODO: Hardcoded Algorithm
-		final MessageDigest digest = MessageDigest.getInstance("SHA-1");
-		// TODO: Hardcoded Algorithm
-		final Signature sig = Signature.getInstance("SHA1withRSA");
+		final Signature sig = Signature.getInstance(AlgorithmDictionary.getRSASignatureAlgorithm(digestAlgorithm));
 		
 		digest.update(content.getEncoded());
 		hash = digest.digest();

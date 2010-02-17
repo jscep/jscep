@@ -122,7 +122,6 @@ public class PkcsPkiEnvelopeGenerator {
     	final ContentInfo contentInfo;
 		try {
 			final Cipher cipher = Cipher.getInstance(cipherTransformation);
-			// TODO: Hardcoded Algorithm
 			final SecretKey encKey = KeyGenerator.getInstance(keyAlgorithm).generateKey();
 			final AlgorithmParameters params = generateParameters();
 			final AlgorithmIdentifier encAlgId = getAlgorithmIdentifier(AlgorithmDictionary.getOid(cipherTransformation), params);
@@ -163,8 +162,7 @@ public class PkcsPkiEnvelopeGenerator {
 		final byte[] iv = new byte[8];
 		final SecureRandom rnd = new SecureRandom();
 		rnd.nextBytes(iv);
-		
-		// TODO: Hardcoded Algorithm
+
 		final AlgorithmParameters params = AlgorithmParameters.getInstance(cipherAlgorithm);
 		params.init(new IvParameterSpec(iv));
 		
@@ -183,11 +181,9 @@ public class PkcsPkiEnvelopeGenerator {
 		TBSCertificateStructure tbs = TBSCertificateStructure.getInstance(ASN1Object.fromByteArray(cert.getTBSCertificate()));
 		AlgorithmIdentifier keyEncAlg = tbs.getSubjectPublicKeyInfo().getAlgorithmId();
 
-		ASN1OctetString encKey;
-		// TODO: Hardcoded Algorithm
 		Cipher keyCipher = Cipher.getInstance("RSA");
 		keyCipher.init(Cipher.WRAP_MODE, pubKey);
-		encKey = new DEROctetString(keyCipher.wrap(key));
+		ASN1OctetString encKey = new DEROctetString(keyCipher.wrap(key));
 		
 		ASN1InputStream aIn = new ASN1InputStream(cert.getTBSCertificate());
 		tbs = TBSCertificateStructure.getInstance(aIn.readObject());

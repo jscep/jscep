@@ -57,7 +57,6 @@ public class NextCaCertificateContentHandlerTest {
 	
 	private X509Certificate getCertificate() throws Exception {
 		X500Principal subject = new X500Principal("CN=example.org");
-		// TODO: Hardcoded Algorithm
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
 		X509Certificate cert = X509Util.createEphemeralCertificate(subject, keyPair);
 		
