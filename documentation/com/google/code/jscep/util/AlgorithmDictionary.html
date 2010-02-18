@@ -126,6 +126,14 @@ This class provides a utility to lookup a friendly name for an algorithm given
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/util/AlgorithmDictionary.html#fromTransformation(java.lang.String)">fromTransformation</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;transformation)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the cipher part of the provided transformation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/AlgorithmIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">AlgorithmIdentifier</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/util/AlgorithmDictionary.html#getAlgId(java.lang.String)">getAlgId</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;algorithm)</CODE>
 
@@ -139,6 +147,14 @@ This class provides a utility to lookup a friendly name for an algorithm given
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the OID for the provided algorithm name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/util/AlgorithmDictionary.html#getRSASignatureAlgorithm(java.lang.String)">getRSASignatureAlgorithm</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -229,6 +245,20 @@ public static <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.ht
 </DL>
 <HR>
 
+<A NAME="fromTransformation(java.lang.String)"><!-- --></A><H3>
+fromTransformation</H3>
+<PRE>
+public static <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>fromTransformation</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;transformation)</PRE>
+<DL>
+<DD>Returns the cipher part of the provided transformation.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>transformation</CODE> - the transformation, e.g. "DES/CBC/PKCS5Padding"
+<DT><B>Returns:</B><DD>the cipher, e.g. "DES"</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="lookup(org.bouncycastle.asn1.x509.AlgorithmIdentifier)"><!-- --></A><H3>
 lookup</H3>
 <PRE>
@@ -239,6 +269,17 @@ public static <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.ht
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>alg</CODE> - the algorithm to look up.
 <DT><B>Returns:</B><DD>the algorithm name.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRSASignatureAlgorithm(java.lang.String)"><!-- --></A><H3>
+getRSASignatureAlgorithm</H3>
+<PRE>
+public static <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getRSASignatureAlgorithm</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm)</PRE>
+<DL>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

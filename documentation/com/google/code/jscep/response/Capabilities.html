@@ -148,6 +148,15 @@ This class represents a set of capabilities for a particular
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/google/code/jscep/response/Capabilities.html#contains(com.google.code.jscep.response.Capability)">contains</A></B>(<A HREF="../../../../../com/google/code/jscep/response/Capability.html" title="enum in com.google.code.jscep.response">Capability</A>&nbsp;capability)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns <code>true</code> if the server supports the provided
+ Capability, <code>false</code> otherwise.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/google/code/jscep/response/Capabilities.html#getStrongestCipher()">getStrongestCipher</A></B>()</CODE>
 
@@ -248,6 +257,22 @@ public void <B>add</B>(<A HREF="../../../../../com/google/code/jscep/response/Ca
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>capability</CODE> - the capability to add.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="contains(com.google.code.jscep.response.Capability)"><!-- --></A><H3>
+contains</H3>
+<PRE>
+public boolean <B>contains</B>(<A HREF="../../../../../com/google/code/jscep/response/Capability.html" title="enum in com.google.code.jscep.response">Capability</A>&nbsp;capability)</PRE>
+<DL>
+<DD>Returns <code>true</code> if the server supports the provided
+ Capability, <code>false</code> otherwise.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>capability</CODE> - the capability to test for.
+<DT><B>Returns:</B><DD><code>true</code> if the server supports the provided
+        Capability, <code>false</code> otherwise.</DL>
 </DD>
 </DL>
 <HR>

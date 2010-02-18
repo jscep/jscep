@@ -4,6 +4,9 @@ import static org.hamcrest.core.Is.is;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.util.List;
+
+import junit.framework.Assert;
 
 import org.junit.Assume;
 import org.junit.Ignore;
@@ -55,6 +58,18 @@ public class ClientTest extends AbstractClientTest {
 		if (state == State.CERT_ISSUED) {
 			trans.getCertStore().getCertificates(null);
 		}
+	}
+	
+	@Test
+	public void testEnrollThenGet() throws Exception {		
+		final Transaction enrollTrans = client.createTransaction();		
+		final State state = enrollTrans.enrollCertificate(identity, keyPair, password);
+		Assume.assumeTrue(state == State.CERT_ISSUED);
+		identity = (X509Certificate) enrollTrans.getCertStore().getCertificates(null).iterator().next();
+		final Transaction getCertTrans = client.createTransaction();
+		final List<X509Certificate> certs = getCertTrans.getCertificate(identity.getSerialNumber());
+		
+		Assert.assertEquals(identity, certs.get(0));
 	}
 	
 	@Test(expected = IOException.class)
