@@ -36,7 +36,6 @@ public class Main extends JFrame {
 		Client client = builder.build();
 		Transaction transaction = client.createTransaction();
 		transaction.enrollCertificate(identity, keyPair, "INBOUND_TLSuscl99".toCharArray());
-		System.out.println(transaction.getCertStore());
 	}
 	
 	public static void main(String[] args) throws Exception {

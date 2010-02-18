@@ -2,6 +2,7 @@ com.google.code.jscep
 com.google.code.jscep.asn1
 com.google.code.jscep.client
 com.google.code.jscep.content
+com.google.code.jscep.gui
 com.google.code.jscep.operations
 com.google.code.jscep.pkcs7
 com.google.code.jscep.pkcs9

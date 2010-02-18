@@ -138,13 +138,18 @@ public class Transaction {
 	 * this method will throw an IllegalStateException.
 	 * 
 	 * @return the certificate store.
+	 * @throws IOException 
 	 * @throws IllegalStateException
 	 */
-	public CertStore getCertStore() {
+	public List<X509Certificate> getIssuedCertificates() throws IOException {
 		if (state != State.CERT_ISSUED) {
 			throw new IllegalStateException();
 		}
-		return certStore;
+		try {
+			return getCertificates(certStore.getCertificates(null));
+		} catch (CertStoreException e) {
+			throw new IOException(e);
+		}
 	}
 	
 	/**
@@ -178,7 +183,7 @@ public class Transaction {
 		
 		if (getState() == State.CERT_ISSUED) {
 			try {
-				return getCertificates(getCertStore().getCertificates(null));
+				return getCertificates(certStore.getCertificates(null));
 			} catch (CertStoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -225,7 +230,7 @@ public class Transaction {
 		
 		if (getState() == State.CERT_ISSUED) {
 			try {
-				return getCRLs(getCertStore().getCRLs(null));
+				return getCRLs(certStore.getCRLs(null));
 			} catch (CertStoreException e) {
 				throw new RuntimeException(e);
 			}

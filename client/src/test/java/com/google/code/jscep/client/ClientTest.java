@@ -25,7 +25,7 @@ public class ClientTest extends AbstractClientTest {
 		Transaction trans = client.createTransaction();		
 		State state = trans.enrollCertificate(identity, keyPair, password);
 		if (state == State.CERT_ISSUED) {
-			trans.getCertStore();
+			trans.getIssuedCertificates();
 		}
 	}
 
@@ -43,11 +43,11 @@ public class ClientTest extends AbstractClientTest {
 		State state;
 		state = trans.enrollCertificate(identity, keyPair, password);
 		if (state == State.CERT_ISSUED) {
-			identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
+			identity = trans.getIssuedCertificates().get(0);
 		}
 		state = trans.enrollCertificate(identity, keyPair, password);
 		if (state == State.CERT_ISSUED) {
-			identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
+			identity = trans.getIssuedCertificates().get(0);
 		}
 	}
 
@@ -56,7 +56,7 @@ public class ClientTest extends AbstractClientTest {
 		Transaction trans = client.createTransaction();		
 		State state = trans.enrollCertificate(identity, keyPair, password);
 		if (state == State.CERT_ISSUED) {
-			trans.getCertStore().getCertificates(null);
+			trans.getIssuedCertificates().get(0);
 		}
 	}
 	
@@ -65,7 +65,7 @@ public class ClientTest extends AbstractClientTest {
 		final Transaction enrollTrans = client.createTransaction();		
 		final State state = enrollTrans.enrollCertificate(identity, keyPair, password);
 		Assume.assumeTrue(state == State.CERT_ISSUED);
-		identity = (X509Certificate) enrollTrans.getCertStore().getCertificates(null).iterator().next();
+		identity = enrollTrans.getIssuedCertificates().get(0);
 		final Transaction getCertTrans = client.createTransaction();
 		final List<X509Certificate> certs = getCertTrans.getCertificate(identity.getSerialNumber());
 		
@@ -77,7 +77,7 @@ public class ClientTest extends AbstractClientTest {
 		Transaction trans = client.createTransaction();		
 		State state = trans.enrollCertificate(identity, keyPair, new char[0]);
 		if (state == State.CERT_ISSUED) {
-			trans.getCertStore().getCertificates(null);
+			trans.getIssuedCertificates().get(0);
 		}
 	}
 }
