@@ -1,6 +1,8 @@
 package com.google.code.jscep.gui;
 
+import java.awt.HeadlessException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -30,12 +32,16 @@ public class Main extends JFrame {
 		X500Principal subject = new X500Principal("CN=example.org");
 		X509Certificate identity = X509Util.createEphemeralCertificate(subject, keyPair);
 		Client.Builder builder = new Client.Builder();
-		builder.url(new URL("https://engtest66-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe"));
+		builder.url(getURL());
 		builder.identity(identity, keyPair);
 		builder.callbackHandler(new Handler());
 		Client client = builder.build();
 		Transaction transaction = client.createTransaction();
 		transaction.enrollCertificate(identity, keyPair, "INBOUND_TLSuscl99".toCharArray());
+	}
+	
+	public URL getURL() throws HeadlessException, MalformedURLException {
+		return new URL(JOptionPane.showInputDialog("SCEP URL"));
 	}
 	
 	public static void main(String[] args) throws Exception {
