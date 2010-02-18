@@ -92,6 +92,10 @@ public class Client {
     	// certificate fingerprint just makes things more complicated for
     	// pre-provisioning.  Perhaps we should settle on a definite hash?
 
+    	if (keyPair == null) {
+    		throw new IllegalStateException("keyPair is null");
+    	}
+    	
     	if (callbackHandler != null) {
     		// Manual Authorization
     	} else {
@@ -249,7 +253,7 @@ public class Client {
     	if (this.hashAlgorithm != null) {
     		hashAlgorithm = this.hashAlgorithm;
     	} else {
-    		hashAlgorithm = "SHA-512";
+    		hashAlgorithm = getCaCapabilities(true).getStrongestMessageDigest();
     	}
     	final byte[] fingerprint;
     	try {
