@@ -30,31 +30,31 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
  */
 public interface SCEPObjectIdentifiers {
 	/**
-	 * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) messageType(2)
+	 * <code>2.16.840.1.113733.1.9.2</code>
 	 */
 	DERObjectIdentifier messageType = new DERObjectIdentifier("2.16.840.1.113733.1.9.2");
     /**
-	 * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) pkiStatus(3)
+	 * <code>2.16.840.1.113733.1.9.3</code>
 	 */
     DERObjectIdentifier pkiStatus = new DERObjectIdentifier("2.16.840.1.113733.1.9.3");
     /**
-     * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) failInfo(4)
+     * <code>2.16.840.1.113733.1.9.4</code>
      */
     DERObjectIdentifier failInfo = new DERObjectIdentifier("2.16.840.1.113733.1.9.4");
     /**
-     * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) senderNonce(5)
+     * <code>2.16.840.1.113733.1.9.5</code>
      */
     DERObjectIdentifier senderNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.5");
     /**
-     * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) recipientNonce(6)
+     * <code>2.16.840.1.113733.1.9.6</code>
      */
     DERObjectIdentifier recipientNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.6");
     /**
-     * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) transId(7)
+     * <code>2.16.840.1.113733.1.9.7</code>
      */
     DERObjectIdentifier transId = new DERObjectIdentifier("2.16.840.1.113733.1.9.7");
     /**
-     * 2 16 US(840) 1 VeriSign(113733) pki(1) attributes(9) pkiStatus(8)
+     * <code>2.16.840.1.113733.1.9.8</code>
      */
     DERObjectIdentifier extensionReq = new DERObjectIdentifier("2.16.840.1.113733.1.9.8");
 }

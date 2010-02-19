@@ -27,7 +27,7 @@ import com.google.code.jscep.transaction.PkiStatus;
 
 /**
  * This is a marker interface for those PKI operations which may have
- * a {@link PkiStatus.PENDING} response.
+ * a {@link PkiStatus#PENDING} response.
  * 
  * @author David Grant
  * @param <T> the type message data for this operation.

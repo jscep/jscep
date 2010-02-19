@@ -37,7 +37,8 @@ import org.bouncycastle.x509.X509V1CertificateGenerator;
 import com.google.code.jscep.util.LoggingUtil;
 
 /**
- * This class is used for generating ephemeral certificates.
+ * This is a utility class for performing various operations pertaining to X.509
+ * certificates.
  * 
  * @author David Grant
  */
@@ -56,8 +57,8 @@ public final class X509Util {
 	 * 
 	 * @param subject the subject to certify.
 	 * @param keyPair the key pair to sign the certificate with.
-	 * @return new certificate.
-	 * @throws GeneralSecurityException
+	 * @return a new certificate.
+	 * @throws GeneralSecurityException if any security problem occurs.
 	 */
 	public static X509Certificate createEphemeralCertificate(X500Principal subject, KeyPair keyPair) throws GeneralSecurityException {
 		LOGGER.entering(X509Util.class.getName(), "createEphemeralCertificate", new Object[] {subject, keyPair});
@@ -82,10 +83,22 @@ public final class X509Util {
 		return cert;
 	}
 	
+	/**
+	 * Converts a Java SE X500Principal to a Bouncy Castle X509Name.
+	 * 
+	 * @param principal the principal to convert.
+	 * @return the converted name.
+	 */
 	public static X509Name toX509Name(X500Principal principal) {
 		return new X509Name(principal.getName());
 	}
 	
+	/**
+	 * Checks the provided certificate to see if it is self-signed.
+	 * 
+	 * @param cert the certificate to check.
+	 * @return <code>true</code> if the certificate is self-signed, <code>false</code> otherwise.
+	 */
 	public static boolean isSelfSigned(X509Certificate cert) {
 		try {
     		cert.verify(cert.getPublicKey());

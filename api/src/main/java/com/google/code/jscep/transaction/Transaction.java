@@ -62,11 +62,12 @@ import com.google.code.jscep.x509.X509Util;
  * performing operations.
  * <p>
  * The behaviour of this class changes in accordance with the possible valid states
- * for each transaction operation.  For enrollment operations, clients should obtain
- * the current state using {@see #getState()}, and perform the steps required by
- * that outcome.  For all other operations, the method will return the required
- * type unless the server rejects the operation, in which case a 
- * {@see PkiOperationFailureException} will be thrown.
+ * for each transaction operation.  For enrollment operations, clients should inspect 
+ * the {@link State} returned by the {@link #enrollCertificate(X509Certificate, KeyPair, char[])}
+ * method or the state returned by the callable returned by {@link #getTask()}.
+ * 
+ * For non-enrollment operations, either the invocation will be successful, or the
+ * method will throw a {@link PKIOperationFailureException}. 
  * 
  * @author David Grant
  */
@@ -118,8 +119,8 @@ public class Transaction {
 	/**
 	 * Returns the failure reason explaining why the server rejected this transaction.
 	 * <p>
-	 * If the state of this transaction is not {@see Transaction.State.FAILED},
-	 * this method will throw an IllegalStateException.
+	 * If the state of this transaction is not {@link State#CERT_NON_EXISTANT},
+	 * this method will throw an {@link IllegalStateException}.
 	 * 
 	 * @return the failure reason.
 	 * @throws IllegalStateException
@@ -134,8 +135,8 @@ public class Transaction {
 	/**
 	 * Returns the CertStore that was the outcome of this transaction.
 	 * <p>
-	 * If the state of this transaction is not {@see Transaction.State.SUCCEEDED},
-	 * this method will throw an IllegalStateException.
+	 * If the state of this transaction is not {@link State#CERT_ISSUED},
+	 * this method will throw an {@link IllegalStateException}.
 	 * 
 	 * @return the certificate store.
 	 * @throws IOException 
@@ -155,8 +156,8 @@ public class Transaction {
 	/**
 	 * Returns the task that may be used to advance this transaction.
 	 * <p>
-	 * If the state of this transaction is not {@see Transaction.State.PENDING},
-	 * this method will throw an IllegalStateException.
+	 * If the state of this transaction is not {@link State#CERT_REQ_PENDING},
+	 * this method will throw an {@link IllegalStateException}.
 	 * 
 	 * @return the task.
 	 * @throws IllegalStateException
@@ -293,7 +294,7 @@ public class Transaction {
 				task = new InitialCertTask();
 				state = State.CERT_REQ_PENDING;
 			} else {
-				throw new IllegalStateException(PkiStatus.PENDING + " not expected.");
+				throw new IllegalStateException(PkiStatus.PENDING + " not expected for " + op.getMessageType());
 			}
 		} else {
 			certStore = extractCertStore(res);
@@ -384,24 +385,24 @@ public class Transaction {
 	 */
 	public enum State {
 		/**
-		 * The transaction is a pending state.  Clients should obtain
-		 * a task to execute to proceed.
+		 * The transaction is a pending state.
 		 * <p>
-		 * See {@link Transaction#getTask()}
+		 * Clients should use {@link Transaction#getTask()} to retrieve
+		 * the task to execute in order to proceed.
 		 */
 		CERT_REQ_PENDING,
 		/**
-		 * The transaction is in a failed state.  Clients should obtain
-		 * the failure reason.
+		 * The transaction is in a failed state.
 		 * <p>
-		 * See {@link Transaction#getFailureReason()}
+		 * Clients should use {@link Transaction#getFailureReason()} to retrieve
+		 * the failure reason.
 		 */
 		CERT_NON_EXISTANT,
 		/**
-		 * The transaction has succeeded.  Clients should obtain the certificate
-		 * store.
+		 * The transaction has succeeded.
 		 * <p>
-		 * See {@link Transaction#getCertStore()}
+		 * Clients should use {@link Transaction#getIssuedCertificates()} to 
+		 * retrieve the enrolled certificates.
 		 */
 		CERT_ISSUED,
 	}
@@ -413,7 +414,8 @@ public class Transaction {
 	 * @param serverCertificate the server certificate.
 	 * @param clientCertificate the client certificate.
 	 * @param clientKeyPair the key pair for the client.
-	 * @param capabilities the server capabilities.
+	 * @param digestAlg the hash algorithm to use.
+	 * @param cipherAlg the cipher algorithm to use.
 	 * @param transport the transport to use for this transaction.
 	 * @return a new transaction.
 	 */

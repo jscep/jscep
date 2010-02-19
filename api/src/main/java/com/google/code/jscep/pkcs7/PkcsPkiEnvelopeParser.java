@@ -68,11 +68,11 @@ public class PkcsPkiEnvelopeParser {
 	}
 	
 	/**
-	 * Parses the provided {@link ContentInfo} to extract 
+	 * Parses the provided {@link EnvelopedData}. 
 	 * 
-	 * @param envContentInfo
-	 * @return
-	 * @throws IOException
+	 * @param envelopedData the data to parse.
+	 * @return the parsed pkcsPkiEnvelope.
+	 * @throws IOException if any I/O error occurs.
 	 */
 	public PkcsPkiEnvelope parse(EnvelopedData envelopedData) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse", envelopedData);

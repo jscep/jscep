@@ -43,7 +43,7 @@ import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
  * generally as and when they are required by changes to the SCEP specification.
  * 
  * @author David Grant
- * @see http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html
+ * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html
  */
 public final class AlgorithmDictionary {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.util");
@@ -175,11 +175,20 @@ public final class AlgorithmDictionary {
 		return contents.get(alg.getObjectId());
 	}
 	
-	public static String getRSASignatureAlgorithm(String digestAlgorithm) {
-		if (digestAlgorithm.startsWith("SHA")) {
-			return digestAlgorithm.replace("-", "") + "withRSA";
+	/**
+	 * Returns the signature algorithm name for a given hash algorithm to be used
+	 * with a RSA cipher.
+	 * <p>
+	 * For example, "SHA-1" becomes "SHA1withRSA".
+	 *  
+	 * @param hashAlgorithm the hash algorithm to use. 
+	 * @return the signature algorithm name.
+	 */
+	public static String getRSASignatureAlgorithm(String hashAlgorithm) {
+		if (hashAlgorithm.startsWith("SHA")) {
+			return hashAlgorithm.replace("-", "") + "withRSA";
 		} else {
-			return digestAlgorithm + "withRSA";
+			return hashAlgorithm + "withRSA";
 		}
 	}
 }
