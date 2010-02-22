@@ -30,6 +30,7 @@ public class NextCaCertificateContentHandlerTest {
 	
 	@Test
 	public void testSuccess() throws Exception {
+		// We need a DSD wrapped in a SD.  This is only a DSD.
 		final SignedDataGenerator generator = new SignedDataGenerator();
 		generator.addCertificate(ca);
 		SignedData dsd = generator.generate();
