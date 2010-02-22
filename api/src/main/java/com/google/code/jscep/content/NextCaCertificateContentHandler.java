@@ -51,10 +51,10 @@ import com.google.code.jscep.util.LoggingUtil;
  */
 public class NextCaCertificateContentHandler implements SCEPContentHandler<List<X509Certificate>> {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
-	private final X509Certificate ca;
+	private final X509Certificate issuer;
 	
-	public NextCaCertificateContentHandler(X509Certificate ca) {
-		this.ca = ca;
+	public NextCaCertificateContentHandler(X509Certificate issuer) {
+		this.issuer = issuer;
 	}
 	
 	/**
@@ -76,12 +76,17 @@ public class NextCaCertificateContentHandler implements SCEPContentHandler<List<
 				ASN1Sequence seq = (ASN1Sequence) ci.getContent();
 				// TODO: This must be signed by the current CA.
 				final SignedData sd = new SignedData(seq);
-				if (SignedDataUtil.isSignedBy(sd, ca) == false) {
+				if (SignedDataUtil.isSignedBy(sd, issuer) == false) {
 					IOException ioe = new IOException();
 					
 					LOGGER.throwing(getClass().getName(), "getContent", ioe);
 					throw ioe;
 				}
+				// The content of the SignedData PKCS#7 [RFC2315] is a degenerate
+				// certificates-only Signed-data (Section 3.3) message containing the
+				// new CA certificate and any new RA certificates, as defined in
+				// Section 5.2.1.1.2, to be used when the current CA certificate
+				// expires.
 				ASN1Encodable sdContent = (ASN1Encodable) sd.getEncapContentInfo().getContent();
 				SignedDataParser parser = new SignedDataParser();
 				SignedData dsd = parser.parse(sdContent);

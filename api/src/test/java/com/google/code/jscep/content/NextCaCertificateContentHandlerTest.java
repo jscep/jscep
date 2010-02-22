@@ -28,7 +28,7 @@ public class NextCaCertificateContentHandlerTest {
 		fixture = new NextCaCertificateContentHandler(ca);
 	}
 	
-	@Ignore @Test
+	@Test
 	public void testSuccess() throws Exception {
 		final SignedDataGenerator generator = new SignedDataGenerator();
 		generator.addCertificate(ca);

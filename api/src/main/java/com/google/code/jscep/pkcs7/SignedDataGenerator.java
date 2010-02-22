@@ -245,7 +245,7 @@ public class SignedDataGenerator {
 	private ASN1OctetString getEncryptedDigest() throws NoSuchAlgorithmException {
 		byte[] digest = getMessageDigest();
 		// TODO
-		return null;
+		return new DEROctetString(new byte[0]);
 	}
 	
 	private DERSet getUnauthenticatedAttributes() {

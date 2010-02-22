@@ -22,6 +22,7 @@
 package com.google.code.jscep.pkcs7;
 
 import java.io.ByteArrayInputStream;
+import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.CRL;
 import java.security.cert.CertStore;
@@ -36,12 +37,16 @@ import java.util.HashSet;
 
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerIdentifier;
 import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.x509.X509Name;
+
+import com.google.code.jscep.x509.X509Util;
 
 /**
- * This class contains utility methods for manipulating SingedData
+ * This class contains utility methods for manipulating SignedData
  * objects.
  * 
  * @author David Grant
@@ -96,13 +101,20 @@ public final class SignedDataUtil {
 	 * @return <code>true</code> if the signedData was signed by the entity, <code>false</code> otherwise.
 	 */
 	public static boolean isSignedBy(SignedData signedData, X509Certificate signer) {
+		X509Name signerName = X509Util.toX509Name(signer.getIssuerX500Principal());
+		BigInteger signerSerialNo = signer.getSerialNumber();
+		IssuerAndSerialNumber issuerIasn = new IssuerAndSerialNumber(signerName, signerSerialNo);
+		
 		final ASN1Set signerInfos = signedData.getSignerInfos();
 		@SuppressWarnings("unchecked")
-		Enumeration<SignerInfo> signerInfosEnum = signerInfos.getObjects();
-		while (signerInfosEnum.hasMoreElements()) {
-			SignerInfo signerInfo = signerInfosEnum.nextElement();
+		Enumeration<ASN1Sequence> seqs = signerInfos.getObjects();
+		while (seqs.hasMoreElements()) {
+			final ASN1Sequence seq = seqs.nextElement();
+			SignerInfo signerInfo = new SignerInfo(seq);
 			SignerIdentifier signerId = signerInfo.getSID();
-			System.out.println(signerId.getId());
+			IssuerAndSerialNumber iasn = IssuerAndSerialNumber.getInstance(signerId.getId());
+			
+			return issuerIasn.equals(iasn);
 		}
 		
 		return false;
