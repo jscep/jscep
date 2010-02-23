@@ -2,6 +2,7 @@ package com.google.code.jscep.asn1;
 
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.jscep.asn1.IssuerAndSubject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

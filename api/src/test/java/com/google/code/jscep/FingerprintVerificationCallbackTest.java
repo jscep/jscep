@@ -1,5 +1,6 @@
 package com.google.code.jscep;
 
+import org.jscep.FingerprintVerificationCallback;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

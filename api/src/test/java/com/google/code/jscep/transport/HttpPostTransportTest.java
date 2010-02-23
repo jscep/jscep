@@ -12,14 +12,15 @@ import javax.security.auth.x500.X500Principal;
 
 import junit.framework.Assert;
 
+import org.jscep.request.GetCACaps;
+import org.jscep.request.GetCACert;
+import org.jscep.request.GetNextCACert;
+import org.jscep.transport.Transport;
+import org.jscep.transport.Transport.Method;
+import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.request.GetCACaps;
-import com.google.code.jscep.request.GetCACert;
-import com.google.code.jscep.request.GetNextCACert;
-import com.google.code.jscep.transport.Transport.Method;
-import com.google.code.jscep.x509.X509Util;
 
 public class HttpPostTransportTest {
 	private URL url;

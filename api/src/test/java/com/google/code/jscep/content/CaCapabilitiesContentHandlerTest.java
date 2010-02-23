@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 
+import org.jscep.content.CaCapabilitiesContentHandler;
+import org.jscep.response.Capabilities;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.response.Capabilities;
 
 public class CaCapabilitiesContentHandlerTest {
 	private CaCapabilitiesContentHandler fixture;

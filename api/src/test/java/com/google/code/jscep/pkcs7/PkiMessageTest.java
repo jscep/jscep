@@ -13,18 +13,23 @@ import junit.framework.Assert;
 
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.jscep.operations.GetCRL;
+import org.jscep.operations.GetCert;
+import org.jscep.operations.GetCertInitial;
+import org.jscep.operations.PKCSReq;
+import org.jscep.pkcs7.MessageData;
+import org.jscep.pkcs7.PkiMessage;
+import org.jscep.pkcs7.PkiMessageGenerator;
+import org.jscep.pkcs7.PkiMessageParser;
+import org.jscep.pkcs7.SignedDataGenerator;
+import org.jscep.transaction.MessageType;
+import org.jscep.transaction.Nonce;
+import org.jscep.transaction.PkiStatus;
+import org.jscep.transaction.TransactionId;
+import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.operations.GetCRL;
-import com.google.code.jscep.operations.GetCert;
-import com.google.code.jscep.operations.GetCertInitial;
-import com.google.code.jscep.operations.PKCSReq;
-import com.google.code.jscep.transaction.MessageType;
-import com.google.code.jscep.transaction.Nonce;
-import com.google.code.jscep.transaction.PkiStatus;
-import com.google.code.jscep.transaction.TransactionId;
-import com.google.code.jscep.x509.X509Util;
 
 public class PkiMessageTest {
 	private PkiMessageGenerator generator;

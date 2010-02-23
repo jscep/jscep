@@ -2,6 +2,8 @@ package com.google.code.jscep.transaction;
 
 import java.util.Iterator;
 
+import org.jscep.transaction.Nonce;
+import org.jscep.transaction.NonceQueue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

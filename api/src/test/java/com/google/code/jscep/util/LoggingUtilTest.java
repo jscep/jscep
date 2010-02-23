@@ -2,6 +2,7 @@ package com.google.code.jscep.util;
 
 import java.util.logging.Logger;
 
+import org.jscep.util.LoggingUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

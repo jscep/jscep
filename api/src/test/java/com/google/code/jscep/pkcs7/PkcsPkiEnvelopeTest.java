@@ -12,12 +12,15 @@ import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jscep.pkcs7.MessageData;
+import org.jscep.pkcs7.PkcsPkiEnvelope;
+import org.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
+import org.jscep.x509.X509Util;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.code.jscep.x509.X509Util;
 
 public class PkcsPkiEnvelopeTest {
 	private ASN1Encodable msgData;

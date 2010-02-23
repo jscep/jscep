@@ -2,10 +2,11 @@ package com.google.code.jscep;
 
 import junit.framework.Assert;
 
+import org.jscep.PKIOperationFailureException;
+import org.jscep.transaction.FailInfo;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.transaction.FailInfo;
 
 public class PKIOperationFailureExceptionTest {
 	private PKIOperationFailureException fixture;

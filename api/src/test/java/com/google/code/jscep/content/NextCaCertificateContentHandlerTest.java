@@ -10,13 +10,14 @@ import java.security.cert.X509Certificate;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.cms.SignedData;
+import org.jscep.content.NextCaCertificateContentHandler;
+import org.jscep.pkcs7.MessageData;
+import org.jscep.pkcs7.SignedDataGenerator;
+import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.code.jscep.pkcs7.SignedDataGenerator;
-import com.google.code.jscep.pkcs7.MessageData;
-import com.google.code.jscep.x509.X509Util;
 
 public class NextCaCertificateContentHandlerTest {
 	private NextCaCertificateContentHandler fixture;

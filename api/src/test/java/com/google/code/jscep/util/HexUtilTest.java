@@ -1,5 +1,6 @@
 package com.google.code.jscep.util;
 
+import org.jscep.util.HexUtil;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -5,10 +5,11 @@ import java.net.URL;
 
 import junit.framework.Assert;
 
+import org.jscep.transport.Transport;
+import org.jscep.transport.Transport.Method;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.transport.Transport.Method;
 
 public class HttpGetTransportTest {
 	private URL url;

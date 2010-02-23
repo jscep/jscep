@@ -3,6 +3,7 @@ package com.google.code.jscep.transaction;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
+import org.jscep.transaction.TransactionId;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -7,10 +7,12 @@ import java.security.KeyPairGenerator;
 import junit.framework.Assert;
 
 import org.easymock.classextension.EasyMock;
+import org.jscep.pkcs7.PkiMessage;
+import org.jscep.request.Operation;
+import org.jscep.request.PKCSReq;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.code.jscep.pkcs7.PkiMessage;
 
 public class PkiRequestTest {
 	private PkiMessage message;

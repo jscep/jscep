@@ -2,6 +2,7 @@ package com.google.code.jscep.pkcs9;
 
 import junit.framework.Assert;
 
+import org.jscep.pkcs9.ChallengePassword;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+import org.jscep.request.GetCACert;
+import org.jscep.request.Operation;
+import org.jscep.request.Request;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
