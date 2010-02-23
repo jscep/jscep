@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.google.code.jscep.gui;
+package org.jscep.gui;
 
 import java.awt.HeadlessException;
 import java.io.IOException;
@@ -41,11 +41,12 @@ import javax.security.auth.x500.X500Principal;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.google.code.jscep.FingerprintVerificationCallback;
-import com.google.code.jscep.client.Client;
-import com.google.code.jscep.transaction.Transaction;
-import com.google.code.jscep.util.HexUtil;
-import com.google.code.jscep.x509.X509Util;
+import org.jscep.FingerprintVerificationCallback;
+import org.jscep.client.Client;
+import org.jscep.transaction.Transaction;
+import org.jscep.util.HexUtil;
+import org.jscep.x509.X509Util;
+
 
 public class Main extends JFrame {
 	public Main() throws Exception {

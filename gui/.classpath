@@ -1,0 +1,13 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/bouncycastle/bcprov-jdk16/140/bcprov-jdk16-140.jar"/>
+  <classpathentry kind="var" path="M2_REPO/cglib/cglib-nodep/2.1_3/cglib-nodep-2.1_3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.4/commons-codec-1.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/easymock/easymock/2.2/easymock-2.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/easymock/easymockclassextension/2.2/easymockclassextension-2.2.jar"/>
+  <classpathentry kind="src" path="/jscep-api"/>
+  <classpathentry kind="src" path="/jscep-client"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/4.4/junit-4.4.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+</classpath>
