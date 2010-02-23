@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.client;
+package org.jscep.client;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -45,14 +45,15 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import com.google.code.jscep.FingerprintVerificationCallback;
-import com.google.code.jscep.request.GetCACaps;
-import com.google.code.jscep.request.GetCACert;
-import com.google.code.jscep.request.GetNextCACert;
-import com.google.code.jscep.response.Capabilities;
-import com.google.code.jscep.transaction.Transaction;
-import com.google.code.jscep.transport.Transport;
-import com.google.code.jscep.util.LoggingUtil;
+import org.jscep.FingerprintVerificationCallback;
+import org.jscep.request.GetCACaps;
+import org.jscep.request.GetCACert;
+import org.jscep.request.GetNextCACert;
+import org.jscep.response.Capabilities;
+import org.jscep.transaction.Transaction;
+import org.jscep.transport.Transport;
+import org.jscep.util.LoggingUtil;
+
 
 /**
  * This class represents a SCEP client, or Requester.

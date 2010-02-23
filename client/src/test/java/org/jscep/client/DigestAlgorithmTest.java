@@ -1,15 +1,15 @@
-package com.google.code.jscep.client;
+package org.jscep.client;
 
 import static org.hamcrest.core.Is.is;
 
 import java.io.IOException;
 
+import org.jscep.response.Capability;
+import org.jscep.transaction.Transaction;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.code.jscep.response.Capability;
-import com.google.code.jscep.transaction.Transaction;
 
 public class DigestAlgorithmTest extends AbstractClientTest {
 	@Test

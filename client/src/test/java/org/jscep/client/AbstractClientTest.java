@@ -1,4 +1,4 @@
-package com.google.code.jscep.client;
+package org.jscep.client;
 
 import java.net.URL;
 import java.security.KeyPair;
@@ -12,10 +12,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
+import org.jscep.client.Client;
+import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.google.code.jscep.x509.X509Util;
+
 
 //@Ignore
 public abstract class AbstractClientTest {

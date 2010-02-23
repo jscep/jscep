@@ -1,4 +1,4 @@
-package com.google.code.jscep.client;
+package org.jscep.client;
 
 import static org.hamcrest.core.Is.is;
 
@@ -8,12 +8,12 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.jscep.transaction.Transaction;
+import org.jscep.transaction.Transaction.State;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.code.jscep.transaction.Transaction;
-import com.google.code.jscep.transaction.Transaction.State;
 
 //@Ignore
 public class ClientTest extends AbstractClientTest {
