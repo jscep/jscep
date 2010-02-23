@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package com.google.code.jscep.server;
+package org.jscep.server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,16 +43,16 @@ import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.pkcs.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.jscep.asn1.IssuerAndSubject;
+import org.jscep.pkcs7.MessageData;
+import org.jscep.pkcs7.PkiMessage;
+import org.jscep.pkcs7.PkiMessageParser;
+import org.jscep.pkcs7.SignedDataGenerator;
+import org.jscep.request.Operation;
+import org.jscep.response.Capability;
+import org.jscep.transaction.MessageType;
+import org.jscep.util.LoggingUtil;
 
-import com.google.code.jscep.asn1.IssuerAndSubject;
-import com.google.code.jscep.pkcs7.MessageData;
-import com.google.code.jscep.pkcs7.PkiMessage;
-import com.google.code.jscep.pkcs7.PkiMessageParser;
-import com.google.code.jscep.pkcs7.SignedDataGenerator;
-import com.google.code.jscep.request.Operation;
-import com.google.code.jscep.response.Capability;
-import com.google.code.jscep.transaction.MessageType;
-import com.google.code.jscep.util.LoggingUtil;
 
 public abstract class ScepServlet extends HttpServlet {
 	private final static String GET = "GET";

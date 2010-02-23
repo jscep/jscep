@@ -1,4 +1,4 @@
-package com.google.code.jscep.server;
+package org.jscep.server;
 
 import java.math.BigInteger;
 import java.security.PrivateKey;
@@ -13,10 +13,10 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.jscep.response.Capability;
+import org.jscep.server.ScepServlet;
+import org.jscep.util.LoggingUtil;
 
-import com.google.code.jscep.response.Capability;
-import com.google.code.jscep.server.ScepServlet;
-import com.google.code.jscep.util.LoggingUtil;
 
 public class ScepServletImpl extends ScepServlet {
 	/**

@@ -1,4 +1,4 @@
-package com.google.code.jscep.server;
+package org.jscep.server;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -7,16 +7,16 @@ import java.util.List;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.jscep.request.GetCACaps;
+import org.jscep.response.Capabilities;
+import org.jscep.transport.Transport;
+import org.jscep.transport.Transport.Method;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.google.code.jscep.request.GetCACaps;
-import com.google.code.jscep.response.Capabilities;
-import com.google.code.jscep.transport.Transport;
-import com.google.code.jscep.transport.Transport.Method;
 
 @RunWith(Parameterized.class)
 public class ScepServletTest {
