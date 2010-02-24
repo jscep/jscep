@@ -90,6 +90,12 @@ Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.h
 <DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#addCRL(java.security.cert.X509CRL)"><B>addCRL(X509CRL)</B></A> - 
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.html" title="class in org.jscep.pkcs7">SignedDataGenerator</A>
 <DD>Adds the provided CRL to the resulting <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A>.
+<DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#addSigner(java.security.PrivateKey, java.security.cert.X509Certificate, java.lang.String, java.lang.String)"><B>addSigner(PrivateKey, X509Certificate, String, String)</B></A> - 
+Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.html" title="class in org.jscep.pkcs7">SignedDataGenerator</A>
+<DD>&nbsp;
+<DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#addSigner(java.security.PrivateKey, java.util.Collection, java.util.Collection, java.lang.String, java.lang.String)"><B>addSigner(PrivateKey, Collection&lt;X509Certificate&gt;, Collection&lt;X509CRL&gt;, String, String)</B></A> - 
+Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.html" title="class in org.jscep.pkcs7">SignedDataGenerator</A>
+<DD>&nbsp;
 <DT><A HREF="./org/jscep/util/AlgorithmDictionary.html" title="class in org.jscep.util"><B>AlgorithmDictionary</B></A> - Class in <A HREF="./org/jscep/util/package-summary.html">org.jscep.util</A><DD>This class provides a utility to lookup a friendly name for an algorithm given
  a particular OID or AlgorithmIdentifier.</DL>
 <HR>
@@ -128,8 +134,8 @@ Constructor for class org.jscep.response.<A HREF="./org/jscep/response/Capabilit
 <DT><A HREF="./org/jscep/response/Capability.html" title="enum in org.jscep.response"><B>Capability</B></A> - Enum in <A HREF="./org/jscep/response/package-summary.html">org.jscep.response</A><DD>This class represents a single SCEP server capability.<DT><A HREF="./org/jscep/content/CertRepContentHandler.html" title="class in org.jscep.content"><B>CertRepContentHandler</B></A> - Class in <A HREF="./org/jscep/content/package-summary.html">org.jscep.content</A><DD>This class handles responses to <code>PKIRequest</code> requests.<DT><A HREF="./org/jscep/content/CertRepContentHandler.html#CertRepContentHandler(java.security.KeyPair)"><B>CertRepContentHandler(KeyPair)</B></A> - 
 Constructor for class org.jscep.content.<A HREF="./org/jscep/content/CertRepContentHandler.html" title="class in org.jscep.content">CertRepContentHandler</A>
 <DD>Constructs a new instance of <code>CertRepContentHandler</code>.
-<DT><A HREF="./org/jscep/pkcs9/ChallengePassword.html" title="class in org.jscep.pkcs9"><B>ChallengePassword</B></A> - Class in <A HREF="./org/jscep/pkcs9/package-summary.html">org.jscep.pkcs9</A><DD>This class represents a PKCS #9 challengePassword attribute.<DT><A HREF="./org/jscep/pkcs9/ChallengePassword.html#ChallengePassword(java.lang.String)"><B>ChallengePassword(String)</B></A> - 
-Constructor for class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/ChallengePassword.html" title="class in org.jscep.pkcs9">ChallengePassword</A>
+<DT><A HREF="./org/jscep/pkcs9/ChallengePasswordAttribute.html" title="class in org.jscep.pkcs9"><B>ChallengePasswordAttribute</B></A> - Class in <A HREF="./org/jscep/pkcs9/package-summary.html">org.jscep.pkcs9</A><DD>This class represents a PKCS #9 challengePassword attribute.<DT><A HREF="./org/jscep/pkcs9/ChallengePasswordAttribute.html#ChallengePasswordAttribute(java.lang.String)"><B>ChallengePasswordAttribute(String)</B></A> - 
+Constructor for class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/ChallengePasswordAttribute.html" title="class in org.jscep.pkcs9">ChallengePasswordAttribute</A>
 <DD>Creates a new instance of <code>ChallengePassword</code> using the provided
  password.
 <DT><A HREF="./org/jscep/client/Client.html" title="class in org.jscep.client"><B>Client</B></A> - Class in <A HREF="./org/jscep/client/package-summary.html">org.jscep.client</A><DD>This class represents a SCEP client, or Requester.<DT><A HREF="./org/jscep/client/Client.Builder.html" title="class in org.jscep.client"><B>Client.Builder</B></A> - Class in <A HREF="./org/jscep/client/package-summary.html">org.jscep.client</A><DD>This class is used for building immutable instances of the <code>Client</code>
@@ -143,6 +149,10 @@ Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkiMessageGenerator.h
 Method in class org.jscep.response.<A HREF="./org/jscep/response/Capabilities.html" title="class in org.jscep.response">Capabilities</A>
 <DD>Returns <code>true</code> if the server supports the provided
  Capability, <code>false</code> otherwise.
+<DT><A HREF="./org/jscep/pkcs9/ContentTypeAttribute.html" title="class in org.jscep.pkcs9"><B>ContentTypeAttribute</B></A> - Class in <A HREF="./org/jscep/pkcs9/package-summary.html">org.jscep.pkcs9</A><DD>This class represents a PKCS #9 contentType attribute.<DT><A HREF="./org/jscep/pkcs9/ContentTypeAttribute.html#ContentTypeAttribute(org.bouncycastle.asn1.DERObjectIdentifier)"><B>ContentTypeAttribute(DERObjectIdentifier)</B></A> - 
+Constructor for class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/ContentTypeAttribute.html" title="class in org.jscep.pkcs9">ContentTypeAttribute</A>
+<DD>Creates a new instance of <code>ContentTypeAttribute</code> using the provided
+ contentType.
 <DT><A HREF="./org/jscep/x509/X509Util.html#createEphemeralCertificate(javax.security.auth.x500.X500Principal, java.security.KeyPair)"><B>createEphemeralCertificate(X500Principal, KeyPair)</B></A> - 
 Static method in class org.jscep.x509.<A HREF="./org/jscep/x509/X509Util.html" title="class in org.jscep.x509">X509Util</A>
 <DD>Creates a self-signed ephemeral certificate.
@@ -330,6 +340,9 @@ Method in class org.jscep.request.<A HREF="./org/jscep/request/PKCSReq.html" tit
 <DT><A HREF="./org/jscep/request/Request.html#getContentHandler()"><B>getContentHandler()</B></A> - 
 Method in interface org.jscep.request.<A HREF="./org/jscep/request/Request.html" title="interface in org.jscep.request">Request</A>
 <DD>Returns the ScepContentHandler for the given response type.
+<DT><A HREF="./org/jscep/pkcs9/ContentTypeAttribute.html#getContentType()"><B>getContentType()</B></A> - 
+Method in class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/ContentTypeAttribute.html" title="class in org.jscep.pkcs9">ContentTypeAttribute</A>
+<DD>Returns the content type contained in this contentType attribute.
 <DT><A HREF="./org/jscep/operations/GetCRL.html" title="class in org.jscep.operations"><B>GetCRL</B></A> - Class in <A HREF="./org/jscep/operations/package-summary.html">org.jscep.operations</A><DD>This class represents the SCEP <code>GetCRL</code> <code>pkiMessage</code> type.<DT><A HREF="./org/jscep/operations/GetCRL.html#GetCRL(javax.security.auth.x500.X500Principal, java.math.BigInteger)"><B>GetCRL(X500Principal, BigInteger)</B></A> - 
 Constructor for class org.jscep.operations.<A HREF="./org/jscep/operations/GetCRL.html" title="class in org.jscep.operations">GetCRL</A>
 <DD>&nbsp;
@@ -409,6 +422,9 @@ Method in interface org.jscep.request.<A HREF="./org/jscep/request/Request.html"
 <DT><A HREF="./org/jscep/pkcs7/PkcsPkiEnvelope.html#getMessageData()"><B>getMessageData()</B></A> - 
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkcsPkiEnvelope.html" title="class in org.jscep.pkcs7">PkcsPkiEnvelope</A>
 <DD>&nbsp;
+<DT><A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html#getMessageDigest()"><B>getMessageDigest()</B></A> - 
+Method in class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9">MessageDigestAttribute</A>
+<DD>Returns the message digest contained in this messageDigest attribute.
 <DT><A HREF="./org/jscep/operations/GetCert.html#getMessageType()"><B>getMessageType()</B></A> - 
 Method in class org.jscep.operations.<A HREF="./org/jscep/operations/GetCert.html" title="class in org.jscep.operations">GetCert</A>
 <DD>Returns the message type for this operation.
@@ -455,8 +471,8 @@ Method in class org.jscep.request.<A HREF="./org/jscep/request/PKCSReq.html" tit
 <DT><A HREF="./org/jscep/request/Request.html#getOperation()"><B>getOperation()</B></A> - 
 Method in interface org.jscep.request.<A HREF="./org/jscep/request/Request.html" title="interface in org.jscep.request">Request</A>
 <DD>Returns the name of this operation.
-<DT><A HREF="./org/jscep/pkcs9/ChallengePassword.html#getPassword()"><B>getPassword()</B></A> - 
-Method in class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/ChallengePassword.html" title="class in org.jscep.pkcs9">ChallengePassword</A>
+<DT><A HREF="./org/jscep/pkcs9/ChallengePasswordAttribute.html#getPassword()"><B>getPassword()</B></A> - 
+Method in class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/ChallengePasswordAttribute.html" title="class in org.jscep.pkcs9">ChallengePasswordAttribute</A>
 <DD>Returns the password contained in this challengePassword attribute.
 <DT><A HREF="./org/jscep/pkcs7/PkiMessage.html#getPkcsPkiEnvelope()"><B>getPkcsPkiEnvelope()</B></A> - 
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkiMessage.html" title="class in org.jscep.pkcs7">PkiMessage</A>
@@ -592,7 +608,11 @@ Constructor for class org.jscep.gui.<A HREF="./org/jscep/gui/Main.html" title="c
 <DT><A HREF="./org/jscep/gui/Main.html#main(java.lang.String[])"><B>main(String[])</B></A> - 
 Static method in class org.jscep.gui.<A HREF="./org/jscep/gui/Main.html" title="class in org.jscep.gui">Main</A>
 <DD>&nbsp;
-<DT><A HREF="./org/jscep/pkcs7/MessageData.html" title="class in org.jscep.pkcs7"><B>MessageData</B></A> - Class in <A HREF="./org/jscep/pkcs7/package-summary.html">org.jscep.pkcs7</A><DD>This class represents the SCEP <code>messageData</code> data structure.<DT><A HREF="./org/jscep/asn1/SCEPObjectIdentifiers.html#messageType"><B>messageType</B></A> - 
+<DT><A HREF="./org/jscep/pkcs7/MessageData.html" title="class in org.jscep.pkcs7"><B>MessageData</B></A> - Class in <A HREF="./org/jscep/pkcs7/package-summary.html">org.jscep.pkcs7</A><DD>This class represents the SCEP <code>messageData</code> data structure.<DT><A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9"><B>MessageDigestAttribute</B></A> - Class in <A HREF="./org/jscep/pkcs9/package-summary.html">org.jscep.pkcs9</A><DD>This class represents a PKCS #9 messageDigest attribute.<DT><A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html#MessageDigestAttribute(byte[])"><B>MessageDigestAttribute(byte[])</B></A> - 
+Constructor for class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9">MessageDigestAttribute</A>
+<DD>Creates a new instance of <code>MessageDigestAttribute</code> using the provided
+ messageDigest.
+<DT><A HREF="./org/jscep/asn1/SCEPObjectIdentifiers.html#messageType"><B>messageType</B></A> - 
 Static variable in interface org.jscep.asn1.<A HREF="./org/jscep/asn1/SCEPObjectIdentifiers.html" title="interface in org.jscep.asn1">SCEPObjectIdentifiers</A>
 <DD><code>2.16.840.1.113733.1.9.2</code>
 <DT><A HREF="./org/jscep/transaction/MessageType.html" title="enum in org.jscep.transaction"><B>MessageType</B></A> - Enum in <A HREF="./org/jscep/transaction/package-summary.html">org.jscep.transaction</A><DD>This class represents the SCEP <code>messageType</code> attribute.</DL>
@@ -794,6 +814,9 @@ Static method in class org.jscep.util.<A HREF="./org/jscep/util/HexUtil.html" ti
 <DT><A HREF="./org/jscep/util/HexUtil.html#toHexString(byte[])"><B>toHexString(byte[])</B></A> - 
 Static method in class org.jscep.util.<A HREF="./org/jscep/util/HexUtil.html" title="class in org.jscep.util">HexUtil</A>
 <DD>Converts the provided byte array to a string of hex characters.
+<DT><A HREF="./org/jscep/x509/X509Util.html#toIssuerAndSerialNumber(java.security.cert.X509Certificate)"><B>toIssuerAndSerialNumber(X509Certificate)</B></A> - 
+Static method in class org.jscep.x509.<A HREF="./org/jscep/x509/X509Util.html" title="class in org.jscep.x509">X509Util</A>
+<DD>Creates a new IssuerAndSerialNumber from the provided certificate.
 <DT><A HREF="./org/jscep/FingerprintVerificationCallback.html#toString()"><B>toString()</B></A> - 
 Method in class org.jscep.<A HREF="./org/jscep/FingerprintVerificationCallback.html" title="class in org.jscep">FingerprintVerificationCallback</A>
 <DD>

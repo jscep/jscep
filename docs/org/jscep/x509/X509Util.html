@@ -140,6 +140,14 @@ This is a utility class for performing various operations pertaining to X.509
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/IssuerAndSerialNumber.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">IssuerAndSerialNumber</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../org/jscep/x509/X509Util.html#toIssuerAndSerialNumber(java.security.cert.X509Certificate)">toIssuerAndSerialNumber</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;certificate)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new IssuerAndSerialNumber from the provided certificate.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/x509/X509Name.html?is-external=true" title="class or interface in org.bouncycastle.asn1.x509">X509Name</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../org/jscep/x509/X509Util.html#toX509Name(javax.security.auth.x500.X500Principal)">toX509Name</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/javax/security/auth/x500/X500Principal.html?is-external=true" title="class or interface in javax.security.auth.x500">X500Principal</A>&nbsp;principal)</CODE>
 
@@ -214,6 +222,20 @@ public static boolean <B>isSelfSigned</B>(<A HREF="http://java.sun.com/javase/6/
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>cert</CODE> - the certificate to check.
 <DT><B>Returns:</B><DD><code>true</code> if the certificate is self-signed, <code>false</code> otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toIssuerAndSerialNumber(java.security.cert.X509Certificate)"><!-- --></A><H3>
+toIssuerAndSerialNumber</H3>
+<PRE>
+public static <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/IssuerAndSerialNumber.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">IssuerAndSerialNumber</A> <B>toIssuerAndSerialNumber</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;certificate)</PRE>
+<DL>
+<DD>Creates a new IssuerAndSerialNumber from the provided certificate.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>certificate</CODE> - the certificate to use.
+<DT><B>Returns:</B><DD>the IssuerAndSerialNumber to represent the certificate.</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
