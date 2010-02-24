@@ -49,6 +49,11 @@ import org.jscep.x509.X509Util;
 
 
 public class Main extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public Main() throws Exception {
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
 		X500Principal subject = new X500Principal("CN=example.org");
@@ -82,7 +87,7 @@ public class Main extends JFrame {
 		HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
 		
 		try {
-			Main main = new Main();
+			new Main();
 //			main.setTitle("jSCEP GUI");
 //			main.setVisible(true);
 		} catch (Exception e) {
