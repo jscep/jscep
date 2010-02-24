@@ -66,7 +66,7 @@
 					<notimestamp>true</notimestamp>
 					<detectLinks />
 					<reportOutputDirectory>.</reportOutputDirectory>
-					<destDir>documentation</destDir>
+					<destDir>docs</destDir>
 					<links>
 						<link>http://java.sun.com/javase/6/docs/api/</link>
 						<link>http://www.bouncycastle.org/docs/docs1.6/</link>
