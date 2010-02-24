@@ -24,14 +24,18 @@ package org.jscep.pkcs7;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -42,14 +46,18 @@ import org.bouncycastle.asn1.DEREncodableVector;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerIdentifier;
 import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.jscep.pkcs9.ContentTypeAttribute;
+import org.jscep.pkcs9.MessageDigestAttribute;
 import org.jscep.util.AlgorithmDictionary;
 import org.jscep.util.LoggingUtil;
 
@@ -73,7 +81,9 @@ public class SignedDataGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
 	private final List<X509Certificate> certs;
 	private final List<X509CRL> crls;
+	private final List<AlgorithmIdentifier> digestAlgorithms;
 	private final String digestAlgorithm = "MD5";
+	private final Set<SignerInformation> signerInfos;
 	
 	/**
 	 * Creates a new instance of <code>SignedDataGenerator</code>
@@ -81,6 +91,8 @@ public class SignedDataGenerator {
 	public SignedDataGenerator() {
 		certs = new LinkedList<X509Certificate>();
 		crls = new LinkedList<X509CRL>();
+		digestAlgorithms = new LinkedList<AlgorithmIdentifier>();
+		signerInfos = new HashSet<SignerInformation>();
 	}
 	
 	/**
@@ -90,6 +102,16 @@ public class SignedDataGenerator {
 	 */
 	public void addCertificate(X509Certificate cert) {
 		certs.add(cert);
+	}
+	
+	public void addSigner(PrivateKey key, X509Certificate cert, String digestAlgorithm, String encryptionAlgorithm) {
+		
+	}
+	
+	public void addSigner(PrivateKey key, Collection<X509Certificate> certs, Collection<X509CRL> crls, String digestAlgorithm, String encryptionAlgorithm) {
+		this.certs.addAll(certs);
+		this.crls.addAll(crls);
+		this.digestAlgorithms.add(AlgorithmDictionary.getAlgId(digestAlgorithm));
 	}
 	
 	/**
@@ -115,7 +137,7 @@ public class SignedDataGenerator {
 		final ContentInfo contentInfo = getContentInfo();
 		DERSet signerInfos;
 		try {
-			signerInfos = getSignerInfos();
+			signerInfos = getSignerInfos(contentInfo);
 		} catch (NoSuchAlgorithmException e) {
 			throw new IOException(e);
 		}
@@ -141,31 +163,28 @@ public class SignedDataGenerator {
 	}
 	
 	private DERSet getDigestAlgorithmIdentifiers() {
-		return new DERSet();
+		return new DERSet(getDigestAlgorithmIdentifiersVector());
 	}
 	
-	private DERSet getSignerInfos() throws NoSuchAlgorithmException {
-		return new DERSet(getSignerInfoVector());
-	}
-	
-	private DEREncodableVector getSignerInfoVector() throws NoSuchAlgorithmException {
+	private DEREncodableVector getDigestAlgorithmIdentifiersVector() {
 		final DEREncodableVector v = new ASN1EncodableVector();
 		
-		for (X509Certificate signer : certs) {
-			final SignerIdentifier signerIdentifier = getSignerIdentifier(signer);
-			final AlgorithmIdentifier digestAlgorithm = getDigestAlgorithm();
-			final DERSet authenticatedAttributes = getAuthenticatedAttributes();
-			final AlgorithmIdentifier digestEncryptionAlgorithm = getDigestEncryptionAlgorithm(signer);
-			final ASN1OctetString encryptedDigest = getEncryptedDigest();
-			final DERSet unauthenticatedAttributes = getUnauthenticatedAttributes();
-			
-			SignerInfo signerInfo = new SignerInfo(signerIdentifier, 
-												   digestAlgorithm,
-												   authenticatedAttributes,
-												   digestEncryptionAlgorithm,
-												   encryptedDigest,
-												   unauthenticatedAttributes);
-			v.add(signerInfo);
+		for (SignerInformation signerInformation : signerInfos) {
+			v.add(signerInformation.getDigestAlgorithm());
+		}
+		
+		return v;
+	}
+	
+	private DERSet getSignerInfos(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {
+		return new DERSet(getSignerInfoVector(contentInfo));
+	}
+	
+	private DEREncodableVector getSignerInfoVector(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {
+		final DEREncodableVector v = new ASN1EncodableVector();
+		
+		for (SignerInformation signerInformation : signerInfos) {
+			v.add(signerInformation.asSignerInfo(contentInfo));
 		}
 		
 		return v;
@@ -210,46 +229,90 @@ public class SignedDataGenerator {
 		return v;
 	}
 	
-	private SignerIdentifier getSignerIdentifier(X509Certificate signer) {
-		return new SignerIdentifier(getIssuerAndSerialNumber(signer));
-	}
-	
-	private IssuerAndSerialNumber getIssuerAndSerialNumber(X509Certificate certificate) {
-		return new IssuerAndSerialNumber(getIssuerName(certificate), certificate.getSerialNumber());
-	}
-	
-	private X509Name getIssuerName(X509Certificate certificate) {
-		return new X509Name(certificate.getIssuerDN().getName());
-	}
-	
-	private AlgorithmIdentifier getDigestAlgorithm() {
-		return AlgorithmDictionary.getAlgId(digestAlgorithm);
-	}
-	
-	private DERSet getAuthenticatedAttributes() {
-		// TODO
-		return new DERSet();
-	}
-	
-	private AlgorithmIdentifier getDigestEncryptionAlgorithm(X509Certificate certificate) {
-		// I would expect this to always be RSA.
-		return AlgorithmDictionary.getAlgId(certificate.getPublicKey().getAlgorithm());
-	}
-	
-	private byte[] getMessageDigest() throws NoSuchAlgorithmException {
-		MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
+	private class SignerInformation {		
+		private final IssuerAndSerialNumber iasn;
+		private final AlgorithmIdentifier digestAlgorithm;
+		private final Set<Attribute> authenticatedAttributes;
+		private final AlgorithmIdentifier digestEncryptionAlgorithm;
+		private final Set<Attribute> unauthenticatedAttributes;
 		
-		return digest.digest();
-	}
-	
-	private ASN1OctetString getEncryptedDigest() throws NoSuchAlgorithmException {
-		byte[] digest = getMessageDigest();
-		// TODO
-		return new DEROctetString(new byte[0]);
-	}
-	
-	private DERSet getUnauthenticatedAttributes() {
-		// TODO
-		return new DERSet();
+		public SignerInformation(IssuerAndSerialNumber iasn, AlgorithmIdentifier digestAlgorithm, AlgorithmIdentifier digestEncryptionAlgorithm) {
+			this.iasn = iasn;
+			this.digestAlgorithm = digestAlgorithm;
+			this.authenticatedAttributes = null;
+			this.digestEncryptionAlgorithm = digestEncryptionAlgorithm;
+			this.unauthenticatedAttributes = null;
+		}
+		
+		public AlgorithmIdentifier getDigestAlgorithm() {
+			return digestAlgorithm;
+		}
+		
+		private SignerIdentifier getSignerIdentifier() {
+			return new SignerIdentifier(iasn);
+		}
+		
+		private DERSet getAuthenticatedAttributes(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {
+			// The field is optional, but it must be present if the content
+            // type of the ContentInfo value being signed is not data.
+			if (contentInfo.getContentType().equals(PKCSObjectIdentifiers.data) == false) {
+				// Optional
+			} else {
+				// If the field is present, it must contain, at a minimum, two
+				// attributes:
+				
+				// A PKCS #9 content-type attribute having as its value the 
+				// content type of the ContentInfo value being signed.
+				Attribute contentType = new ContentTypeAttribute(contentInfo.getContentType());
+				// A PKCS #9 message-digest attribute, having as its value 
+				// the message digest of the content (see below).
+				Attribute messageDigest = new MessageDigestAttribute(getMessageDigest(contentInfo));
+			}
+			// TODO
+			return new DERSet();
+		}
+		
+		private ASN1OctetString getEncryptedDigest(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {
+			// When the [authenticatedAttributes] field is absent, the result 
+			// is just the message digest of the content.
+			byte[] digest = getMessageDigest(contentInfo);
+			// When the [authenticatedAttributes] field is present, however, 
+			// the result is the message digest of the complete DER encoding 
+			// of the Attributes value containted in the authenticatedAttributes 
+			// field.
+			
+			// TODO
+			return new DEROctetString(new byte[0]);
+		}
+		
+		private byte[] getMessageDigest(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {
+			final String digestAlgName = AlgorithmDictionary.lookup(digestAlgorithm);
+			final MessageDigest digest = MessageDigest.getInstance(digestAlgName);
+			
+			// TODO
+			
+			// the initial input to the message-digesting process is the "value" 
+			// of the content being signed.  Specifically, the initial input is 
+			// the contents octets of the DER encoding of the content field of 
+			// the ContentInfo value to which the signing process is applied.
+			//
+			// return digest.digest(contentInfo.getContent().getDERObject().getDEREncoded());
+			return digest.digest(contentInfo.getEncoded());
+		}
+		
+		private DERSet getUnauthenticatedAttributes() {
+			// TODO
+			return new DERSet();
+		}
+		
+		public SignerInfo asSignerInfo(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {
+			SignerInfo info = new SignerInfo(getSignerIdentifier(), 
+											 digestAlgorithm, 
+											 getAuthenticatedAttributes(contentInfo),
+											 digestEncryptionAlgorithm,
+											 getEncryptedDigest(contentInfo),
+											 getUnauthenticatedAttributes());
+			return info;
+		}
 	}
 }

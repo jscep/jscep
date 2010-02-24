@@ -25,7 +25,7 @@ import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.pkcs.Attribute;
+import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
 /**
@@ -33,14 +33,14 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
  * 
  * @author David Grant
  */
-public class ChallengePassword extends Attribute {
+public class ChallengePasswordAttribute extends Attribute {
 	/**
 	 * Creates a new instance of <code>ChallengePassword</code> using the provided
 	 * password.
 	 * 
 	 * @param password the password to use.
 	 */
-	public ChallengePassword(String password) {
+	public ChallengePasswordAttribute(String password) {
 		super(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, toSet(password));
 	}
 	

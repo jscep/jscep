@@ -2,17 +2,17 @@ package org.jscep.pkcs9;
 
 import junit.framework.Assert;
 
-import org.jscep.pkcs9.ChallengePassword;
+import org.jscep.pkcs9.ChallengePasswordAttribute;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ChallengePasswordTest {
 	private String password = "password";
-	private ChallengePassword fixture;
+	private ChallengePasswordAttribute fixture;
 	
 	@Before
 	public void setup() {
-		this.fixture = new ChallengePassword(password);
+		this.fixture = new ChallengePasswordAttribute(password);
 	}
 	
 	@Test

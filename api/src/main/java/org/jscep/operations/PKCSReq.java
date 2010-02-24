@@ -38,7 +38,7 @@ import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.jscep.pkcs9.ChallengePassword;
+import org.jscep.pkcs9.ChallengePasswordAttribute;
 import org.jscep.transaction.MessageType;
 import org.jscep.util.AlgorithmDictionary;
 
@@ -95,7 +95,7 @@ public class PKCSReq implements DelayablePKIOperation<CertificationRequest> {
 
 	private DERSet getAttributes() {
 		final ASN1EncodableVector v = new ASN1EncodableVector();
-		v.add(new ChallengePassword(new String(password)));
+		v.add(new ChallengePasswordAttribute(new String(password)));
 		
 		return new DERSet(v);
 	}

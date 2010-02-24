@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.x509.X509V1CertificateGenerator;
 import org.jscep.util.LoggingUtil;
@@ -107,5 +108,16 @@ public final class X509Util {
     	} catch (Exception e) {
     		return false;
     	}
+	}
+
+	/**
+	 * Creates a new IssuerAndSerialNumber from the provided certificate.
+	 * 
+	 * @param certificate the certificate to use.
+	 * @return the IssuerAndSerialNumber to represent the certificate.
+	 */
+	public static IssuerAndSerialNumber toIssuerAndSerialNumber(X509Certificate certificate) {
+		final X509Name issuer = X509Util.toX509Name(certificate.getIssuerX500Principal());
+		return new IssuerAndSerialNumber(issuer, certificate.getSerialNumber());
 	}
 }
