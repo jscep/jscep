@@ -22,7 +22,7 @@ public class LoggingUtilTest {
 
 	@Test
 	public void testGetLoggerString() {
-		Assert.assertEquals(fixture, LoggingUtil.getLogger("com.google.code.jscep.util"));
+		Assert.assertEquals(fixture, LoggingUtil.getLogger("org.jscep.util"));
 	}
 
 }

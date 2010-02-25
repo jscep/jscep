@@ -46,7 +46,7 @@ import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
  * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html
  */
 public final class AlgorithmDictionary {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.util");
+	private static Logger LOGGER = LoggingUtil.getLogger(AlgorithmDictionary.class);
 	/**
 	 * JCA standards RECOMMEND NoPadding and PKCS5Padding to Providers.
 	 * 
@@ -185,7 +185,9 @@ public final class AlgorithmDictionary {
 	 * @return the signature algorithm name.
 	 */
 	public static String getRSASignatureAlgorithm(String hashAlgorithm) {
-		if (hashAlgorithm.startsWith("SHA")) {
+		if (hashAlgorithm.equals("SHA")) {
+			return "SHA1withRSA";
+		} else if (hashAlgorithm.startsWith("SHA-")) {
 			return hashAlgorithm.replace("-", "") + "withRSA";
 		} else {
 			return hashAlgorithm + "withRSA";

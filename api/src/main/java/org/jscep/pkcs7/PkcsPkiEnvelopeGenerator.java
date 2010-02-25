@@ -72,7 +72,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class PkcsPkiEnvelopeGenerator {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger(PkcsPkiEnvelopeGenerator.class);
 	private X509Certificate recipient;
 	private String cipherAlgorithm;
 	private String cipherTransformation;

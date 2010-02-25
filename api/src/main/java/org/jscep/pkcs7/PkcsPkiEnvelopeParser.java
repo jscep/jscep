@@ -59,7 +59,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class PkcsPkiEnvelopeParser {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger(PkcsPkiEnvelopeParser.class);
 	private final PrivateKey privKey;
 	
 	

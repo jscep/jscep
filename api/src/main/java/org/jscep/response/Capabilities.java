@@ -38,7 +38,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class Capabilities {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.response");
+	private static Logger LOGGER = LoggingUtil.getLogger(Capabilities.class);
 	private EnumSet<Capability> capabilities;
 
 	/**

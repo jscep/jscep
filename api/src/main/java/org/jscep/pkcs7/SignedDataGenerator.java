@@ -21,10 +21,14 @@
  */
 package org.jscep.pkcs7;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
@@ -33,6 +37,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -43,10 +48,13 @@ import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DEREncodableVector;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
@@ -55,7 +63,6 @@ import org.bouncycastle.asn1.cms.SignerIdentifier;
 import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.X509Name;
 import org.jscep.pkcs9.ContentTypeAttribute;
 import org.jscep.pkcs9.MessageDigestAttribute;
 import org.jscep.util.AlgorithmDictionary;
@@ -79,7 +86,7 @@ import org.jscep.x509.X509Util;
  * @author David Grant
  */
 public class SignedDataGenerator {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger(SignedDataGenerator.class);
 	private final List<X509Certificate> certs;
 	private final List<X509CRL> crls;
 	private final List<AlgorithmIdentifier> digestAlgorithms;
@@ -105,14 +112,12 @@ public class SignedDataGenerator {
 		certs.add(cert);
 	}
 	
-	public void addSigner(PrivateKey privateKey, X509Certificate cert, String digestAlgorithm, Set<Attribute> authenticatedAttributes, Set<Attribute> unauthenticatedAttributes) {
-		new SignerInformation(privateKey, cert, AlgorithmDictionary.getAlgId(digestAlgorithm), authenticatedAttributes, unauthenticatedAttributes);
-	}
-	
-	public void addSigner(PrivateKey key, Collection<X509Certificate> certs, Collection<X509CRL> crls, String digestAlgorithm, String encryptionAlgorithm) {
-		this.certs.addAll(certs);
-		this.crls.addAll(crls);
-		this.digestAlgorithms.add(AlgorithmDictionary.getAlgId(digestAlgorithm));
+	public void addSigner(PrivateKey privateKey, X509Certificate cert, String digestAlgorithm, AttributeTable authenticatedAttributes, AttributeTable unauthenticatedAttributes) {
+		signerInfos.add(new SignerInformation(privateKey, 
+											  cert, 
+											  AlgorithmDictionary.getAlgId(digestAlgorithm), 
+											  authenticatedAttributes, 
+											  unauthenticatedAttributes));
 	}
 	
 	/**
@@ -131,11 +136,27 @@ public class SignedDataGenerator {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws NoSuchAlgorithmException 
 	 */
+	public SignedData generate(DERObjectIdentifier contentType, DEREncodable content) throws IOException {
+		LOGGER.entering(getClass().getName(), "generate", new Object[] {contentType, content});
+
+		final SignedData sd = doGenerate(contentType, content);
+		
+		LOGGER.exiting(getClass().getName(), "generate", sd);
+		return sd;
+	}
+	
 	public SignedData generate() throws IOException {
 		LOGGER.entering(getClass().getName(), "generate");
+
+		final SignedData sd = doGenerate(PKCSObjectIdentifiers.data, new DERNull());
 		
+		LOGGER.exiting(getClass().getName(), "generate", sd);
+		return sd;
+	}
+	
+	private SignedData doGenerate(DERObjectIdentifier contentType, DEREncodable content) throws IOException {
 		final DERSet digestAlgorithms = getDigestAlgorithmIdentifiers();
-		final ContentInfo contentInfo = getContentInfo();
+		final ContentInfo contentInfo = new ContentInfo(contentType, content);
 		DERSet signerInfos;
 		try {
 			signerInfos = getSignerInfos(contentInfo);
@@ -145,22 +166,7 @@ public class SignedDataGenerator {
 		final DERSet certificates = getCertificates();
 		final DERSet crls = getCRLs();
 		
-		final SignedData sd = new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
-		
-		LOGGER.exiting(getClass().getName(), "generate", sd);
-		return sd;
-	}
-	
-	private ContentInfo getContentInfo() {
-		return new ContentInfo(getContentType(), getContent());
-	}
-	
-	private DEREncodable getContent() {
-		return new DEROctetString(new byte[0]);
-	}
-	
-	private DERObjectIdentifier getContentType() {
-		return CMSObjectIdentifiers.data;
+		return new SignedData(digestAlgorithms, contentInfo, certificates, crls, signerInfos);
 	}
 	
 	private DERSet getDigestAlgorithmIdentifiers() {
@@ -234,17 +240,17 @@ public class SignedDataGenerator {
 		private final PrivateKey privateKey;
 		private final X509Certificate certificate;
 		private final AlgorithmIdentifier digestAlgorithm;
-		private final Set<Attribute> authenticatedAttributes;
+		private final AttributeTable authenticatedAttributes;
 		private final AlgorithmIdentifier digestEncryptionAlgorithm;
-		private final Set<Attribute> unauthenticatedAttributes;
+		private final AttributeTable unauthenticatedAttributes;
 		
-		public SignerInformation(PrivateKey privateKey, X509Certificate certificate, AlgorithmIdentifier digestAlgorithm, Set<Attribute> authenticatedAttributes, Set<Attribute> unauthenticatedAttributes) {
+		public SignerInformation(PrivateKey privateKey, X509Certificate certificate, AlgorithmIdentifier digestAlgorithm, AttributeTable authenticatedAttributes, AttributeTable unauthenticatedAttributes) {
 			this.privateKey = privateKey;
 			this.certificate = certificate;
 			this.digestAlgorithm = digestAlgorithm;
-			this.authenticatedAttributes = null;
+			this.authenticatedAttributes = authenticatedAttributes;
 			this.digestEncryptionAlgorithm = AlgorithmDictionary.getAlgId("RSA");
-			this.unauthenticatedAttributes = null;
+			this.unauthenticatedAttributes = unauthenticatedAttributes;
 		}
 		
 		public AlgorithmIdentifier getDigestAlgorithm() {
@@ -262,34 +268,66 @@ public class SignedDataGenerator {
 		private DERSet getAuthenticatedAttributes(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {
 			// The field is optional, but it must be present if the content
 			// type of the ContentInfo value being signed is not data.
-			if (contentInfo.getContentType().equals(PKCSObjectIdentifiers.data) == false) {
+			if (contentInfo.getContentType().equals(PKCSObjectIdentifiers.data)) {
 				// Optional
+				if (authenticatedAttributes == null) {
+					return new DERSet();
+				}
+				return new DERSet(authenticatedAttributes.toASN1EncodableVector());
 			} else {
+				Hashtable<DERObjectIdentifier, Attribute> hashtable;
+				if (authenticatedAttributes == null) {
+					hashtable = new Hashtable<DERObjectIdentifier, Attribute>();
+				} else {
+					hashtable = authenticatedAttributes.toHashtable();
+				}
 				// If the field is present, it must contain, at a minimum, two
 				// attributes:
-				
+
 				// A PKCS #9 content-type attribute having as its value the 
 				// content type of the ContentInfo value being signed.
-				Attribute contentType = new ContentTypeAttribute(contentInfo.getContentType());
+				if (hashtable.get(PKCSObjectIdentifiers.pkcs_9_at_contentType) == null) {
+					Attribute contentType = new ContentTypeAttribute(contentInfo.getContentType());
+					hashtable.put(PKCSObjectIdentifiers.pkcs_9_at_contentType, contentType);
+				}
 				// A PKCS #9 message-digest attribute, having as its value 
 				// the message digest of the content (see below).
-				Attribute messageDigest = new MessageDigestAttribute(getMessageDigest(contentInfo));
+				if (hashtable.get(PKCSObjectIdentifiers.pkcs_9_at_messageDigest) == null) {
+					Attribute messageDigest = new MessageDigestAttribute(getMessageDigest(contentInfo));
+					hashtable.put(PKCSObjectIdentifiers.pkcs_9_at_messageDigest, messageDigest);
+				}
+				
+				return new DERSet(new AttributeTable(hashtable).toASN1EncodableVector());
 			}
-			// TODO
-			return new DERSet();
 		}
 		
 		private ASN1OctetString getEncryptedDigest(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {
 			// When the [authenticatedAttributes] field is absent, the result 
 			// is just the message digest of the content.
-			byte[] digest = getMessageDigest(contentInfo);
-			// When the [authenticatedAttributes] field is present, however, 
-			// the result is the message digest of the complete DER encoding 
-			// of the Attributes value containted in the authenticatedAttributes 
-			// field.
-			
-			// TODO
-			return new DEROctetString(new byte[0]);
+			if (authenticatedAttributes == null && contentInfo.getContentType().equals(PKCSObjectIdentifiers.data)) {
+				return new DEROctetString(getMessageDigest(contentInfo));
+			} else {
+				// When the [authenticatedAttributes] field is present, however, 
+				// the result is the message digest of the complete DER encoding 
+				// of the Attributes value containted in the authenticatedAttributes 
+				// field.
+				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				final DEROutputStream dos = new DEROutputStream(baos);
+				dos.writeObject(getAuthenticatedAttributes(contentInfo));
+				
+				final String signatureAlg = AlgorithmDictionary.getRSASignatureAlgorithm(AlgorithmDictionary.lookup(digestAlgorithm));
+				final Signature sig = Signature.getInstance(signatureAlg);
+				try {
+					sig.initSign(privateKey);
+					sig.update(baos.toByteArray());
+					
+					return new DEROctetString(sig.sign());
+				} catch (InvalidKeyException e) {
+					throw new IOException(e);
+				} catch (SignatureException e) {
+					throw new IOException(e);
+				}
+			}
 		}
 		
 		private byte[] getMessageDigest(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {

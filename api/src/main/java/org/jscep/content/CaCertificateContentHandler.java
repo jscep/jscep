@@ -50,7 +50,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class CaCertificateContentHandler implements SCEPContentHandler<List<X509Certificate>> {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.content");
+	private static Logger LOGGER = LoggingUtil.getLogger(CaCertificateContentHandler.class);
 	
 	/**
 	 * {@inheritDoc}

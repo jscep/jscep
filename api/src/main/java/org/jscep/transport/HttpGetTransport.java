@@ -42,7 +42,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class HttpGetTransport extends Transport {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transport");
+	private static Logger LOGGER = LoggingUtil.getLogger(HttpGetTransport.class);
 
 	HttpGetTransport(URL url, Proxy proxy) {
 		super(url, proxy);

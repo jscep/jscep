@@ -38,7 +38,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class SignedDataParser {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger(SignedDataParser.class);
 
 	/**
 	 * Parses the provided ASN1 object and extracts a degenerate SignedData

@@ -38,7 +38,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public final class TransactionId {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
+	private static Logger LOGGER = LoggingUtil.getLogger(TransactionId.class);
 	private static final AtomicLong ID_SOURCE = new AtomicLong();
 	private final byte[] id;
 	

@@ -49,7 +49,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class PkiMessageParser {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageParser.class);
 	private PrivateKey privateKey;
 	
 	public void setPrivateKey(PrivateKey privateKey) {

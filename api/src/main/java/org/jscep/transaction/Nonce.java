@@ -37,7 +37,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class Nonce {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
+	private static Logger LOGGER = LoggingUtil.getLogger(Nonce.class);
 	private static final Random RND = new SecureRandom();
 	private byte[] nonce;
 	

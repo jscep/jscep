@@ -44,7 +44,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public final class X509Util {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
+	private static Logger LOGGER = LoggingUtil.getLogger(X509Util.class);
 	
 	private X509Util() {
 		// This constructor will never be invoked.

@@ -95,7 +95,7 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class PkiMessageGenerator implements Cloneable {
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.pkcs7");
+	private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageGenerator.class);
 	
 	private MessageType msgType;
 	private TransactionId transId;
