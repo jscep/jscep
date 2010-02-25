@@ -60,6 +60,7 @@ import org.jscep.pkcs9.ContentTypeAttribute;
 import org.jscep.pkcs9.MessageDigestAttribute;
 import org.jscep.util.AlgorithmDictionary;
 import org.jscep.util.LoggingUtil;
+import org.jscep.x509.X509Util;
 
 
 /**
@@ -104,8 +105,8 @@ public class SignedDataGenerator {
 		certs.add(cert);
 	}
 	
-	public void addSigner(PrivateKey key, X509Certificate cert, String digestAlgorithm, String encryptionAlgorithm) {
-		
+	public void addSigner(PrivateKey privateKey, X509Certificate cert, String digestAlgorithm, Set<Attribute> authenticatedAttributes, Set<Attribute> unauthenticatedAttributes) {
+		new SignerInformation(privateKey, cert, AlgorithmDictionary.getAlgId(digestAlgorithm), authenticatedAttributes, unauthenticatedAttributes);
 	}
 	
 	public void addSigner(PrivateKey key, Collection<X509Certificate> certs, Collection<X509CRL> crls, String digestAlgorithm, String encryptionAlgorithm) {
@@ -230,17 +231,19 @@ public class SignedDataGenerator {
 	}
 	
 	private class SignerInformation {		
-		private final IssuerAndSerialNumber iasn;
+		private final PrivateKey privateKey;
+		private final X509Certificate certificate;
 		private final AlgorithmIdentifier digestAlgorithm;
 		private final Set<Attribute> authenticatedAttributes;
 		private final AlgorithmIdentifier digestEncryptionAlgorithm;
 		private final Set<Attribute> unauthenticatedAttributes;
 		
-		public SignerInformation(IssuerAndSerialNumber iasn, AlgorithmIdentifier digestAlgorithm, AlgorithmIdentifier digestEncryptionAlgorithm) {
-			this.iasn = iasn;
+		public SignerInformation(PrivateKey privateKey, X509Certificate certificate, AlgorithmIdentifier digestAlgorithm, Set<Attribute> authenticatedAttributes, Set<Attribute> unauthenticatedAttributes) {
+			this.privateKey = privateKey;
+			this.certificate = certificate;
 			this.digestAlgorithm = digestAlgorithm;
 			this.authenticatedAttributes = null;
-			this.digestEncryptionAlgorithm = digestEncryptionAlgorithm;
+			this.digestEncryptionAlgorithm = AlgorithmDictionary.getAlgId("RSA");
 			this.unauthenticatedAttributes = null;
 		}
 		
@@ -249,12 +252,16 @@ public class SignedDataGenerator {
 		}
 		
 		private SignerIdentifier getSignerIdentifier() {
-			return new SignerIdentifier(iasn);
+			return new SignerIdentifier(getIssuerAndSerialNumber());
+		}
+		
+		private IssuerAndSerialNumber getIssuerAndSerialNumber() {
+			return X509Util.toIssuerAndSerialNumber(certificate);
 		}
 		
 		private DERSet getAuthenticatedAttributes(ContentInfo contentInfo) throws NoSuchAlgorithmException, IOException {
 			// The field is optional, but it must be present if the content
-            // type of the ContentInfo value being signed is not data.
+			// type of the ContentInfo value being signed is not data.
 			if (contentInfo.getContentType().equals(PKCSObjectIdentifiers.data) == false) {
 				// Optional
 			} else {
