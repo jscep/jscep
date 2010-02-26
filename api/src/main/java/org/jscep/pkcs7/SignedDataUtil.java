@@ -22,8 +22,14 @@
 package org.jscep.pkcs7;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreParameters;
@@ -35,13 +41,20 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerIdentifier;
 import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.jscep.pkcs9.MessageDigestAttribute;
+import org.jscep.util.AlgorithmDictionary;
 import org.jscep.x509.X509Util;
 
 
@@ -111,12 +124,47 @@ public final class SignedDataUtil {
 		while (seqs.hasMoreElements()) {
 			final ASN1Sequence seq = seqs.nextElement();
 			SignerInfo signerInfo = new SignerInfo(seq);
+			signerInfo.getAuthenticatedAttributes();
 			SignerIdentifier signerId = signerInfo.getSID();
 			IssuerAndSerialNumber iasn = IssuerAndSerialNumber.getInstance(signerId.getId());
 			
-			return issuerIasn.equals(iasn);
+			if (issuerIasn.equals(iasn) == false) {
+				continue;
+			}
+			// We've found the right issuer.
+			ASN1OctetString signedDigest = signerInfo.getEncryptedDigest();
+			String hashAlg = AlgorithmDictionary.lookup(signerInfo.getDigestAlgorithm());
+			String sigAlg = AlgorithmDictionary.getRSASignatureAlgorithm(hashAlg);
+			Signature sig;
+			try {
+				sig = Signature.getInstance(sigAlg);
+			} catch (NoSuchAlgorithmException e) {
+				return false;
+			}
+			try {
+				sig.initVerify(signer);
+			} catch (InvalidKeyException e) {
+				return false;
+			}
+			try {
+				sig.update(getHash(signerInfo));
+				return sig.verify(signedDigest.getOctets());
+			} catch (SignatureException e) {
+				return false;
+			} catch (IOException e) {
+				return false;
+			}
 		}
 		
 		return false;
+	}
+	
+	private static byte[] getHash(SignerInfo signerInfo) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final DEROutputStream dos = new DEROutputStream(baos);
+		dos.writeObject(signerInfo.getAuthenticatedAttributes());
+		dos.close();
+
+		return baos.toByteArray();
 	}
 }

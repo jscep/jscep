@@ -6,8 +6,11 @@ import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
+
+import junit.framework.Assert;
 
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -15,9 +18,7 @@ import org.jscep.pkcs7.MessageData;
 import org.jscep.pkcs7.SignedDataGenerator;
 import org.jscep.x509.X509Util;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
 
 public class NextCaCertificateContentHandlerTest {
 	private NextCaCertificateContentHandler fixture;
@@ -31,16 +32,35 @@ public class NextCaCertificateContentHandlerTest {
 		fixture = new NextCaCertificateContentHandler(ca);
 	}
 	
-	@Ignore @Test
+	@Test
 	public void testSuccess() throws Exception {
 		// We need a DSD wrapped in a SD.  This is only a DSD.
 		final SignedDataGenerator generator = new SignedDataGenerator();
 		generator.addSigner(keyPair.getPrivate(), ca, "SHA-1", null, null);
 		generator.addCertificate(ca);
-		SignedData dsd = generator.generate();
-		SignedData sd = generator.generate(PKCSObjectIdentifiers.signedData, dsd);
+		final SignedData degenerateSignedData = generator.generate();
+		final SignedData signedData = generator.generate(PKCSObjectIdentifiers.signedData, degenerateSignedData);
 		
-		InputStream in = new ByteArrayInputStream(MessageData.getInstance(sd).getEncoded());
+		final InputStream in = new ByteArrayInputStream(MessageData.getInstance(signedData).getEncoded());
+		final List<X509Certificate> certs = fixture.getContent(in, "application/x-x509-next-ca-cert");
+		
+		Assert.assertEquals(1, certs.size());
+		Assert.assertTrue(certs.contains(ca));
+	}
+	
+	@Test(expected = IOException.class)
+	public void testInvalidSigner() throws Exception {
+		final KeyPair invalidKeyPair = getKeyPair();
+		final X509Certificate invalidCertificate = getCertificate(invalidKeyPair);
+		
+		// We need a DSD wrapped in a SD.  This is only a DSD.
+		final SignedDataGenerator generator = new SignedDataGenerator();
+		generator.addSigner(invalidKeyPair.getPrivate(), invalidCertificate, "SHA-1", null, null);
+		generator.addCertificate(invalidCertificate);
+		final SignedData degenerateSignedData = generator.generate();
+		final SignedData signedData = generator.generate(PKCSObjectIdentifiers.signedData, degenerateSignedData);
+		
+		final InputStream in = new ByteArrayInputStream(MessageData.getInstance(signedData).getEncoded());
 		fixture.getContent(in, "application/x-x509-next-ca-cert");
 	}
 	

@@ -77,7 +77,7 @@ public class NextCaCertificateContentHandler implements SCEPContentHandler<List<
 				// TODO: This must be signed by the current CA.
 				final SignedData sd = new SignedData(seq);
 				if (SignedDataUtil.isSignedBy(sd, issuer) == false) {
-					IOException ioe = new IOException();
+					IOException ioe = new IOException("Invalid Signer");
 					
 					LOGGER.throwing(getClass().getName(), "getContent", ioe);
 					throw ioe;
@@ -87,9 +87,9 @@ public class NextCaCertificateContentHandler implements SCEPContentHandler<List<
 				// new CA certificate and any new RA certificates, as defined in
 				// Section 5.2.1.1.2, to be used when the current CA certificate
 				// expires.
-				ASN1Encodable sdContent = (ASN1Encodable) sd.getEncapContentInfo().getContent();
+				ASN1Encodable sdContentInfo = (ASN1Encodable) sd.getEncapContentInfo();
 				SignedDataParser parser = new SignedDataParser();
-				SignedData dsd = parser.parse(sdContent);
+				SignedData dsd = parser.parse(sdContentInfo);
 				CertStore store = SignedDataUtil.extractCertStore(dsd);
 				collection = store.getCertificates(new X509CertSelector());
 			} catch (GeneralSecurityException e) {

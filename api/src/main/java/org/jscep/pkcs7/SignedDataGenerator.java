@@ -89,8 +89,6 @@ public class SignedDataGenerator {
 	private static Logger LOGGER = LoggingUtil.getLogger(SignedDataGenerator.class);
 	private final List<X509Certificate> certs;
 	private final List<X509CRL> crls;
-	private final List<AlgorithmIdentifier> digestAlgorithms;
-	private final String digestAlgorithm = "MD5";
 	private final Set<SignerInformation> signerInfos;
 	
 	/**
@@ -99,7 +97,6 @@ public class SignedDataGenerator {
 	public SignedDataGenerator() {
 		certs = new LinkedList<X509Certificate>();
 		crls = new LinkedList<X509CRL>();
-		digestAlgorithms = new LinkedList<AlgorithmIdentifier>();
 		signerInfos = new HashSet<SignerInformation>();
 	}
 	
@@ -114,7 +111,7 @@ public class SignedDataGenerator {
 	
 	public void addSigner(PrivateKey privateKey, X509Certificate cert, String digestAlgorithm, AttributeTable authenticatedAttributes, AttributeTable unauthenticatedAttributes) {
 		signerInfos.add(new SignerInformation(privateKey, 
-											  cert, 
+											  cert,
 											  AlgorithmDictionary.getAlgId(digestAlgorithm), 
 											  authenticatedAttributes, 
 											  unauthenticatedAttributes));
@@ -314,14 +311,18 @@ public class SignedDataGenerator {
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				final DEROutputStream dos = new DEROutputStream(baos);
 				dos.writeObject(getAuthenticatedAttributes(contentInfo));
+				dos.close();
 				
 				final String signatureAlg = AlgorithmDictionary.getRSASignatureAlgorithm(AlgorithmDictionary.lookup(digestAlgorithm));
 				final Signature sig = Signature.getInstance(signatureAlg);
 				try {
+					byte[] hash = baos.toByteArray();
 					sig.initSign(privateKey);
-					sig.update(baos.toByteArray());
+					sig.update(hash);
 					
-					return new DEROctetString(sig.sign());
+					byte[] bytes = sig.sign();
+					
+					return new DEROctetString(bytes);
 				} catch (InvalidKeyException e) {
 					throw new IOException(e);
 				} catch (SignatureException e) {

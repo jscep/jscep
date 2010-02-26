@@ -22,6 +22,7 @@
 package org.jscep.pkcs9;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSet;
@@ -42,6 +43,10 @@ public class MessageDigestAttribute extends Attribute {
 	 */
 	public MessageDigestAttribute(byte[] messageDigest) {
 		super(PKCSObjectIdentifiers.pkcs_9_at_messageDigest, toSet(messageDigest));
+	}
+	
+	public MessageDigestAttribute(ASN1Sequence seq) {
+		super(seq);
 	}
 	
 	/**
@@ -67,5 +72,9 @@ public class MessageDigestAttribute extends Attribute {
 		DEROctetString octetString = (DEROctetString) getAttrValues().getObjectAt(0);
 		
 		return octetString.getOctets();
+	}
+	
+	public static MessageDigestAttribute getInstance(Object o) {
+		return new MessageDigestAttribute((ASN1Sequence) Attribute.getInstance(o).toASN1Object());
 	}
 }
