@@ -10,7 +10,7 @@ import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
+@Ignore
 public class CipherAlgorithmTest extends AbstractClientTest {
 	@Test
 	public void testCipherDES() throws Exception {

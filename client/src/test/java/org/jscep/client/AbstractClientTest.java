@@ -16,15 +16,16 @@ import org.jscep.client.Client;
 import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 
 
 
-//@Ignore
+@Ignore
 public abstract class AbstractClientTest {
 	protected Client client;
 	protected KeyPair keyPair;
 	protected X509Certificate identity;
-	protected char[] password = "INBOUND_TLSuscl99".toCharArray();
+	protected char[] password = "password".toCharArray();
 	
 	@Before
 	public void setUp() throws Exception {
@@ -32,7 +33,7 @@ public abstract class AbstractClientTest {
 		identity = X509Util.createEphemeralCertificate(new X500Principal("CN=example.org"), keyPair);
 		
 		Client.Builder builder = new Client.Builder();
-		builder.url(new URL("https://engtest66-2.eu.ubiquity.net/ejbca/publicweb/apply/scep/pkiclient.exe"));
+		builder.url(new URL("https://localhost/ejbca/publicweb/apply/scep/pkiclient.exe"));
 		builder.caFingerprint(new byte[] {-93, -44, 23, 25, -106, 116, 80, -113, 36, 23, 76, -89, -36, -18, 89, -59}, "MD5");
 		builder.identity(identity, keyPair);
 		builder.caIdentifier("foo");

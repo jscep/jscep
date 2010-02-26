@@ -10,7 +10,7 @@ import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
+@Ignore
 public class DigestAlgorithmTest extends AbstractClientTest {
 	@Test
 	public void testDigestMD5() throws Exception {

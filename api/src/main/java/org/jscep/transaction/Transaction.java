@@ -73,7 +73,7 @@ import org.jscep.x509.X509Util;
  */
 public class Transaction {
 	private static NonceQueue QUEUE = new NonceQueue(20);
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep.transaction");
+	private static Logger LOGGER = LoggingUtil.getLogger(Transaction.class);
 	private final KeyPair clientKeyPair;
 	private final Transport transport;
 	private final PkiMessageGenerator msgGenerator;
