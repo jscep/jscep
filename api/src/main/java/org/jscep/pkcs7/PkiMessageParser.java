@@ -63,7 +63,12 @@ public class PkiMessageParser {
 	public PkiMessage parse(byte[] msgBytes) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse", msgBytes);
 
-		final ContentInfo sdContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(msgBytes));
+		final ContentInfo sdContentInfo;
+		try {
+			sdContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(msgBytes));
+		} catch (ClassCastException e) {
+			throw new IOException(e);
+		}
 		final SignedData signedData = SignedData.getInstance((ASN1Sequence) sdContentInfo.getContent());
 		
 		// 3.1 version MUST be 1

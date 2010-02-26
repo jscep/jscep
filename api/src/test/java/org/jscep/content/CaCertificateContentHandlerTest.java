@@ -5,29 +5,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.Security;
 import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.cms.SignedData;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jscep.content.CaCertificateContentHandler;
 import org.jscep.pkcs7.MessageData;
 import org.jscep.pkcs7.SignedDataGenerator;
 import org.jscep.x509.X509Util;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 
 public class CaCertificateContentHandlerTest {
 	private CaCertificateContentHandler fixture;
-	
-	@BeforeClass
-	public static void setUpClass() {
-		Security.addProvider(new BouncyCastleProvider());
-	}
 	
 	@Before
 	public void setUp() {

@@ -2,23 +2,25 @@ package org.jscep.request;
 
 import java.io.IOException;
 
-import org.jscep.request.GetCACaps;
-import org.jscep.request.Operation;
-import org.jscep.request.Request;
-import org.jscep.response.Capabilities;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 
 public class GetCACapsTest {
-	private Request<Capabilities> fixture;
+	private GetCACaps fixture;
 	private String caIdentifier;
 	
 	@Before
 	public void setUp() {
 		caIdentifier = "id";
 		fixture = new GetCACaps(caIdentifier);
+	}
+	
+	@Test
+	public void testNullConstructor() {
+		fixture = new GetCACaps();
+		Assert.assertNull(fixture.getMessage());
 	}
 
 	@Test
@@ -34,5 +36,11 @@ public class GetCACapsTest {
 	@Test
 	public void testContentHandler() {
 		Assert.assertNotNull(fixture.getContentHandler());
+	}
+	
+	@Test
+	public void testString() {
+		// Coverage
+		fixture.toString();
 	}
 }

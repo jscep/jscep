@@ -36,4 +36,11 @@ public class FingerprintVerificationCallbackTest {
 		Assert.assertTrue(fixture.isVerified());
 	}
 
+	@Test
+	public void testString() {
+		// Coverage
+		fixture.toString();
+		fixture.setVerified(true);
+		fixture.toString();
+	}
 }
