@@ -40,6 +40,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.BERConstructedOctetString;
 import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DEROutputStream;
@@ -267,6 +268,9 @@ public class PkiMessageGenerator implements Cloneable {
 	}
 	
 	private DEREncodable getContent() {
+		if (content == null) {
+			return new DERNull();
+		}
 		return new BERConstructedOctetString(content);
 	}
 	
