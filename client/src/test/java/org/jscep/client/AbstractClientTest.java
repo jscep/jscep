@@ -40,6 +40,11 @@ public abstract class AbstractClientTest {
 		client = builder.build();
 	}
 	
+	/**
+	 * Removes any trust checking for SSL connections.
+	 * 
+	 * @throws Exception if any error occurs.
+	 */
 	@BeforeClass
 	public static void setUpTrustManager() throws Exception {
 		SSLContext ctx = SSLContext.getInstance("TLS");
