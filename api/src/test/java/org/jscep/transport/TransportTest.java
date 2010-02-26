@@ -2,6 +2,7 @@ package org.jscep.transport;
 
 import java.net.URL;
 
+import org.jscep.request.Operation;
 import org.jscep.transport.Transport.Method;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,4 +21,10 @@ public class TransportTest {
 		Assert.assertTrue(t instanceof HttpGetTransport);
 	}
 
+	@Test
+	public void testGetURL() throws Exception {
+		Transport t = Transport.createTransport(Method.GET, new URL("http://example.org/"));
+		URL url = t.getUrl(Operation.GetCACaps);
+		Assert.assertTrue(url.getQuery().contains("operation=" + Operation.GetCACaps.toString()));
+	}
 }
