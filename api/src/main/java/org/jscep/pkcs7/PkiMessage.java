@@ -45,6 +45,41 @@ import org.jscep.transaction.TransactionId;
 
 /**
  * This class represents the SCEP <code>pkiMessage</code> structure.
+ * 
+ * <pre>
+ *  ContentInfo :: SEQUENCE {
+ *    contentType ContentType, // pkcs-7 2 (signedData)
+ *    content {
+ *      [0] pkiMessage SignedData {
+ *            signerInfos SignerInfos ::= SET OF SignerInfo {
+ *              encryptedDigest EncryptedDigest
+ *              authenticatedAttributes
+ *                transactionID
+ *                messageType
+ *                pkiStatus
+ *                failInfo
+ *                senderNonce
+ *                recipientNonce
+ *                etc
+ *            },
+ *            contentInfo ContentInfo :: SEQUENCE {
+ *              contentType ContentType, // pkcs-7 3 (envelopedData)
+ *              content 
+ *                [0] pkcsPkiEnvelope EnvelopedData OPTIONAL
+ *                      recipientInfos ::= SET OF RecipientInfo {
+ *                      },
+ *                      encryptedContentInfo EncryptedContentInfo :: SEQUENCE {
+ *                        contentType ContentType, // = pkcs-7 1 (data)
+ *                        contentEncryptionAlgorithm ContentEncryptionAlgorithmIdentifier,
+ *                        encryptedContent {
+ *                          [0] messageData EncryptedContent OPTIONAL
+ *                        }
+ *                     }
+ *            }
+ *      }
+ *    }
+ *  }
+ * </pre>
  *
  * @author David Grant
  */

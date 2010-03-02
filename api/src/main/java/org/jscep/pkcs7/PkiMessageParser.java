@@ -87,7 +87,7 @@ public class PkiMessageParser {
 			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(privateKey);
 			final ContentInfo envelopeContentInfo = signedData.getEncapContentInfo();
 			// 3.1 the contentType in contentInfo MUST be data
-			DERObjectIdentifier contentType = envelopeContentInfo.getContentType();
+			final DERObjectIdentifier contentType = envelopeContentInfo.getContentType();
 			if (contentType.equals(CMSObjectIdentifiers.data) == false) {
 				LOGGER.severe("The contentType in contentInfo MUST be data, was: " + contentType);
 			}
