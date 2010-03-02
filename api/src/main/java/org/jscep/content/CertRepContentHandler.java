@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.util.ASN1Dump;
 import org.jscep.pkcs7.PkiMessage;
 import org.jscep.pkcs7.PkiMessageParser;
@@ -69,10 +70,13 @@ public class CertRepContentHandler implements SCEPContentHandler<PkiMessage> {
 			
 			}
 			baos.close();
+			
+			ContentInfo contentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(baos.toByteArray()));
+			SignedData signedData = SignedData.getInstance(contentInfo.getContent());
 
 			final PkiMessageParser parser = new PkiMessageParser();
 			parser.setPrivateKey(keyPair.getPrivate());
-			final PkiMessage msg = parser.parse(baos.toByteArray());
+			final PkiMessage msg = parser.parse(signedData);
 			
 			LOGGER.exiting(getClass().getName(), "getContent", msg);
 			return msg;

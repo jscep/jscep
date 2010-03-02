@@ -227,8 +227,7 @@ public class PkiMessageGenerator implements Cloneable {
 			this.content = new ContentInfo((ASN1Sequence) ASN1Object.fromByteArray(envelope.getEncoded()));
 		}
 		
-        final ContentInfo ci;
-        final SignedData signedData;
+		final SignedData signedData;
 		try {
 			final ASN1Set digestAlgorithms = getDigestAlgorithms();
 			final ContentInfo contentInfo = getContentInfo();
@@ -241,15 +240,13 @@ public class PkiMessageGenerator implements Cloneable {
 			assert(signedData.getVersion().getValue().equals(BigInteger.ONE));
 			// 3.1 the contentType in contentInfo MUST be data
 			assert(signedData.getEncapContentInfo().getContentType().equals(CMSObjectIdentifiers.data));
-			
-			ci = new ContentInfo(CMSObjectIdentifiers.signedData, signedData);
 		} catch (GeneralSecurityException e) {
 			RuntimeException rt = new RuntimeException(e);
 			LOGGER.throwing(getClass().getName(), "parse", rt);
 			throw rt;
 		}
     	
-		final PkiMessage msg = new PkiMessage(ci);
+		final PkiMessage msg = new PkiMessage(signedData);
 		msg.setPkcsPkiEnvelope(envelope);
 		
 		LOGGER.exiting(getClass().getName(), "generate", msg);

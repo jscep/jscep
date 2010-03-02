@@ -35,6 +35,7 @@ import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.jscep.asn1.SCEPObjectIdentifiers;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
@@ -86,13 +87,15 @@ import org.jscep.transaction.TransactionId;
 public class PkiMessage {
 	private PkcsPkiEnvelope pkcsPkiEnvelope;
 	private final SignerInfo signerInfo;
-	private final ContentInfo contentInfo;
 	private final SignedData signedData;
 	
-	PkiMessage(ContentInfo contentInfo) {
-		this.contentInfo = contentInfo;
-		this.signedData = SignedData.getInstance(contentInfo.getContent());
+	PkiMessage(SignedData signedData) {
+		this.signedData = signedData;
 		this.signerInfo = getSignerSet(signedData).iterator().next();
+	}
+	
+	public SignedData getSignerData() {
+		return signedData;
 	}
 	
 	private Set<SignerInfo> getSignerSet(SignedData signedData) {
@@ -196,6 +199,9 @@ public class PkiMessage {
 	}
 	
 	public byte[] getEncoded() throws IOException {
+		final DERObjectIdentifier contentType = PKCSObjectIdentifiers.signedData;
+		final ContentInfo contentInfo = new ContentInfo(contentType, signedData);
+		
 		return contentInfo.getEncoded();
 	}
 	
@@ -219,7 +225,6 @@ public class PkiMessage {
 		} else {
 			sb.append("pkiMessage (response) [\n");
 		}
-		sb.append("\tcontentType: " + contentInfo.getContentType() + "\n");
 		sb.append("\ttransactionId: " + getTransactionId() + "\n");
 		sb.append("\tmessageType: " + getMessageType() + "\n");
 		if (getPkiStatus() != null) {

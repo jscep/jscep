@@ -65,11 +65,10 @@ public class PkiMessageTest {
 	public void testCertRepResponse() throws IOException, NoSuchAlgorithmException {
 		SignedDataGenerator dsdGenerator = new SignedDataGenerator();
 		SignedData sd = dsdGenerator.generate(); 
-		
 		generator.setMessageType(MessageType.CertRep);
 		generator.setMessageData(MessageData.getInstance(sd));
 		final PkiMessage generatedMsg = generator.generate();
-		final PkiMessage parsedMsg = parser.parse(generatedMsg.getEncoded());
+		final PkiMessage parsedMsg = parser.parse(generatedMsg.getSignerData());
 		
 		Assert.assertEquals(generatedMsg, parsedMsg);
 	}
@@ -81,7 +80,7 @@ public class PkiMessageTest {
 		generator.setMessageType(MessageType.GetCert);
 		generator.setMessageData(MessageData.getInstance(req.getMessage()));
 		final PkiMessage generatedMsg = generator.generate();
-		final PkiMessage parsedMsg = parser.parse(generatedMsg.getEncoded());
+		final PkiMessage parsedMsg = parser.parse(generatedMsg.getSignerData());
 		
 		Assert.assertEquals(generatedMsg, parsedMsg);
 	}
@@ -93,7 +92,7 @@ public class PkiMessageTest {
 		generator.setMessageType(MessageType.GetCertInitial);
 		generator.setMessageData(MessageData.getInstance(req.getMessage()));
 		final PkiMessage generatedMsg = generator.generate();
-		final PkiMessage parsedMsg = parser.parse(generatedMsg.getEncoded());
+		final PkiMessage parsedMsg = parser.parse(generatedMsg.getSignerData());
 		
 		Assert.assertEquals(generatedMsg, parsedMsg);
 	}
@@ -105,7 +104,7 @@ public class PkiMessageTest {
 		generator.setMessageType(MessageType.GetCRL);
 		generator.setMessageData(MessageData.getInstance(req.getMessage()));
 		final PkiMessage generatedMsg = generator.generate();
-		final PkiMessage parsedMsg = parser.parse(generatedMsg.getEncoded());
+		final PkiMessage parsedMsg = parser.parse(generatedMsg.getSignerData());
 		
 		Assert.assertEquals(generatedMsg, parsedMsg);
 	}
@@ -117,7 +116,7 @@ public class PkiMessageTest {
 		generator.setMessageType(MessageType.PKCSReq);
 		generator.setMessageData(MessageData.getInstance(req.getMessage()));
 		final PkiMessage generatedMsg = generator.generate();
-		final PkiMessage parsedMsg = parser.parse(generatedMsg.getEncoded());
+		final PkiMessage parsedMsg = parser.parse(generatedMsg.getSignerData());
 		
 		Assert.assertEquals(generatedMsg, parsedMsg);
 	}
