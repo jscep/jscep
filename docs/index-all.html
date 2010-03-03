@@ -507,6 +507,9 @@ Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkiMessage.html" titl
 <DT><A HREF="./org/jscep/pkcs7/PkiMessageGenerator.html#getSenderNonce()"><B>getSenderNonce()</B></A> - 
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkiMessageGenerator.html" title="class in org.jscep.pkcs7">PkiMessageGenerator</A>
 <DD>&nbsp;
+<DT><A HREF="./org/jscep/pkcs7/PkiMessage.html#getSignerData()"><B>getSignerData()</B></A> - 
+Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkiMessage.html" title="class in org.jscep.pkcs7">PkiMessage</A>
+<DD>&nbsp;
 <DT><A HREF="./org/jscep/transaction/Transaction.html#getState()"><B>getState()</B></A> - 
 Method in class org.jscep.transaction.<A HREF="./org/jscep/transaction/Transaction.html" title="class in org.jscep.transaction">Transaction</A>
 <DD>Returns the current state of this transaction.
@@ -528,9 +531,6 @@ Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkiMessage.html" titl
 <DT><A HREF="./org/jscep/util/AlgorithmDictionary.html#getTransformation(java.lang.String)"><B>getTransformation(String)</B></A> - 
 Static method in class org.jscep.util.<A HREF="./org/jscep/util/AlgorithmDictionary.html" title="class in org.jscep.util">AlgorithmDictionary</A>
 <DD>Returns an appropriate transformation name for the given cipher.
-<DT><A HREF="./org/jscep/gui/Main.html#getURL()"><B>getURL()</B></A> - 
-Method in class org.jscep.gui.<A HREF="./org/jscep/gui/Main.html" title="class in org.jscep.gui">Main</A>
-<DD>&nbsp;
 <DT><A HREF="./org/jscep/transport/Transport.html#getURL()"><B>getURL()</B></A> - 
 Method in class org.jscep.transport.<A HREF="./org/jscep/transport/Transport.html" title="class in org.jscep.transport">Transport</A>
 <DD>Returns the URL configured for use by this transport.
@@ -605,12 +605,6 @@ Static method in class org.jscep.util.<A HREF="./org/jscep/util/AlgorithmDiction
 <A NAME="_M_"><!-- --></A><H2>
 <B>M</B></H2>
 <DL>
-<DT><A HREF="./org/jscep/gui/Main.html" title="class in org.jscep.gui"><B>Main</B></A> - Class in <A HREF="./org/jscep/gui/package-summary.html">org.jscep.gui</A><DD>&nbsp;<DT><A HREF="./org/jscep/gui/Main.html#Main()"><B>Main()</B></A> - 
-Constructor for class org.jscep.gui.<A HREF="./org/jscep/gui/Main.html" title="class in org.jscep.gui">Main</A>
-<DD>&nbsp;
-<DT><A HREF="./org/jscep/gui/Main.html#main(java.lang.String[])"><B>main(String[])</B></A> - 
-Static method in class org.jscep.gui.<A HREF="./org/jscep/gui/Main.html" title="class in org.jscep.gui">Main</A>
-<DD>&nbsp;
 <DT><A HREF="./org/jscep/pkcs7/MessageData.html" title="class in org.jscep.pkcs7"><B>MessageData</B></A> - Class in <A HREF="./org/jscep/pkcs7/package-summary.html">org.jscep.pkcs7</A><DD>This class represents the SCEP <code>messageData</code> data structure.<DT><A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9"><B>MessageDigestAttribute</B></A> - Class in <A HREF="./org/jscep/pkcs9/package-summary.html">org.jscep.pkcs9</A><DD>This class represents a PKCS #9 messageDigest attribute.<DT><A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html#MessageDigestAttribute(byte[])"><B>MessageDigestAttribute(byte[])</B></A> - 
 Constructor for class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9">MessageDigestAttribute</A>
 <DD>Creates a new instance of <code>MessageDigestAttribute</code> using the provided
@@ -647,7 +641,7 @@ Constructor for class org.jscep.transaction.<A HREF="./org/jscep/transaction/Non
 <DT><A HREF="./org/jscep/transaction/NonceQueue.html#offer(org.jscep.transaction.Nonce)"><B>offer(Nonce)</B></A> - 
 Method in class org.jscep.transaction.<A HREF="./org/jscep/transaction/NonceQueue.html" title="class in org.jscep.transaction">NonceQueue</A>
 <DD>Inserts the specified nonce into this queue if possible.
-<DT><A HREF="./org/jscep/request/Operation.html" title="enum in org.jscep.request"><B>Operation</B></A> - Enum in <A HREF="./org/jscep/request/package-summary.html">org.jscep.request</A><DD>This enum represents the different types of transaction operations in SCEP.<DT><A HREF="./org/jscep/package-summary.html"><B>org.jscep</B></A> - package org.jscep<DD>Provides classes and interfaces to represent SCEP types.<DT><A HREF="./org/jscep/asn1/package-summary.html"><B>org.jscep.asn1</B></A> - package org.jscep.asn1<DD>Provides classes and interfaces to represent ASN.1 objects specific to SCEP.<DT><A HREF="./org/jscep/client/package-summary.html"><B>org.jscep.client</B></A> - package org.jscep.client<DD>&nbsp;<DT><A HREF="./org/jscep/content/package-summary.html"><B>org.jscep.content</B></A> - package org.jscep.content<DD>Provides classes and interfaces to handle SCEP response messages.<DT><A HREF="./org/jscep/gui/package-summary.html"><B>org.jscep.gui</B></A> - package org.jscep.gui<DD>&nbsp;<DT><A HREF="./org/jscep/operations/package-summary.html"><B>org.jscep.operations</B></A> - package org.jscep.operations<DD>Provides classes and interfaces to represent SCEP PKI operations.<DT><A HREF="./org/jscep/pkcs7/package-summary.html"><B>org.jscep.pkcs7</B></A> - package org.jscep.pkcs7<DD>Provides classes and interfaces to represent PKCS #7 types and utilities.<DT><A HREF="./org/jscep/pkcs9/package-summary.html"><B>org.jscep.pkcs9</B></A> - package org.jscep.pkcs9<DD>Provides classes and interfaces to represent PKCS #9 types.<DT><A HREF="./org/jscep/request/package-summary.html"><B>org.jscep.request</B></A> - package org.jscep.request<DD>Provides classes and interfaces to represent SCEP request messages.<DT><A HREF="./org/jscep/response/package-summary.html"><B>org.jscep.response</B></A> - package org.jscep.response<DD>Provides classes to represent SCEP responses.<DT><A HREF="./org/jscep/server/package-summary.html"><B>org.jscep.server</B></A> - package org.jscep.server<DD>&nbsp;<DT><A HREF="./org/jscep/transaction/package-summary.html"><B>org.jscep.transaction</B></A> - package org.jscep.transaction<DD>Provides classes and interfaces to manipulate SCEP transactions.<DT><A HREF="./org/jscep/transport/package-summary.html"><B>org.jscep.transport</B></A> - package org.jscep.transport<DD>Provides classes for providing HTTP transport to SCEP messages.<DT><A HREF="./org/jscep/util/package-summary.html"><B>org.jscep.util</B></A> - package org.jscep.util<DD>Provides classes for performing miscellaneous functions.<DT><A HREF="./org/jscep/x509/package-summary.html"><B>org.jscep.x509</B></A> - package org.jscep.x509<DD>Provides classes for performing X.509-related operations.</DL>
+<DT><A HREF="./org/jscep/request/Operation.html" title="enum in org.jscep.request"><B>Operation</B></A> - Enum in <A HREF="./org/jscep/request/package-summary.html">org.jscep.request</A><DD>This enum represents the different types of transaction operations in SCEP.<DT><A HREF="./org/jscep/package-summary.html"><B>org.jscep</B></A> - package org.jscep<DD>Provides classes and interfaces to represent SCEP types.<DT><A HREF="./org/jscep/asn1/package-summary.html"><B>org.jscep.asn1</B></A> - package org.jscep.asn1<DD>Provides classes and interfaces to represent ASN.1 objects specific to SCEP.<DT><A HREF="./org/jscep/client/package-summary.html"><B>org.jscep.client</B></A> - package org.jscep.client<DD>&nbsp;<DT><A HREF="./org/jscep/content/package-summary.html"><B>org.jscep.content</B></A> - package org.jscep.content<DD>Provides classes and interfaces to handle SCEP response messages.<DT><A HREF="./org/jscep/operations/package-summary.html"><B>org.jscep.operations</B></A> - package org.jscep.operations<DD>Provides classes and interfaces to represent SCEP PKI operations.<DT><A HREF="./org/jscep/pkcs7/package-summary.html"><B>org.jscep.pkcs7</B></A> - package org.jscep.pkcs7<DD>Provides classes and interfaces to represent PKCS #7 types and utilities.<DT><A HREF="./org/jscep/pkcs9/package-summary.html"><B>org.jscep.pkcs9</B></A> - package org.jscep.pkcs9<DD>Provides classes and interfaces to represent PKCS #9 types.<DT><A HREF="./org/jscep/request/package-summary.html"><B>org.jscep.request</B></A> - package org.jscep.request<DD>Provides classes and interfaces to represent SCEP request messages.<DT><A HREF="./org/jscep/response/package-summary.html"><B>org.jscep.response</B></A> - package org.jscep.response<DD>Provides classes to represent SCEP responses.<DT><A HREF="./org/jscep/server/package-summary.html"><B>org.jscep.server</B></A> - package org.jscep.server<DD>&nbsp;<DT><A HREF="./org/jscep/transaction/package-summary.html"><B>org.jscep.transaction</B></A> - package org.jscep.transaction<DD>Provides classes and interfaces to manipulate SCEP transactions.<DT><A HREF="./org/jscep/transport/package-summary.html"><B>org.jscep.transport</B></A> - package org.jscep.transport<DD>Provides classes for providing HTTP transport to SCEP messages.<DT><A HREF="./org/jscep/util/package-summary.html"><B>org.jscep.util</B></A> - package org.jscep.util<DD>Provides classes for performing miscellaneous functions.<DT><A HREF="./org/jscep/x509/package-summary.html"><B>org.jscep.x509</B></A> - package org.jscep.x509<DD>Provides classes for performing X.509-related operations.</DL>
 <HR>
 <A NAME="_P_"><!-- --></A><H2>
 <B>P</B></H2>
@@ -655,7 +649,7 @@ Method in class org.jscep.transaction.<A HREF="./org/jscep/transaction/NonceQueu
 <DT><A HREF="./org/jscep/pkcs7/PkcsPkiEnvelopeParser.html#parse(org.bouncycastle.asn1.cms.EnvelopedData)"><B>parse(EnvelopedData)</B></A> - 
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkcsPkiEnvelopeParser.html" title="class in org.jscep.pkcs7">PkcsPkiEnvelopeParser</A>
 <DD>Parses the provided <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/EnvelopedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>EnvelopedData</CODE></A>.
-<DT><A HREF="./org/jscep/pkcs7/PkiMessageParser.html#parse(byte[])"><B>parse(byte[])</B></A> - 
+<DT><A HREF="./org/jscep/pkcs7/PkiMessageParser.html#parse(org.bouncycastle.asn1.cms.SignedData)"><B>parse(SignedData)</B></A> - 
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkiMessageParser.html" title="class in org.jscep.pkcs7">PkiMessageParser</A>
 <DD>&nbsp;
 <DT><A HREF="./org/jscep/pkcs7/SignedDataParser.html#parse(org.bouncycastle.asn1.ASN1Encodable)"><B>parse(ASN1Encodable)</B></A> - 
@@ -677,7 +671,8 @@ Constructor for class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkcsPkiEnvelope
 <DD>&nbsp;
 <DT><A HREF="./org/jscep/pkcs7/PkcsPkiEnvelopeParser.html" title="class in org.jscep.pkcs7"><B>PkcsPkiEnvelopeParser</B></A> - Class in <A HREF="./org/jscep/pkcs7/package-summary.html">org.jscep.pkcs7</A><DD>This class is used for parsing SCEP <code>pkcsPKIEnvelope</code> structures.<DT><A HREF="./org/jscep/pkcs7/PkcsPkiEnvelopeParser.html#PkcsPkiEnvelopeParser(java.security.PrivateKey)"><B>PkcsPkiEnvelopeParser(PrivateKey)</B></A> - 
 Constructor for class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkcsPkiEnvelopeParser.html" title="class in org.jscep.pkcs7">PkcsPkiEnvelopeParser</A>
-<DD>&nbsp;
+<DD>Creates a new instance of this class, using the provided PrivateKey
+ for decryption operations.
 <DT><A HREF="./org/jscep/operations/PKCSReq.html" title="class in org.jscep.operations"><B>PKCSReq</B></A> - Class in <A HREF="./org/jscep/operations/package-summary.html">org.jscep.operations</A><DD>This class represents the SCEP <code>PKCSReq</code> <code>pkiMessage</code>
  type.<DT><A HREF="./org/jscep/operations/PKCSReq.html#PKCSReq(java.security.KeyPair, java.security.cert.X509Certificate, java.lang.String, char[])"><B>PKCSReq(KeyPair, X509Certificate, String, char[])</B></A> - 
 Constructor for class org.jscep.operations.<A HREF="./org/jscep/operations/PKCSReq.html" title="class in org.jscep.operations">PKCSReq</A>

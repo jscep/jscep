@@ -2,7 +2,6 @@ org.jscep
 org.jscep.asn1
 org.jscep.client
 org.jscep.content
-org.jscep.gui
 org.jscep.operations
 org.jscep.pkcs7
 org.jscep.pkcs9

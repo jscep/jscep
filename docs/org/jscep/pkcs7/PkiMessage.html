@@ -103,21 +103,38 @@ Class PkiMessage</H2>
 This class represents the SCEP <code>pkiMessage</code> structure.
  
  <pre>
-  ContentType = SignedData (called pkiMessage)
-    SignerInfo
-      Signature
-      authenticatedAttributes
-         transactionID
-         messageType
-         pkiStatus
-         failInfo
-         senderNonce
-         recipientNonce
-         etc
-  ContentInfo type = EnvelopedData (called pkcsPKIEnvelope; optional)
-    RecipientInfo
-    ContentInfo type = Data
-      messageData
+  ContentInfo :: SEQUENCE {
+    contentType ContentType, // pkcs-7 2 (signedData)
+    content {
+      [0] pkiMessage SignedData {
+            signerInfos SignerInfos ::= SET OF SignerInfo {
+              encryptedDigest EncryptedDigest
+              authenticatedAttributes
+                transactionID
+                messageType
+                pkiStatus
+                failInfo
+                senderNonce
+                recipientNonce
+                etc
+            },
+            contentInfo ContentInfo :: SEQUENCE {
+              contentType ContentType, // pkcs-7 3 (envelopedData)
+              content 
+                [0] pkcsPkiEnvelope EnvelopedData OPTIONAL
+                      recipientInfos ::= SET OF RecipientInfo {
+                      },
+                      encryptedContentInfo EncryptedContentInfo :: SEQUENCE {
+                        contentType ContentType, // = pkcs-7 1 (data)
+                        contentEncryptionAlgorithm ContentEncryptionAlgorithmIdentifier,
+                        encryptedContent {
+                          [0] messageData EncryptedContent OPTIONAL
+                        }
+                     }
+            }
+      }
+    }
+  }
  </pre>
 <P>
 
@@ -207,6 +224,14 @@ This class represents the SCEP <code>pkiMessage</code> structure.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../org/jscep/pkcs7/PkiMessage.html#getSignerData()">getSignerData</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../org/jscep/transaction/TransactionId.html" title="class in org.jscep.transaction">TransactionId</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../org/jscep/pkcs7/PkiMessage.html#getTransactionId()">getTransactionId</A></B>()</CODE>
 
@@ -251,6 +276,17 @@ This class represents the SCEP <code>pkiMessage</code> structure.
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="getSignerData()"><!-- --></A><H3>
+getSignerData</H3>
+<PRE>
+public <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A> <B>getSignerData</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
 
 <A NAME="isRequest()"><!-- --></A><H3>
 isRequest</H3>

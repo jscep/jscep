@@ -125,10 +125,11 @@ This class is used for parsing SCEP <code>pkcsPKIEnvelope</code> structures.
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../org/jscep/pkcs7/PkcsPkiEnvelopeParser.html#PkcsPkiEnvelopeParser(java.security.PrivateKey)">PkcsPkiEnvelopeParser</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;keyPair)</CODE>
+<TD><CODE><B><A HREF="../../../org/jscep/pkcs7/PkcsPkiEnvelopeParser.html#PkcsPkiEnvelopeParser(java.security.PrivateKey)">PkcsPkiEnvelopeParser</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;privKey)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new instance of this class, using the provided PrivateKey
+ for decryption operations.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -174,8 +175,13 @@ This class is used for parsing SCEP <code>pkcsPKIEnvelope</code> structures.
 <A NAME="PkcsPkiEnvelopeParser(java.security.PrivateKey)"><!-- --></A><H3>
 PkcsPkiEnvelopeParser</H3>
 <PRE>
-public <B>PkcsPkiEnvelopeParser</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;keyPair)</PRE>
+public <B>PkcsPkiEnvelopeParser</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;privKey)</PRE>
 <DL>
+<DD>Creates a new instance of this class, using the provided PrivateKey
+ for decryption operations.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>privKey</CODE> - the key to use for decryption.</DL>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
