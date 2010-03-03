@@ -23,7 +23,7 @@ public class ScepServletImpl extends ScepServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static Logger LOGGER = LoggingUtil.getLogger("com.google.code.jscep");
+	private static Logger LOGGER = LoggingUtil.getLogger(ScepServletImpl.class);
 	
 	@Override
 	protected List<X509Certificate> enrollCertificate(PKCS10CertificationRequest certificationRequest) {
