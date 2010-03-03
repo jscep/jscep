@@ -70,17 +70,16 @@ public class CertRepContentHandler implements SCEPContentHandler<PkiMessage> {
 			}
 			baos.close();
 			
-			final SignedData signedData;
+			final ContentInfo contentInfo;
 			try {
-				final ContentInfo contentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(baos.toByteArray()));
-				signedData = SignedData.getInstance(contentInfo.getContent());
+				contentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(baos.toByteArray()));
 			} catch (ClassCastException e) {
 				throw new IOException(e);
 			}
 
 			final PkiMessageParser parser = new PkiMessageParser();
 			parser.setPrivateKey(keyPair.getPrivate());
-			final PkiMessage msg = parser.parse(signedData);
+			final PkiMessage msg = parser.parse(contentInfo);
 			
 			LOGGER.exiting(getClass().getName(), "getContent", msg);
 			return msg;

@@ -245,8 +245,9 @@ public class PkiMessageGenerator implements Cloneable {
 			LOGGER.throwing(getClass().getName(), "parse", rt);
 			throw rt;
 		}
-    	
-		final PkiMessage msg = new PkiMessage(signedData);
+		
+		final ContentInfo contentInfo = new ContentInfo(PKCSObjectIdentifiers.signedData, signedData);
+		final PkiMessage msg = new PkiMessage(contentInfo);
 		msg.setPkcsPkiEnvelope(envelope);
 		
 		LOGGER.exiting(getClass().getName(), "generate", msg);

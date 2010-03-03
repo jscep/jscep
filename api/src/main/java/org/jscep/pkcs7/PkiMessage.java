@@ -48,10 +48,10 @@ import org.jscep.transaction.TransactionId;
  * This class represents the SCEP <code>pkiMessage</code> structure.
  * 
  * <pre>
- *  ContentInfo :: SEQUENCE {
+ *  pkiMessage ContentInfo :: SEQUENCE {
  *    contentType ContentType, // pkcs-7 2 (signedData)
  *    content {
- *      [0] pkiMessage SignedData {
+ *      [0] SignedData {
  *            signerInfos SignerInfos ::= SET OF SignerInfo {
  *              encryptedDigest EncryptedDigest
  *              authenticatedAttributes
@@ -64,18 +64,24 @@ import org.jscep.transaction.TransactionId;
  *                etc
  *            },
  *            contentInfo ContentInfo :: SEQUENCE {
- *              contentType ContentType, // pkcs-7 3 (envelopedData)
+ *              contentType ContentType, // pkcs-7 3 (data)
  *              content 
- *                [0] pkcsPkiEnvelope EnvelopedData OPTIONAL
- *                      recipientInfos ::= SET OF RecipientInfo {
- *                      },
- *                      encryptedContentInfo EncryptedContentInfo :: SEQUENCE {
- *                        contentType ContentType, // = pkcs-7 1 (data)
- *                        contentEncryptionAlgorithm ContentEncryptionAlgorithmIdentifier,
- *                        encryptedContent {
- *                          [0] messageData EncryptedContent OPTIONAL
+ *                [0] pkcsPkiEnvelope ContentInfo {
+ *                      contentType ContentType, // pkcs-7 3 (envelopedData),
+ *                      content {
+ *                        [0] EnvelopedData {
+ *                          recipientInfos ::= SET OF RecipientInfo {
+ *                          },
+ *                          encryptedContentInfo EncryptedContentInfo :: SEQUENCE {
+ *                            contentType ContentType, // = pkcs-7 1 (data)
+ *                            contentEncryptionAlgorithm ContentEncryptionAlgorithmIdentifier,
+ *                            encryptedContent {
+ *                              [0] messageData EncryptedContent OPTIONAL
+ *                            }
+ *                          }
  *                        }
- *                     }
+ *                      }
+ *                }
  *            }
  *      }
  *    }
@@ -84,18 +90,16 @@ import org.jscep.transaction.TransactionId;
  *
  * @author David Grant
  */
-public class PkiMessage {
+public class PkiMessage extends ContentInfo {
 	private PkcsPkiEnvelope pkcsPkiEnvelope;
 	private final SignerInfo signerInfo;
 	private final SignedData signedData;
 	
-	PkiMessage(SignedData signedData) {
-		this.signedData = signedData;
+	PkiMessage(ContentInfo contentInfo) {
+		super(contentInfo.getContentType(), contentInfo.getContent());
+
+		this.signedData = SignedData.getInstance(contentInfo.getContent());
 		this.signerInfo = getSignerSet(signedData).iterator().next();
-	}
-	
-	public SignedData getSignerData() {
-		return signedData;
 	}
 	
 	private Set<SignerInfo> getSignerSet(SignedData signedData) {

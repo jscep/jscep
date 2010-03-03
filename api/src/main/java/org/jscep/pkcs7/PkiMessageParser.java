@@ -31,13 +31,20 @@ import java.util.logging.Logger;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.jscep.asn1.SCEPObjectIdentifiers;
+import org.jscep.transaction.MessageType;
 import org.jscep.transaction.PkiStatus;
 import org.jscep.util.LoggingUtil;
 
@@ -59,28 +66,65 @@ public class PkiMessageParser {
 	 * @param msgBytes DER-encoded degenerate certificates-only signedData
 	 * @return a new instance of PkiMessage
 	 */
-	public PkiMessage parse(SignedData signedData) throws IOException {
-		LOGGER.entering(getClass().getName(), "parse", signedData);
+	public PkiMessage parse(ContentInfo contentInfo) throws IOException {
+		LOGGER.entering(getClass().getName(), "parse", contentInfo);
 
-		// 3.1 version MUST be 1
-		assert(signedData.getVersion().getValue().equals(BigInteger.ONE));
+		final DERObjectIdentifier contentType = contentInfo.getContentType();
+		if (contentType.equals(CMSObjectIdentifiers.signedData) == false) {
+			LOGGER.severe("The contentType in pkiMessage MUST be signedData, was: " + contentType);
+		}
+		final SignedData content = SignedData.getInstance(contentInfo.getContent());
 		
-		final Set<SignerInfo> signerInfoSet = getSignerInfo(signedData);
+		final DERInteger version = content.getVersion();
+		
+		// 3.1 version MUST be 1
+		if (version.getValue().equals(BigInteger.ONE) == false) {
+			LOGGER.severe("The version in pkiMessage MUST be one, was: " + contentType);
+		}
+		
+		final Set<SignerInfo> signerInfoSet = getSignerInfo(content);
 
-		if (signerInfoSet.size() > 1) {
+		if (signerInfoSet.size() != 1) {
 			IOException ioe = new IOException("Too Many SignerInfos");
 			LOGGER.throwing(getClass().getName(), "parse", ioe);
 			throw ioe;
 		}
+		
+		final SignerInfo signerInfo = signerInfoSet.iterator().next();
+		final AttributeTable authAttrs = new AttributeTable(signerInfo.getAuthenticatedAttributes());
+		
+		// §3.1. SCEP pkiMessage
+		// 
+		// The SignerInfo MUST contain a set of authenticatedAttributes.  All messages
+		// must contain:
+		//
+		// * an SCEP transactionID attribute
+		checkAttribute(authAttrs, SCEPObjectIdentifiers.transId);
+		// * an SCEP messageType attribute
+		checkAttribute(authAttrs, SCEPObjectIdentifiers.messageType);
+		// * an SCEP senderNonce attribute
+		checkAttribute(authAttrs, SCEPObjectIdentifiers.senderNonce);
+		// * any attributes required by PKCS #7 section 9.2
+		checkAttribute(authAttrs, PKCSObjectIdentifiers.pkcs_9_at_contentType);
+		checkAttribute(authAttrs, PKCSObjectIdentifiers.pkcs_9_at_messageDigest);
+		
+		if (isResponse(authAttrs)) {
+			// If the message is a response, it MUST also include
+			//
+			// * an SCEP pkiStatus attribute
+			checkAttribute(authAttrs, SCEPObjectIdentifiers.pkiStatus);
+			// * an SCEP recipientNonce attribute
+			checkAttribute(authAttrs, SCEPObjectIdentifiers.recipientNonce);
+		}
 
-		final PkiMessage msg = new PkiMessage(signedData);
+		final PkiMessage msg = new PkiMessage(contentInfo);
 		if (msg.isRequest() || msg.getPkiStatus() == PkiStatus.SUCCESS) {
 			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(privateKey);
-			final ContentInfo envelopeContentInfo = signedData.getEncapContentInfo();
+			final ContentInfo envelopeContentInfo = content.getEncapContentInfo();
 			// 3.1 the contentType in contentInfo MUST be data
-			final DERObjectIdentifier contentType = envelopeContentInfo.getContentType();
-			if (contentType.equals(CMSObjectIdentifiers.data) == false) {
-				LOGGER.severe("The contentType in contentInfo MUST be data, was: " + contentType);
+			final DERObjectIdentifier encapsulatedContentType = envelopeContentInfo.getContentType();
+			if (encapsulatedContentType.equals(CMSObjectIdentifiers.data) == false) {
+				LOGGER.severe("The contentType in contentInfo MUST be data, was: " + encapsulatedContentType);
 			}
 			msg.setPkcsPkiEnvelope(envelopeParser.parse(getEnvelopedData(envelopeContentInfo.getContent())));	
 		} else {
@@ -90,6 +134,22 @@ public class PkiMessageParser {
 		
 		LOGGER.exiting(getClass().getName(), "parse", msg);
 		return msg; 
+	}
+	
+	private void checkAttribute(AttributeTable table, DERObjectIdentifier oid) throws IOException {
+		if (table.get(oid) == null) {
+			throw new IOException("pkiMessage is missing mandatory attribute: " + oid.getId());
+		}
+	}
+	
+	private boolean isResponse(AttributeTable table) {
+		final ASN1Set messageTypeSet = table.get(SCEPObjectIdentifiers.messageType).getAttrValues();
+		if (messageTypeSet.size() != 1) {
+			return false;
+		}
+		final DERPrintableString msgType = (DERPrintableString) messageTypeSet.getObjectAt(0);
+		
+		return MessageType.valueOf(Integer.valueOf(msgType.getString())) == MessageType.CertRep;
 	}
 	
 	private EnvelopedData getEnvelopedData(DEREncodable content) throws IOException {

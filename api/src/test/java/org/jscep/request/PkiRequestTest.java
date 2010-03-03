@@ -11,9 +11,10 @@ import org.jscep.pkcs7.PkiMessage;
 import org.jscep.request.Operation;
 import org.jscep.request.PKCSReq;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
-
+@Ignore
 public class PkiRequestTest {
 	private PkiMessage message;
 	private PKCSReq fixture;
