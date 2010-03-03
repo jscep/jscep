@@ -134,7 +134,7 @@ public abstract class ScepServlet extends HttpServlet {
 		} else {
 			res.setHeader("Content-Type", "application/x-pki-message");
 			PkiMessageParser msgParser = new PkiMessageParser();
-			PkiMessage msg = msgParser.parse(getSignedData(req.getInputStream()));
+			PkiMessage msg = msgParser.parse(getContentInfo(req.getInputStream()));
 			
 			MessageType msgType = msg.getMessageType();
 			MessageData msgData = msg.getPkcsPkiEnvelope().getMessageData();
@@ -189,17 +189,12 @@ public abstract class ScepServlet extends HttpServlet {
 		}
 	}
 	
-	private SignedData getSignedData(InputStream in) throws IOException {
-		final SignedData signedData;
-		
+	private ContentInfo getContentInfo(InputStream in) throws IOException {
 		try {
-			final ContentInfo contentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(getBytes(in)));
-			signedData = SignedData.getInstance(contentInfo.getContent());
+			return ContentInfo.getInstance(ASN1Object.fromByteArray(getBytes(in)));
 		} catch (ClassCastException e) {
 			throw new IOException(e);
 		}
-		
-		return signedData;
 	}
 	
 	private byte[] getBytes(InputStream in) throws IOException {
