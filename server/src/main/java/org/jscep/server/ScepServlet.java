@@ -22,6 +22,7 @@
 
 package org.jscep.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -38,7 +39,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.pkcs.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
@@ -131,7 +134,7 @@ public abstract class ScepServlet extends HttpServlet {
 		} else {
 			res.setHeader("Content-Type", "application/x-pki-message");
 			PkiMessageParser msgParser = new PkiMessageParser();
-			PkiMessage msg = msgParser.parse(getBytes(req.getInputStream()));
+			PkiMessage msg = msgParser.parse(getSignedData(req.getInputStream()));
 			
 			MessageType msgType = msg.getMessageType();
 			MessageData msgData = msg.getPkcsPkiEnvelope().getMessageData();
@@ -186,8 +189,30 @@ public abstract class ScepServlet extends HttpServlet {
 		}
 	}
 	
-	private byte[] getBytes(InputStream in) {
-		return new byte[0];
+	private SignedData getSignedData(InputStream in) throws IOException {
+		final SignedData signedData;
+		
+		try {
+			final ContentInfo contentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(getBytes(in)));
+			signedData = SignedData.getInstance(contentInfo.getContent());
+		} catch (ClassCastException e) {
+			throw new IOException(e);
+		}
+		
+		return signedData;
+	}
+	
+	private byte[] getBytes(InputStream in) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		int b;
+		while ((b = in.read()) != -1) {
+			baos.write(b);
+		
+		}
+		baos.close();
+		
+		return baos.toByteArray();
 	}
 	
 	private Operation getOperation(HttpServletRequest req) {
