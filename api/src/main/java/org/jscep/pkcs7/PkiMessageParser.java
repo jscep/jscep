@@ -24,7 +24,6 @@ package org.jscep.pkcs7;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.PrivateKey;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
