@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.SignedData;
 import org.jscep.pkcs7.PkiMessage;
 import org.jscep.pkcs7.PkiMessageParser;
 import org.jscep.util.LoggingUtil;

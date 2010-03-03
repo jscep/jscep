@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERInteger;
@@ -39,7 +38,6 @@ import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -121,12 +119,16 @@ public class PkiMessageParser {
 		if (msg.isRequest() || msg.getPkiStatus() == PkiStatus.SUCCESS) {
 			final PkcsPkiEnvelopeParser envelopeParser = new PkcsPkiEnvelopeParser(privateKey);
 			final ContentInfo envelopeContentInfo = content.getEncapContentInfo();
-			// 3.1 the contentType in contentInfo MUST be data
+			// §3.1. SCEP pkiMessage
+			// ... the contentType in contentInfo MUST be data
 			final DERObjectIdentifier encapsulatedContentType = envelopeContentInfo.getContentType();
 			if (encapsulatedContentType.equals(CMSObjectIdentifiers.data) == false) {
 				LOGGER.severe("The contentType in contentInfo MUST be data, was: " + encapsulatedContentType);
 			}
-			msg.setPkcsPkiEnvelope(envelopeParser.parse(getEnvelopedData(envelopeContentInfo.getContent())));	
+			final ASN1OctetString octetString = (ASN1OctetString) envelopeContentInfo.getContent();
+			final byte[] octets = octetString.getOctets();
+			final PkcsPkiEnvelope pkcsPkiEnvelope = envelopeParser.parse(ContentInfo.getInstance(ASN1Object.fromByteArray(octets)));
+			msg.setPkcsPkiEnvelope(pkcsPkiEnvelope);	
 		} else {
 			// TODO: Assert No ContentInfo
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-3
@@ -150,20 +152,6 @@ public class PkiMessageParser {
 		final DERPrintableString msgType = (DERPrintableString) messageTypeSet.getObjectAt(0);
 		
 		return MessageType.valueOf(Integer.valueOf(msgType.getString())) == MessageType.CertRep;
-	}
-	
-	private EnvelopedData getEnvelopedData(DEREncodable content) throws IOException {
-		// According to PKCS #9, data consists of an octet string.
-		final ASN1OctetString octetString = (ASN1OctetString) content;
-		final byte[] octets = octetString.getOctets();
-		final ContentInfo contentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(octets));
-		final DERObjectIdentifier contentType = contentInfo.getContentType();
-		
-		if (contentType.equals(CMSObjectIdentifiers.envelopedData) == false) {
-			LOGGER.warning("Expected envelopedData ContentInfo, was " + contentType);
-		}
-		
-		return new EnvelopedData((ASN1Sequence) contentInfo.getContent());
 	}
 	
 	private Set<SignerInfo> getSignerInfo(SignedData signedData) {

@@ -21,27 +21,18 @@
  */
 package org.jscep.pkcs7;
 
-import java.io.IOException;
-
 import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.EnvelopedData;
-
 
 /**
  * This class represents the SCEP <code>pkcsPKIEnvelope</code> structure.
  * 
  * @author David Grant
  */
-public class PkcsPkiEnvelope {
+public class PkcsPkiEnvelope extends ContentInfo {
 	private MessageData msgData;
-	private final ContentInfo info;
-	
-	public PkcsPkiEnvelope(EnvelopedData envelopedData) {
-		this.info = null;
-	}
 	
 	public PkcsPkiEnvelope(ContentInfo info) {
-		this.info = info;
+		super(info.getContentType(), info.getContent());
 	}
 	
 	void setMessageData(MessageData msgData) {
@@ -52,16 +43,12 @@ public class PkcsPkiEnvelope {
 		return msgData;
 	}
 	
-	public byte[] getEncoded() throws IOException {
-		return info.getEncoded();
-	}
-	
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		
 		sb.append("pkcsPkiEnvelope [\n");
-		sb.append("\tcontentType: " + info.getContentType() + "\n");
+		sb.append("\tcontentType: " + getContentType() + "\n");
 		sb.append("\tmessageData: " + msgData.toString().replaceAll("\n", "\n\t") + "\n");
 		sb.append("]");
 		

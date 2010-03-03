@@ -77,9 +77,10 @@ public class PkcsPkiEnvelopeParser {
 	 * @return the parsed pkcsPkiEnvelope.
 	 * @throws IOException if any I/O error occurs.
 	 */
-	public PkcsPkiEnvelope parse(EnvelopedData envelopedData) throws IOException {
-		LOGGER.entering(getClass().getName(), "parse", envelopedData);
-
+	public PkcsPkiEnvelope parse(ContentInfo contentInfo) throws IOException {
+		LOGGER.entering(getClass().getName(), "parse", contentInfo);
+		
+		final EnvelopedData envelopedData = EnvelopedData.getInstance(contentInfo.getContent());
 		final EncryptedContentInfo encryptedContentInfo = envelopedData.getEncryptedContentInfo();
 		final DERInteger version = envelopedData.getVersion();
 		final DERObjectIdentifier contentType = encryptedContentInfo.getContentType();
@@ -122,7 +123,7 @@ public class PkcsPkiEnvelopeParser {
 			}
 		}
 
-    	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(envelopedData);
+    	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(contentInfo);
     	envelope.setMessageData(MessageData.getInstance(msgData));
     	
     	LOGGER.exiting(getClass().getName(), "parse", envelope);
