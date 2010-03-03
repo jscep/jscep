@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.google.code.jscep</groupId>
 		<artifactId>jscep</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep-client</artifactId>
@@ -22,9 +22,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-1.0.0</connection>
-		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-1.0.0</developerConnection>
-		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-1.0.0</url>
+		<connection>scm:svn:http://jscep.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/trunk/</developerConnection>
+		<url>http://code.google.com/p/jscep/source/browse/</url>
 	</scm>
 	<dependencies>
 		<dependency>
