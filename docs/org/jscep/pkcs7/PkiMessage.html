@@ -101,6 +101,24 @@ Class PkiMessage</H2>
 
 <P>
 This class represents the SCEP <code>pkiMessage</code> structure.
+ 
+ <pre>
+  ContentType = SignedData (called pkiMessage)
+    SignerInfo
+      Signature
+      authenticatedAttributes
+         transactionID
+         messageType
+         pkiStatus
+         failInfo
+         senderNonce
+         recipientNonce
+         etc
+  ContentInfo type = EnvelopedData (called pkcsPKIEnvelope; optional)
+    RecipientInfo
+    ContentInfo type = Data
+      messageData
+ </pre>
 <P>
 
 <P>

@@ -165,22 +165,11 @@ This class is used for generating degenerate (certificates and CRLs only)
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../org/jscep/pkcs7/SignedDataGenerator.html#addSigner(java.security.PrivateKey, java.util.Collection, java.util.Collection, java.lang.String, java.lang.String)">addSigner</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;key,
-          <A HREF="http://java.sun.com/javase/6/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt;&nbsp;certs,
-          <A HREF="http://java.sun.com/javase/6/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509CRL.html?is-external=true" title="class or interface in java.security.cert">X509CRL</A>&gt;&nbsp;crls,
-          <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm,
-          <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;encryptionAlgorithm)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../org/jscep/pkcs7/SignedDataGenerator.html#addSigner(java.security.PrivateKey, java.security.cert.X509Certificate, java.lang.String, java.lang.String)">addSigner</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;key,
+<TD><CODE><B><A HREF="../../../org/jscep/pkcs7/SignedDataGenerator.html#addSigner(java.security.PrivateKey, java.security.cert.X509Certificate, java.lang.String, org.bouncycastle.asn1.cms.AttributeTable, org.bouncycastle.asn1.cms.AttributeTable)">addSigner</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;privateKey,
           <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;cert,
           <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm,
-          <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;encryptionAlgorithm)</CODE>
+          <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/AttributeTable.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">AttributeTable</A>&nbsp;authenticatedAttributes,
+          <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/AttributeTable.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">AttributeTable</A>&nbsp;unauthenticatedAttributes)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -189,6 +178,15 @@ This class is used for generating degenerate (certificates and CRLs only)
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../org/jscep/pkcs7/SignedDataGenerator.html#generate()">generate</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../org/jscep/pkcs7/SignedDataGenerator.html#generate(org.bouncycastle.asn1.DERObjectIdentifier, org.bouncycastle.asn1.DEREncodable)">generate</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DERObjectIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DERObjectIdentifier</A>&nbsp;contentType,
+         <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DEREncodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DEREncodable</A>&nbsp;content)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generates a new <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A> instance.</TD>
@@ -248,28 +246,14 @@ public void <B>addCertificate</B>(<A HREF="http://java.sun.com/javase/6/docs/api
 </DL>
 <HR>
 
-<A NAME="addSigner(java.security.PrivateKey, java.security.cert.X509Certificate, java.lang.String, java.lang.String)"><!-- --></A><H3>
+<A NAME="addSigner(java.security.PrivateKey, java.security.cert.X509Certificate, java.lang.String, org.bouncycastle.asn1.cms.AttributeTable, org.bouncycastle.asn1.cms.AttributeTable)"><!-- --></A><H3>
 addSigner</H3>
 <PRE>
-public void <B>addSigner</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;key,
+public void <B>addSigner</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;privateKey,
                       <A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&nbsp;cert,
                       <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm,
-                      <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;encryptionAlgorithm)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="addSigner(java.security.PrivateKey, java.util.Collection, java.util.Collection, java.lang.String, java.lang.String)"><!-- --></A><H3>
-addSigner</H3>
-<PRE>
-public void <B>addSigner</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/security/PrivateKey.html?is-external=true" title="class or interface in java.security">PrivateKey</A>&nbsp;key,
-                      <A HREF="http://java.sun.com/javase/6/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509Certificate.html?is-external=true" title="class or interface in java.security.cert">X509Certificate</A>&gt;&nbsp;certs,
-                      <A HREF="http://java.sun.com/javase/6/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</A>&lt;<A HREF="http://java.sun.com/javase/6/docs/api/java/security/cert/X509CRL.html?is-external=true" title="class or interface in java.security.cert">X509CRL</A>&gt;&nbsp;crls,
-                      <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;digestAlgorithm,
-                      <A HREF="http://java.sun.com/javase/6/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;encryptionAlgorithm)</PRE>
+                      <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/AttributeTable.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">AttributeTable</A>&nbsp;authenticatedAttributes,
+                      <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/AttributeTable.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">AttributeTable</A>&nbsp;unauthenticatedAttributes)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -290,10 +274,11 @@ public void <B>addCRL</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/se
 </DL>
 <HR>
 
-<A NAME="generate()"><!-- --></A><H3>
+<A NAME="generate(org.bouncycastle.asn1.DERObjectIdentifier, org.bouncycastle.asn1.DEREncodable)"><!-- --></A><H3>
 generate</H3>
 <PRE>
-public <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A> <B>generate</B>()
+public <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A> <B>generate</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DERObjectIdentifier.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DERObjectIdentifier</A>&nbsp;contentType,
+                           <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/DEREncodable.html?is-external=true" title="class or interface in org.bouncycastle.asn1">DEREncodable</A>&nbsp;content)
                     throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
 <DL>
 <DD>Generates a new <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A> instance.
@@ -304,6 +289,20 @@ public <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/c
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE> - if any I/O error occurs.
 <DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/security/NoSuchAlgorithmException.html?is-external=true" title="class or interface in java.security">NoSuchAlgorithmException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="generate()"><!-- --></A><H3>
+generate</H3>
+<PRE>
+public <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">SignedData</A> <B>generate</B>()
+                    throws <A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/javase/6/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

@@ -109,11 +109,9 @@ public class PkiMessageParser {
 	
 	private Set<SignerInfo> getSignerInfo(SignedData signedData) {
 		final Set<SignerInfo> set = new HashSet<SignerInfo>();
-		final Enumeration<?> signerInfos = signedData.getSignerInfos().getObjects();
 		
-		while (signerInfos.hasMoreElements()) {
-			final ASN1Sequence seq = (ASN1Sequence) signerInfos.nextElement();
-			set.add(new SignerInfo(seq));
+		for (int i = 0; i < signedData.getSignerInfos().size(); i++) {
+			set.add(SignerInfo.getInstance(signedData.getSignerInfos().getObjectAt(i)));
 		}
 		
 		return set;

@@ -144,6 +144,12 @@ This class represents a PKCS #9 messageDigest attribute.
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../org/jscep/pkcs9/MessageDigestAttribute.html#MessageDigestAttribute(org.bouncycastle.asn1.ASN1Sequence)">MessageDigestAttribute</A></B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/ASN1Sequence.html?is-external=true" title="class or interface in org.bouncycastle.asn1">ASN1Sequence</A>&nbsp;seq)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE><B><A HREF="../../../org/jscep/pkcs9/MessageDigestAttribute.html#MessageDigestAttribute(byte[])">MessageDigestAttribute</A></B>(byte[]&nbsp;messageDigest)</CODE>
 
 <BR>
@@ -162,6 +168,14 @@ This class represents a PKCS #9 messageDigest attribute.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9">MessageDigestAttribute</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../org/jscep/pkcs9/MessageDigestAttribute.html#getInstance(java.lang.Object)">getInstance</A></B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;byte[]</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../org/jscep/pkcs9/MessageDigestAttribute.html#getMessageDigest()">getMessageDigest</A></B>()</CODE>
 
@@ -175,7 +189,7 @@ This class represents a PKCS #9 messageDigest attribute.
 <TH ALIGN="left"><B>Methods inherited from class org.bouncycastle.asn1.cms.<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/Attribute.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms">Attribute</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/Attribute.html?is-external=true#getAttrType()" title="class or interface in org.bouncycastle.asn1.cms">getAttrType</A>, <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/Attribute.html?is-external=true#getAttrValues()" title="class or interface in org.bouncycastle.asn1.cms">getAttrValues</A>, <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/Attribute.html?is-external=true#getInstance(java.lang.Object)" title="class or interface in org.bouncycastle.asn1.cms">getInstance</A>, <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/Attribute.html?is-external=true#toASN1Object()" title="class or interface in org.bouncycastle.asn1.cms">toASN1Object</A></CODE></TD>
+<TD><CODE><A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/Attribute.html?is-external=true#getAttrType()" title="class or interface in org.bouncycastle.asn1.cms">getAttrType</A>, <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/Attribute.html?is-external=true#getAttrValues()" title="class or interface in org.bouncycastle.asn1.cms">getAttrValues</A>, <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/Attribute.html?is-external=true#toASN1Object()" title="class or interface in org.bouncycastle.asn1.cms">toASN1Object</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_org.bouncycastle.asn1.ASN1Encodable"><!-- --></A>
@@ -220,6 +234,14 @@ public <B>MessageDigestAttribute</B>(byte[]&nbsp;messageDigest)</PRE>
 <DL>
 <DT><B>Parameters:</B><DD><CODE>messageDigest</CODE> - the messageDigest to use.</DL>
 </DL>
+<HR>
+
+<A NAME="MessageDigestAttribute(org.bouncycastle.asn1.ASN1Sequence)"><!-- --></A><H3>
+MessageDigestAttribute</H3>
+<PRE>
+public <B>MessageDigestAttribute</B>(<A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/ASN1Sequence.html?is-external=true" title="class or interface in org.bouncycastle.asn1">ASN1Sequence</A>&nbsp;seq)</PRE>
+<DL>
+</DL>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -241,6 +263,17 @@ public byte[] <B>getMessageDigest</B>()</PRE>
 <DD><DL>
 
 <DT><B>Returns:</B><DD>the messageDigest.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInstance(java.lang.Object)"><!-- --></A><H3>
+getInstance</H3>
+<PRE>
+public static <A HREF="../../../org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9">MessageDigestAttribute</A> <B>getInstance</B>(<A HREF="http://java.sun.com/javase/6/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</PRE>
+<DL>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

@@ -90,10 +90,7 @@ Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.h
 <DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#addCRL(java.security.cert.X509CRL)"><B>addCRL(X509CRL)</B></A> - 
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.html" title="class in org.jscep.pkcs7">SignedDataGenerator</A>
 <DD>Adds the provided CRL to the resulting <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A>.
-<DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#addSigner(java.security.PrivateKey, java.security.cert.X509Certificate, java.lang.String, java.lang.String)"><B>addSigner(PrivateKey, X509Certificate, String, String)</B></A> - 
-Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.html" title="class in org.jscep.pkcs7">SignedDataGenerator</A>
-<DD>&nbsp;
-<DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#addSigner(java.security.PrivateKey, java.util.Collection, java.util.Collection, java.lang.String, java.lang.String)"><B>addSigner(PrivateKey, Collection&lt;X509Certificate&gt;, Collection&lt;X509CRL&gt;, String, String)</B></A> - 
+<DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#addSigner(java.security.PrivateKey, java.security.cert.X509Certificate, java.lang.String, org.bouncycastle.asn1.cms.AttributeTable, org.bouncycastle.asn1.cms.AttributeTable)"><B>addSigner(PrivateKey, X509Certificate, String, AttributeTable, AttributeTable)</B></A> - 
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.html" title="class in org.jscep.pkcs7">SignedDataGenerator</A>
 <DD>&nbsp;
 <DT><A HREF="./org/jscep/util/AlgorithmDictionary.html" title="class in org.jscep.util"><B>AlgorithmDictionary</B></A> - Class in <A HREF="./org/jscep/util/package-summary.html">org.jscep.util</A><DD>This class provides a utility to lookup a friendly name for an algorithm given
@@ -250,9 +247,12 @@ Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkcsPkiEnvelopeGenera
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/PkiMessageGenerator.html" title="class in org.jscep.pkcs7">PkiMessageGenerator</A>
 <DD>Generates a new <A HREF="./org/jscep/pkcs7/PkiMessage.html" title="class in org.jscep.pkcs7"><CODE>PkiMessage</CODE></A> according to the options specified by the 
  caller.
-<DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#generate()"><B>generate()</B></A> - 
+<DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#generate(org.bouncycastle.asn1.DERObjectIdentifier, org.bouncycastle.asn1.DEREncodable)"><B>generate(DERObjectIdentifier, DEREncodable)</B></A> - 
 Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.html" title="class in org.jscep.pkcs7">SignedDataGenerator</A>
 <DD>Generates a new <A HREF="http://www.bouncycastle.org/docs/docs1.6/org/bouncycastle/asn1/cms/SignedData.html?is-external=true" title="class or interface in org.bouncycastle.asn1.cms"><CODE>SignedData</CODE></A> instance.
+<DT><A HREF="./org/jscep/pkcs7/SignedDataGenerator.html#generate()"><B>generate()</B></A> - 
+Method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/SignedDataGenerator.html" title="class in org.jscep.pkcs7">SignedDataGenerator</A>
+<DD>&nbsp;
 <DT><A HREF="./org/jscep/util/AlgorithmDictionary.html#getAlgId(java.lang.String)"><B>getAlgId(String)</B></A> - 
 Static method in class org.jscep.util.<A HREF="./org/jscep/util/AlgorithmDictionary.html" title="class in org.jscep.util">AlgorithmDictionary</A>
 <DD>Returns an AlgorithmIdentifier to represent the provider algorithm.
@@ -377,6 +377,9 @@ Method in class org.jscep.<A HREF="./org/jscep/FingerprintVerificationCallback.h
 <DT><A HREF="./org/jscep/pkcs7/MessageData.html#getInstance(org.bouncycastle.asn1.DEREncodable)"><B>getInstance(DEREncodable)</B></A> - 
 Static method in class org.jscep.pkcs7.<A HREF="./org/jscep/pkcs7/MessageData.html" title="class in org.jscep.pkcs7">MessageData</A>
 <DD>Provides a new instance of MessageData by wrapping the provided object.
+<DT><A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html#getInstance(java.lang.Object)"><B>getInstance(Object)</B></A> - 
+Static method in class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9">MessageDigestAttribute</A>
+<DD>&nbsp;
 <DT><A HREF="./org/jscep/transaction/Transaction.html#getIssuedCertificates()"><B>getIssuedCertificates()</B></A> - 
 Method in class org.jscep.transaction.<A HREF="./org/jscep/transaction/Transaction.html" title="class in org.jscep.transaction">Transaction</A>
 <DD>Returns the CertStore that was the outcome of this transaction.
@@ -612,6 +615,9 @@ Static method in class org.jscep.gui.<A HREF="./org/jscep/gui/Main.html" title="
 Constructor for class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9">MessageDigestAttribute</A>
 <DD>Creates a new instance of <code>MessageDigestAttribute</code> using the provided
  messageDigest.
+<DT><A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html#MessageDigestAttribute(org.bouncycastle.asn1.ASN1Sequence)"><B>MessageDigestAttribute(ASN1Sequence)</B></A> - 
+Constructor for class org.jscep.pkcs9.<A HREF="./org/jscep/pkcs9/MessageDigestAttribute.html" title="class in org.jscep.pkcs9">MessageDigestAttribute</A>
+<DD>&nbsp;
 <DT><A HREF="./org/jscep/asn1/SCEPObjectIdentifiers.html#messageType"><B>messageType</B></A> - 
 Static variable in interface org.jscep.asn1.<A HREF="./org/jscep/asn1/SCEPObjectIdentifiers.html" title="interface in org.jscep.asn1">SCEPObjectIdentifiers</A>
 <DD><code>2.16.840.1.113733.1.9.2</code>
