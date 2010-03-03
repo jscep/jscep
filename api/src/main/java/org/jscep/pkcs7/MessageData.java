@@ -61,6 +61,11 @@ public class MessageData {
 	 * @return a new instance of MessageData.
 	 */
 	public static MessageData getInstance(DEREncodable content) {
+		// Something is a bit wrong here.  This will be called with
+		// * a degenerate SignedData
+		// * a CertificationRequest
+		// * a IssuerAndSerial
+		// * a IssuerAndSubject
 		ContentInfo info = new ContentInfo(CMSObjectIdentifiers.data, content);
 		
 		return new MessageData(info);

@@ -62,38 +62,47 @@ public class PkcsPkiEnvelopeParser {
 	
 	/**
 	 * Creates a new instance of this class, using the provided PrivateKey
-	 * for decryption operations.
+	 * to decrypt the message.
 	 * 
-	 * @param privKey the key to use for decryption.
+	 * @param recipientKey the key to use for decryption.
 	 */
-	public PkcsPkiEnvelopeParser(PrivateKey privKey) {
-		this.privKey = privKey;
+	public PkcsPkiEnvelopeParser(PrivateKey recipientKey) {
+		this.privKey = recipientKey;
 	}
 	
 	/**
-	 * Parses the provided {@link EnvelopedData}. 
+	 * Parses the provided {@link ContentInfo}. 
 	 * 
-	 * @param envelopedData the data to parse.
+	 * @param contentInfo the data to parse.
 	 * @return the parsed pkcsPkiEnvelope.
 	 * @throws IOException if any I/O error occurs.
 	 */
 	public PkcsPkiEnvelope parse(ContentInfo contentInfo) throws IOException {
 		LOGGER.entering(getClass().getName(), "parse", contentInfo);
 		
+		final DERObjectIdentifier contentType = contentInfo.getContentType();
+		// The information portion of a SCEP message is carried inside an
+		// enveloped-data content type.
+		if (contentType.equals(CMSObjectIdentifiers.data) == false) {
+			LOGGER.warning("contentType in encryptedContentInfo MUST be data, but was " + contentType + ".");
+		}
+		
 		final EnvelopedData envelopedData = EnvelopedData.getInstance(contentInfo.getContent());
 		final EncryptedContentInfo encryptedContentInfo = envelopedData.getEncryptedContentInfo();
 		final DERInteger version = envelopedData.getVersion();
-		final DERObjectIdentifier contentType = encryptedContentInfo.getContentType();
+		final DERObjectIdentifier encryptedContentType = encryptedContentInfo.getContentType();
 		final ASN1OctetString encryptedContent = encryptedContentInfo.getEncryptedContent();
 		final AlgorithmIdentifier contentEncryptionAlgorithm = encryptedContentInfo.getContentEncryptionAlgorithm();
 		
-		// 3.1.2 version MUST be 0
+		// §3.1.2. SCEP pkcsPKIEnvelope
+		//
+		// version MUST be 0
 		if (version.getValue().equals(BigInteger.ZERO) == false) {
-			LOGGER.warning("EnvelopedData version MUST be 0");
+			LOGGER.warning("EnvelopedData version MUST be 0, but was " + version.getValue() + ".");
 		}
-		// 3.1.2 contentType in encryptedContentInfo MUST be data as defined in PKCS#7 
-		if (contentType.equals(CMSObjectIdentifiers.data) == false) {
-			LOGGER.warning("contentType in encryptedContentInfo MUST be data.");
+		// contentType in encryptedContentInfo MUST be data as defined in PKCS#7 
+		if (encryptedContentType.equals(CMSObjectIdentifiers.data) == false) {
+			LOGGER.warning("contentType in encryptedContentInfo MUST be data, but was " + encryptedContentType + ".");
 		}
 		
 		final String secretKeyAlg = AlgorithmDictionary.fromTransformation(AlgorithmDictionary.lookup(contentEncryptionAlgorithm));

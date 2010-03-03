@@ -69,7 +69,7 @@ public class PkiMessageParser {
 
 		final DERObjectIdentifier contentType = contentInfo.getContentType();
 		if (contentType.equals(CMSObjectIdentifiers.signedData) == false) {
-			LOGGER.severe("The contentType in pkiMessage MUST be signedData, was: " + contentType);
+			LOGGER.warning("The contentType in pkiMessage MUST be signedData, was: " + contentType);
 		}
 		final SignedData content = SignedData.getInstance(contentInfo.getContent());
 		
@@ -77,7 +77,7 @@ public class PkiMessageParser {
 		
 		// 3.1 version MUST be 1
 		if (version.getValue().equals(BigInteger.ONE) == false) {
-			LOGGER.severe("The version in pkiMessage MUST be one, was: " + contentType);
+			LOGGER.warning("The version in pkiMessage MUST be one, was: " + contentType);
 		}
 		
 		final Set<SignerInfo> signerInfoSet = getSignerInfo(content);
