@@ -19,59 +19,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.request;
+package org.jscep;
 
-import java.io.IOException;
-import java.security.KeyPair;
-
-import org.jscep.content.CertRepContentHandler;
-import org.jscep.pkcs7.PkiMessage;
-
+import org.jscep.transaction.FailInfo;
 
 /**
- * This class represents a <code>PKCSReq</code> request.
+ * This exception represents the situation where a PKI operation has failed.
  * 
  * @author David Grant
  */
-public class PKCSReq implements Request<PkiMessage> {
-	private final PkiMessage signedData;
-	private final KeyPair keyPair;
-
+public class PkiOperationFailureException extends Exception {
 	/**
-	 * Creates a new instance of this class using the provided pkiMessage
-	 * and {@link java.security.KeyPair}.
 	 * 
-	 * @param msgData the pkiMessage to use.
-	 * @param keyPair the KeyPair to use.
 	 */
-	public PKCSReq(PkiMessage msgData, KeyPair keyPair) {
-		this.signedData = msgData;
-		this.keyPair = keyPair;
-	}
+	private static final long serialVersionUID = 747055232323410404L;
+	private final FailInfo failInfo;
 
 	/**
-	 * {@inheritDoc}
+	 * Creates a new instance of <code>PKIOperationFailureException</code> from
+	 * the provided {@link FailInfo}.
+	 * <p>
+	 * 
+	 * @param failInfo the failure reason.
 	 */
-	public byte[] getMessage() throws IOException {
-		return signedData.getEncoded();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Operation getOperation() {
-		return Operation.PKIOperation;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public CertRepContentHandler getContentHandler() {
-		return new CertRepContentHandler(keyPair);
+	public PkiOperationFailureException(FailInfo failInfo) {
+		super(failInfo.toString());
+		
+		this.failInfo = failInfo;
 	}
 	
-	@Override
-	public String toString() {
-		return signedData.toString();
+	public FailInfo getFailInfo() {
+		return failInfo;
 	}
 }

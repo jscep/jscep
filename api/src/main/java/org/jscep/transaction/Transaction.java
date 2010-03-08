@@ -40,18 +40,18 @@ import java.util.logging.Logger;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.jscep.PKIOperationFailureException;
-import org.jscep.operations.DelayablePKIOperation;
-import org.jscep.operations.GetCRL;
+import org.jscep.PkiOperationFailureException;
+import org.jscep.operations.DelayablePkiOperation;
+import org.jscep.operations.GetCrl;
 import org.jscep.operations.GetCert;
 import org.jscep.operations.GetCertInitial;
-import org.jscep.operations.PKIOperation;
+import org.jscep.operations.PkiOperation;
 import org.jscep.pkcs7.MessageData;
 import org.jscep.pkcs7.PkiMessage;
 import org.jscep.pkcs7.PkiMessageGenerator;
 import org.jscep.pkcs7.SignedDataParser;
 import org.jscep.pkcs7.SignedDataUtil;
-import org.jscep.request.PKCSReq;
+import org.jscep.request.PkcsReq;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
 import org.jscep.x509.X509Util;
@@ -67,7 +67,7 @@ import org.jscep.x509.X509Util;
  * method or the state returned by the callable returned by {@link #getTask()}.
  * 
  * For non-enrollment operations, either the invocation will be successful, or the
- * method will throw a {@link PKIOperationFailureException}. 
+ * method will throw a {@link PkiOperationFailureException}. 
  * 
  * @author David Grant
  */
@@ -175,9 +175,9 @@ public class Transaction {
      *  
      * @return the certificate.
      * @throws IOException if any I/O error occurs.
-     * @throws PKIOperationFailureException if the transaction is rejected.
+     * @throws PkiOperationFailureException if the transaction is rejected.
      */
-	public List<X509Certificate> getCertificate(BigInteger serial) throws IOException, PKIOperationFailureException {
+	public List<X509Certificate> getCertificate(BigInteger serial) throws IOException, PkiOperationFailureException {
 		X509Certificate ca = issuerCertificate;
 		final GetCert req = new GetCert(ca.getIssuerX500Principal(), serial);
 		performOperation(req);
@@ -191,7 +191,7 @@ public class Transaction {
 		} else if (getState() == State.CERT_REQ_PENDING) {
 			throw new IllegalStateException();
 		} else {
-			throw new PKIOperationFailureException(getFailureReason());
+			throw new PkiOperationFailureException(getFailureReason());
 		}
 	}
 	
@@ -217,16 +217,16 @@ public class Transaction {
      *  
      * @return the CRL.
      * @throws IOException if any I/O error occurs.
-     * @throws PKIOperationFailureException if the transaction is rejected.
+     * @throws PkiOperationFailureException if the transaction is rejected.
      */
-	public List<X509CRL> getCRL() throws IOException, PKIOperationFailureException {
+	public List<X509CRL> getCRL() throws IOException, PkiOperationFailureException {
 		X509Certificate ca = issuerCertificate;
 		
 		if (supportsDistributionPoints(issuerCertificate)) {
 			throw new UnsupportedOperationException();
 		}
 		
-		final GetCRL req = new GetCRL(ca.getIssuerX500Principal(), ca.getSerialNumber());
+		final GetCrl req = new GetCrl(ca.getIssuerX500Principal(), ca.getSerialNumber());
 		performOperation(req);
 		
 		if (getState() == State.CERT_ISSUED) {
@@ -238,7 +238,7 @@ public class Transaction {
 		} else if (getState() == State.CERT_REQ_PENDING) {
 			throw new IllegalStateException();
 		} else {
-			throw new PKIOperationFailureException(getFailureReason());
+			throw new PkiOperationFailureException(getFailureReason());
 		}
 	}
 	
@@ -262,7 +262,7 @@ public class Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 */
 	public State enrollCertificate(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException {
-		final org.jscep.operations.PKCSReq req = new org.jscep.operations.PKCSReq(subjectKeyPair, subject, digestAlg, password);
+		final org.jscep.operations.PkcsReq req = new org.jscep.operations.PkcsReq(subjectKeyPair, subject, digestAlg, password);
 		return performOperation(req);
 	}
 	
@@ -272,9 +272,9 @@ public class Transaction {
 	 * @param op the operation to perform.
 	 * @return a certificate store, containing either certificates or CRLs.
 	 * @throws IOException if any I/O error occurs.
-	 * @throws PKIOperationFailureException if the operation fails.
+	 * @throws PkiOperationFailureException if the operation fails.
 	 */
-	private <T extends DEREncodable> State performOperation(PKIOperation<T> op) throws IOException {
+	private <T extends DEREncodable> State performOperation(PkiOperation<T> op) throws IOException {
 		LOGGER.entering(getClass().getName(), "performOperation", op);
 		
 		msgGenerator.setMessageType(op.getMessageType());
@@ -282,7 +282,7 @@ public class Transaction {
 		msgGenerator.setMessageData(MessageData.getInstance(op.getMessage()));
 		
 		final PkiMessage req = msgGenerator.generate();
-		final PkiMessage res = transport.sendMessage(new PKCSReq(req, clientKeyPair));
+		final PkiMessage res = transport.sendMessage(new PkcsReq(req, clientKeyPair));
 
 		validateExchange(req, res);
 		
@@ -290,7 +290,7 @@ public class Transaction {
 			failInfo = res.getFailInfo();
 			state = State.CERT_NON_EXISTANT;
 		} else if (res.getPkiStatus() == PkiStatus.PENDING) {
-			if (op instanceof DelayablePKIOperation<?>) {
+			if (op instanceof DelayablePkiOperation<?>) {
 				task = new InitialCertTask();
 				state = State.CERT_REQ_PENDING;
 			} else {

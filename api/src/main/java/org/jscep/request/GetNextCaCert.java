@@ -32,7 +32,7 @@ import org.jscep.content.NextCaCertificateContentHandler;
  * 
  * @author David Grant
  */
-public class GetNextCACert implements Request<List<X509Certificate>> {
+public class GetNextCaCert implements Request<List<X509Certificate>> {
     private final String caIdentifier;
     private final X509Certificate issuer;
 
@@ -42,12 +42,12 @@ public class GetNextCACert implements Request<List<X509Certificate>> {
      * @param issuer the existing CA certificate.
      * @param caIdentifier the CA identification string.
      */
-    public GetNextCACert(X509Certificate issuer, String caIdentifier) {
+    public GetNextCaCert(X509Certificate issuer, String caIdentifier) {
     	this.issuer = issuer;
         this.caIdentifier = caIdentifier;
     }
     
-    public GetNextCACert(X509Certificate issuer) {
+    public GetNextCaCert(X509Certificate issuer) {
     	this.issuer = issuer;
         this.caIdentifier = null;
     }

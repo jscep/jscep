@@ -41,7 +41,7 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.jscep.asn1.SCEPObjectIdentifiers;
+import org.jscep.asn1.ScepObjectIdentifiers;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.PkiStatus;
 import org.jscep.util.LoggingUtil;
@@ -97,11 +97,11 @@ public class PkiMessageParser {
 		// must contain:
 		//
 		// * an SCEP transactionID attribute
-		checkAttribute(authAttrs, SCEPObjectIdentifiers.transId);
+		checkAttribute(authAttrs, ScepObjectIdentifiers.transId);
 		// * an SCEP messageType attribute
-		checkAttribute(authAttrs, SCEPObjectIdentifiers.messageType);
+		checkAttribute(authAttrs, ScepObjectIdentifiers.messageType);
 		// * an SCEP senderNonce attribute
-		checkAttribute(authAttrs, SCEPObjectIdentifiers.senderNonce);
+		checkAttribute(authAttrs, ScepObjectIdentifiers.senderNonce);
 		// * any attributes required by PKCS #7 section 9.2
 		checkAttribute(authAttrs, PKCSObjectIdentifiers.pkcs_9_at_contentType);
 		checkAttribute(authAttrs, PKCSObjectIdentifiers.pkcs_9_at_messageDigest);
@@ -110,9 +110,9 @@ public class PkiMessageParser {
 			// If the message is a response, it MUST also include
 			//
 			// * an SCEP pkiStatus attribute
-			checkAttribute(authAttrs, SCEPObjectIdentifiers.pkiStatus);
+			checkAttribute(authAttrs, ScepObjectIdentifiers.pkiStatus);
 			// * an SCEP recipientNonce attribute
-			checkAttribute(authAttrs, SCEPObjectIdentifiers.recipientNonce);
+			checkAttribute(authAttrs, ScepObjectIdentifiers.recipientNonce);
 		}
 
 		final PkiMessage msg = new PkiMessage(contentInfo);
@@ -145,7 +145,7 @@ public class PkiMessageParser {
 	}
 	
 	private boolean isResponse(AttributeTable table) {
-		final ASN1Set messageTypeSet = table.get(SCEPObjectIdentifiers.messageType).getAttrValues();
+		final ASN1Set messageTypeSet = table.get(ScepObjectIdentifiers.messageType).getAttrValues();
 		if (messageTypeSet.size() != 1) {
 			return false;
 		}

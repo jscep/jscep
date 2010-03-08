@@ -19,36 +19,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep;
+package org.jscep.asn1;
 
-import org.jscep.transaction.FailInfo;
+import org.bouncycastle.asn1.DERObjectIdentifier;
 
 /**
- * This exception represents the situation where a PKI operation has failed.
+ * Object Identifiers used by SCEP
  * 
  * @author David Grant
  */
-public class PKIOperationFailureException extends Exception {
+public interface ScepObjectIdentifiers {
 	/**
-	 * 
+	 * <code>2.16.840.1.113733.1.9.2</code>
 	 */
-	private static final long serialVersionUID = 747055232323410404L;
-	private final FailInfo failInfo;
-
-	/**
-	 * Creates a new instance of <code>PKIOperationFailureException</code> from
-	 * the provided {@link FailInfo}.
-	 * <p>
-	 * 
-	 * @param failInfo the failure reason.
+	DERObjectIdentifier messageType = new DERObjectIdentifier("2.16.840.1.113733.1.9.2");
+    /**
+	 * <code>2.16.840.1.113733.1.9.3</code>
 	 */
-	public PKIOperationFailureException(FailInfo failInfo) {
-		super(failInfo.toString());
-		
-		this.failInfo = failInfo;
-	}
-	
-	public FailInfo getFailInfo() {
-		return failInfo;
-	}
+    DERObjectIdentifier pkiStatus = new DERObjectIdentifier("2.16.840.1.113733.1.9.3");
+    /**
+     * <code>2.16.840.1.113733.1.9.4</code>
+     */
+    DERObjectIdentifier failInfo = new DERObjectIdentifier("2.16.840.1.113733.1.9.4");
+    /**
+     * <code>2.16.840.1.113733.1.9.5</code>
+     */
+    DERObjectIdentifier senderNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.5");
+    /**
+     * <code>2.16.840.1.113733.1.9.6</code>
+     */
+    DERObjectIdentifier recipientNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.6");
+    /**
+     * <code>2.16.840.1.113733.1.9.7</code>
+     */
+    DERObjectIdentifier transId = new DERObjectIdentifier("2.16.840.1.113733.1.9.7");
+    /**
+     * <code>2.16.840.1.113733.1.9.8</code>
+     */
+    DERObjectIdentifier extensionReq = new DERObjectIdentifier("2.16.840.1.113733.1.9.8");
 }

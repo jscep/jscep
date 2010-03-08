@@ -38,7 +38,7 @@ import org.jscep.transaction.MessageType;
  * 
  * @author David Grant
  */
-public class GetCert implements PKIOperation<IssuerAndSerialNumber> {
+public class GetCert implements PkiOperation<IssuerAndSerialNumber> {
 	private final X500Principal issuer;
     private final BigInteger serial;
 

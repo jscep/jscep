@@ -9,7 +9,7 @@ import junit.framework.Assert;
 import org.easymock.classextension.EasyMock;
 import org.jscep.pkcs7.PkiMessage;
 import org.jscep.request.Operation;
-import org.jscep.request.PKCSReq;
+import org.jscep.request.PkcsReq;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import org.junit.Test;
 @Ignore
 public class PkiRequestTest {
 	private PkiMessage message;
-	private PKCSReq fixture;
+	private PkcsReq fixture;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -27,7 +27,7 @@ public class PkiRequestTest {
 		
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
 		
-		fixture = new PKCSReq(message, keyPair);
+		fixture = new PkcsReq(message, keyPair);
 	}
 	
 	@Test

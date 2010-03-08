@@ -49,13 +49,13 @@ import org.jscep.util.AlgorithmDictionary;
  * 
  * @author David Grant
  */
-public class PKCSReq implements DelayablePKIOperation<CertificationRequest> {
+public class PkcsReq implements DelayablePkiOperation<CertificationRequest> {
     private final X509Certificate identity;
     private final char[] password;
     private final KeyPair keyPair;
     private final String digestAlgorithm;
 
-    public PKCSReq(KeyPair keyPair, X509Certificate identity, String digestAlgorithm, char[] password) {
+    public PkcsReq(KeyPair keyPair, X509Certificate identity, String digestAlgorithm, char[] password) {
         this.keyPair = keyPair;
         this.identity = identity;
         this.password = password;

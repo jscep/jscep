@@ -19,19 +19,59 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.operations;
+package org.jscep.request;
 
-import org.bouncycastle.asn1.DEREncodable;
-import org.jscep.transaction.PkiStatus;
+import java.io.IOException;
+import java.security.KeyPair;
+
+import org.jscep.content.CertRepContentHandler;
+import org.jscep.pkcs7.PkiMessage;
 
 
 /**
- * This is a marker interface for those PKI operations which may have
- * a {@link PkiStatus#PENDING} response.
+ * This class represents a <code>PKCSReq</code> request.
  * 
  * @author David Grant
- * @param <T> the type message data for this operation.
  */
-public interface DelayablePKIOperation<T extends DEREncodable> extends PKIOperation<T> {
+public class PkcsReq implements Request<PkiMessage> {
+	private final PkiMessage signedData;
+	private final KeyPair keyPair;
 
+	/**
+	 * Creates a new instance of this class using the provided pkiMessage
+	 * and {@link java.security.KeyPair}.
+	 * 
+	 * @param msgData the pkiMessage to use.
+	 * @param keyPair the KeyPair to use.
+	 */
+	public PkcsReq(PkiMessage msgData, KeyPair keyPair) {
+		this.signedData = msgData;
+		this.keyPair = keyPair;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public byte[] getMessage() throws IOException {
+		return signedData.getEncoded();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Operation getOperation() {
+		return Operation.PKIOperation;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public CertRepContentHandler getContentHandler() {
+		return new CertRepContentHandler(keyPair);
+	}
+	
+	@Override
+	public String toString() {
+		return signedData.toString();
+	}
 }

@@ -6,19 +6,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GetCACertTest {
-	private GetCACert fixture;
+public class GetCaCertTest {
+	private GetCaCert fixture;
 	private String caIdentifier;
 	
 	@Before
 	public void setUp() {
 		caIdentifier = "id";
-		fixture = new GetCACert(caIdentifier);
+		fixture = new GetCaCert(caIdentifier);
 	}
 	
 	@Test
 	public void testNullConstructor() {
-		fixture = new GetCACert();
+		fixture = new GetCaCert();
 		Assert.assertNull(fixture.getMessage());
 	}
 	

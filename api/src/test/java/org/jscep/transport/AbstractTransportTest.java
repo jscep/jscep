@@ -17,7 +17,7 @@ import org.eclipse.jetty.server.Server;
 import org.jscep.pkcs7.MessageData;
 import org.jscep.pkcs7.PkiMessage;
 import org.jscep.pkcs7.PkiMessageGenerator;
-import org.jscep.request.PKCSReq;
+import org.jscep.request.PkcsReq;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
@@ -75,7 +75,7 @@ abstract public class AbstractTransportTest {
 		msgGenerator.setRecipient(getCertificate(keyPair));
 		msgGenerator.setMessageData(MessageData.getInstance(new DERNull()));
 		PkiMessage msgData = msgGenerator.generate();
-		PKCSReq req = new PKCSReq(msgData, keyPair);
+		PkcsReq req = new PkcsReq(msgData, keyPair);
 		
 		try {
 			transport.sendMessage(req);

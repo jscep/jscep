@@ -13,10 +13,10 @@ import junit.framework.Assert;
 
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.jscep.operations.GetCRL;
+import org.jscep.operations.GetCrl;
 import org.jscep.operations.GetCert;
 import org.jscep.operations.GetCertInitial;
-import org.jscep.operations.PKCSReq;
+import org.jscep.operations.PkcsReq;
 import org.jscep.pkcs7.MessageData;
 import org.jscep.pkcs7.PkiMessage;
 import org.jscep.pkcs7.PkiMessageGenerator;
@@ -99,7 +99,7 @@ public class PkiMessageTest {
 	
 	@Test
 	public void testGetCRLRequest() throws IOException {
-		final GetCRL req = new GetCRL(subject, BigInteger.ONE);
+		final GetCrl req = new GetCrl(subject, BigInteger.ONE);
 		
 		generator.setMessageType(MessageType.GetCRL);
 		generator.setMessageData(MessageData.getInstance(req.getMessage()));
@@ -111,7 +111,7 @@ public class PkiMessageTest {
 	
 	@Test
 	public void testPKCSReqRequest() throws IOException {
-		final PKCSReq req = new PKCSReq(keyPair, identity, "SHA-1", new char[0]);
+		final PkcsReq req = new PkcsReq(keyPair, identity, "SHA-1", new char[0]);
 		
 		generator.setMessageType(MessageType.PKCSReq);
 		generator.setMessageData(MessageData.getInstance(req.getMessage()));

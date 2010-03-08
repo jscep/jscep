@@ -9,16 +9,16 @@ import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
-import org.jscep.operations.GetCRL;
-import org.jscep.operations.PKIOperation;
+import org.jscep.operations.GetCrl;
+import org.jscep.operations.PkiOperation;
 import org.jscep.transaction.MessageType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 
-public class GetCRLTest {
-	private PKIOperation<IssuerAndSerialNumber> fixture;
+public class GetCrlTest {
+	private PkiOperation<IssuerAndSerialNumber> fixture;
 	private X500Principal issuer;
 	private BigInteger serial;
 	
@@ -26,7 +26,7 @@ public class GetCRLTest {
 	public void setUp() {
 		issuer = new X500Principal("CN=issuer");
 		serial = BigInteger.ZERO;
-		fixture = new GetCRL(issuer, serial);
+		fixture = new GetCrl(issuer, serial);
 	}
 
 	@Test

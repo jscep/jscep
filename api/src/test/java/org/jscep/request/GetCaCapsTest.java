@@ -7,19 +7,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class GetCACapsTest {
-	private GetCACaps fixture;
+public class GetCaCapsTest {
+	private GetCaCaps fixture;
 	private String caIdentifier;
 	
 	@Before
 	public void setUp() {
 		caIdentifier = "id";
-		fixture = new GetCACaps(caIdentifier);
+		fixture = new GetCaCaps(caIdentifier);
 	}
 	
 	@Test
 	public void testNullConstructor() {
-		fixture = new GetCACaps();
+		fixture = new GetCaCaps();
 		Assert.assertNull(fixture.getMessage());
 	}
 

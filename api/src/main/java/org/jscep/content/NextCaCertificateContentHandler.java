@@ -49,7 +49,7 @@ import org.jscep.util.LoggingUtil;
  * 
  * @author David Grant
  */
-public class NextCaCertificateContentHandler implements SCEPContentHandler<List<X509Certificate>> {
+public class NextCaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
 	private static Logger LOGGER = LoggingUtil.getLogger(NextCaCertificateContentHandler.class);
 	private final X509Certificate issuer;
 	

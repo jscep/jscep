@@ -39,7 +39,7 @@ import org.jscep.util.LoggingUtil;
  * 
  * @author David Grant
  */
-public class CertRepContentHandler implements SCEPContentHandler<PkiMessage> {
+public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	private static Logger LOGGER = LoggingUtil.getLogger(CertRepContentHandler.class);
 	private final KeyPair keyPair;
 	

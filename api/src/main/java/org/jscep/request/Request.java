@@ -23,7 +23,7 @@ package org.jscep.request;
 
 import java.io.IOException;
 
-import org.jscep.content.SCEPContentHandler;
+import org.jscep.content.ScepContentHandler;
 
 
 /**
@@ -56,5 +56,5 @@ public interface Request<T> {
      * 
      * @return the content handler.
      */
-    SCEPContentHandler<T> getContentHandler();
+    ScepContentHandler<T> getContentHandler();
 }

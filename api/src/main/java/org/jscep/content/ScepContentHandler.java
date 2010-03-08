@@ -19,54 +19,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.request;
+package org.jscep.content;
 
-import org.jscep.content.CaCapabilitiesContentHandler;
-import org.jscep.response.Capabilities;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * This class represents a <code>GetCACaps</code> request.
+ * This interface represents a mechanism for handling specific SCEP content.
  * 
  * @author David Grant
+ * @param <T> the content handled by the handler implementation
  */
-public final class GetCACaps implements Request<Capabilities> {
-	private final String caIdentifier;
-
-	public GetCACaps() {
-		this.caIdentifier = null;
-	}
-	
-	public GetCACaps(String caIdentifier) {
-		this.caIdentifier = caIdentifier;
-	}
-
+public interface ScepContentHandler<T> {
 	/**
-	 * {@inheritDoc}
+	 * Read and interpret the content from the input stream.
+	 * 
+	 * @param in
+	 *            the input stream containing the content.
+	 * @param mimeType
+	 *            the type of the input stream.
+	 * @return the content in a usage form.
+	 * @throws IOException
+	 *             if any I/O error occurs.
 	 */
-	public Operation getOperation() {
-		return Operation.GetCACaps;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getMessage() {
-		return caIdentifier;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public CaCapabilitiesContentHandler getContentHandler() {
-		return new CaCapabilitiesContentHandler();
-	}
-	
-	@Override
-	public String toString() {
-		if (caIdentifier != null) {
-			return "GetCACaps(" + caIdentifier + ")";
-		} else {
-			return "GetCACaps";
-		}
-	}
+	T getContent(InputStream in, String mimeType) throws IOException;
 }

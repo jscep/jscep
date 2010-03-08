@@ -19,61 +19,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.request;
+package org.jscep.operations;
 
-import java.security.cert.X509Certificate;
-import java.util.List;
-
-import org.jscep.content.CaCertificateContentHandler;
+import org.bouncycastle.asn1.DEREncodable;
+import org.jscep.transaction.PkiStatus;
 
 
 /**
- * This class represents a <code>GetCACert</code> request.
+ * This is a marker interface for those PKI operations which may have
+ * a {@link PkiStatus#PENDING} response.
  * 
  * @author David Grant
+ * @param <T> the type message data for this operation.
  */
-public final class GetCACert implements Request<List<X509Certificate>> {
-	private final String caIdentifier;
-	/**
-	 * Creates a new GetCACert request with the given CA identification string.
-	 * 
-	 * @param caIdentifier the CA identification string.
-	 */
-	public GetCACert(String caIdentifier) {
-		this.caIdentifier = caIdentifier;
-	}
-	
-	public GetCACert() {
-		this.caIdentifier = null;
-	}
+public interface DelayablePkiOperation<T extends DEREncodable> extends PkiOperation<T> {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Operation getOperation() {
-		return Operation.GetCACert;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getMessage() {
-		return caIdentifier;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public CaCertificateContentHandler getContentHandler() {
-		return new CaCertificateContentHandler();
-	}
-	
-	@Override
-	public String toString() {
-		if (caIdentifier != null) {
-			return "GetCACert(" + caIdentifier + ")";
-		} else {
-			return "GetCACert";
-		}
-	}
 }

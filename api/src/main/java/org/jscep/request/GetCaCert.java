@@ -19,42 +19,61 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.asn1;
+package org.jscep.request;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
+import java.security.cert.X509Certificate;
+import java.util.List;
+
+import org.jscep.content.CaCertificateContentHandler;
+
 
 /**
- * Object Identifiers used by SCEP
+ * This class represents a <code>GetCACert</code> request.
  * 
  * @author David Grant
  */
-public interface SCEPObjectIdentifiers {
+public final class GetCaCert implements Request<List<X509Certificate>> {
+	private final String caIdentifier;
 	/**
-	 * <code>2.16.840.1.113733.1.9.2</code>
+	 * Creates a new GetCACert request with the given CA identification string.
+	 * 
+	 * @param caIdentifier the CA identification string.
 	 */
-	DERObjectIdentifier messageType = new DERObjectIdentifier("2.16.840.1.113733.1.9.2");
-    /**
-	 * <code>2.16.840.1.113733.1.9.3</code>
+	public GetCaCert(String caIdentifier) {
+		this.caIdentifier = caIdentifier;
+	}
+	
+	public GetCaCert() {
+		this.caIdentifier = null;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
-    DERObjectIdentifier pkiStatus = new DERObjectIdentifier("2.16.840.1.113733.1.9.3");
-    /**
-     * <code>2.16.840.1.113733.1.9.4</code>
-     */
-    DERObjectIdentifier failInfo = new DERObjectIdentifier("2.16.840.1.113733.1.9.4");
-    /**
-     * <code>2.16.840.1.113733.1.9.5</code>
-     */
-    DERObjectIdentifier senderNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.5");
-    /**
-     * <code>2.16.840.1.113733.1.9.6</code>
-     */
-    DERObjectIdentifier recipientNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.6");
-    /**
-     * <code>2.16.840.1.113733.1.9.7</code>
-     */
-    DERObjectIdentifier transId = new DERObjectIdentifier("2.16.840.1.113733.1.9.7");
-    /**
-     * <code>2.16.840.1.113733.1.9.8</code>
-     */
-    DERObjectIdentifier extensionReq = new DERObjectIdentifier("2.16.840.1.113733.1.9.8");
+	public Operation getOperation() {
+		return Operation.GetCACert;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getMessage() {
+		return caIdentifier;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public CaCertificateContentHandler getContentHandler() {
+		return new CaCertificateContentHandler();
+	}
+	
+	@Override
+	public String toString() {
+		if (caIdentifier != null) {
+			return "GetCACert(" + caIdentifier + ")";
+		} else {
+			return "GetCACert";
+		}
+	}
 }

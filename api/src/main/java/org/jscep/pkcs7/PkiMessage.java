@@ -36,7 +36,7 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.jscep.asn1.SCEPObjectIdentifiers;
+import org.jscep.asn1.ScepObjectIdentifiers;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
@@ -136,7 +136,7 @@ public class PkiMessage extends ContentInfo {
 	 * @return the {@link FailInfo} value, or <code>null</code>.
 	 */
 	public FailInfo getFailInfo() {
-		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.failInfo);
+		final Attribute attr = getAttributeTable().get(ScepObjectIdentifiers.failInfo);
 		if (attr == null) {
 			return null;
 		}
@@ -152,7 +152,7 @@ public class PkiMessage extends ContentInfo {
 	 * @return the {@link PkiStatus} value, or <code>null</code>.
 	 */
 	public PkiStatus getPkiStatus() {
-		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.pkiStatus);
+		final Attribute attr = getAttributeTable().get(ScepObjectIdentifiers.pkiStatus);
 		if (attr == null) {
 			return null;
 		}
@@ -178,7 +178,7 @@ public class PkiMessage extends ContentInfo {
 	 * @return the recipient {@link Nonce}, or <code>null</code>.
 	 */
 	public Nonce getRecipientNonce() {
-		return getNonce(SCEPObjectIdentifiers.recipientNonce);
+		return getNonce(ScepObjectIdentifiers.recipientNonce);
 	}
 	
 	/**
@@ -187,7 +187,7 @@ public class PkiMessage extends ContentInfo {
 	 * @return the sender {@link Nonce}.
 	 */
 	public Nonce getSenderNonce() {
-		return getNonce(SCEPObjectIdentifiers.senderNonce);
+		return getNonce(ScepObjectIdentifiers.senderNonce);
 	}
 	
 	/**
@@ -196,7 +196,7 @@ public class PkiMessage extends ContentInfo {
 	 * @return the sender {@link TransactionId}.
 	 */
 	public TransactionId getTransactionId() {
-		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.transId);
+		final Attribute attr = getAttributeTable().get(ScepObjectIdentifiers.transId);
 		DERPrintableString transId = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
 		
 		return new TransactionId(transId.getOctets());
@@ -215,7 +215,7 @@ public class PkiMessage extends ContentInfo {
 	 * @return the sender {@link MessageType}.
 	 */
 	public MessageType getMessageType() {
-		final Attribute attr = getAttributeTable().get(SCEPObjectIdentifiers.messageType);
+		final Attribute attr = getAttributeTable().get(ScepObjectIdentifiers.messageType);
 		final DERPrintableString msgType = (DERPrintableString) attr.getAttrValues().getObjectAt(0);
 		
 		return MessageType.valueOf(Integer.parseInt(msgType.getString()));

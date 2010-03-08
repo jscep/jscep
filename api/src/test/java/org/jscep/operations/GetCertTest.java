@@ -10,7 +10,7 @@ import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509Principal;
 import org.jscep.operations.GetCert;
-import org.jscep.operations.PKIOperation;
+import org.jscep.operations.PkiOperation;
 import org.jscep.transaction.MessageType;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,7 +18,7 @@ import org.junit.Test;
 
 
 public class GetCertTest {
-	private PKIOperation<IssuerAndSerialNumber> fixture;
+	private PkiOperation<IssuerAndSerialNumber> fixture;
 	private X500Principal issuer;
 	private BigInteger serial;
 	
