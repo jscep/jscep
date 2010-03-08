@@ -42,6 +42,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Object;
@@ -77,7 +78,7 @@ public class PkcsPkiEnvelopeGenerator {
 	private String cipherAlgorithm;
 	private String cipherTransformation;
 	private String keyAlgorithm;
-	private MessageData msgData;
+	private ASN1Encodable msgData;
 	
 	/**
 	 * Specifies the {@link MessageData messageData} that will be wrapped in the resulting
@@ -85,7 +86,7 @@ public class PkcsPkiEnvelopeGenerator {
 	 * 
 	 * @param msgData the messageData to wrap.
 	 */
-	public void setMessageData(MessageData msgData) {
+	public void setMessageData(ASN1Encodable msgData) {
 		this.msgData = msgData;
 	}
 	
@@ -129,7 +130,7 @@ public class PkcsPkiEnvelopeGenerator {
 						
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			CipherOutputStream caos = new CipherOutputStream(baos, cipher);
-			caos.write(msgData.getContent().getDEREncoded());
+			caos.write(msgData.getDEREncoded());
 			caos.close();
 			
 			final ASN1OctetString encContent = new BERConstructedOctetString(baos.toByteArray());

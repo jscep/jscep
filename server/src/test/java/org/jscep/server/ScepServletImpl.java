@@ -26,26 +26,26 @@ public class ScepServletImpl extends ScepServlet {
 	private static Logger LOGGER = LoggingUtil.getLogger(ScepServletImpl.class);
 	
 	@Override
-	protected List<X509Certificate> enrollCertificate(PKCS10CertificationRequest certificationRequest) {
+	protected List<X509Certificate> doEnroll(PKCS10CertificationRequest certificationRequest) {
 		 LOGGER.entering(getClass().getName(), "enrollCertificate");
 		 
 		return null;
 	}
 
 	@Override
-	protected List<X509Certificate> getCACertificate(String identifier) {
+	protected List<X509Certificate> doGetCaCertificate(String identifier) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected X509CRL getCRL(X500Principal issuer, BigInteger serial) {
+	protected X509CRL doGetCrl(X500Principal issuer, BigInteger serial) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected Set<Capability> getCapabilities(String identifier) {
+	protected Set<Capability> doCapabilities(String identifier) {
 		LOGGER.entering(getClass().getName(), "getCapabilities");
 		
 		final Set<Capability> caps = EnumSet.of(Capability.SHA_1);
@@ -55,19 +55,19 @@ public class ScepServletImpl extends ScepServlet {
 	}
 
 	@Override
-	protected X509Certificate getCertificate(X509Name issuer, BigInteger serial) {
+	protected X509Certificate doGetCert(X509Name issuer, BigInteger serial) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected X509Certificate getCertificate(X509Name issuer, X509Name subject) {
+	protected X509Certificate doGetCertInitial(X509Name issuer, X509Name subject) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected List<X509Certificate> getNextCACertificate(String identifier) {
+	protected List<X509Certificate> getNextCaCertificate(String identifier) {
 		// TODO Auto-generated method stub
 		return null;
 	}

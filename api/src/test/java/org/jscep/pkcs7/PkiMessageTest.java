@@ -13,15 +13,10 @@ import junit.framework.Assert;
 
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.jscep.operations.GetCrl;
 import org.jscep.operations.GetCert;
 import org.jscep.operations.GetCertInitial;
+import org.jscep.operations.GetCrl;
 import org.jscep.operations.PkcsReq;
-import org.jscep.pkcs7.MessageData;
-import org.jscep.pkcs7.PkiMessage;
-import org.jscep.pkcs7.PkiMessageGenerator;
-import org.jscep.pkcs7.PkiMessageParser;
-import org.jscep.pkcs7.SignedDataGenerator;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.PkiStatus;
@@ -66,7 +61,7 @@ public class PkiMessageTest {
 		SignedDataGenerator dsdGenerator = new SignedDataGenerator();
 		SignedData sd = dsdGenerator.generate();
 		generator.setMessageType(MessageType.CertRep);
-		generator.setMessageData(MessageData.getInstance(sd));
+		generator.setMessageData(sd);
 		final PkiMessage generatedMsg = generator.generate();
 		final PkiMessage parsedMsg = parser.parse(generatedMsg);
 		
@@ -78,7 +73,7 @@ public class PkiMessageTest {
 		final GetCert req = new GetCert(subject, BigInteger.ONE);
 		
 		generator.setMessageType(MessageType.GetCert);
-		generator.setMessageData(MessageData.getInstance(req.getMessage()));
+		generator.setMessageData(req.getMessage());
 		final PkiMessage generatedMsg = generator.generate();
 		final PkiMessage parsedMsg = parser.parse(generatedMsg);
 		
@@ -90,7 +85,7 @@ public class PkiMessageTest {
 		final GetCertInitial req = new GetCertInitial(new X509Name("CN=example.org"), new X509Name("CN=example.org"));
 		
 		generator.setMessageType(MessageType.GetCertInitial);
-		generator.setMessageData(MessageData.getInstance(req.getMessage()));
+		generator.setMessageData(req.getMessage());
 		final PkiMessage generatedMsg = generator.generate();
 		final PkiMessage parsedMsg = parser.parse(generatedMsg);
 		
@@ -102,7 +97,7 @@ public class PkiMessageTest {
 		final GetCrl req = new GetCrl(subject, BigInteger.ONE);
 		
 		generator.setMessageType(MessageType.GetCRL);
-		generator.setMessageData(MessageData.getInstance(req.getMessage()));
+		generator.setMessageData(req.getMessage());
 		final PkiMessage generatedMsg = generator.generate();
 		final PkiMessage parsedMsg = parser.parse(generatedMsg);
 		
@@ -114,7 +109,7 @@ public class PkiMessageTest {
 		final PkcsReq req = new PkcsReq(keyPair, identity, "SHA-1", new char[0]);
 		
 		generator.setMessageType(MessageType.PKCSReq);
-		generator.setMessageData(MessageData.getInstance(req.getMessage()));
+		generator.setMessageData(req.getMessage());
 		final PkiMessage generatedMsg = generator.generate();
 		final PkiMessage parsedMsg = parser.parse(generatedMsg);
 		

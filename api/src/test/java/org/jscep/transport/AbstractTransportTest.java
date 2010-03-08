@@ -14,7 +14,6 @@ import junit.framework.Assert;
 
 import org.bouncycastle.asn1.DERNull;
 import org.eclipse.jetty.server.Server;
-import org.jscep.pkcs7.MessageData;
 import org.jscep.pkcs7.PkiMessage;
 import org.jscep.pkcs7.PkiMessageGenerator;
 import org.jscep.request.PkcsReq;
@@ -73,7 +72,7 @@ abstract public class AbstractTransportTest {
 		msgGenerator.setKeyPair(keyPair);
 		msgGenerator.setSigner(getCertificate(keyPair));
 		msgGenerator.setRecipient(getCertificate(keyPair));
-		msgGenerator.setMessageData(MessageData.getInstance(new DERNull()));
+		msgGenerator.setMessageData(new DERNull());
 		PkiMessage msgData = msgGenerator.generate();
 		PkcsReq req = new PkcsReq(msgData, keyPair);
 		

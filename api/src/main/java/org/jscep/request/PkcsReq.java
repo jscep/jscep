@@ -34,7 +34,7 @@ import org.jscep.pkcs7.PkiMessage;
  * @author David Grant
  */
 public class PkcsReq implements Request<PkiMessage> {
-	private final PkiMessage signedData;
+	private final PkiMessage msgData;
 	private final KeyPair keyPair;
 
 	/**
@@ -45,7 +45,7 @@ public class PkcsReq implements Request<PkiMessage> {
 	 * @param keyPair the KeyPair to use.
 	 */
 	public PkcsReq(PkiMessage msgData, KeyPair keyPair) {
-		this.signedData = msgData;
+		this.msgData = msgData;
 		this.keyPair = keyPair;
 	}
 
@@ -53,7 +53,7 @@ public class PkcsReq implements Request<PkiMessage> {
 	 * {@inheritDoc}
 	 */
 	public byte[] getMessage() throws IOException {
-		return signedData.getEncoded();
+		return msgData.getEncoded();
 	}
 
 	/**
@@ -72,6 +72,6 @@ public class PkcsReq implements Request<PkiMessage> {
 	
 	@Override
 	public String toString() {
-		return signedData.toString();
+		return msgData.toString();
 	}
 }

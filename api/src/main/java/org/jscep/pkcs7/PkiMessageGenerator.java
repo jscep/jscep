@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -111,7 +112,7 @@ public class PkiMessageGenerator implements Cloneable {
 	private byte[] hash;
 	private X509Certificate recipient;
 	private String cipherAlgorithm;
-	private MessageData msgData;
+	private ASN1Encodable msgData;
 	
 	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
@@ -145,7 +146,7 @@ public class PkiMessageGenerator implements Cloneable {
 		this.pkiStatus = pkiStatus;
 	}
 	
-	public void setMessageData(MessageData msgData) {
+	public void setMessageData(ASN1Encodable msgData) {
 		this.msgData = msgData;
 	}
 	

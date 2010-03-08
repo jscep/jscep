@@ -12,9 +12,6 @@ import javax.security.auth.x500.X500Principal;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jscep.pkcs7.MessageData;
-import org.jscep.pkcs7.PkcsPkiEnvelope;
-import org.jscep.pkcs7.PkcsPkiEnvelopeGenerator;
 import org.jscep.x509.X509Util;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,7 +39,7 @@ public class PkcsPkiEnvelopeTest {
 		final PkcsPkiEnvelopeGenerator envGenerator = new PkcsPkiEnvelopeGenerator();
 		envGenerator.setCipherAlgorithm("DES");
 		envGenerator.setRecipient(cert);
-		envGenerator.setMessageData(MessageData.getInstance(msgData));
+		envGenerator.setMessageData(msgData);
 		envGenerator.setKeyAlgorithm("DES");
 		
 		fixture = envGenerator.generate();
@@ -50,7 +47,7 @@ public class PkcsPkiEnvelopeTest {
 	
 	@Test
 	public void testGetCertStore() throws NoSuchProviderException, NoSuchAlgorithmException {
-		Assert.assertEquals(msgData, fixture.getMessageData().getContent());
+		Assert.assertEquals(msgData, fixture.getMessageData());
 	}
 
 }

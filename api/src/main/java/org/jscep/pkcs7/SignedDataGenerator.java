@@ -237,7 +237,7 @@ public class SignedDataGenerator {
 		private final AlgorithmIdentifier digestAlgorithm;
 		private final AttributeTable authenticatedAttributes;
 		private final AlgorithmIdentifier digestEncryptionAlgorithm;
-		private final AttributeTable unauthenticatedAttributes;
+//		private final AttributeTable unauthenticatedAttributes;
 		
 		public SignerInformation(PrivateKey privateKey, X509Certificate certificate, AlgorithmIdentifier digestAlgorithm, AttributeTable authenticatedAttributes, AttributeTable unauthenticatedAttributes) {
 			this.privateKey = privateKey;
@@ -245,7 +245,7 @@ public class SignedDataGenerator {
 			this.digestAlgorithm = digestAlgorithm;
 			this.authenticatedAttributes = authenticatedAttributes;
 			this.digestEncryptionAlgorithm = AlgorithmDictionary.getAlgId("RSA");
-			this.unauthenticatedAttributes = unauthenticatedAttributes;
+//			this.unauthenticatedAttributes = unauthenticatedAttributes;
 		}
 		
 		public AlgorithmIdentifier getDigestAlgorithm() {

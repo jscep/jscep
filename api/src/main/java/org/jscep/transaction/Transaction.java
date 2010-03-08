@@ -37,16 +37,15 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.jscep.PkiOperationFailureException;
 import org.jscep.operations.DelayablePkiOperation;
-import org.jscep.operations.GetCrl;
 import org.jscep.operations.GetCert;
 import org.jscep.operations.GetCertInitial;
+import org.jscep.operations.GetCrl;
 import org.jscep.operations.PkiOperation;
-import org.jscep.pkcs7.MessageData;
 import org.jscep.pkcs7.PkiMessage;
 import org.jscep.pkcs7.PkiMessageGenerator;
 import org.jscep.pkcs7.SignedDataParser;
@@ -219,7 +218,7 @@ public class Transaction {
      * @throws IOException if any I/O error occurs.
      * @throws PkiOperationFailureException if the transaction is rejected.
      */
-	public List<X509CRL> getCRL() throws IOException, PkiOperationFailureException {
+	public List<X509CRL> getCrl() throws IOException, PkiOperationFailureException {
 		X509Certificate ca = issuerCertificate;
 		
 		if (supportsDistributionPoints(issuerCertificate)) {
@@ -274,12 +273,12 @@ public class Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws PkiOperationFailureException if the operation fails.
 	 */
-	private <T extends DEREncodable> State performOperation(PkiOperation<T> op) throws IOException {
+	private <T extends ASN1Encodable> State performOperation(PkiOperation<T> op) throws IOException {
 		LOGGER.entering(getClass().getName(), "performOperation", op);
 		
 		msgGenerator.setMessageType(op.getMessageType());
 		msgGenerator.setSenderNonce(Nonce.nextNonce());
-		msgGenerator.setMessageData(MessageData.getInstance(op.getMessage()));
+		msgGenerator.setMessageData(op.getMessage());
 		
 		final PkiMessage req = msgGenerator.generate();
 		final PkiMessage res = transport.sendMessage(new PkcsReq(req, clientKeyPair));
@@ -305,9 +304,9 @@ public class Transaction {
 	}
 
 	private CertStore extractCertStore(PkiMessage response) throws IOException {
-		final MessageData repMsgData = response.getPkcsPkiEnvelope().getMessageData();
+		final ASN1Encodable repMsgData = response.getPkcsPkiEnvelope().getMessageData();
 		final SignedDataParser parser = new SignedDataParser();
-		final SignedData signedData = parser.parse(repMsgData.getContent());
+		final SignedData signedData = parser.parse(repMsgData);
 		CertStore cs;
 		try {
 			cs = SignedDataUtil.extractCertStore(signedData);

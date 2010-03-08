@@ -21,6 +21,7 @@
  */
 package org.jscep.pkcs7;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.ContentInfo;
 
 /**
@@ -29,17 +30,17 @@ import org.bouncycastle.asn1.cms.ContentInfo;
  * @author David Grant
  */
 public class PkcsPkiEnvelope extends ContentInfo {
-	private MessageData msgData;
+	private ASN1Encodable msgData;
 	
 	public PkcsPkiEnvelope(ContentInfo info) {
 		super(info.getContentType(), info.getContent());
 	}
 	
-	void setMessageData(MessageData msgData) {
+	void setMessageData(ASN1Encodable msgData) {
 		this.msgData = msgData;
 	}
 	
-	public MessageData getMessageData() {
+	public ASN1Encodable getMessageData() {
 		return msgData;
 	}
 	

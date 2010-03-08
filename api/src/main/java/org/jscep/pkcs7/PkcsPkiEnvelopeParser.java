@@ -133,7 +133,7 @@ public class PkcsPkiEnvelopeParser {
 		}
 
     	final PkcsPkiEnvelope envelope = new PkcsPkiEnvelope(contentInfo);
-    	envelope.setMessageData(MessageData.getInstance(msgData));
+    	envelope.setMessageData(msgData);
     	
     	LOGGER.exiting(getClass().getName(), "parse", envelope);
 		return envelope;

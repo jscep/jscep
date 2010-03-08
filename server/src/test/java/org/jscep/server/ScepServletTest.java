@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
-import org.jscep.request.GetCACaps;
+import org.jscep.request.GetCaCaps;
 import org.jscep.response.Capabilities;
 import org.jscep.transport.Transport;
 import org.jscep.transport.Transport.Method;
@@ -53,7 +53,7 @@ public class ScepServletTest {
 	
 	@Test
 	public void basicTest() throws Exception {
-		GetCACaps req = new GetCACaps(null);
+		GetCaCaps req = new GetCaCaps(null);
 		Transport transport = Transport.createTransport(method, getURL());
 		Capabilities caps = transport.sendMessage(req);
 		
