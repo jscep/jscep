@@ -46,9 +46,9 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.jscep.FingerprintVerificationCallback;
-import org.jscep.request.GetCACaps;
-import org.jscep.request.GetCACert;
-import org.jscep.request.GetNextCACert;
+import org.jscep.request.GetCaCaps;
+import org.jscep.request.GetCaCert;
+import org.jscep.request.GetNextCaCert;
 import org.jscep.response.Capabilities;
 import org.jscep.transaction.Transaction;
 import org.jscep.transport.Transport;
@@ -205,7 +205,7 @@ public class Client {
     		caps = capabilitiesCache.get(caIdentifier);
     	}
     	if (caps == null) {
-	    	final GetCACaps req = new GetCACaps(caIdentifier);
+	    	final GetCaCaps req = new GetCaCaps(caIdentifier);
 	        final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 	        caps = trans.sendMessage(req);
 	        capabilitiesCache.put(caIdentifier, caps);
@@ -226,7 +226,7 @@ public class Client {
      */
     public List<X509Certificate> getCaCertificate() throws IOException {
     	LOGGER.entering(getClass().getName(), "getCaCertificate");
-    	final GetCACert req = new GetCACert(caIdentifier);
+    	final GetCaCert req = new GetCaCert(caIdentifier);
         final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
         final List<X509Certificate> certs = trans.sendMessage(req);
@@ -295,7 +295,7 @@ public class Client {
     	final X509Certificate issuer = retrieveCA();
     	
     	final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-    	final GetNextCACert req = new GetNextCACert(issuer, caIdentifier);
+    	final GetNextCaCert req = new GetNextCaCert(issuer, caIdentifier);
     	
     	return trans.sendMessage(req);
     }
