@@ -77,50 +77,67 @@ public class Client {
     
     private Client(Builder builder) throws IllegalStateException {
     	url = builder.url;
-    	proxy = builder.proxy;
-    	caIdentifier = builder.caIdentifier;
-    	// This is used for communicating with the SCEP server.  It SHOULD
-    	// NOT necessarily correspond to what we're going to enroll.
-    	keyPair = builder.keyPair;
-    	identity = builder.identity;
-    	// or we can use the fingerprints (pre-provisioning)
-    	fingerprint = builder.fingerprint;
-    	hashAlgorithm = builder.hashAlgorithm;
-    	// Used to present to the end-user (out-of-band)
-    	callbackHandler = builder.callbackHandler;
-    	
-    	// Offering the use of multiple hash algorithms for the
-    	// certificate fingerprint just makes things more complicated for
-    	// pre-provisioning.  Perhaps we should settle on a definite hash?
-
-    	if (keyPair == null) {
-    		throw new IllegalStateException("keyPair is null");
-    	}
-    	
-    	if (callbackHandler != null) {
-    		// Manual Authorization
-    	} else {
-    		// Automatic Authorization
-    		callbackHandler = new FingerprintCallbackHandler(fingerprint, hashAlgorithm);
-    	}
-    	
     	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-5.1
     	if (isValid(url) == false) {
     		throw new IllegalStateException("Invalid URL");
     	}
-    	
+    	// If the user doesn't specify a proxy, we must explicitly state
+    	// not to use a proxy.
+    	proxy = builder.proxy;
     	if (proxy == null) {
     		proxy = Proxy.NO_PROXY;
     	}
-
+    	// Support for multiple CA profiles.
+    	caIdentifier = builder.caIdentifier;
+    	// This is used for communicating with the SCEP server.  It SHOULD
+    	// NOT necessarily correspond to what we're going to enroll.
+    	keyPair = builder.keyPair;
+    	if (keyPair == null) {
+    		throw new IllegalStateException("keyPair is null");
+    	}
     	if (isValid(keyPair) == false) {
     		throw new IllegalStateException("Invalid KeyPair");
     	}
-    	
-		// If we're replacing a certificate, we must have the same key pair.
+    	// This is the identity of the SCEP client.  This can be different to
+    	// the certificate being enrolled.
+    	identity = builder.identity;
+    	// The key pair and certificate have to match otherwise we'll run into
+    	// problems decrypting content.
 		if (identity.getPublicKey().equals(keyPair.getPublic()) == false) {
 			throw new IllegalStateException("Public Key Mismatch");
 		}
+    	
+    	// The user will either provide a finger print and hash algorithm
+    	fingerprint = builder.fingerprint;
+    	// This isn't necessary.  We can guess the algorithm from the length.
+    	hashAlgorithm = determineAlgorithm(fingerprint);
+    	// ... or a callback handler
+    	callbackHandler = builder.callbackHandler;
+    	
+    	
+    	if (callbackHandler != null) {
+    		if (fingerprint != null) {
+    			// One or the other damnit.
+    		}
+    	} else {
+    		callbackHandler = new FingerprintCallbackHandler(fingerprint, hashAlgorithm);
+    	}
+    	
+    }
+    
+    private String determineAlgorithm(byte[] fingerprint) {
+    	switch (fingerprint.length) {
+    		case 16:
+    			return "MD5";
+    		case 20:
+    			return "SHA-1";
+    		case 32:
+    			return "SHA-256";
+    		case 64:
+    			return "SHA-512";
+    		default:
+    			throw new IllegalArgumentException("Fingerprint length does not correspond to a known cryptographic hash function.");
+    	}
     }
 
     
@@ -418,7 +435,6 @@ public class Client {
     	private URL url;
     	private Proxy proxy = Proxy.NO_PROXY;
     	private byte[] fingerprint;
-    	private String hashAlgorithm;
     	private String caIdentifier;
     	private X509Certificate identity;
     	private KeyPair keyPair;
@@ -463,9 +479,8 @@ public class Client {
     	 * @param hashAlgorithm the algorithm used to create the fingerprint.
     	 * @return the builder.
     	 */
-    	public Builder caFingerprint(byte[] fingerprint, String hashAlgorithm) {
+    	public Builder caFingerprint(byte[] fingerprint) {
     		this.fingerprint = fingerprint;
-    		this.hashAlgorithm = hashAlgorithm;
     		
     		return this;
     	}
