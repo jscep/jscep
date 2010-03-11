@@ -23,13 +23,16 @@
 package org.jscep.client;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.Proxy;
 import java.net.URL;
 import java.security.InvalidKeyException;
+import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,11 +46,14 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.jscep.FingerprintVerificationCallback;
+import org.jscep.PkiOperationFailureException;
 import org.jscep.request.GetCaCaps;
 import org.jscep.request.GetCaCert;
 import org.jscep.request.GetNextCaCert;
 import org.jscep.response.Capabilities;
 import org.jscep.transaction.Transaction;
+import org.jscep.transaction.TransactionImpl;
+import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
 
@@ -219,7 +225,7 @@ public class Client {
      * @return a new transaction.
      * @throws IOException 
      */
-    public Transaction createTransaction() throws IOException {
+    private TransactionImpl createTransaction() throws IOException {
     	X509Certificate ca = retrieveCA();
     	Transport transport = createTransport();
     	Capabilities capabilities = getCaCapabilities(true);
@@ -232,7 +238,26 @@ public class Client {
     		digestAlg = capabilities.getStrongestMessageDigest();
     	}
     	
-    	return Transaction.createTransaction(ca, getRecipientCertificate(), identity, privKey, digestAlg, cipherAlg, transport);
+    	return TransactionImpl.createTransaction(ca, getRecipientCertificate(), identity, privKey, digestAlg, cipherAlg, transport);
+    }
+    
+    public List<X509CRL> getCrl() throws IOException, PkiOperationFailureException {
+    	final TransactionImpl t = createTransaction();
+    	
+    	return t.getCrl();
+    }
+    
+    public List<X509Certificate> getCertificate(BigInteger serial) throws IOException, PkiOperationFailureException {
+    	final TransactionImpl t = createTransaction();
+    	
+    	return t.getCertificate(serial);
+    }
+    
+    public Transaction enrollCertificate(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException {
+    	final TransactionImpl t = createTransaction();
+    	t.enrollCertificate(subject, subjectKeyPair, password);
+    	
+    	return t;
     }
     
     private Transport createTransport() throws IOException {

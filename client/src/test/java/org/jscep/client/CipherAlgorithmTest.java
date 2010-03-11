@@ -5,7 +5,7 @@ import static org.hamcrest.core.Is.is;
 import java.io.IOException;
 
 import org.jscep.response.Capability;
-import org.jscep.transaction.Transaction;
+import org.jscep.transaction.TransactionImpl;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,8 +33,6 @@ public class CipherAlgorithmTest extends AbstractClientTest {
 	
 	private void testCipher(String cipher) throws Exception {
 		client.setPreferredCipherAlgorithm(cipher);
-		
-		Transaction trans = client.createTransaction();
-		trans.enrollCertificate(identity, keyPair, password);
+		client.enrollCertificate(identity, keyPair, password);
 	}
 }

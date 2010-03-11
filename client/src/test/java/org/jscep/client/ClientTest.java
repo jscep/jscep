@@ -9,6 +9,7 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.jscep.transaction.Transaction;
+import org.jscep.transaction.TransactionImpl;
 import org.jscep.transaction.Transaction.State;
 import org.junit.Assume;
 import org.junit.Ignore;
@@ -22,10 +23,10 @@ public class ClientTest extends AbstractClientTest {
 		// Ignore this test if the CA doesn't support renewal.
 		Assume.assumeTrue(client.getCaCapabilities().isRenewalSupported());
 		
-		Transaction trans = client.createTransaction();		
-		State state = trans.enrollCertificate(identity, keyPair, password);
+		Transaction trans = client.enrollCertificate(identity, keyPair, password);
+		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			trans.getIssuedCertificates();
+			trans.getCertificates();
 		}
 	}
 
@@ -38,46 +39,49 @@ public class ClientTest extends AbstractClientTest {
 	public void testRenewalSameCAEnrollDisallowed() throws Exception {
 		// Ignore if renewal is supported.
 		Assume.assumeThat(client.getCaCapabilities().isRenewalSupported(), is(false));
-		
-		Transaction trans = client.createTransaction();		
+
+		Transaction trans;
 		State state;
-		state = trans.enrollCertificate(identity, keyPair, password);
+		
+		trans = client.enrollCertificate(identity, keyPair, password);
+		state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			identity = trans.getIssuedCertificates().get(0);
+			identity = trans.getCertificates().get(0);
 		}
-		state = trans.enrollCertificate(identity, keyPair, password);
+		
+		trans = client.enrollCertificate(identity, keyPair, password);
+		state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			identity = trans.getIssuedCertificates().get(0);
+			identity = trans.getCertificates().get(0);
 		}
 	}
 
 	@Test
 	public void testEnroll() throws Exception {		
-		Transaction trans = client.createTransaction();		
-		State state = trans.enrollCertificate(identity, keyPair, password);
+		Transaction trans = client.enrollCertificate(identity, keyPair, password);
+		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			trans.getIssuedCertificates().get(0);
+			trans.getCertificates().get(0);
 		}
 	}
 	
 	@Test
 	public void testEnrollThenGet() throws Exception {		
-		final Transaction enrollTrans = client.createTransaction();		
-		final State state = enrollTrans.enrollCertificate(identity, keyPair, password);
+		final Transaction trans = client.enrollCertificate(identity, keyPair, password);
+		State state = trans.getState();
 		Assume.assumeTrue(state == State.CERT_ISSUED);
-		identity = enrollTrans.getIssuedCertificates().get(0);
-		final Transaction getCertTrans = client.createTransaction();
-		final List<X509Certificate> certs = getCertTrans.getCertificate(identity.getSerialNumber());
+		identity = trans.getCertificates().get(0);
+		final List<X509Certificate> certs = client.getCertificate(identity.getSerialNumber());
 		
 		Assert.assertEquals(identity, certs.get(0));
 	}
 	
 	@Test(expected = IOException.class)
 	public void testEnrollInvalidPassword() throws Exception {
-		Transaction trans = client.createTransaction();		
-		State state = trans.enrollCertificate(identity, keyPair, new char[0]);
+		Transaction trans = client.enrollCertificate(identity, keyPair, new char[0]);
+		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			trans.getIssuedCertificates().get(0);
+			trans.getCertificates().get(0);
 		}
 	}
 }

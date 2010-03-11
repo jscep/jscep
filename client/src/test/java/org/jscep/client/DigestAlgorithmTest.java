@@ -62,7 +62,6 @@ public class DigestAlgorithmTest extends AbstractClientTest {
 	private void testDigest(String digest) throws Exception {
 		client.setPreferredDigestAlgorithm(digest);
 		
-		Transaction trans = client.createTransaction();
-		trans.enrollCertificate(identity, keyPair, password);
+		Transaction trans = client.enrollCertificate(identity, keyPair, password);
 	}
 }
