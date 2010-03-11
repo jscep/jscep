@@ -24,7 +24,7 @@ package org.jscep.content;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
@@ -41,15 +41,15 @@ import org.jscep.util.LoggingUtil;
  */
 public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	private static Logger LOGGER = LoggingUtil.getLogger(CertRepContentHandler.class);
-	private final KeyPair keyPair;
+	private final PrivateKey privKey;
 	
 	/**
 	 * Constructs a new instance of <code>CertRepContentHandler</code>.
 	 * 
 	 * @param keyPair the KeyPair used to decode the {@link PkiMessage}.
 	 */
-	public CertRepContentHandler(KeyPair keyPair) {
-		this.keyPair = keyPair;
+	public CertRepContentHandler(PrivateKey privKey) {
+		this.privKey = privKey;
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 			}
 
 			final PkiMessageParser parser = new PkiMessageParser();
-			parser.setPrivateKey(keyPair.getPrivate());
+			parser.setPrivateKey(privKey);
 			final PkiMessage msg = parser.parse(contentInfo);
 			
 			LOGGER.exiting(getClass().getName(), "getContent", msg);

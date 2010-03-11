@@ -26,14 +26,11 @@ import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.security.InvalidKeyException;
-import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -64,107 +61,156 @@ public class Client {
 	private Set<X509Certificate> verified = new HashSet<X509Certificate>(1);
 	private String preferredDigestAlg;
 	private String preferredCipherAlg;
-    private URL url;						// Required
-    private Proxy proxy;					// Optional
-    private String caIdentifier;			// Optional
-    private KeyPair keyPair;				// Optional
-    private X509Certificate identity;		// Optional
+	
+    private final URL url;
+    private final PrivateKey privKey;
+    private final X509Certificate identity;
+    private final CallbackHandler cbh;
+    private final String profile;
+    private Proxy proxy = Proxy.NO_PROXY;
     
-    private byte[] fingerprint;				// Required
-    private String hashAlgorithm;			// Required
-    // OR
-    private CallbackHandler callbackHandler; // Optional
-    
-    private Client(Builder builder) throws IllegalStateException {
-    	url = builder.url;
-    	// See http://tools.ietf.org/html/draft-nourse-scep-19#section-5.1
-    	if (isValid(url) == false) {
-    		throw new IllegalStateException("Invalid URL");
-    	}
-    	// If the user doesn't specify a proxy, we must explicitly state
-    	// not to use a proxy.
-    	proxy = builder.proxy;
-    	if (proxy == null) {
-    		proxy = Proxy.NO_PROXY;
-    	}
-    	// Support for multiple CA profiles.
-    	caIdentifier = builder.caIdentifier;
-    	// This is used for communicating with the SCEP server.  It SHOULD
-    	// NOT necessarily correspond to what we're going to enroll.
-    	keyPair = builder.keyPair;
-    	if (keyPair == null) {
-    		throw new IllegalStateException("keyPair is null");
-    	}
-    	if (isValid(keyPair) == false) {
-    		throw new IllegalStateException("Invalid KeyPair");
-    	}
-    	// This is the identity of the SCEP client.  This can be different to
-    	// the certificate being enrolled.
-    	identity = builder.identity;
-    	// The key pair and certificate have to match otherwise we'll run into
-    	// problems decrypting content.
-		if (identity.getPublicKey().equals(keyPair.getPublic()) == false) {
-			throw new IllegalStateException("Public Key Mismatch");
-		}
-    	
-    	// The user will either provide a finger print and hash algorithm
-    	fingerprint = builder.fingerprint;
-    	// This isn't necessary.  We can guess the algorithm from the length.
-    	hashAlgorithm = determineAlgorithm(fingerprint);
-    	// ... or a callback handler
-    	callbackHandler = builder.callbackHandler;
-    	
-    	
-    	if (callbackHandler != null) {
-    		if (fingerprint != null) {
-    			// One or the other damnit.
-    		}
-    	} else {
-    		callbackHandler = new FingerprintCallbackHandler(fingerprint, hashAlgorithm);
-    	}
-    	
+    /**
+     * Creates a new Client instance without a profile identifier.
+     * <p>
+     * This method will throw a NullPointerException if any of the arguments are null,
+     * and an InvalidArgumentException if any of the arguments is invalid.
+     * 
+     * @param url the URL to the SCEP server.
+     * @param identity the certificate to identify this client.
+     * @param privKey the private key for the identity.
+     * @param cbh the callback handler to check the CA identity.
+     */
+    public Client(URL url, X509Certificate identity, PrivateKey privKey, CallbackHandler cbh) {
+    	this(url, identity, privKey, cbh, null);
     }
     
-    private String determineAlgorithm(byte[] fingerprint) {
-    	switch (fingerprint.length) {
-    		case 16:
-    			return "MD5";
-    		case 20:
-    			return "SHA-1";
-    		case 32:
-    			return "SHA-256";
-    		case 64:
-    			return "SHA-512";
-    		default:
-    			throw new IllegalArgumentException("Fingerprint length does not correspond to a known cryptographic hash function.");
-    	}
-    }
-
-    
-    private boolean isValid(KeyPair keyPair) {
-    	PrivateKey pri = keyPair.getPrivate();
-    	PublicKey pub = keyPair.getPublic();
+    /**
+     * Creates a new Client instance with a profile identifier.
+     * <p>
+     * With the exception of the profile name, this method will throw a 
+     * NullPointerException if any of the arguments are null, and an 
+     * InvalidArgumentException if any of the arguments is invalid.
+     * 
+     * @param url the URL to the SCEP server.
+     * @param identity the certificate to identify this client.
+     * @param privKey the private key for the identity.
+     * @param cbh the callback handler to check the CA identity.
+     * @param profile the name of the CA profile.
+     */
+    public Client(URL url, X509Certificate identity, PrivateKey privKey, CallbackHandler cbh, String profile) {
+    	this.url = url;
+    	this.identity = identity;
+    	this.privKey = privKey;
+    	this.cbh = cbh;
+    	this.profile = profile;
     	
-    	return pri.getAlgorithm().equals("RSA") && pub.getAlgorithm().equals("RSA");
+    	validateInput();
     }
     
-    private boolean isValid(URL url) {
+    /**
+     * Sets the proxy for this client to use.
+     *  
+     * @param proxy the proxy to use.
+     */
+    public void setProxy(Proxy proxy) {
+    	this.proxy = proxy;
+    }
+    
+    /**
+     * Returns the proxy in use by this client.
+     * 
+     * @return the proxy.
+     */
+    public Proxy getProxy() {
+    	return proxy;
+    }
+    
+    /**
+     * Returns the URL of the SCEP server used by this client.
+     * 
+     * @return the SCEP server URL.
+     */
+    public URL getURL() {
+    	return url;
+    }
+    
+    /**
+     * Returns the profile name of the CA for this client.
+     * <p>
+     * If no profile is set, this method returns <code>null</code>.
+     * 
+     * @return the profile name.
+     */
+    public String getProfile() {
+    	return profile;
+    }
+    
+    /**
+     * Returns the callback handler in use by this client.
+     * 
+     * @return the callback handler.
+     */
+    public CallbackHandler getCallbackHandler() {
+    	return cbh;
+    }
+    
+    /**
+     * Returns the certificate in use by this client to identify itself.
+     * 
+     * @return the certificate.
+     */
+    public X509Certificate getIdentity() {
+    	return identity;
+    }
+    
+    /**
+     * Returns the private key in use by this client.
+     * 
+     * @return the private key.
+     */
+    public PrivateKey getPrivateKey() {
+    	return privKey;
+    }
+    
+    /**
+     * Validates all the input to this client.
+     * 
+     * @throws NullPointerException if any member variables are null.
+     * @throws IllegalArgumentException if any member variables are invalid.
+     */
+    private void validateInput() throws NullPointerException, IllegalArgumentException {
+    	// Check for null values first.
     	if (url == null) {
-    		return false;
+    		throw new NullPointerException("URL should not be null");
+    	}
+    	if (identity == null) {
+    		throw new NullPointerException("Identity should not be null");
+    	}
+    	if (privKey == null) {
+    		throw new NullPointerException("Private key should not be null");
+    	}
+    	if (cbh == null) {
+    		throw new NullPointerException("Callback handler should not be null");
+    	}
+    	
+    	if (identity.getPublicKey().getAlgorithm().equals("RSA") == false) {
+    		throw new IllegalArgumentException("Public key algorithm should be RSA");
+    	}
+    	if (privKey.getAlgorithm().equals("RSA") == false) {
+    		throw new IllegalArgumentException("Private key algorithm should be RSA");
     	}
     	if (url.getProtocol().matches("^https?$") == false) {
-    		return false;
+    		throw new IllegalArgumentException("URL protocol should be HTTP or HTTPS");
     	}
     	if (url.getPath().endsWith("pkiclient.exe") == false) {
-    		return false;
+    		throw new IllegalArgumentException("URL should end with pkiclient.exe");
     	}
     	if (url.getRef() != null) {
-    		return false;
+    		throw new IllegalArgumentException("URL should contain no reference");
     	}
     	if (url.getQuery() != null) {
-    		return false;
+    		throw new IllegalArgumentException("URL should contain no query string");
     	}
-    	return true;
     }
     
     /**
@@ -186,7 +232,7 @@ public class Client {
     		digestAlg = capabilities.getStrongestMessageDigest();
     	}
     	
-    	return Transaction.createTransaction(ca, getRecipientCertificate(), identity, keyPair, digestAlg, cipherAlg, transport);
+    	return Transaction.createTransaction(ca, getRecipientCertificate(), identity, privKey, digestAlg, cipherAlg, transport);
     }
     
     private Transport createTransport() throws IOException {
@@ -219,13 +265,13 @@ public class Client {
     	
     	Capabilities caps = null;
     	if (useCache == true) {
-    		caps = capabilitiesCache.get(caIdentifier);
+    		caps = capabilitiesCache.get(profile);
     	}
     	if (caps == null) {
-	    	final GetCaCaps req = new GetCaCaps(caIdentifier);
+	    	final GetCaCaps req = new GetCaCaps(profile);
 	        final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 	        caps = trans.sendMessage(req);
-	        capabilitiesCache.put(caIdentifier, caps);
+	        capabilitiesCache.put(profile, caps);
     	}
         
         LOGGER.exiting(getClass().getName(), "getCaCapabilities", caps);
@@ -243,7 +289,7 @@ public class Client {
      */
     public List<X509Certificate> getCaCertificate() throws IOException {
     	LOGGER.entering(getClass().getName(), "getCaCertificate");
-    	final GetCaCert req = new GetCaCert(caIdentifier);
+    	final GetCaCert req = new GetCaCert(profile);
         final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
         final List<X509Certificate> certs = trans.sendMessage(req);
@@ -267,12 +313,7 @@ public class Client {
     		LOGGER.finer("Verification Cache Missed.");
     	}
     	
-    	final String hashAlgorithm;
-    	if (this.hashAlgorithm != null) {
-    		hashAlgorithm = this.hashAlgorithm;
-    	} else {
-    		hashAlgorithm = getCaCapabilities(true).getStrongestMessageDigest();
-    	}
+    	final String hashAlgorithm = getCaCapabilities(true).getStrongestMessageDigest();
     	final byte[] fingerprint;
     	try {
 			fingerprint = createFingerprint(cert, hashAlgorithm);
@@ -285,7 +326,7 @@ public class Client {
 		}
 		FingerprintVerificationCallback callback = new FingerprintVerificationCallback(fingerprint, hashAlgorithm);
 		try {
-			callbackHandler.handle(new Callback[] {callback});
+			cbh.handle(new Callback[] {callback});
 		} catch (UnsupportedCallbackException e) {
 			throw new RuntimeException(e);
 		}
@@ -312,7 +353,7 @@ public class Client {
     	final X509Certificate issuer = retrieveCA();
     	
     	final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-    	final GetNextCaCert req = new GetNextCaCert(issuer, caIdentifier);
+    	final GetNextCaCert req = new GetNextCaCert(issuer, profile);
     	
     	return trans.sendMessage(req);
     }
@@ -382,204 +423,5 @@ public class Client {
     
     void setPreferredDigestAlgorithm(String algorithm) {
     	preferredDigestAlg = algorithm;
-    }
-    
-    /**
-     * This class is used for building immutable instances of the <code>Client</code>
-     * class.  
-     * <p>
-     * Instances of this class can be configured by invoking the methods
-     * declared below.  Following configuration, the {@see #build()} method should
-     * be invoked to retrieve the new <code>Client</code> instance.
-     * <p>
-     * In order to create a valid <code>Client</code>, adopters must adhere to the
-     * following pre-conditions.  The client must be able to...
-     * <ul>
-     *     <li>communicate with the SCEP server using:
-     *         <ul>
-     *             <li>{@see #url(URL)}
-     *             <li>{@see #proxy(Proxy)} (if required)
-     *         </ul>
-     *     <li>identify itself using:
-     *         <ul>
-     *             <li>{@see #identity(X509Certificate, KeyPair)}
-     *         </ul>
-     *     <li>verify the CA certificate fingerprint using either:
-     *         <ul>
-     *             <li>{@see #callbackHandler(CallbackHandler)} OR
-     *             <li>{@see #caFingerprint(byte[], String)}
-     *         </ul>
-     *     <li>select the correct CA profile, if supported, using:
-     *         <ul>
-     *             <li>{@see #caIdentifier(String)}
-     *         </ul>
-     * </ul>
-     * <p>
-     * If an instance of this class is not correctly configured according to the
-     * above pre-conditions, the {@see #build()} method will throw an 
-     * {@see IllegalStateException}.
-     * <p>
-     * Example Usage:
-     * <pre>
-     * URL url = new URL("http://www.example.org/scep/pkiclient.exe");
-     * X509Certificate id = ...;
-     * KeyPair pair = ...;
-     * CallbackHandler handler = ...;
-     * 
-     * Client client = new Client.Builder().url(<b>url</b>).identity(<b>id</b>, <b>pair</b>).callbackHandler(<b>handler</b>).build();
-     * </pre>
-     * 
-     * @author David Grant
-     */
-    public static class Builder {
-    	private URL url;
-    	private Proxy proxy = Proxy.NO_PROXY;
-    	private byte[] fingerprint;
-    	private String caIdentifier;
-    	private X509Certificate identity;
-    	private KeyPair keyPair;
-    	private CallbackHandler callbackHandler;
-    	
-    	/**
-    	 * Sets the {@see URL} of the SCEP server.
-    	 * <p>
-    	 * The URL should be of the following form:
-    	 * <pre>
-    	 * http(s?)://&lt;host&gt;[:&lt;port&gt;]/[&lt;path&gt;]pkiclient.exe
-    	 * </pre>
-    	 * 
-    	 * @param url the URL.
-    	 * @return the builder.
-    	 */
-    	public Builder url(URL url) {
-    		this.url = url;
-    		
-    		return this;
-    	}
-    	
-    	/**
-    	 * Sets the {@see Proxy} needed to access the SCEP server, if any.
-    	 * 
-    	 * @param proxy the Proxy.
-    	 * @return the builder.
-    	 */
-    	public Builder proxy(Proxy proxy) {
-    		this.proxy = proxy;
-    		
-    		return this;
-    	}
-    	
-    	/**
-    	 * Sets the expected CA fingerprint.
-    	 * <p>
-    	 * If the fingerprint is not known, the {@see #callbackHandler(CallbackHandler)} 
-    	 * method MUST be used instead. 
-    	 * 
-    	 * @param fingerprint the expected fingerprint.
-    	 * @param hashAlgorithm the algorithm used to create the fingerprint.
-    	 * @return the builder.
-    	 */
-    	public Builder caFingerprint(byte[] fingerprint) {
-    		this.fingerprint = fingerprint;
-    		
-    		return this;
-    	}
-    	
-    	/**
-    	 * Sets the CA identity string.
-    	 * <p>
-    	 * This property should be set if the CA supports multiple profiles.
-    	 * 
-    	 * @param caIdentifier the CA identity string.
-    	 * @return the builder.
-    	 */
-    	public Builder caIdentifier(String caIdentifier) {
-    		this.caIdentifier = caIdentifier;
-    		
-    		return this;
-    	}
-    	
-    	/**
-    	 * Sets the identity of the SCEP client.
-    	 * <p>
-    	 * The arguments provided to this method represent the identity of the
-    	 * SCEP client, and not necessarily the entity to be enrolled. 
-    	 * 
-    	 * @param identity the client identity.
-    	 * @param keyPair the RSA keypair of the client.
-    	 * @return the builder.
-    	 */
-    	public Builder identity(X509Certificate identity, KeyPair keyPair) {
-    		this.identity = identity;
-    		this.keyPair = keyPair;
-    		
-    		return this;
-    	}
-    	
-    	/**
-    	 * Sets a {@link CallbackHandler} to use for handling the fingerprint
-    	 * verification callback.
-    	 * <p>
-    	 * This method should be used if the CA fingerprint is not known at the 
-    	 * time of client creation.  If a fingerprint is already known, the
-    	 * {@see #caFingerprint(byte[], String)} method should be used instead.
-    	 * <p>
-    	 * The provided {@see CallbackHandler} MUST be able to handle the 
-    	 * {@see FingerprintVerificationCallback} callback.
-    	 * 
-    	 * @param callbackHandler the callback handler.
-    	 * @return the builder.
-    	 */
-    	public Builder callbackHandler(CallbackHandler callbackHandler) {
-    		this.callbackHandler = callbackHandler;
-    		
-    		return this;
-    	}
-    	
-    	/**
-    	 * Constructs a new immutable instance of <code>Client</code>.
-    	 * 
-    	 * @return a new instance of <code>Client</code>
-    	 * @throws IllegalStateException if any pre-conditions have been violated.
-    	 */
-    	public Client build() throws IllegalStateException {
-    		return new Client(this);
-    	}
-    }
-    
-    /**
-     * Basic CallbackHandler
-     * 
-     * @author David Grant
-     */
-    private static class FingerprintCallbackHandler implements CallbackHandler {
-    	private final byte[] fingerprint;
-    	private final String hashAlgorithm;
-    	
-    	public FingerprintCallbackHandler(byte[] fingerprint, String hashAlgorithm) {
-    		this.fingerprint = fingerprint;
-    		this.hashAlgorithm = hashAlgorithm;
-    	}
-    	
-		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-			for (int i = 0; i < callbacks.length; i++) {
-				if (callbacks[i] instanceof FingerprintVerificationCallback) {
-					final FingerprintVerificationCallback callback = (FingerprintVerificationCallback) callbacks[i];
-					
-					if (callback.getAlgorithm().equals(hashAlgorithm) == false) {
-						// We didn't supply this algorithm.
-						callback.setVerified(false);
-					} else if (Arrays.equals(callback.getFingerprint(), fingerprint) == false) {
-						// The fingerprints don't match.
-						callback.setVerified(false);
-					} else {
-						// OK!
-						callback.setVerified(true);
-					}
-				} else {
-					throw new UnsupportedCallbackException(callbacks[i]);
-				}
-			}
-		}
     }
 }

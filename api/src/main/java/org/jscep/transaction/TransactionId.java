@@ -21,9 +21,9 @@
  */
 package org.jscep.transaction;
 
-import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
@@ -46,14 +46,14 @@ public final class TransactionId {
 		this.id = id;
 	}
 	
-	private TransactionId(KeyPair keyPair, String digestAlgorithm) {
+	private TransactionId(PublicKey pubKey, String digestAlgorithm) {
     	MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance(digestAlgorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        id = HexUtil.toHex(digest.digest(keyPair.getPublic().getEncoded()));
+        id = HexUtil.toHex(digest.digest(pubKey.getEncoded()));
 	}
 	
 	private TransactionId() {
@@ -78,10 +78,10 @@ public final class TransactionId {
 	 * 
 	 * @return the new Transaction Id
 	 */
-	public static TransactionId createTransactionId(KeyPair keyPair, String digestAlgorithm) {
-		LOGGER.entering(TransactionId.class.getName(), "createTransactionId", new Object[] {keyPair, digestAlgorithm});
+	public static TransactionId createTransactionId(PublicKey pubKey, String digestAlgorithm) {
+		LOGGER.entering(TransactionId.class.getName(), "createTransactionId", new Object[] {pubKey, digestAlgorithm});
 		
-		TransactionId t = new TransactionId(keyPair, digestAlgorithm);
+		TransactionId t = new TransactionId(pubKey, digestAlgorithm);
 
 		LOGGER.exiting(TransactionId.class.getName(), "createTransactionId", t);
 		return t;

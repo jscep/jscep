@@ -48,7 +48,7 @@ public class PkiMessageTest {
 		generator.setRecipientNonce(Nonce.nextNonce());
 		generator.setMessageDigest("SHA-1");
 		generator.setCipherAlgorithm("DES");
-		generator.setKeyPair(keyPair);
+		generator.setPrivateKey(keyPair.getPrivate());
 		generator.setRecipient(recipient);
 		generator.setSigner(identity);
 		

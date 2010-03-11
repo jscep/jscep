@@ -22,7 +22,7 @@
 package org.jscep.request;
 
 import java.io.IOException;
-import java.security.KeyPair;
+import java.security.PrivateKey;
 
 import org.jscep.content.CertRepContentHandler;
 import org.jscep.pkcs7.PkiMessage;
@@ -35,7 +35,7 @@ import org.jscep.pkcs7.PkiMessage;
  */
 public class PkcsReq implements Request<PkiMessage> {
 	private final PkiMessage msgData;
-	private final KeyPair keyPair;
+	private final PrivateKey privKey;
 
 	/**
 	 * Creates a new instance of this class using the provided pkiMessage
@@ -44,9 +44,9 @@ public class PkcsReq implements Request<PkiMessage> {
 	 * @param msgData the pkiMessage to use.
 	 * @param keyPair the KeyPair to use.
 	 */
-	public PkcsReq(PkiMessage msgData, KeyPair keyPair) {
+	public PkcsReq(PkiMessage msgData, PrivateKey privKey) {
 		this.msgData = msgData;
-		this.keyPair = keyPair;
+		this.privKey = privKey;
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class PkcsReq implements Request<PkiMessage> {
 	 * {@inheritDoc}
 	 */
 	public CertRepContentHandler getContentHandler() {
-		return new CertRepContentHandler(keyPair);
+		return new CertRepContentHandler(privKey);
 	}
 	
 	@Override

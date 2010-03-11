@@ -27,7 +27,7 @@ public class PkiRequestTest {
 		
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
 		
-		fixture = new PkcsReq(message, keyPair);
+		fixture = new PkcsReq(message, keyPair.getPrivate());
 	}
 	
 	@Test

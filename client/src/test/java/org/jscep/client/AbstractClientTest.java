@@ -10,6 +10,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.x500.X500Principal;
 
 import org.jscep.x509.X509Util;
@@ -28,14 +29,11 @@ public abstract class AbstractClientTest {
 	public void setUp() throws Exception {
 		keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 		identity = X509Util.createEphemeralCertificate(new X500Principal("CN=jscep.org"), keyPair);
+
+		final URL url = new URL("http://jscep.org/scep/pkiclient.exe");
+		final CallbackHandler cbh = new NoSecurityCallbackHandler();
 		
-		Client.Builder builder = new Client.Builder();
-		builder.url(new URL("http://jscep.org/scep/pkiclient.exe"));
-		builder.caFingerprint(new byte[] {-93, -44, 23, 25, -106, 116, 80, -113, 36, 23, 76, -89, -36, -18, 89, -59});
-		builder.identity(identity, keyPair);
-		builder.caIdentifier("foo");
-		
-		client = builder.build();
+		client = new Client(url, identity, keyPair.getPrivate(), cbh);
 	}
 	
 	/**

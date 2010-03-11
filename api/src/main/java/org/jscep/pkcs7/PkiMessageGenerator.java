@@ -25,8 +25,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
 import java.security.MessageDigest;
+import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -104,7 +104,7 @@ public class PkiMessageGenerator implements Cloneable {
 	private Nonce senderNonce;
 	private Nonce recipientNonce;
 	private FailInfo failInfo;
-	private KeyPair keyPair;
+	private PrivateKey privKey;
 	private X509Certificate identity;
 	private String digestAlgorithm;
 	private PkiStatus pkiStatus;
@@ -114,8 +114,8 @@ public class PkiMessageGenerator implements Cloneable {
 	private String cipherAlgorithm;
 	private ASN1Encodable msgData;
 	
-	public void setKeyPair(KeyPair keyPair) {
-		this.keyPair = keyPair;
+	public void setPrivateKey(PrivateKey privKey) {
+		this.privKey = privKey;
 	}
 	
 	public void setSigner(X509Certificate identity) {
@@ -207,8 +207,8 @@ public class PkiMessageGenerator implements Cloneable {
 		if (cipherAlgorithm == null) {
 			throw new IllegalStateException("Missing Cipher Algorithm");
 		}
-		if (keyPair == null) {
-			throw new IllegalStateException("Missing Key Pair");
+		if (privKey == null) {
+			throw new IllegalStateException("Missing Private Key");
 		}
 		if (recipient == null) {
 			throw new IllegalStateException("Missing Recipient");
@@ -330,7 +330,7 @@ public class PkiMessageGenerator implements Cloneable {
 		final DEROutputStream dOut = new DEROutputStream(bOut);
 		dOut.writeObject(signedAttr);
 
-		sig.initSign(keyPair.getPrivate());
+		sig.initSign(privKey);
 		sig.update(bOut.toByteArray());
 		
 		final SignerIdentifier sid = getSignerIdentifier();

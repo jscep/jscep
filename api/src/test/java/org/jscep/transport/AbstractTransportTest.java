@@ -69,12 +69,12 @@ abstract public class AbstractTransportTest {
 		msgGenerator.setSenderNonce(Nonce.nextNonce());
 		msgGenerator.setMessageDigest("MD5");
 		msgGenerator.setCipherAlgorithm("DES");
-		msgGenerator.setKeyPair(keyPair);
+		msgGenerator.setPrivateKey(keyPair.getPrivate());
 		msgGenerator.setSigner(getCertificate(keyPair));
 		msgGenerator.setRecipient(getCertificate(keyPair));
 		msgGenerator.setMessageData(new DERNull());
 		PkiMessage msgData = msgGenerator.generate();
-		PkcsReq req = new PkcsReq(msgData, keyPair);
+		PkcsReq req = new PkcsReq(msgData, keyPair.getPrivate());
 		
 		try {
 			transport.sendMessage(req);

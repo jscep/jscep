@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.cert.CRL;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
@@ -73,7 +74,7 @@ import org.jscep.x509.X509Util;
 public class Transaction {
 	private static NonceQueue QUEUE = new NonceQueue(20);
 	private static Logger LOGGER = LoggingUtil.getLogger(Transaction.class);
-	private final KeyPair clientKeyPair;
+	private final PrivateKey clientPrivateKey;
 	private final Transport transport;
 	private final PkiMessageGenerator msgGenerator;
 	private final X509Certificate serverCertificate;
@@ -86,21 +87,21 @@ public class Transaction {
 	private Callable<State> task;
 	private State state = State.CERT_NON_EXISTANT;
 
-	Transaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, KeyPair clientKeyPair, String digestAlg, String cipherAlg, Transport transport) {
+	Transaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, PrivateKey clientPrivateKey, String digestAlg, String cipherAlg, Transport transport) {
 		this.issuerCertificate = issuerCertificate;
 		this.transport = transport;
 		
 		this.serverCertificate = serverCertificate;
 		this.clientCertificate = clientCertificate;
-		this.clientKeyPair = clientKeyPair;
-		this.transId = TransactionId.createTransactionId(clientKeyPair, digestAlg);
+		this.clientPrivateKey = clientPrivateKey;
+		this.transId = TransactionId.createTransactionId(clientCertificate.getPublicKey(), digestAlg);
 		this.digestAlg = digestAlg;
 		
 		msgGenerator = new PkiMessageGenerator();
 		msgGenerator.setTransactionId(transId);
 		msgGenerator.setMessageDigest(digestAlg);
 		msgGenerator.setSigner(clientCertificate);
-		msgGenerator.setKeyPair(clientKeyPair);
+		msgGenerator.setPrivateKey(clientPrivateKey);
 		msgGenerator.setCipherAlgorithm(cipherAlg);
 		msgGenerator.setRecipient(serverCertificate);
 	}
@@ -281,7 +282,7 @@ public class Transaction {
 		msgGenerator.setMessageData(op.getMessage());
 		
 		final PkiMessage req = msgGenerator.generate();
-		final PkiMessage res = transport.sendMessage(new PkcsReq(req, clientKeyPair));
+		final PkiMessage res = transport.sendMessage(new PkcsReq(req, clientPrivateKey));
 
 		validateExchange(req, res);
 		
@@ -418,10 +419,10 @@ public class Transaction {
 	 * @param transport the transport to use for this transaction.
 	 * @return a new transaction.
 	 */
-	public static Transaction createTransaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, KeyPair clientKeyPair, String digestAlg, String cipherAlg, Transport transport) {
+	public static Transaction createTransaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, PrivateKey privateKey, String digestAlg, String cipherAlg, Transport transport) {
 		LOGGER.entering(Transaction.class.getName(), "createTransaction");
 		
-		Transaction t = new Transaction(issuerCertificate, serverCertificate, clientCertificate, clientKeyPair, digestAlg, cipherAlg, transport);
+		Transaction t = new Transaction(issuerCertificate, serverCertificate, clientCertificate, privateKey, digestAlg, cipherAlg, transport);
 		
 		LOGGER.exiting (Transaction.class.getName(), "createTransaction", t);
 		return t;
