@@ -1,14 +1,22 @@
 package org.jscep.transaction;
 
-import java.io.IOException;
-import java.security.cert.X509Certificate;
-import java.util.List;
+import java.security.cert.CertStore;
 import java.util.concurrent.Callable;
 
 public interface Transaction {
+	/**
+	 * Returns the current state of this transaction.
+	 * 
+	 * @return the current state.
+	 */
 	State getState();
+	/**
+	 * Retrieve the reason for failure.
+	 * 
+	 * @return the reason for failure.
+	 */
 	FailInfo getFailureReason();
-	List<X509Certificate> getCertificates() throws IOException;
+	CertStore getCertStore();
 	Callable<State> getTask();
 	
 	/**

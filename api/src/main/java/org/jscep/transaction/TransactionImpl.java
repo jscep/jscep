@@ -22,19 +22,11 @@
 package org.jscep.transaction;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
-import java.security.cert.CRL;
 import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.Certificate;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
@@ -43,15 +35,14 @@ import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.jscep.PkiOperationFailureException;
 import org.jscep.operations.DelayablePkiOperation;
-import org.jscep.operations.GetCert;
 import org.jscep.operations.GetCertInitial;
-import org.jscep.operations.GetCrl;
 import org.jscep.operations.PkiOperation;
 import org.jscep.pkcs7.PkiMessage;
 import org.jscep.pkcs7.PkiMessageGenerator;
 import org.jscep.pkcs7.SignedDataParser;
 import org.jscep.pkcs7.SignedDataUtil;
 import org.jscep.request.PkcsReq;
+import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
 import org.jscep.x509.X509Util;
@@ -80,23 +71,18 @@ public class TransactionImpl implements Transaction {
 	private final X509Certificate serverCertificate;
 	private final X509Certificate clientCertificate;
 	private final TransactionId transId;
-	private final X509Certificate issuerCertificate;
-	private String digestAlg;
 	private FailInfo failInfo;
 	private CertStore certStore;
 	private Callable<State> task;
 	private State state = State.CERT_NON_EXISTANT;
 
-	TransactionImpl(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, PrivateKey clientPrivateKey, String digestAlg, String cipherAlg, Transport transport) {
-		this.issuerCertificate = issuerCertificate;
+	public TransactionImpl(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, PrivateKey clientPrivateKey, String digestAlg, String cipherAlg, Transport transport) {
 		this.transport = transport;
 		
 		this.serverCertificate = serverCertificate;
 		this.clientCertificate = clientCertificate;
 		this.clientPrivateKey = clientPrivateKey;
 		this.transId = TransactionId.createTransactionId(clientCertificate.getPublicKey(), digestAlg);
-		this.digestAlg = digestAlg;
-		
 		msgGenerator = new PkiMessageGenerator();
 		msgGenerator.setTransactionId(transId);
 		msgGenerator.setMessageDigest(digestAlg);
@@ -139,18 +125,13 @@ public class TransactionImpl implements Transaction {
 	 * this method will throw an {@link IllegalStateException}.
 	 * 
 	 * @return the certificate store.
-	 * @throws IOException 
 	 * @throws IllegalStateException
 	 */
-	public List<X509Certificate> getCertificates() throws IOException {
+	public CertStore getCertStore() {
 		if (state != State.CERT_ISSUED) {
 			throw new IllegalStateException();
 		}
-		try {
-			return getCertificates(certStore.getCertificates(null));
-		} catch (CertStoreException e) {
-			throw new IOException(e);
-		}
+		return certStore;
 	}
 	
 	/**
@@ -170,103 +151,6 @@ public class TransactionImpl implements Transaction {
 	}
 	
 	/**
-     * Retrieves the certificate with the provided serial number as issued by the
-     * server CA. 
-     *  
-     * @return the certificate.
-     * @throws IOException if any I/O error occurs.
-     * @throws PkiOperationFailureException if the transaction is rejected.
-     */
-	public List<X509Certificate> getCertificate(BigInteger serial) throws IOException, PkiOperationFailureException {
-		X509Certificate ca = issuerCertificate;
-		final GetCert req = new GetCert(ca.getIssuerX500Principal(), serial);
-		performOperation(req);
-		
-		if (getState() == State.CERT_ISSUED) {
-			try {
-				return getCertificates(certStore.getCertificates(null));
-			} catch (CertStoreException e) {
-				throw new RuntimeException(e);
-			}
-		} else if (getState() == State.CERT_REQ_PENDING) {
-			throw new IllegalStateException();
-		} else {
-			throw new PkiOperationFailureException(getFailureReason());
-		}
-	}
-	
-	private List<X509Certificate> getCertificates(Collection<? extends Certificate> certs) {
-    	final List<X509Certificate> x509 = new ArrayList<X509Certificate>();
-    	
-    	for (Certificate cert : certs) {
-    		x509.add((X509Certificate) cert);
-    	}
-    	
-    	return x509;
-    }
-	
-	/**
-     * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
-     */
-    private boolean supportsDistributionPoints(X509Certificate issuerCertificate) {
-    	return issuerCertificate.getExtensionValue("2.5.29.31") != null;
-    }
-	
-    /**
-     * Retrieves the Certificate Revocation List for the server CA.
-     *  
-     * @return the CRL.
-     * @throws IOException if any I/O error occurs.
-     * @throws PkiOperationFailureException if the transaction is rejected.
-     */
-	public List<X509CRL> getCrl() throws IOException, PkiOperationFailureException {
-		X509Certificate ca = issuerCertificate;
-		
-		if (supportsDistributionPoints(issuerCertificate)) {
-			throw new UnsupportedOperationException();
-		}
-		
-		final GetCrl req = new GetCrl(ca.getIssuerX500Principal(), ca.getSerialNumber());
-		performOperation(req);
-		
-		if (getState() == State.CERT_ISSUED) {
-			try {
-				return getCRLs(certStore.getCRLs(null));
-			} catch (CertStoreException e) {
-				throw new RuntimeException(e);
-			}
-		} else if (getState() == State.CERT_REQ_PENDING) {
-			throw new IllegalStateException();
-		} else {
-			throw new PkiOperationFailureException(getFailureReason());
-		}
-	}
-	
-	private List<X509CRL> getCRLs(Collection<? extends CRL> crls) {
-    	final List<X509CRL> x509 = new ArrayList<X509CRL>();
-        
-        for (CRL crl : crls) {
-        	x509.add((X509CRL) crl);
-        }
-        
-        return x509;
-    }
-
-	/**
-	 * Attempts to enroll the provided subject certificate with the configured CA server.
-	 * 
-	 * @param subject the subject certificate.
-	 * @param subjectKeyPair the subject key pair.
-	 * @param password the password to authenticate the operation.
-	 * @return the resulting state.
-	 * @throws IOException if any I/O error occurs.
-	 */
-	public State enrollCertificate(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException {
-		final org.jscep.operations.PkcsReq req = new org.jscep.operations.PkcsReq(subjectKeyPair, subject, digestAlg, password);
-		return performOperation(req);
-	}
-	
-	/**
 	 * Performs the given operation inside this transaction.
 	 * 
 	 * @param op the operation to perform.
@@ -274,7 +158,7 @@ public class TransactionImpl implements Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws PkiOperationFailureException if the operation fails.
 	 */
-	private <T extends ASN1Encodable> State performOperation(PkiOperation<T> op) throws IOException {
+	public <T extends ASN1Encodable> State performOperation(PkiOperation<T> op) throws IOException {
 		LOGGER.entering(getClass().getName(), "performOperation", op);
 		
 		msgGenerator.setMessageType(op.getMessageType());
@@ -376,26 +260,5 @@ public class TransactionImpl implements Transaction {
 			
 			return State.CERT_REQ_PENDING;
 		}
-	}
-	
-	/**
-	 * Creates a new transaction.
-	 * 
-	 * @param issuerCertificate the certificate of the issuer (CA).
-	 * @param serverCertificate the server certificate.
-	 * @param clientCertificate the client certificate.
-	 * @param clientKeyPair the key pair for the client.
-	 * @param digestAlg the hash algorithm to use.
-	 * @param cipherAlg the cipher algorithm to use.
-	 * @param transport the transport to use for this transaction.
-	 * @return a new transaction.
-	 */
-	public static TransactionImpl createTransaction(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, PrivateKey privateKey, String digestAlg, String cipherAlg, Transport transport) {
-		LOGGER.entering(TransactionImpl.class.getName(), "createTransaction");
-		
-		TransactionImpl t = new TransactionImpl(issuerCertificate, serverCertificate, clientCertificate, privateKey, digestAlg, cipherAlg, transport);
-		
-		LOGGER.exiting (TransactionImpl.class.getName(), "createTransaction", t);
-		return t;
 	}
 }
