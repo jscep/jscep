@@ -106,7 +106,7 @@ public class PkiMessageTest {
 	
 	@Test
 	public void testPKCSReqRequest() throws IOException {
-		final PkcsReq req = new PkcsReq(keyPair, identity, "SHA-1", new char[0]);
+		final PkcsReq req = new PkcsReq(keyPair.getPrivate(), identity, "SHA-1", new char[0]);
 		
 		generator.setMessageType(MessageType.PKCSReq);
 		generator.setMessageData(req.getMessage());

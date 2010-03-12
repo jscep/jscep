@@ -22,7 +22,7 @@ public class ClientTest extends AbstractClientTest {
 		// Ignore this test if the CA doesn't support renewal.
 		Assume.assumeTrue(client.getCaCapabilities().isRenewalSupported());
 		
-		Transaction trans = client.enrollCertificate(identity, keyPair, password);
+		Transaction trans = client.enrollCertificate(identity, keyPair.getPrivate(), password);
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			trans.getCertStore();
@@ -42,13 +42,13 @@ public class ClientTest extends AbstractClientTest {
 		Transaction trans;
 		State state;
 		
-		trans = client.enrollCertificate(identity, keyPair, password);
+		trans = client.enrollCertificate(identity, keyPair.getPrivate(), password);
 		state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
 		}
 		
-		trans = client.enrollCertificate(identity, keyPair, password);
+		trans = client.enrollCertificate(identity, keyPair.getPrivate(), password);
 		state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
@@ -57,7 +57,7 @@ public class ClientTest extends AbstractClientTest {
 
 	@Test
 	public void testEnroll() throws Exception {		
-		Transaction trans = client.enrollCertificate(identity, keyPair, password);
+		Transaction trans = client.enrollCertificate(identity, keyPair.getPrivate(), password);
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			trans.getCertStore();
@@ -66,7 +66,7 @@ public class ClientTest extends AbstractClientTest {
 	
 	@Test
 	public void testEnrollThenGet() throws Exception {		
-		final Transaction trans = client.enrollCertificate(identity, keyPair, password);
+		final Transaction trans = client.enrollCertificate(identity, keyPair.getPrivate(), password);
 		State state = trans.getState();
 		Assume.assumeTrue(state == State.CERT_ISSUED);
 		identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
@@ -77,7 +77,7 @@ public class ClientTest extends AbstractClientTest {
 	
 	@Test(expected = IOException.class)
 	public void testEnrollInvalidPassword() throws Exception {
-		Transaction trans = client.enrollCertificate(identity, keyPair, new char[0]);
+		Transaction trans = client.enrollCertificate(identity, keyPair.getPrivate(), new char[0]);
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			trans.getCertStore();

@@ -32,6 +32,6 @@ public class CipherAlgorithmTest extends AbstractClientTest {
 	
 	private void testCipher(String cipher) throws Exception {
 		client.setPreferredCipherAlgorithm(cipher);
-		client.enrollCertificate(identity, keyPair, password);
+		client.enrollCertificate(identity, keyPair.getPrivate(), password);
 	}
 }

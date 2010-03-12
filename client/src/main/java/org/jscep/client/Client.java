@@ -27,7 +27,6 @@ import java.math.BigInteger;
 import java.net.Proxy;
 import java.net.URL;
 import java.security.InvalidKeyException;
-import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -294,7 +293,7 @@ public class Client {
 		}
     }
     
-    public Transaction enrollCertificate(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException {
+    public Transaction enrollCertificate(X509Certificate subject, PrivateKey privKey, char[] password) throws IOException {
     	final TransactionImpl t = createTransaction();
     	
     	final Capabilities capabilities = getCaCapabilities(true);
@@ -306,7 +305,7 @@ public class Client {
     	if (digestAlg == null) {
     		digestAlg = capabilities.getStrongestMessageDigest();
     	}
-    	final org.jscep.operations.PkcsReq req = new org.jscep.operations.PkcsReq(subjectKeyPair, subject, digestAlg, password);
+    	final org.jscep.operations.PkcsReq req = new org.jscep.operations.PkcsReq(privKey, subject, digestAlg, password);
     	t.performOperation(req);
     	
     	return t;

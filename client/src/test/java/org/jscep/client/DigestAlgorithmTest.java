@@ -61,6 +61,6 @@ public class DigestAlgorithmTest extends AbstractClientTest {
 	private void testDigest(String digest) throws Exception {
 		client.setPreferredDigestAlgorithm(digest);
 		
-		client.enrollCertificate(identity, keyPair, password);
+		client.enrollCertificate(identity, keyPair.getPrivate(), password);
 	}
 }

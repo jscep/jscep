@@ -24,7 +24,7 @@ package org.jscep.operations;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
 
@@ -52,11 +52,11 @@ import org.jscep.util.AlgorithmDictionary;
 public class PkcsReq implements DelayablePkiOperation<CertificationRequest> {
     private final X509Certificate identity;
     private final char[] password;
-    private final KeyPair keyPair;
+    private final PrivateKey privKey;
     private final String digestAlgorithm;
 
-    public PkcsReq(KeyPair keyPair, X509Certificate identity, String digestAlgorithm, char[] password) {
-        this.keyPair = keyPair;
+    public PkcsReq(PrivateKey privKey, X509Certificate identity, String digestAlgorithm, char[] password) {
+        this.privKey = privKey;
         this.identity = identity;
         this.password = password;
         this.digestAlgorithm = digestAlgorithm;
@@ -102,14 +102,14 @@ public class PkcsReq implements DelayablePkiOperation<CertificationRequest> {
     
     private DERBitString sign(CertificationRequestInfo info) throws GeneralSecurityException {
     	Signature signature = Signature.getInstance(AlgorithmDictionary.lookup(getSignatureAlgorithm()));
-    	signature.initSign(keyPair.getPrivate());
+    	signature.initSign(privKey);
     	signature.update(info.getDEREncoded());
     	
     	return new DERBitString(signature.sign());
     }
     
     private SubjectPublicKeyInfo getPublicKeyInfo() throws IOException {
-    	final ByteArrayInputStream bIn = new ByteArrayInputStream(keyPair.getPublic().getEncoded());
+    	final ByteArrayInputStream bIn = new ByteArrayInputStream(identity.getPublicKey().getEncoded());
 		final ASN1InputStream dIn = new ASN1InputStream(bIn);
 		
     	return new SubjectPublicKeyInfo((ASN1Sequence) dIn.readObject());
