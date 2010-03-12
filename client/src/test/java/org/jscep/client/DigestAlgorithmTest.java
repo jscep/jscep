@@ -5,7 +5,6 @@ import static org.hamcrest.core.Is.is;
 import java.io.IOException;
 
 import org.jscep.response.Capability;
-import org.jscep.transaction.Transaction;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -62,6 +61,6 @@ public class DigestAlgorithmTest extends AbstractClientTest {
 	private void testDigest(String digest) throws Exception {
 		client.setPreferredDigestAlgorithm(digest);
 		
-		Transaction trans = client.enrollCertificate(identity, keyPair, password);
+		client.enrollCertificate(identity, keyPair, password);
 	}
 }

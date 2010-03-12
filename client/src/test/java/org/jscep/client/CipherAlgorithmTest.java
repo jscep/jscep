@@ -5,7 +5,6 @@ import static org.hamcrest.core.Is.is;
 import java.io.IOException;
 
 import org.jscep.response.Capability;
-import org.jscep.transaction.TransactionImpl;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;

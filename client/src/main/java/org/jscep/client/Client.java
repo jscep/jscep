@@ -31,9 +31,12 @@ import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.cert.CRL;
+import java.security.cert.CertStoreException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +50,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.jscep.FingerprintVerificationCallback;
 import org.jscep.PkiOperationFailureException;
+import org.jscep.operations.GetCert;
+import org.jscep.operations.GetCrl;
 import org.jscep.request.GetCaCaps;
 import org.jscep.request.GetCaCert;
 import org.jscep.request.GetNextCaCert;
@@ -238,24 +243,71 @@ public class Client {
     		digestAlg = capabilities.getStrongestMessageDigest();
     	}
     	
-    	return TransactionImpl.createTransaction(ca, getRecipientCertificate(), identity, privKey, digestAlg, cipherAlg, transport);
+    	return new TransactionImpl(ca, getRecipientCertificate(), identity, privKey, digestAlg, cipherAlg, transport);
     }
     
-    public List<X509CRL> getCrl() throws IOException, PkiOperationFailureException {
-    	final TransactionImpl t = createTransaction();
-    	
-    	return t.getCrl();
+    /**
+     * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
+     */
+    private boolean supportsDistributionPoints(X509Certificate issuerCertificate) {
+    	return issuerCertificate.getExtensionValue("2.5.29.31") != null;
     }
     
-    public List<X509Certificate> getCertificate(BigInteger serial) throws IOException, PkiOperationFailureException {
+    public Collection<? extends CRL> getCrl() throws IOException, PkiOperationFailureException {
     	final TransactionImpl t = createTransaction();
+    	final X509Certificate ca = retrieveCA();
+    	if (supportsDistributionPoints(ca)) {
+    		throw new RuntimeException("Unimplemented");
+    	}
+    	final GetCrl req = new GetCrl(ca.getIssuerX500Principal(), ca.getSerialNumber());
+    	t.performOperation(req);
     	
-    	return t.getCertificate(serial);
+    	if (t.getState() == State.CERT_ISSUED) {
+			try {
+				return t.getCertStore().getCRLs(null);
+			} catch (CertStoreException e) {
+				throw new RuntimeException(e);
+			}
+		} else if (t.getState() == State.CERT_REQ_PENDING) {
+			throw new IllegalStateException();
+		} else {
+			throw new PkiOperationFailureException(t.getFailureReason());
+		}
+    }
+
+    public Collection<? extends Certificate> getCertificate(BigInteger serial) throws IOException, PkiOperationFailureException {
+    	final TransactionImpl t = createTransaction();
+    	final X509Certificate ca = retrieveCA();;
+		final GetCert req = new GetCert(ca.getIssuerX500Principal(), serial);
+		t.performOperation(req);
+    	
+		if (t.getState() == State.CERT_ISSUED) {
+			try {
+				return t.getCertStore().getCertificates(null);
+			} catch (CertStoreException e) {
+				throw new RuntimeException(e);
+			}
+		} else if (t.getState() == State.CERT_REQ_PENDING) {
+			throw new IllegalStateException();
+		} else {
+			throw new PkiOperationFailureException(t.getFailureReason());
+		}
     }
     
     public Transaction enrollCertificate(X509Certificate subject, KeyPair subjectKeyPair, char[] password) throws IOException {
     	final TransactionImpl t = createTransaction();
-    	t.enrollCertificate(subject, subjectKeyPair, password);
+    	
+    	final Capabilities capabilities = getCaCapabilities(true);
+    	String cipherAlg = preferredCipherAlg;
+    	if (cipherAlg == null) {
+    		cipherAlg = capabilities.getStrongestCipher();
+    	}
+    	String digestAlg = preferredDigestAlg;
+    	if (digestAlg == null) {
+    		digestAlg = capabilities.getStrongestMessageDigest();
+    	}
+    	final org.jscep.operations.PkcsReq req = new org.jscep.operations.PkcsReq(subjectKeyPair, subject, digestAlg, password);
+    	t.performOperation(req);
     	
     	return t;
     }

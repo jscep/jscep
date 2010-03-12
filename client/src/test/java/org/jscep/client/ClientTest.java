@@ -3,13 +3,12 @@ package org.jscep.client;
 import static org.hamcrest.core.Is.is;
 
 import java.io.IOException;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.List;
 
 import junit.framework.Assert;
 
 import org.jscep.transaction.Transaction;
-import org.jscep.transaction.TransactionImpl;
 import org.jscep.transaction.Transaction.State;
 import org.junit.Assume;
 import org.junit.Ignore;
@@ -26,7 +25,7 @@ public class ClientTest extends AbstractClientTest {
 		Transaction trans = client.enrollCertificate(identity, keyPair, password);
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			trans.getCertificates();
+			trans.getCertStore();
 		}
 	}
 
@@ -46,13 +45,13 @@ public class ClientTest extends AbstractClientTest {
 		trans = client.enrollCertificate(identity, keyPair, password);
 		state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			identity = trans.getCertificates().get(0);
+			identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
 		}
 		
 		trans = client.enrollCertificate(identity, keyPair, password);
 		state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			identity = trans.getCertificates().get(0);
+			identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
 		}
 	}
 
@@ -61,7 +60,7 @@ public class ClientTest extends AbstractClientTest {
 		Transaction trans = client.enrollCertificate(identity, keyPair, password);
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			trans.getCertificates().get(0);
+			trans.getCertStore();
 		}
 	}
 	
@@ -70,10 +69,10 @@ public class ClientTest extends AbstractClientTest {
 		final Transaction trans = client.enrollCertificate(identity, keyPair, password);
 		State state = trans.getState();
 		Assume.assumeTrue(state == State.CERT_ISSUED);
-		identity = trans.getCertificates().get(0);
-		final List<X509Certificate> certs = client.getCertificate(identity.getSerialNumber());
+		identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
+		Certificate retrieved = client.getCertificate(identity.getSerialNumber()).iterator().next();
 		
-		Assert.assertEquals(identity, certs.get(0));
+		Assert.assertEquals(identity, retrieved);
 	}
 	
 	@Test(expected = IOException.class)
@@ -81,7 +80,7 @@ public class ClientTest extends AbstractClientTest {
 		Transaction trans = client.enrollCertificate(identity, keyPair, new char[0]);
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
-			trans.getCertificates().get(0);
+			trans.getCertStore();
 		}
 	}
 }
