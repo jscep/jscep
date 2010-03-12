@@ -15,7 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
-//@Ignore
+@Ignore
 public class ClientTest extends AbstractClientTest {
 	@Test
 	public void testRenewalEnrollAllowed() throws Exception {
