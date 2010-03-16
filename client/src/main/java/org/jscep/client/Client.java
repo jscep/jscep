@@ -432,11 +432,6 @@ public class Client {
         return certs;
     }
     
-    private byte[] createFingerprint(X509Certificate cert, String hashAlgorithm) throws NoSuchAlgorithmException, CertificateEncodingException {
-    	final MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
-    	return md.digest(cert.getEncoded());
-    }
-    
     private void verifyCA(X509Certificate cert) throws IOException {
     	// Cache
     	if (verified.contains(cert)) {
