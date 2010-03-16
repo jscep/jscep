@@ -48,7 +48,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.jscep.FingerprintVerificationCallback;
-import org.jscep.PkiOperationFailureException;
 import org.jscep.operations.GetCert;
 import org.jscep.operations.GetCrl;
 import org.jscep.request.GetCaCaps;

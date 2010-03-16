@@ -1,8 +1,7 @@
-package org.jscep;
+package org.jscep.client;
 
 import junit.framework.Assert;
 
-import org.jscep.PkiOperationFailureException;
 import org.jscep.transaction.FailInfo;
 import org.junit.Before;
 import org.junit.Test;
