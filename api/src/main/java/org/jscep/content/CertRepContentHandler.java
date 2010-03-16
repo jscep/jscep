@@ -46,7 +46,7 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 	/**
 	 * Constructs a new instance of <code>CertRepContentHandler</code>.
 	 * 
-	 * @param keyPair the KeyPair used to decode the {@link PkiMessage}.
+	 * @param privKey the private key used to decode the {@link PkiMessage}.
 	 */
 	public CertRepContentHandler(PrivateKey privKey) {
 		this.privKey = privKey;

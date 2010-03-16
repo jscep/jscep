@@ -42,7 +42,7 @@ public class PkcsReq implements Request<PkiMessage> {
 	 * and {@link java.security.KeyPair}.
 	 * 
 	 * @param msgData the pkiMessage to use.
-	 * @param keyPair the KeyPair to use.
+	 * @param privKey the private key to use.
 	 */
 	public PkcsReq(PkiMessage msgData, PrivateKey privKey) {
 		this.msgData = msgData;

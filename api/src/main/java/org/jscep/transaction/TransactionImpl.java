@@ -56,9 +56,6 @@ import org.jscep.x509.X509Util;
  * the {@link State} returned by the {@link #enrollCertificate(X509Certificate, KeyPair, char[])}
  * method or the state returned by the callable returned by {@link #getTask()}.
  * 
- * For non-enrollment operations, either the invocation will be successful, or the
- * method will throw a {@link PkiOperationFailureException}. 
- * 
  * @author David Grant
  */
 public class TransactionImpl implements Transaction {

@@ -42,7 +42,7 @@ public interface Transaction {
 		/**
 		 * The transaction has succeeded.
 		 * <p>
-		 * Clients should use {@link Transaction#getIssuedCertificates()} to 
+		 * Clients should use {@link Transaction#getCertStore()} to 
 		 * retrieve the enrolled certificates.
 		 */
 		CERT_ISSUED,

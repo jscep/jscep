@@ -60,7 +60,7 @@ public class PkiMessageParser {
 	}
 	
 	/**
-	 * @param msgBytes DER-encoded degenerate certificates-only signedData
+	 * @param contentInfo message ContentInfo
 	 * @return a new instance of PkiMessage
 	 */
 	public PkiMessage parse(ContentInfo contentInfo) throws IOException {
