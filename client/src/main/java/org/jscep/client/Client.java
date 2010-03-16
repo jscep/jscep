@@ -71,10 +71,33 @@ public class Client {
 	private String preferredDigestAlg;
 	private String preferredCipherAlg;
 	
+	// A requester MUST have the following information locally configured:
+	//
+    // 1.  The Certification Authority IP address or fully qualified domain name
+    // 2.  The Certification Authority HTTP CGI script path
+	//
+	// We use a URL for this.
     private final URL url;
-    private final PrivateKey privKey;
+    // Before a requester can start a PKI transaction, it MUST have at least
+    // one RSA key pair use for signing the SCEP pkiMessage (Section 3.1).
+    //
+    // The following identity and key pair is used for this case.
     private final X509Certificate identity;
+    private final PrivateKey privKey;
+    // A requester MUST have the following information locally configured:
+    //
+    // 3. The identifying information that is used for authentication of the 
+    // Certification Authority in Section 4.1.1.  This information MAY be 
+    // obtained from the user, or presented to the end user for manual 
+    // authorization during the protocol exchange (e.g. the user indicates 
+    // acceptance of a fingerprint via a user-interface element).
+    //
+    // We use a callback handler for this.
     private final CallbackHandler cbh;
+    // The requester MUST have MESSAGE information configured if the
+    // Certification Authority requires it (see Section 5.1).
+    //
+    // How does one determine that the CA _requires_ this?
     private final String profile;
     private Proxy proxy = Proxy.NO_PROXY;
     
@@ -259,6 +282,7 @@ public class Client {
      * @throws PkiOperationFailureException if the operation fails.
      */
     public Collection<? extends CRL> getCrl() throws IOException, PkiOperationFailureException {
+    	// CRL query
     	final TransactionImpl t = createTransaction();
     	final X509Certificate ca = retrieveCA();
     	if (supportsDistributionPoints(ca)) {
@@ -290,6 +314,7 @@ public class Client {
      * @throws PkiOperationFailureException if the operation fails.
      */
     public Collection<? extends Certificate> getCertificate(BigInteger serial) throws IOException, PkiOperationFailureException {
+    	// Certificate query
     	final TransactionImpl t = createTransaction();
     	final X509Certificate ca = retrieveCA();;
 		final GetCert req = new GetCert(ca.getIssuerX500Principal(), serial);
@@ -318,6 +343,7 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public Transaction enrollCertificate(X509Certificate subject, PrivateKey privKey, char[] password) throws IOException {
+    	// Certificate enrollment
     	final TransactionImpl t = createTransaction();
     	
     	final Capabilities capabilities = getCaCapabilities(true);
@@ -394,6 +420,7 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public List<X509Certificate> getCaCertificate() throws IOException {
+    	// CA and RA public key distribution
     	LOGGER.entering(getClass().getName(), "getCaCertificate");
     	final GetCaCert req = new GetCaCert(profile);
         final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
@@ -418,26 +445,15 @@ public class Client {
     	} else {
     		LOGGER.finer("Verification Cache Missed.");
     	}
-    	
-    	final String hashAlgorithm = getCaCapabilities(true).getStrongestMessageDigest();
-    	final byte[] fingerprint;
-    	try {
-			fingerprint = createFingerprint(cert, hashAlgorithm);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO
-			throw new RuntimeException(e);
-		} catch (CertificateEncodingException e) {
-			// TODO
-			throw new RuntimeException(e);
-		}
-		FingerprintVerificationCallback callback = new FingerprintVerificationCallback(fingerprint, hashAlgorithm);
+
+		FingerprintVerificationCallback callback = new FingerprintVerificationCallback(cert);
 		try {
 			cbh.handle(new Callback[] {callback});
 		} catch (UnsupportedCallbackException e) {
 			throw new RuntimeException(e);
 		}
 		if (callback.isVerified() == false) {
-			throw new IOException("CA certificate fingerprint could not be verified (using " + hashAlgorithm + ").");
+			throw new IOException("CA certificate fingerprint could not be verified.");
 		} else {
 			verified.add(cert);
 		}

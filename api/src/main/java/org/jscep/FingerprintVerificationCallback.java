@@ -21,20 +21,41 @@
  */
 package org.jscep;
 
-import javax.security.auth.callback.Callback;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.jscep.util.HexUtil;
+import javax.security.auth.callback.Callback;
 
 
 /**
  * This class is used to obtain verification of the fingerprint of a CA
- * certificate. 
+ * certificate.
+ * <p>
+ * The SCEP specification states that the CA certificate must be provided
+ * out-of-band, and that the CA certificate fingerprint MAY be used to authenticate
+ * that certificate.  The specification also states that only particular algorithms
+ * may be used to create the fingerprint, so we allow the client to choose the
+ * algorithm fingerprint, whilst keeping the CA certificate secret.
+ * <p>
+ * Use of the term MAY in the above statement means that other forms of authentication
+ * should be acceptable, but it should be fairly trivial for clients to figure out the
+ * hash.
  * 
  * @author David Grant
  */
 public class FingerprintVerificationCallback implements Callback {
-	private final byte[] fingerprint;
-	private final String algorithm;
+	private static final Set<String> VALID_ALGORITHMS = new HashSet<String>();
+	static {
+		VALID_ALGORITHMS.add("SHA-1");
+		VALID_ALGORITHMS.add("SHA-256");
+		VALID_ALGORITHMS.add("SHA-512");
+		VALID_ALGORITHMS.add("MD5");
+	}
+	private final X509Certificate caCertificate;
 	private boolean verified;
 	
 	/**
@@ -43,28 +64,36 @@ public class FingerprintVerificationCallback implements Callback {
 	 * 
 	 * @param fingerprint the CA fingerprint.
 	 * @param algorithm the hash algorithm.
+	 * @throws IllegalArgumentException if the algorithm is invalid.
 	 */
-	public FingerprintVerificationCallback(byte[] fingerprint, String algorithm) {
-		this.fingerprint = fingerprint;
-		this.algorithm = algorithm;
+	public FingerprintVerificationCallback(X509Certificate caCertificate) throws IllegalArgumentException {
+		this.caCertificate = caCertificate;
 	}
-	
-	/**
-	 * Returns the hash algorithm used to construct the fingerprint.
-	 * 
-	 * @return the hash algorithm.
-	 */
-	public String getAlgorithm() {
-		return algorithm;
-	}
-	
+
 	/**
 	 * Returns the fingerprint of the CA certificate.
+	 * <p>
+	 * The only valid algorithms here are:
+	 * <ul>
+	 *     <li>SHA-1</li>
+	 *     <li>SHA-256</li>
+	 *     <li>SHA-512</li>
+	 *     <li>MD5</li>
+	 * </ul>
 	 * 
+	 * @param hashAlgorithm the hash algorithm name.
 	 * @return the fingerprint.
+	 * @throws NoSuchAlgorithmException if the algorithm is not supported by the JCA.
+	 * @throws CertificateEncodingException if the CA certificate cannot be decoded.
 	 */
-	public byte[] getFingerprint() {
-		return fingerprint;
+	public byte[] getFingerprint(String hashAlgorithm) throws IllegalArgumentException, NoSuchAlgorithmException, CertificateEncodingException {
+		if (VALID_ALGORITHMS.contains(hashAlgorithm) == false) {
+			throw new IllegalArgumentException("Algorithm must be one of SHA-1, SHA-256, SHA-512 or MD5.  Was " + hashAlgorithm);
+		}
+		final MessageDigest digest = MessageDigest.getInstance(hashAlgorithm);
+		digest.update(caCertificate.getTBSCertificate());
+		
+		return digest.digest();
 	}
 	
 	/**
@@ -91,23 +120,5 @@ public class FingerprintVerificationCallback implements Callback {
 	 */
 	public void setVerified(boolean verified) {
 		this.verified = verified;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		final StringBuilder builder = new StringBuilder(algorithm);
-		builder.append(' ');
-		builder.append(HexUtil.toHexString(fingerprint));
-		builder.append(' ');
-		if (verified) {
-			builder.append("(Verified)");
-		} else {
-			builder.append("(Unverified)");
-		}
-		
-		return builder.toString();
 	}
 }
