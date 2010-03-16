@@ -251,6 +251,13 @@ public class Client {
     	return issuerCertificate.getExtensionValue("2.5.29.31") != null;
     }
     
+    /**
+     * Returns any certificate revocation lists relating to the current CA.
+     *  
+     * @return a collection of CRLs
+     * @throws IOException if any I/O error occurs.
+     * @throws PkiOperationFailureException if the operation fails.
+     */
     public Collection<? extends CRL> getCrl() throws IOException, PkiOperationFailureException {
     	final TransactionImpl t = createTransaction();
     	final X509Certificate ca = retrieveCA();
@@ -273,6 +280,15 @@ public class Client {
 		}
     }
 
+    /**
+     * Returns the certificate corresponding to the provided serial number, as issued
+     * by the current CA.
+     * 
+     * @param serial the serial number.
+     * @return the certificate.
+     * @throws IOException if any I/O error occurs.
+     * @throws PkiOperationFailureException if the operation fails.
+     */
     public Collection<? extends Certificate> getCertificate(BigInteger serial) throws IOException, PkiOperationFailureException {
     	final TransactionImpl t = createTransaction();
     	final X509Certificate ca = retrieveCA();;
@@ -292,6 +308,15 @@ public class Client {
 		}
     }
     
+    /**
+     * Enrolls the provided subject into a PKI.
+     * 
+     * @param subject the subject to enroll.
+     * @param privKey the private key to use.
+     * @param password the SCEP password.
+     * @return the enrollment transaction.
+     * @throws IOException if any I/O error occurs.
+     */
     public Transaction enrollCertificate(X509Certificate subject, PrivateKey privKey, char[] password) throws IOException {
     	final TransactionImpl t = createTransaction();
     	
@@ -310,6 +335,12 @@ public class Client {
     	return t;
     }
     
+    /**
+     * Creates a new transport based on the capabilities of the server.
+     * 
+     * @return the new transport.
+     * @throws IOException if any I/O error occurs.
+     */
     private Transport createTransport() throws IOException {
     	LOGGER.entering(getClass().getName(), "createTransport");
     	
