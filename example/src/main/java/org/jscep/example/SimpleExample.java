@@ -28,7 +28,7 @@ public class SimpleExample {
 		final CallbackHandler cbh = new ConsoleCallbackHandler();
 		
 		final Client scepClient = new Client(url, identity, privKey, cbh);
-		final List<X509Certificate> certs = scepClient.getCaCertificate();
+		scepClient.getCaCertificate();
 	}
 	
 	private static class ConsoleCallbackHandler implements CallbackHandler {
@@ -36,13 +36,18 @@ public class SimpleExample {
 			for (int i = 0; i < callbacks.length; i++) {
 				if (callbacks[i] instanceof FingerprintVerificationCallback) {
 					final FingerprintVerificationCallback callback = (FingerprintVerificationCallback) callbacks[i];
-					final byte[] fingerprint = callback.getFingerprint();
+					byte[] fingerprint;
+					try {
+						fingerprint = callback.getFingerprint("MD5");
+					} catch (Exception e) {
+						continue;
+					}
 					final Console console = System.console();
 					if (console == null) {
 						continue;
 					}
 					final PrintWriter writer = console.writer();
-					writer.write("Is this the " + callback.getAlgorithm() + " hash of your CA's certificate?\n");
+					writer.write("Is this the MD5 hash of your CA's certificate?\n");
 					writer.write(new String(fingerprint) + "\n");
 					writer.write("[yes/no]: ");
 					writer.flush();
