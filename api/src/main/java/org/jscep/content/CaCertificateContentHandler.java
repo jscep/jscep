@@ -85,7 +85,12 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 				throw ioe;
 			}
 		} else if (mimeType.equals("application/x-x509-ca-ra-cert")) {
-			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.2
+			// If an RA is in use, a certificates-only PKCS#7 SignedData
+			// with a certificate chain consisting of both RA and CA certificates is
+			// returned.
+			// It should be in the order:
+			// [0] RA
+			// [1] CA
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 			int b;
@@ -125,6 +130,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 		}
 
 		LOGGER.exiting(getClass().getName(), "getContent", certs);
+		
 		return certs;
 	}
 }
