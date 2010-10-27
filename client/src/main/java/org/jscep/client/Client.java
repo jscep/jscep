@@ -44,6 +44,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.jscep.FingerprintVerificationCallback;
 import org.jscep.operations.GetCert;
 import org.jscep.operations.GetCrl;
@@ -331,28 +332,17 @@ public class Client {
     }
     
     /**
-     * Enrolls the provided subject into a PKI.
+     * Enrolls the provided CSR into a PKI.
      * 
-     * @param subject the subject to enroll.
-     * @param privKey the private key to use.
-     * @param password the SCEP password.
+     * @param csr the certificate signing request
      * @return the enrollment transaction.
      * @throws IOException if any I/O error occurs.
      */
-    public Transaction enrollCertificate(X509Certificate subject, PrivateKey privKey, char[] password) throws IOException {
+    public Transaction enrollCertificate(CertificationRequest csr) throws IOException {
     	// Certificate enrollment
     	final TransactionImpl t = createTransaction();
     	
-    	final Capabilities capabilities = getCaCapabilities(true);
-    	String cipherAlg = preferredCipherAlg;
-    	if (cipherAlg == null) {
-    		cipherAlg = capabilities.getStrongestCipher();
-    	}
-    	String digestAlg = preferredDigestAlg;
-    	if (digestAlg == null) {
-    		digestAlg = capabilities.getStrongestMessageDigest();
-    	}
-    	final org.jscep.operations.PkcsReq req = new org.jscep.operations.PkcsReq(privKey, subject, digestAlg, password);
+    	final org.jscep.operations.PkcsReq req = new org.jscep.operations.PkcsReq(csr);
     	t.performOperation(req);
     	
     	return t;

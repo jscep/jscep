@@ -6,8 +6,10 @@ import java.security.KeyPairGenerator;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.security.auth.callback.CallbackHandler;
@@ -56,5 +58,10 @@ public abstract class AbstractClientTest {
 			}
 		}}, null);
 		HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
+		HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+			public boolean verify(String hostname, SSLSession session) {
+				return true;
+			}
+		});
 	}
 }

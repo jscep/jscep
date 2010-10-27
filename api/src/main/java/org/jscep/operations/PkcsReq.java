@@ -21,26 +21,10 @@
  */
 package org.jscep.operations;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.cert.X509Certificate;
 
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x509.X509Name;
-import org.jscep.pkcs9.ChallengePasswordAttribute;
 import org.jscep.transaction.MessageType;
-import org.jscep.util.AlgorithmDictionary;
 
 
 /**
@@ -50,16 +34,10 @@ import org.jscep.util.AlgorithmDictionary;
  * @author David Grant
  */
 public class PkcsReq implements DelayablePkiOperation<CertificationRequest> {
-    private final X509Certificate identity;
-    private final char[] password;
-    private final PrivateKey privKey;
-    private final String digestAlgorithm;
+    private final CertificationRequest csr;
 
-    public PkcsReq(PrivateKey privKey, X509Certificate identity, String digestAlgorithm, char[] password) {
-        this.privKey = privKey;
-        this.identity = identity;
-        this.password = password;
-        this.digestAlgorithm = digestAlgorithm;
+    public PkcsReq(CertificationRequest csr) {
+        this.csr = csr;
     }
 
     /**
@@ -76,47 +54,7 @@ public class PkcsReq implements DelayablePkiOperation<CertificationRequest> {
      * @see <a href="http://tools.ietf.org/html/rfc2986">RFC 2986</a>
      */
     public CertificationRequest getMessage() throws IOException {
-		try {
-			final CertificationRequestInfo info = getCertificationRequestInfo();
-			return new CertificationRequest(info, getSignatureAlgorithm(), sign(info));
-			
-		} catch (GeneralSecurityException e) {
-			throw new IOException(e);
-		}
-    }
-    
-    private CertificationRequestInfo getCertificationRequestInfo() throws IOException {
-		return new CertificationRequestInfo(getSubject(), getPublicKeyInfo(), getAttributes());
-    }
-
-	private X509Name getSubject() {
-		return new X509Name(identity.getSubjectX500Principal().getName());
-	}
-
-	private DERSet getAttributes() {
-		final ASN1EncodableVector v = new ASN1EncodableVector();
-		v.add(new ChallengePasswordAttribute(new String(password)));
-		
-		return new DERSet(v);
-	}
-    
-    private DERBitString sign(CertificationRequestInfo info) throws GeneralSecurityException {
-    	Signature signature = Signature.getInstance(AlgorithmDictionary.lookup(getSignatureAlgorithm()));
-    	signature.initSign(privKey);
-    	signature.update(info.getDEREncoded());
-    	
-    	return new DERBitString(signature.sign());
-    }
-    
-    private SubjectPublicKeyInfo getPublicKeyInfo() throws IOException {
-    	final ByteArrayInputStream bIn = new ByteArrayInputStream(identity.getPublicKey().getEncoded());
-		final ASN1InputStream dIn = new ASN1InputStream(bIn);
-		
-    	return new SubjectPublicKeyInfo((ASN1Sequence) dIn.readObject());
-    }
-    
-    private AlgorithmIdentifier getSignatureAlgorithm() {
-    	return new AlgorithmIdentifier(AlgorithmDictionary.getOid(AlgorithmDictionary.getRSASignatureAlgorithm(digestAlgorithm)));
+    	return csr;
     }
     
     /**
