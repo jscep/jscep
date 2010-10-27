@@ -59,7 +59,6 @@ import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
 
-
 /**
  * This class represents a SCEP client, or Requester.
  */
