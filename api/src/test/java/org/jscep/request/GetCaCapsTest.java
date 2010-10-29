@@ -2,6 +2,7 @@ package org.jscep.request;
 
 import java.io.IOException;
 
+import org.jscep.content.CaCapabilitiesContentHandler;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,12 +15,12 @@ public class GetCaCapsTest {
 	@Before
 	public void setUp() {
 		caIdentifier = "id";
-		fixture = new GetCaCaps(caIdentifier);
+		fixture = new GetCaCaps(caIdentifier, new CaCapabilitiesContentHandler());
 	}
 	
 	@Test
 	public void testNullConstructor() {
-		fixture = new GetCaCaps();
+		fixture = new GetCaCaps(new CaCapabilitiesContentHandler());
 		Assert.assertNull(fixture.getMessage());
 	}
 

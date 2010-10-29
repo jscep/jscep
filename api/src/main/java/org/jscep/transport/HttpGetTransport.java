@@ -22,15 +22,12 @@
 package org.jscep.transport;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.logging.Logger;
 
-import org.apache.commons.codec.binary.Base64;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
 import org.jscep.util.LoggingUtil;
@@ -53,6 +50,7 @@ public class HttpGetTransport extends Transport {
 		LOGGER.entering(getClass().getName(), "sendMessage", msg);
 		
 		final URL url = getUrl(msg.getOperation(), msg.getMessage());
+		System.out.println(url);
 		final HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -68,26 +66,8 @@ public class HttpGetTransport extends Transport {
 		return response;
 	}
 
-	private URL getUrl(Operation op, Object message) throws MalformedURLException {
-		return new URL(getUrl(op).toExternalForm() + "&message=" + asParameter(message));
-	}
-	
-	private String asParameter(Object message) {
-		if (message == null) {
-			return "";
-		} else if (message instanceof String) {
-			return (String) message;
-		} else if (message instanceof byte[]) {
-			final Base64 base64codec = new Base64(); 
-			final String base64 = base64codec.encodeToString((byte[]) message);
-			try {
-				return URLEncoder.encode(base64, "ASCII");
-			} catch (UnsupportedEncodingException e) {
-				throw new RuntimeException(e);
-			}
-		} else {
-			throw new RuntimeException("Unknown Message Type");
-		}
+	private URL getUrl(Operation op, String message) throws MalformedURLException {
+		return new URL(getUrl(op).toExternalForm() + "&message=" + message);
 	}
 	
 	/**

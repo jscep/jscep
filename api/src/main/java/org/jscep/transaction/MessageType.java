@@ -67,4 +67,9 @@ public enum MessageType {
     	}
     	throw new IllegalArgumentException();
     }
+    
+    @Override
+    public String toString() {
+    	return Integer.toString(value);
+    }
 }

@@ -8,6 +8,7 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.jscep.content.NextCaCertificateContentHandler;
 import org.jscep.request.GetCaCaps;
 import org.jscep.request.GetCaCert;
 import org.jscep.request.GetNextCaCert;
@@ -33,7 +34,8 @@ public class HttpPostTransportTest extends AbstractTransportTest {
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 		X509Certificate cert = X509Util.createEphemeralCertificate(subject, keyPair);
 		
-		transport.sendMessage(new GetNextCaCert(cert));
+		GetNextCaCert nextCa = new GetNextCaCert(new NextCaCertificateContentHandler(cert));
+		transport.sendMessage(nextCa);
 	}
 
 	@Override

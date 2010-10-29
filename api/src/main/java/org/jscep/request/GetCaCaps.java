@@ -21,7 +21,7 @@
  */
 package org.jscep.request;
 
-import org.jscep.content.CaCapabilitiesContentHandler;
+import org.jscep.content.ScepContentHandler;
 import org.jscep.response.Capabilities;
 
 /**
@@ -29,36 +29,26 @@ import org.jscep.response.Capabilities;
  * 
  * @author David Grant
  */
-public final class GetCaCaps implements Request<Capabilities> {
+public final class GetCaCaps extends Request<Capabilities> {
 	private final String caIdentifier;
 
-	public GetCaCaps() {
-		this.caIdentifier = null;
+	public GetCaCaps(ScepContentHandler<Capabilities> handler) {
+		this(null, handler);
 	}
 	
-	public GetCaCaps(String caIdentifier) {
+	public GetCaCaps(String caIdentifier, ScepContentHandler<Capabilities> handler) {
+		super(Operation.GetCACaps, handler);
 		this.caIdentifier = caIdentifier;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Operation getOperation() {
-		return Operation.GetCACaps;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public String getMessage() {
+		if (caIdentifier == null) {
+			return "";
+		}
 		return caIdentifier;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public CaCapabilitiesContentHandler getContentHandler() {
-		return new CaCapabilitiesContentHandler();
 	}
 	
 	@Override

@@ -22,20 +22,19 @@
 package org.jscep.request;
 
 import java.io.IOException;
-import java.security.PrivateKey;
+import java.io.OutputStream;
 
-import org.jscep.content.CertRepContentHandler;
-import org.jscep.pkcs7.PkiMessage;
-
+import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.cms.CMSSignedData;
+import org.jscep.content.ScepContentHandler;
 
 /**
  * This class represents a <code>PKCSReq</code> request.
  * 
  * @author David Grant
  */
-public class PkcsReq implements Request<PkiMessage> {
-	private final PkiMessage msgData;
-	private final PrivateKey privKey;
+public class PKCSReq extends Request<CMSSignedData> {
+	private final CMSSignedData messageData;
 
 	/**
 	 * Creates a new instance of this class using the provided pkiMessage
@@ -44,34 +43,29 @@ public class PkcsReq implements Request<PkiMessage> {
 	 * @param msgData the pkiMessage to use.
 	 * @param privKey the private key to use.
 	 */
-	public PkcsReq(PkiMessage msgData, PrivateKey privKey) {
-		this.msgData = msgData;
-		this.privKey = privKey;
+	public PKCSReq(CMSSignedData messageData, ScepContentHandler<CMSSignedData> handler) {
+		super(Operation.PKIOperation, handler);
+		
+		this.messageData = messageData;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public byte[] getMessage() throws IOException {
-		return msgData.getEncoded();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Operation getOperation() {
-		return Operation.PKIOperation;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public CertRepContentHandler getContentHandler() {
-		return new CertRepContentHandler(privKey);
+	public String getMessage() throws IOException {
+		// URL-safe, all on one line.
+		final Base64 base64 = new Base64(-1, new byte[0], true);
+		
+		return base64.encodeToString(messageData.getEncoded());
 	}
 	
 	@Override
+	public void write(OutputStream out) throws IOException {
+    	out.write(messageData.getEncoded());
+    }
+	
+	@Override
 	public String toString() {
-		return msgData.toString();
+		return messageData.toString();
 	}
 }

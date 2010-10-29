@@ -72,4 +72,10 @@ public class IssuerAndSubject extends ASN1Encodable {
 		
 		return new DERSequence(v);
 	}
+	
+	public static IssuerAndSubject getInstance(ASN1Encodable encodable) {
+		final ASN1Sequence seq = DERSequence.getInstance(encodable);
+		
+		return new IssuerAndSubject(seq);
+	}
 }

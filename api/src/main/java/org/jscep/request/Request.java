@@ -22,6 +22,7 @@
 package org.jscep.request;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.jscep.content.ScepContentHandler;
 
@@ -37,24 +38,40 @@ import org.jscep.content.ScepContentHandler;
  * @param <T> the response type associated with this request
  * @see org.jscep.transport.Transport#sendMessage(Request)
  */
-public interface Request<T> {
+public abstract class Request<T> {
+	private final Operation operation;
+	private final ScepContentHandler<T> handler;
+	
+	public Request(Operation operation, ScepContentHandler<T> handler) {
+		this.operation = operation;
+		this.handler = handler;
+	}
+	
 	/**
 	 * Returns the name of this operation.
 	 * 
 	 * @return the name of this operation.
 	 */
-    Operation getOperation();
+	public Operation getOperation() {
+		return operation;
+	}
     /**
      * Returns the message for this request.
      * 
      * @return the message.
      * @throws IOException if any I/O error occurs.
      */
-    Object getMessage() throws IOException;
+    public abstract String getMessage() throws IOException;
     /**
      * Returns the ScepContentHandler for the given response type.
      * 
      * @return the content handler.
      */
-    ScepContentHandler<T> getContentHandler();
+    public ScepContentHandler<T> getContentHandler() {
+    	return handler;
+    }
+    
+    public void write(OutputStream out) throws IOException {
+    	throw new UnsupportedOperationException();
+    }
 }

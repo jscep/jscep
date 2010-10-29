@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+import org.jscep.content.NextCaCertificateContentHandler;
 import org.jscep.request.GetNextCaCert;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
@@ -18,7 +19,7 @@ public class GetNextCaCertTest {
 	@Before
 	public void setUp() {
 		caIdentifier = "id";
-		fixture = new GetNextCaCert(null, caIdentifier);
+		fixture = new GetNextCaCert(caIdentifier, new NextCaCertificateContentHandler(null));
 	}
 	
 	@Test

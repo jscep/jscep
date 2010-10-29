@@ -24,13 +24,10 @@ package org.jscep.content;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.PrivateKey;
 import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.jscep.pkcs7.PkiMessage;
-import org.jscep.pkcs7.PkiMessageParser;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.util.LoggingUtil;
 
 
@@ -39,24 +36,14 @@ import org.jscep.util.LoggingUtil;
  * 
  * @author David Grant
  */
-public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
+public class CertRepContentHandler implements ScepContentHandler<CMSSignedData> {
 	private static Logger LOGGER = LoggingUtil.getLogger(CertRepContentHandler.class);
-	private final PrivateKey privKey;
-	
-	/**
-	 * Constructs a new instance of <code>CertRepContentHandler</code>.
-	 * 
-	 * @param privKey the private key used to decode the {@link PkiMessage}.
-	 */
-	public CertRepContentHandler(PrivateKey privKey) {
-		this.privKey = privKey;
-	}
 	
 	/**
 	 * {@inheritDoc}
 	 * @throws IOException 
 	 */
-	public PkiMessage getContent(InputStream in, String mimeType) throws IOException {
+	public CMSSignedData getContent(InputStream in, String mimeType) throws IOException {
 		LOGGER.entering(getClass().getName(), "getContent", new Object[] {in, mimeType});
 		
 		if (mimeType.equals("application/x-pki-message")) {
@@ -69,19 +56,11 @@ public class CertRepContentHandler implements ScepContentHandler<PkiMessage> {
 			}
 			baos.close();
 			
-			final ContentInfo contentInfo;
 			try {
-				contentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(baos.toByteArray()));
-			} catch (ClassCastException e) {
+				return new CMSSignedData(baos.toByteArray());
+			} catch (CMSException e) {
 				throw new IOException(e);
 			}
-
-			final PkiMessageParser parser = new PkiMessageParser();
-			parser.setPrivateKey(privKey);
-			final PkiMessage msg = parser.parse(contentInfo);
-			
-			LOGGER.exiting(getClass().getName(), "getContent", msg);
-			return msg;
 		} else {
 			IOException ioe = new IOException("Invalid Content Type");
 			

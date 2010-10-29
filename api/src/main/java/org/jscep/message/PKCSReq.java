@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,49 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.transaction;
+package org.jscep.message;
 
+import org.bouncycastle.asn1.pkcs.CertificationRequest;
+import org.jscep.transaction.MessageType;
+import org.jscep.transaction.Nonce;
+import org.jscep.transaction.TransactionId;
 
-/**
- * This class represents the SCEP <code>pkiStatus</code> attribute.
- * 
- * @author David Grant
- */
-public enum PkiStatus {
-	/**
-	 * Request granted
-	 */
-    SUCCESS(0),
-    /**
-     * Request rejected
-     */
-    FAILURE(2),
-    /**
-     * Request pending for manual approval
-     */
-    PENDING(3);
-    
-    private final int value;
-    
-    private PkiStatus(int value) {
-    	this.value = value;
-    }
-    
-    public int getValue() {
-    	return value;
-    }
-    
-    public static PkiStatus valueOf(int value) {
-    	for (PkiStatus status : PkiStatus.values()) {
-    		if (status.getValue() == value) {
-    			return status;
-    		}
-    	}
-    	throw new IllegalArgumentException();
-    }
-    
-    @Override
-    public String toString() {
-    	return Integer.toString(value);
-    }
+public class PKCSReq extends PkiMessage<CertificationRequest> {
+	public PKCSReq(TransactionId transId, Nonce senderNonce, CertificationRequest messageData) {
+		super(transId, MessageType.PKCSReq, senderNonce, messageData);
+	}
 }

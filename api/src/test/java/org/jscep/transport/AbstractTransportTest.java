@@ -1,6 +1,7 @@
 package org.jscep.transport;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.Proxy;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -12,12 +13,14 @@ import javax.security.auth.x500.X500Principal;
 
 import junit.framework.Assert;
 
-import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.x509.X509Name;
 import org.eclipse.jetty.server.Server;
-import org.jscep.pkcs7.PkiMessage;
-import org.jscep.pkcs7.PkiMessageGenerator;
-import org.jscep.request.PkcsReq;
-import org.jscep.transaction.MessageType;
+import org.jscep.message.GetCert;
+import org.jscep.message.PkcsPkiEnvelopeEncoder;
+import org.jscep.message.PkiMessageEncoder;
+import org.jscep.content.CertRepContentHandler;
+import org.jscep.request.PKCSReq;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 import org.jscep.transport.Transport.Method;
@@ -61,20 +64,17 @@ abstract public class AbstractTransportTest {
 	@Test
 	public void test404() throws Exception {
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-//		SignedDataGenerator gen = new SignedDataGenerator();
-//		SignedData signedData = gen.generate();
-		PkiMessageGenerator msgGenerator = new PkiMessageGenerator();
-		msgGenerator.setTransactionId(TransactionId.createTransactionId());
-		msgGenerator.setMessageType(MessageType.GetCert);
-		msgGenerator.setSenderNonce(Nonce.nextNonce());
-		msgGenerator.setMessageDigest("MD5");
-		msgGenerator.setCipherAlgorithm("DES");
-		msgGenerator.setPrivateKey(keyPair.getPrivate());
-		msgGenerator.setSigner(getCertificate(keyPair));
-		msgGenerator.setRecipient(getCertificate(keyPair));
-		msgGenerator.setMessageData(new DERNull());
-		PkiMessage msgData = msgGenerator.generate();
-		PkcsReq req = new PkcsReq(msgData, keyPair.getPrivate());
+
+		PkcsPkiEnvelopeEncoder envEnc = new PkcsPkiEnvelopeEncoder(getCertificate(keyPair));
+		PkiMessageEncoder enc = new PkiMessageEncoder(keyPair.getPrivate(), getCertificate(keyPair), envEnc);
+
+		TransactionId transId = TransactionId.createTransactionId();
+		Nonce senderNonce = Nonce.nextNonce();
+		X509Name name = new X509Name("CN=jscep.org");
+		BigInteger serialNumber = BigInteger.ONE;
+		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
+		GetCert getCert = new GetCert(transId, senderNonce, iasn);
+		PKCSReq req = new PKCSReq(enc.encode(getCert), new CertRepContentHandler());
 		
 		try {
 			transport.sendMessage(req);

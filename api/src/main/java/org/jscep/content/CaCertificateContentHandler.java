@@ -24,7 +24,6 @@ package org.jscep.content;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.GeneralSecurityException;
 import java.security.cert.CertSelector;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
@@ -38,9 +37,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.cms.SignedData;
-import org.jscep.pkcs7.SignedDataParser;
-import org.jscep.pkcs7.SignedDataUtil;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.util.LoggingUtil;
 
 
@@ -73,8 +71,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.1
 			try {
 
-				X509Certificate ca = (X509Certificate) cf
-						.generateCertificate(in);
+				X509Certificate ca = (X509Certificate) cf.generateCertificate(in);
 
 				// There should only ever be one certificate in this response.
 				certs.add(ca);
@@ -98,17 +95,18 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 				baos.write(b);
 			}
 			
-			SignedDataParser parser = new SignedDataParser();
-			SignedData dsd = parser.parse(ASN1Object.fromByteArray(baos.toByteArray()));
+			// This area needs testing!
+
 			CertStore store;
 			try {
-				store = SignedDataUtil.extractCertStore(dsd);
-			} catch (GeneralSecurityException e) {
-				IOException ioe = new IOException(e);
-				
-				LOGGER.throwing(getClass().getName(), "getContent", ioe);
-				throw ioe;
+				ContentInfo ci = ContentInfo.getInstance(ASN1Object.fromByteArray(baos.toByteArray()));
+				CMSSignedData sd = new CMSSignedData(ci.getContent().getDERObject().getEncoded());
+
+				store = sd.getCertificatesAndCRLs("Collection", null);
+			} catch (Exception e) {
+				throw new IOException(e);
 			}
+			
 			CertSelector selector = new X509CertSelector();
 			try {
 				@SuppressWarnings("unchecked")

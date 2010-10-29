@@ -33,14 +33,20 @@ import java.util.logging.Logger;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.cms.CMSSignedData;
+import org.jscep.asn1.IssuerAndSubject;
+import org.jscep.content.CertRepContentHandler;
+import org.jscep.message.CertRep;
+import org.jscep.message.GetCertInitial;
+import org.jscep.message.PkcsPkiEnvelopeDecoder;
+import org.jscep.message.PkcsPkiEnvelopeEncoder;
+import org.jscep.message.PkiMessage;
+import org.jscep.message.PkiMessageDecoder;
+import org.jscep.message.PkiMessageEncoder;
 import org.jscep.operations.DelayablePkiOperation;
-import org.jscep.operations.GetCertInitial;
-import org.jscep.operations.PkiOperation;
-import org.jscep.pkcs7.PkiMessage;
-import org.jscep.pkcs7.PkiMessageGenerator;
-import org.jscep.pkcs7.SignedDataParser;
 import org.jscep.pkcs7.SignedDataUtil;
-import org.jscep.request.PkcsReq;
+import org.jscep.request.PKCSReq;
+import org.jscep.state.StateMachine;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
@@ -63,29 +69,20 @@ public class TransactionImpl implements Transaction {
 	private static Logger LOGGER = LoggingUtil.getLogger(TransactionImpl.class);
 	private final PrivateKey clientPrivateKey;
 	private final Transport transport;
-	private final PkiMessageGenerator msgGenerator;
 	private final X509Certificate serverCertificate;
 	private final X509Certificate clientCertificate;
-	private final TransactionId transId;
 	private FailInfo failInfo;
 	private CertStore certStore;
 	private Callable<State> task;
 	private State state = State.CERT_NON_EXISTANT;
+	private final StateMachine stateMachine;
 
-	public TransactionImpl(X509Certificate issuerCertificate, X509Certificate serverCertificate, X509Certificate clientCertificate, PrivateKey clientPrivateKey, String digestAlg, String cipherAlg, Transport transport) {
+	public TransactionImpl(X509Certificate serverCertificate, X509Certificate clientCertificate, PrivateKey clientPrivateKey, Transport transport) {
 		this.transport = transport;
-		
 		this.serverCertificate = serverCertificate;
 		this.clientCertificate = clientCertificate;
 		this.clientPrivateKey = clientPrivateKey;
-		this.transId = TransactionId.createTransactionId(clientCertificate.getPublicKey(), digestAlg);
-		msgGenerator = new PkiMessageGenerator();
-		msgGenerator.setTransactionId(transId);
-		msgGenerator.setMessageDigest(digestAlg);
-		msgGenerator.setSigner(clientCertificate);
-		msgGenerator.setPrivateKey(clientPrivateKey);
-		msgGenerator.setCipherAlgorithm(cipherAlg);
-		msgGenerator.setRecipient(serverCertificate);
+		this.stateMachine = new StateMachine();
 	}
 	
 	/**
@@ -154,40 +151,46 @@ public class TransactionImpl implements Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws PkiOperationFailureException if the operation fails.
 	 */
-	public <T extends ASN1Encodable> State performOperation(PkiOperation<T> op) throws IOException {
-		LOGGER.entering(getClass().getName(), "performOperation", op);
+	public <T extends ASN1Encodable> State performOperation(PkiMessage<T> request) throws IOException {
+		LOGGER.entering(getClass().getName(), "performOperation", request);
 		
-		msgGenerator.setMessageType(op.getMessageType());
-		msgGenerator.setSenderNonce(Nonce.nextNonce());
-		msgGenerator.setMessageData(op.getMessage());
+		stateMachine.updateState(request);
 		
-		final PkiMessage req = msgGenerator.generate();
-		final PkiMessage res = transport.sendMessage(new PkcsReq(req, clientPrivateKey));
+		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(serverCertificate);
+		PkiMessageEncoder encoder = new PkiMessageEncoder(clientPrivateKey, clientCertificate, envEncoder);
+		
+		CMSSignedData signedData = encoder.encode(request);
+		CertRepContentHandler handler = new CertRepContentHandler();
+		final CMSSignedData res = transport.sendMessage(new PKCSReq(signedData, handler));
 
-		validateExchange(req, res);
+		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(clientPrivateKey);
+		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+		CertRep response = (CertRep) decoder.decode(res);
+
+		stateMachine.updateState(response);
 		
-		if (res.getPkiStatus() == PkiStatus.FAILURE) {
-			failInfo = res.getFailInfo();
+		validateExchange(request, response);
+		
+		if (response.getPkiStatus() == PkiStatus.FAILURE) {
+			failInfo = response.getFailInfo();
 			state = State.CERT_NON_EXISTANT;
-		} else if (res.getPkiStatus() == PkiStatus.PENDING) {
-			if (op instanceof DelayablePkiOperation<?>) {
+		} else if (response.getPkiStatus() == PkiStatus.PENDING) {
+			if (request instanceof DelayablePkiOperation<?>) {
 				task = new InitialCertTask();
 				state = State.CERT_REQ_PENDING;
 			} else {
-				throw new IllegalStateException(PkiStatus.PENDING + " not expected for " + op.getMessageType());
+				throw new IllegalStateException(PkiStatus.PENDING + " not expected for " + request.getMessageType());
 			}
 		} else {
-			certStore = extractCertStore(res);
+			certStore = extractCertStore(response);
 			state = State.CERT_ISSUED;
 		}
 		
 		return state;
 	}
 
-	private CertStore extractCertStore(PkiMessage response) throws IOException {
-		final ASN1Encodable repMsgData = response.getPkcsPkiEnvelope().getMessageData();
-		final SignedDataParser parser = new SignedDataParser();
-		final SignedData signedData = parser.parse(repMsgData);
+	private CertStore extractCertStore(CertRep response) throws IOException {
+		final SignedData signedData = response.getMessageData();
 		CertStore cs;
 		try {
 			cs = SignedDataUtil.extractCertStore(signedData);
@@ -200,7 +203,7 @@ public class TransactionImpl implements Transaction {
 		return cs;
 	}
 
-	private void validateExchange(PkiMessage req, PkiMessage res) throws IOException {
+	private void validateExchange(PkiMessage<?> req, CertRep res) throws IOException {
 		if (res.getTransactionId().equals(req.getTransactionId()) == false) {
 			final IOException ioe = new IOException("Transaction ID Mismatch");
 			
@@ -229,28 +232,17 @@ public class TransactionImpl implements Transaction {
 		}
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		
-		sb.append("Transaction [\n");
-		sb.append("\ttransactionId: " + transId + "\n");
-		sb.append("]");
-		
-		return sb.toString();
-	}
-	
 	private class InitialCertTask implements Callable<State> {
 		public State call() throws IOException {
 			if (state != State.CERT_REQ_PENDING) {
 				throw new IllegalStateException();
 			}
-			final X509Name issuerName = X509Util.toX509Name(serverCertificate.getIssuerX500Principal());
-			final X509Name subjectName = X509Util.toX509Name(clientCertificate.getSubjectX500Principal());
-			final GetCertInitial getCert = new GetCertInitial(issuerName, subjectName);
+			final X509Name issuer = X509Util.toX509Name(serverCertificate.getIssuerX500Principal());
+			final X509Name subject = X509Util.toX509Name(clientCertificate.getSubjectX500Principal());
+			final IssuerAndSubject ias = new IssuerAndSubject(issuer, subject);
+			final Nonce senderNonce = Nonce.nextNonce();
+			final TransactionId transId = TransactionId.createTransactionId();
+			final GetCertInitial getCert = new GetCertInitial(transId, senderNonce, ias);
 			
 			performOperation(getCert);
 			

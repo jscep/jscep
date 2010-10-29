@@ -21,6 +21,7 @@
  */
 package org.jscep.transport;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -29,7 +30,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.logging.Logger;
 
-import org.jscep.request.Operation;
+import org.jscep.request.PKCSReq;
 import org.jscep.request.Request;
 import org.jscep.util.LoggingUtil;
 
@@ -50,7 +51,7 @@ public class HttpPostTransport extends Transport {
 	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException {
 		LOGGER.entering(getClass().getName(), "sendMessage", msg);
 		
-		if (msg.getOperation() != Operation.PKIOperation) {
+		if (msg instanceof PKCSReq == false) {
 			// Appendix F
 			//
 			// This is allowed for any SCEP message except GetCACert, 
@@ -61,17 +62,14 @@ public class HttpPostTransport extends Transport {
 			throw e;
 		}
 		
-		final byte[] body = (byte[]) msg.getMessage();
         final URL url = getUrl(msg.getOperation());
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
-        if (body != null) {
-        	conn.addRequestProperty("Content-Length", Integer.toString(body.length));
-        	final OutputStream stream = conn.getOutputStream();
-            stream.write(body);
-            stream.close();
-        }
+        
+    	final OutputStream stream = new BufferedOutputStream(conn.getOutputStream());
+    	msg.write(stream);
+        stream.close();
 
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
         	IOException ioe = new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());

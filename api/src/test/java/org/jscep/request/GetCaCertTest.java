@@ -2,6 +2,7 @@ package org.jscep.request;
 
 import java.io.IOException;
 
+import org.jscep.content.CaCertificateContentHandler;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,12 +14,12 @@ public class GetCaCertTest {
 	@Before
 	public void setUp() {
 		caIdentifier = "id";
-		fixture = new GetCaCert(caIdentifier);
+		fixture = new GetCaCert(caIdentifier, new CaCertificateContentHandler());
 	}
 	
 	@Test
 	public void testNullConstructor() {
-		fixture = new GetCaCert();
+		fixture = new GetCaCert(new CaCertificateContentHandler());
 		Assert.assertNull(fixture.getMessage());
 	}
 	

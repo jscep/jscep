@@ -24,48 +24,38 @@ package org.jscep.request;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import org.jscep.content.CaCertificateContentHandler;
-
+import org.jscep.content.ScepContentHandler;
 
 /**
  * This class represents a <code>GetCACert</code> request.
  * 
  * @author David Grant
  */
-public final class GetCaCert implements Request<List<X509Certificate>> {
+public final class GetCaCert extends Request<List<X509Certificate>> {
 	private final String caIdentifier;
 	/**
 	 * Creates a new GetCACert request with the given CA identification string.
 	 * 
 	 * @param caIdentifier the CA identification string.
 	 */
-	public GetCaCert(String caIdentifier) {
+	public GetCaCert(String caIdentifier, ScepContentHandler<List<X509Certificate>> handler) {
+		super(Operation.GetCACert, handler);
+		
 		this.caIdentifier = caIdentifier;
 	}
 	
-	public GetCaCert() {
-		this.caIdentifier = null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Operation getOperation() {
-		return Operation.GetCACert;
+	public GetCaCert(ScepContentHandler<List<X509Certificate>> handler) {
+		this(null, handler);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getMessage() {
+		if (caIdentifier == null) {
+			return "";
+		}
 		return caIdentifier;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public CaCertificateContentHandler getContentHandler() {
-		return new CaCertificateContentHandler();
 	}
 	
 	@Override

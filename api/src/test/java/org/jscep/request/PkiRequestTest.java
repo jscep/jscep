@@ -1,33 +1,28 @@
 package org.jscep.request;
 
 import java.io.IOException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 
 import junit.framework.Assert;
 
+import org.bouncycastle.cms.CMSSignedData;
 import org.easymock.classextension.EasyMock;
-import org.jscep.pkcs7.PkiMessage;
-import org.jscep.request.Operation;
-import org.jscep.request.PkcsReq;
+import org.jscep.content.CertRepContentHandler;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore
 public class PkiRequestTest {
-	private PkiMessage message;
-	private PkcsReq fixture;
+	private CMSSignedData message;
+	private PKCSReq fixture;
 	
 	@Before
 	public void setUp() throws Exception {
-		message = EasyMock.createMock(PkiMessage.class);
+		message = EasyMock.createMock(CMSSignedData.class);
 		EasyMock.expect(message.getEncoded()).andReturn(new byte[0]).times(2);
 		EasyMock.replay(message);
 		
-		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
-		
-		fixture = new PkcsReq(message, keyPair.getPrivate());
+		fixture = new PKCSReq(message, new CertRepContentHandler());
 	}
 	
 	@Test

@@ -23,7 +23,7 @@ public class CertRepContentHandlerTest {
 	@Before
 	public void setUp() throws Exception {
 		keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-		fixture = new CertRepContentHandler(keyPair.getPrivate());
+		fixture = new CertRepContentHandler();
 		X500Principal subject = new X500Principal("CN=example.org");
 		certificate = X509Util.createEphemeralCertificate(subject, keyPair);
 	}

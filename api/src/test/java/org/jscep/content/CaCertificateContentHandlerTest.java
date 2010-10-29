@@ -5,12 +5,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreParameters;
+import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
-import org.jscep.pkcs7.MessageData;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.cms.CMSProcessable;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.jscep.pkcs7.SignedDataGenerator;
 import org.jscep.x509.X509Util;
 import org.junit.Before;
@@ -53,12 +63,16 @@ public class CaCertificateContentHandlerTest {
 	
 	@Test
 	public void testMultipleCertificates() throws Exception {
-		final SignedDataGenerator generator = new SignedDataGenerator();
-		generator.addCertificate(getCertificate());
-		SignedData sd = generator.generate();
-		MessageData md = MessageData.getInstance(sd);
+		CertStoreParameters params = new CollectionCertStoreParameters(Collections.singleton(getCertificate()));
+		CertStore certStore = CertStore.getInstance("Collection", params);
 		
-		InputStream in = new ByteArrayInputStream(md.getEncoded());
+		CMSProcessable content = new CMSProcessableByteArray(new byte[0]);
+		CMSSignedDataGenerator sdGen = new CMSSignedDataGenerator();
+		sdGen.addCertificatesAndCRLs(certStore);
+		CMSSignedData sd = sdGen.generate(content, false, null);		
+		ContentInfo ci = new ContentInfo(PKCSObjectIdentifiers.data, ASN1Object.fromByteArray(sd.getEncoded()));
+		
+		InputStream in = new ByteArrayInputStream(ci.getEncoded());
 		fixture.getContent(in, "application/x-x509-ca-ra-cert");
 	}
 	
