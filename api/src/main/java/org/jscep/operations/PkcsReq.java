@@ -34,7 +34,7 @@ import org.jscep.transaction.MessageType;
  * 
  * @author David Grant
  */
-public class PkcsReq implements DelayablePkiOperation<CertificationRequest> {
+public class PkcsReq implements PkiOperation<CertificationRequest> {
     private final CertificationRequest csr;
 
     public PkcsReq(CertificationRequest csr) {

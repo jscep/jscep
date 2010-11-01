@@ -21,6 +21,7 @@
  */
 package org.jscep.message;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
@@ -43,5 +44,23 @@ public class CertRep extends PkiResponse<SignedData> {
 	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus) {
 		// PENDING
 		super(transId, MessageType.CertRep, senderNonce, recipientNonce, pkiStatus);
+	}
+	
+	public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req, SignedData messageData) {
+		Nonce senderNonce = Nonce.nextNonce();
+		
+		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), PkiStatus.SUCCESS, messageData);
+	}
+	
+	public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req, FailInfo failInfo) {
+		Nonce senderNonce = Nonce.nextNonce();
+		
+		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), PkiStatus.FAILURE, failInfo);
+	}
+	
+	public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req) {
+		Nonce senderNonce = Nonce.nextNonce();
+		
+		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), PkiStatus.PENDING);
 	}
 }

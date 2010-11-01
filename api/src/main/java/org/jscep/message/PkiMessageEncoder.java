@@ -42,13 +42,13 @@ import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSSignedGenerator;
 
 public class PkiMessageEncoder {
-	private final PrivateKey priKey;
-	private final X509Certificate sender;
+	private final PrivateKey senderKey;
+	private final X509Certificate senderCert;
 	private final PkcsPkiEnvelopeEncoder encoder;
 	
 	public PkiMessageEncoder(PrivateKey priKey, X509Certificate sender, PkcsPkiEnvelopeEncoder encoder) {
-		this.priKey = priKey;
-		this.sender = sender;
+		this.senderKey = priKey;
+		this.senderCert = sender;
 		this.encoder = encoder;
 	}
 	
@@ -62,7 +62,7 @@ public class PkiMessageEncoder {
 			table.put(attr.getAttrType(), attr);
 		}
 		AttributeTable signedAttrs = new AttributeTable(table);
-		Collection<X509Certificate> certColl = Collections.singleton(sender);
+		Collection<X509Certificate> certColl = Collections.singleton(senderCert);
 		CertStore store;
 		try {
 			store = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certColl));
@@ -70,7 +70,7 @@ public class PkiMessageEncoder {
 			throw new IOException(e);
 		}
 		
-		sdGenerator.addSigner(priKey, sender, CMSSignedGenerator.DIGEST_SHA1, signedAttrs, null);
+		sdGenerator.addSigner(senderKey, senderCert, CMSSignedGenerator.DIGEST_SHA1, signedAttrs, null);
 		try {
 			sdGenerator.addCertificatesAndCRLs(store);
 		} catch (Exception e) {

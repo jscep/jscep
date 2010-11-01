@@ -24,29 +24,23 @@ package org.jscep.transaction;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.security.PrivateKey;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.content.CertRepContentHandler;
 import org.jscep.message.CertRep;
 import org.jscep.message.GetCertInitial;
-import org.jscep.message.PkcsPkiEnvelopeDecoder;
-import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.operations.DelayablePkiOperation;
 import org.jscep.pkcs7.SignedDataUtil;
 import org.jscep.request.PKCSReq;
-import org.jscep.state.StateMachine;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
@@ -64,83 +58,21 @@ import org.jscep.x509.X509Util;
  * 
  * @author David Grant
  */
-public class TransactionImpl implements Transaction {
+public class EnrollmentTransaction extends Transaction {
+	private final TransactionId transId;
+	private final org.jscep.message.PKCSReq request;
 	private static NonceQueue QUEUE = new NonceQueue(20);
-	private static Logger LOGGER = LoggingUtil.getLogger(TransactionImpl.class);
-	private final PrivateKey clientPrivateKey;
-	private final Transport transport;
-	private final X509Certificate serverCertificate;
-	private final X509Certificate clientCertificate;
-	private FailInfo failInfo;
-	private CertStore certStore;
-	private Callable<State> task;
-	private State state = State.CERT_NON_EXISTANT;
-	private final StateMachine stateMachine;
+	private static Logger LOGGER = LoggingUtil.getLogger(EnrollmentTransaction.class);
 
-	public TransactionImpl(X509Certificate serverCertificate, X509Certificate clientCertificate, PrivateKey clientPrivateKey, Transport transport) {
-		this.transport = transport;
-		this.serverCertificate = serverCertificate;
-		this.clientCertificate = clientCertificate;
-		this.clientPrivateKey = clientPrivateKey;
-		this.stateMachine = new StateMachine();
+	public EnrollmentTransaction(PkiMessageEncoder encoder, PkiMessageDecoder decoder, CertificationRequest csr) throws IOException {
+		super(encoder, decoder);
+		this.transId = TransactionId.createTransactionId(X509Util.getPublicKey(csr), "SHA-1");
+		this.request = new org.jscep.message.PKCSReq(transId, Nonce.nextNonce(), csr);
 	}
 	
-	/**
-	 * Returns the current state of this transaction.
-	 * 
-	 * @return the current state.
-	 */
-	public State getState() {
-		return state;
-	}
-	
-	
-	/**
-	 * Returns the failure reason explaining why the server rejected this transaction.
-	 * <p>
-	 * If the state of this transaction is not {@link State#CERT_NON_EXISTANT},
-	 * this method will throw an {@link IllegalStateException}.
-	 * 
-	 * @return the failure reason.
-	 * @throws IllegalStateException
-	 */
-	public FailInfo getFailureReason() {
-		if (state != State.CERT_NON_EXISTANT) {
-			throw new IllegalStateException();
-		}
-		return failInfo;
-	}
-	
-	/**
-	 * Returns the CertStore that was the outcome of this transaction.
-	 * <p>
-	 * If the state of this transaction is not {@link State#CERT_ISSUED},
-	 * this method will throw an {@link IllegalStateException}.
-	 * 
-	 * @return the certificate store.
-	 * @throws IllegalStateException
-	 */
-	public CertStore getCertStore() {
-		if (state != State.CERT_ISSUED) {
-			throw new IllegalStateException();
-		}
-		return certStore;
-	}
-	
-	/**
-	 * Returns the task that may be used to advance this transaction.
-	 * <p>
-	 * If the state of this transaction is not {@link State#CERT_REQ_PENDING},
-	 * this method will throw an {@link IllegalStateException}.
-	 * 
-	 * @return the task.
-	 * @throws IllegalStateException
-	 */
-	public Callable<State> getTask() {
-		if (state != State.CERT_REQ_PENDING) {
-			throw new IllegalStateException();
-		}
-		return task;
+	@Override
+	public TransactionId getId() {
+		return transId;
 	}
 	
 	/**
@@ -151,39 +83,47 @@ public class TransactionImpl implements Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws PkiOperationFailureException if the operation fails.
 	 */
-	public <T extends ASN1Encodable> State performOperation(PkiMessage<T> request) throws IOException {
-		LOGGER.entering(getClass().getName(), "performOperation", request);
-		
-		stateMachine.updateState(request);
-		
-		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(serverCertificate);
-		PkiMessageEncoder encoder = new PkiMessageEncoder(clientPrivateKey, clientCertificate, envEncoder);
-		
+	public State send(Transport transport) throws IOException {
 		CMSSignedData signedData = encoder.encode(request);
 		CertRepContentHandler handler = new CertRepContentHandler();
-		final CMSSignedData res = transport.sendMessage(new PKCSReq(signedData, handler));
+		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData, handler));
 
-		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(clientPrivateKey);
-		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 		CertRep response = (CertRep) decoder.decode(res);
-
-		stateMachine.updateState(response);
-		
 		validateExchange(request, response);
 		
 		if (response.getPkiStatus() == PkiStatus.FAILURE) {
 			failInfo = response.getFailInfo();
 			state = State.CERT_NON_EXISTANT;
-		} else if (response.getPkiStatus() == PkiStatus.PENDING) {
-			if (request instanceof DelayablePkiOperation<?>) {
-				task = new InitialCertTask();
-				state = State.CERT_REQ_PENDING;
-			} else {
-				throw new IllegalStateException(PkiStatus.PENDING + " not expected for " + request.getMessageType());
-			}
-		} else {
+		} else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
 			certStore = extractCertStore(response);
 			state = State.CERT_ISSUED;
+		} else {
+			state = State.CERT_REQ_PENDING;
+		}
+		
+		return state;
+	}
+	
+	public State poll(Transport transport, X509Certificate issuer) throws IOException {
+		X509Name issuerName = X509Util.toX509Name(issuer.getIssuerX500Principal());
+		X509Name subjectName = request.getMessageData().getCertificationRequestInfo().getSubject();
+		IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
+		final GetCertInitial pollReq = new GetCertInitial(transId, Nonce.nextNonce(), ias);
+		CMSSignedData signedData = encoder.encode(pollReq);
+		CertRepContentHandler handler = new CertRepContentHandler();
+		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData, handler));
+		
+		CertRep response = (CertRep) decoder.decode(res);
+		validateExchange(request, response);
+		
+		if (response.getPkiStatus() == PkiStatus.FAILURE) {
+			failInfo = response.getFailInfo();
+			state = State.CERT_NON_EXISTANT;
+		} else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
+			certStore = extractCertStore(response);
+			state = State.CERT_ISSUED;
+		} else {
+			state = State.CERT_REQ_PENDING;
 		}
 		
 		return state;
@@ -229,24 +169,6 @@ public class TransactionImpl implements Transaction {
 			throw e;
 		} else {
 			QUEUE.offer(res.getSenderNonce());
-		}
-	}
-	
-	private class InitialCertTask implements Callable<State> {
-		public State call() throws IOException {
-			if (state != State.CERT_REQ_PENDING) {
-				throw new IllegalStateException();
-			}
-			final X509Name issuer = X509Util.toX509Name(serverCertificate.getIssuerX500Principal());
-			final X509Name subject = X509Util.toX509Name(clientCertificate.getSubjectX500Principal());
-			final IssuerAndSubject ias = new IssuerAndSubject(issuer, subject);
-			final Nonce senderNonce = Nonce.nextNonce();
-			final TransactionId transId = TransactionId.createTransactionId();
-			final GetCertInitial getCert = new GetCertInitial(transId, senderNonce, ias);
-			
-			performOperation(getCert);
-			
-			return State.CERT_REQ_PENDING;
 		}
 	}
 }

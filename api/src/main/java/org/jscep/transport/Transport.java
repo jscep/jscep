@@ -62,11 +62,9 @@ public abstract class Transport {
 		POST
 	}
 	final URL url;
-	final Proxy proxy;
 	
-	Transport(URL url, Proxy proxy) {
+	Transport(URL url) {
 		this.url = url;
-		this.proxy = proxy;
 	}
 	
 	/**
@@ -79,18 +77,6 @@ public abstract class Transport {
 	}
 	
 	/**
-	 * Returns the proxy configured for use by this <code>Transport</code>.
-	 * <p>
-	 * If no proxy was used to construct this <code>Transport</code>, this
-	 * method returns <code>Proxy.NO_PROXY</code>.
-	 * 
-	 * @return the proxy.
-	 */
-	public Proxy getProxy() {
-		return proxy;
-	}
-	
-	/**
 	 * Sends the given request to the URL provided in the constructor and
 	 * uses the {@link Request}'s content handler to parse the response.  
 	 * 
@@ -100,7 +86,7 @@ public abstract class Transport {
 	 * @throws IOException if any I/O error occurs.
 	 * @see Request#getContentHandler()
 	 */
-	abstract public <T> T sendMessage(Request<T> msg) throws IOException;
+	abstract public <T> T sendRequest(Request<T> msg) throws IOException;
 	
 	/**
 	 * Creates a new <code>Transport</code> of type <code>method</code> with the 
@@ -117,9 +103,9 @@ public abstract class Transport {
 		final Transport t;
 		
 		if (method.equals(Method.GET)) {
-			t = new HttpGetTransport(url, proxy);
+			t = new HttpGetTransport(url);
 		} else {
-			t = new HttpPostTransport(url, proxy);
+			t = new HttpPostTransport(url);
 		}
 		
 		LOGGER.exiting(Transport.class.getName(), "createTransport", t);

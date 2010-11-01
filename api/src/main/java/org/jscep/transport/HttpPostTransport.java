@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -43,12 +42,12 @@ import org.jscep.util.LoggingUtil;
 public class HttpPostTransport extends Transport {
 	private static Logger LOGGER = LoggingUtil.getLogger(HttpPostTransport.class);
 	
-	HttpPostTransport(URL url, Proxy proxy) {
-		super(url, proxy);
+	HttpPostTransport(URL url) {
+		super(url);
 	}
 	
 	@Override
-	public <T> T sendMessage(Request<T> msg) throws IOException, MalformedURLException {
+	public <T> T sendRequest(Request<T> msg) throws IOException, MalformedURLException {
 		LOGGER.entering(getClass().getName(), "sendMessage", msg);
 		
 		if (msg instanceof PKCSReq == false) {
@@ -63,7 +62,7 @@ public class HttpPostTransport extends Transport {
 		}
 		
         final URL url = getUrl(msg.getOperation());
-        final HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
         
@@ -89,10 +88,6 @@ public class HttpPostTransport extends Transport {
 	 */
 	@Override
 	public String toString() {
-		if (proxy == Proxy.NO_PROXY) {
-			return "HTTP POST Transport for " + url;
-		} else {
-			return "HTTP POST Transport for " + url + " (using " + proxy + ")";
-		}
+		return "[POST] " + url;
 	}
 }

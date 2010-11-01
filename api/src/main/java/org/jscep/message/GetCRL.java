@@ -26,7 +26,7 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
-public class GetCRL extends PkiMessage<IssuerAndSerialNumber> {
+public class GetCRL extends PkiRequest<IssuerAndSerialNumber> {
 	public GetCRL(TransactionId transId, Nonce senderNonce, IssuerAndSerialNumber messageData) {
 		super(transId, MessageType.GetCRL, senderNonce, messageData);
 	}

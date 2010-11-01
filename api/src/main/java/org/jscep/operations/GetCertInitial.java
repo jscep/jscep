@@ -34,7 +34,7 @@ import org.jscep.transaction.MessageType;
  * 
  * @author David Grant
  */
-public class GetCertInitial implements DelayablePkiOperation<IssuerAndSubject> {
+public class GetCertInitial implements PkiOperation<IssuerAndSubject> {
 	private final X509Name issuer;
     private final X509Name subject;
     

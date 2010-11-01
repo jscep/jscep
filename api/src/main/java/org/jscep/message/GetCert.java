@@ -26,7 +26,7 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
-public class GetCert extends PkiMessage<IssuerAndSerialNumber> {
+public class GetCert extends PkiRequest<IssuerAndSerialNumber> {
 	public GetCert(TransactionId transId, Nonce senderNonce, IssuerAndSerialNumber messageData) {
 		super(transId, MessageType.GetCert, senderNonce, messageData);
 	}

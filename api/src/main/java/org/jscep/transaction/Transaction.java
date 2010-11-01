@@ -1,23 +1,48 @@
 package org.jscep.transaction;
 
+import java.io.IOException;
 import java.security.cert.CertStore;
-import java.util.concurrent.Callable;
 
-public interface Transaction {
-	/**
-	 * Returns the current state of this transaction.
-	 * 
-	 * @return the current state.
-	 */
-	State getState();
+import org.jscep.message.PkiMessageDecoder;
+import org.jscep.message.PkiMessageEncoder;
+import org.jscep.transport.Transport;
+
+public abstract class Transaction {
+	protected final PkiMessageEncoder encoder;
+	protected final PkiMessageDecoder decoder;
+	protected State state;
+	protected FailInfo failInfo;
+	protected CertStore certStore;
+	
+	public Transaction(PkiMessageEncoder encoder, PkiMessageDecoder decoder) {
+		this.encoder = encoder;
+		this.decoder = decoder;
+	}
 	/**
 	 * Retrieve the reason for failure.
 	 * 
 	 * @return the reason for failure.
 	 */
-	FailInfo getFailureReason();
-	CertStore getCertStore();
-	Callable<State> getTask();
+	public FailInfo getFailInfo() {
+		if (state != State.CERT_NON_EXISTANT) {
+			throw new IllegalStateException();
+		}
+		return failInfo;
+	}
+	
+	public CertStore getCertStore() {
+		if (state != State.CERT_ISSUED) {
+			throw new IllegalStateException();
+		}
+		return certStore;
+	}
+	
+	public State getState() {
+		return state;
+	}
+	
+	public abstract State send(Transport transport) throws IOException;
+	public abstract TransactionId getId();
 	
 	/**
 	 * This class represents the state of a transaction.

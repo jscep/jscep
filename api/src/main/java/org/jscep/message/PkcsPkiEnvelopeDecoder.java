@@ -22,6 +22,7 @@
 package org.jscep.message;
 
 import java.io.IOException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
@@ -30,6 +31,7 @@ import java.util.Collection;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -45,15 +47,29 @@ public class PkcsPkiEnvelopeDecoder {
 		Collection<RecipientInformation> recipientInfos = envelopedData.getRecipientInfos().getRecipients();
 		RecipientInformation recipientInfo = recipientInfos.iterator().next();
 
-		Provider provider = new BouncyCastleProvider();
 		byte[] bytes;
+		
+		// Bouncy Castle and JCE appear to deal with different key lengths, so 
+		// this code block tries anything from JCE, then BC specifically.
+		//
+		// Specifically, we see problems when BC creates the key at the peer, so we 
+		// use BC to handle the key at this end.  This is a workaround.
 		try {
-			Security.addProvider(provider);
-			bytes = recipientInfo.getContent(priKey, provider.getName());
-		} catch (Exception e) {
+			bytes = recipientInfo.getContent(priKey, null);
+		} catch (NoSuchProviderException e) {
 			throw new IOException(e);
-		} finally {
-			Security.removeProvider(provider.getName());
+		} catch (CMSException e) { 
+			Provider provider = new BouncyCastleProvider();
+			Security.addProvider(provider);
+			try {
+				bytes = recipientInfo.getContent(priKey, provider.getName());
+			} catch (NoSuchProviderException ex) {
+				throw new IOException(ex);
+			} catch (CMSException ex) {
+				throw new IOException(ex);
+			} finally {
+				Security.removeProvider(provider.getName());
+			}
 		}
 		
 		return ASN1Object.fromByteArray(bytes);

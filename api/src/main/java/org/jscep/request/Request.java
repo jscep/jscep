@@ -36,7 +36,7 @@ import org.jscep.content.ScepContentHandler;
  * 
  * @author David Grant
  * @param <T> the response type associated with this request
- * @see org.jscep.transport.Transport#sendMessage(Request)
+ * @see org.jscep.transport.Transport#sendRequest(Request)
  */
 public abstract class Request<T> {
 	private final Operation operation;
