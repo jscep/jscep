@@ -7,6 +7,11 @@
 	<name>jSCEP</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>5</version>
+	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -75,23 +80,6 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	<distributionManagement>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>Nexus Release Repository</name>
-			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-		</repository>
-		<site>
-			<id>website</id>
-			<url>ftp://ftp1.ftptoyoursite.com/www.jscep.org/web/content/</url>
-		</site>
-	</distributionManagement>
 	<profiles>
 		<profile>
 			<id>release-sign-artifacts</id>
