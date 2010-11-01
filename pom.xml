@@ -3,7 +3,7 @@
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep</artifactId>
 	<packaging>pom</packaging>
-	<version>1.1.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>jSCEP</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>
@@ -27,9 +27,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-1.1.0</connection>
-		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-1.1.0</developerConnection>
-		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-1.1.0</url>
+		<connection>scm:svn:http://jscep.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/trunk/</developerConnection>
+		<url>http://code.google.com/p/jscep/source/browse/</url>
 	</scm>
 	<mailingLists>
 		<mailingList>
