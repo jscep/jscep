@@ -38,6 +38,7 @@ import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class ClientTest extends AbstractClientTest {
 	/**
 	 * The requester MUST use RSA keys for all symmetric key operations.
