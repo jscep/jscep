@@ -53,7 +53,7 @@ public class ClientTest extends AbstractClientTest {
 		new Client(url, identity, keyPair.getPrivate(), new NoSecurityCallbackHandler());
 	}
 	
-	@Ignore @Test
+	@Test
 	public void testRenewalEnrollAllowed() throws Exception {
 		// Ignore this test if the CA doesn't support renewal.
 		Assume.assumeTrue(client.getCaCapabilities().isRenewalSupported());
@@ -70,7 +70,7 @@ public class ClientTest extends AbstractClientTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Ignore @Test(expected = IOException.class)
+	@Test(expected = IOException.class)
 	public void testRenewalSameCAEnrollDisallowed() throws Exception {
 		// Ignore if renewal is supported.
 		Assume.assumeThat(client.getCaCapabilities().isRenewalSupported(), is(false));
@@ -92,8 +92,10 @@ public class ClientTest extends AbstractClientTest {
 	}
 
 	@Test
-	public void testEnroll() throws Exception {		
-		Transaction trans = client.enrollCertificate(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password));
+	public void testEnroll() throws Exception {
+		client.getCrl();
+		CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
+		Transaction trans = client.enrollCertificate(csr);
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			CertStore store = trans.getCertStore();
@@ -101,7 +103,7 @@ public class ClientTest extends AbstractClientTest {
 		}
 	}
 	
-	@Ignore @Test
+	@Test
 	public void testEnrollThenGet() throws Exception {		
 		Transaction trans = client.enrollCertificate(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password));
 		State state = trans.getState();

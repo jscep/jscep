@@ -25,14 +25,14 @@ public abstract class AbstractClientTest {
 	protected Client client;
 	protected KeyPair keyPair;
 	protected X509Certificate identity;
-	protected char[] password = "secret".toCharArray();
+	protected char[] password = "INBOUND_TLSuscl99".toCharArray();
 	
 	@Before
 	public void setUp() throws Exception {
 		keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 		identity = X509Util.createEphemeralCertificate(new X500Principal("CN=jscep.org"), keyPair);
 
-		final URL url = new URL("http://jscep.org/scep/pkiclient.exe");
+		final URL url = new URL("https://192.168.11.73/ejbca/publicweb/apply/scep/noca/pkiclient.exe");
 		final CallbackHandler cbh = new NoSecurityCallbackHandler();
 		
 		client = new Client(url, identity, keyPair.getPrivate(), cbh);
