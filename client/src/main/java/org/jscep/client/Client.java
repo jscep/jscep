@@ -28,11 +28,15 @@ import java.math.BigInteger;
 import java.net.Proxy;
 import java.net.URL;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.CRL;
 import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.security.spec.KeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,15 +49,26 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.jscep.FingerprintVerificationCallback;
-import org.jscep.operations.GetCert;
-import org.jscep.operations.GetCrl;
+import org.jscep.content.CaCapabilitiesContentHandler;
+import org.jscep.content.CaCertificateContentHandler;
+import org.jscep.content.NextCaCertificateContentHandler;
+import org.jscep.message.GetCRL;
+import org.jscep.message.GetCert;
+import org.jscep.message.PKCSReq;
 import org.jscep.request.GetCaCaps;
 import org.jscep.request.GetCaCert;
 import org.jscep.request.GetNextCaCert;
 import org.jscep.response.Capabilities;
+import org.jscep.transaction.Nonce;
 import org.jscep.transaction.Transaction;
+import org.jscep.transaction.TransactionId;
 import org.jscep.transaction.TransactionImpl;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
@@ -160,6 +175,7 @@ public class Client {
      * 
      * @return the SCEP server URL.
      */
+    @Deprecated
     public URL getURL() {
     	return url;
     }
@@ -171,6 +187,7 @@ public class Client {
      * 
      * @return the profile name.
      */
+    @Deprecated
     public String getProfile() {
     	return profile;
     }
@@ -180,6 +197,7 @@ public class Client {
      * 
      * @return the callback handler.
      */
+    @Deprecated
     public CallbackHandler getCallbackHandler() {
     	return cbh;
     }
@@ -189,6 +207,7 @@ public class Client {
      * 
      * @return the certificate.
      */
+    @Deprecated
     public X509Certificate getIdentity() {
     	return identity;
     }
@@ -198,6 +217,7 @@ public class Client {
      * 
      * @return the private key.
      */
+    @Deprecated
     public PrivateKey getPrivateKey() {
     	return privKey;
     }
@@ -250,7 +270,6 @@ public class Client {
      * @throws IOException 
      */
     private TransactionImpl createTransaction() throws IOException {
-    	X509Certificate ca = retrieveCA();
     	Transport transport = createTransport();
     	Capabilities capabilities = getCaCapabilities(true);
     	String cipherAlg = preferredCipherAlg;
@@ -262,7 +281,7 @@ public class Client {
     		digestAlg = capabilities.getStrongestMessageDigest();
     	}
     	
-    	return new TransactionImpl(ca, getRecipientCertificate(), identity, privKey, digestAlg, cipherAlg, transport);
+    	return new TransactionImpl(getRecipientCertificate(), identity, privKey, transport);
     }
     
     /**
@@ -280,13 +299,20 @@ public class Client {
      * @throws PkiOperationFailureException if the operation fails.
      */
     public Collection<? extends CRL> getCrl() throws IOException, PkiOperationFailureException {
+    	// TRANSACTIONAL
     	// CRL query
     	final TransactionImpl t = createTransaction();
     	final X509Certificate ca = retrieveCA();
     	if (supportsDistributionPoints(ca)) {
     		throw new RuntimeException("Unimplemented");
     	}
-    	final GetCrl req = new GetCrl(ca.getIssuerX500Principal(), ca.getSerialNumber());
+    	
+    	TransactionId transId = TransactionId.createTransactionId();
+    	Nonce senderNonce = Nonce.nextNonce();
+    	X509Name name = new X509Name(ca.getIssuerX500Principal().toString());
+    	BigInteger serialNumber = ca.getSerialNumber();
+    	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
+    	final GetCRL req = new GetCRL(transId, senderNonce, iasn);
     	t.performOperation(req);
     	
     	if (t.getState() == State.CERT_ISSUED) {
@@ -312,10 +338,17 @@ public class Client {
      * @throws PkiOperationFailureException if the operation fails.
      */
     public Collection<? extends Certificate> getCertificate(BigInteger serial) throws IOException, PkiOperationFailureException {
+    	// TRANSACTIONAL
     	// Certificate query
     	final TransactionImpl t = createTransaction();
     	final X509Certificate ca = retrieveCA();;
-		final GetCert req = new GetCert(ca.getIssuerX500Principal(), serial);
+    	
+    	TransactionId transId = TransactionId.createTransactionId();
+    	Nonce senderNonce = Nonce.nextNonce();
+    	X509Name name = new X509Name(ca.getIssuerX500Principal().toString());
+    	BigInteger serialNumber = ca.getSerialNumber();
+    	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
+    	final GetCert req = new GetCert(transId, senderNonce, iasn);
 		t.performOperation(req);
     	
 		if (t.getState() == State.CERT_ISSUED) {
@@ -339,10 +372,25 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public Transaction enrollCertificate(CertificationRequest csr) throws IOException {
+    	// TRANSACTIONAL
     	// Certificate enrollment
     	final TransactionImpl t = createTransaction();
     	
-    	final org.jscep.operations.PkcsReq req = new org.jscep.operations.PkcsReq(csr);
+    	SubjectPublicKeyInfo pubKeyInfo = csr.getCertificationRequestInfo().getSubjectPublicKeyInfo();
+    	RSAKeyParameters keyParams = (RSAKeyParameters) PublicKeyFactory.createKey(pubKeyInfo);
+    	KeySpec keySpec = new RSAPublicKeySpec(keyParams.getModulus(), keyParams.getExponent());
+    	PublicKey pubKey;
+		try {
+			KeyFactory kf = KeyFactory.getInstance("RSA");
+			pubKey = kf.generatePublic(keySpec);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+    	
+    	TransactionId transId = TransactionId.createTransactionId(pubKey, "SHA-1");
+    	Nonce senderNonce = Nonce.nextNonce();
+    	
+    	PKCSReq req = new PKCSReq(transId, senderNonce, csr);
     	t.performOperation(req);
     	
     	return t;
@@ -376,10 +424,12 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public Capabilities getCaCapabilities() throws IOException {
+    	// NON-TRANSACTIONAL
     	return getCaCapabilities(false);
     }
     
     private Capabilities getCaCapabilities(boolean useCache) throws IOException {
+    	// NON-TRANSACTIONAL
     	LOGGER.entering(getClass().getName(), "getCaCapabilities", useCache);
     	
     	Capabilities caps = null;
@@ -387,7 +437,7 @@ public class Client {
     		caps = capabilitiesCache.get(profile);
     	}
     	if (caps == null) {
-	    	final GetCaCaps req = new GetCaCaps(profile);
+	    	final GetCaCaps req = new GetCaCaps(profile, new CaCapabilitiesContentHandler());
 	        final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
 	        caps = trans.sendMessage(req);
 	        capabilitiesCache.put(profile, caps);
@@ -407,9 +457,10 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public List<X509Certificate> getCaCertificate() throws IOException {
+    	// NON-TRANSACTIONAL
     	// CA and RA public key distribution
     	LOGGER.entering(getClass().getName(), "getCaCertificate");
-    	final GetCaCert req = new GetCaCert(profile);
+    	final GetCaCert req = new GetCaCert(profile, new CaCertificateContentHandler());
         final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
         
         final List<X509Certificate> certs = trans.sendMessage(req);
@@ -451,13 +502,14 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public List<X509Certificate> getRolloverCertificate() throws IOException {
+    	// NON-TRANSACTIONAL
     	if (getCaCapabilities().isRolloverSupported() == false) {
     		throw new UnsupportedOperationException();
     	}
     	final X509Certificate issuer = retrieveCA();
     	
     	final Transport trans = Transport.createTransport(Transport.Method.GET, url, proxy);
-    	final GetNextCaCert req = new GetNextCaCert(issuer, profile);
+    	final GetNextCaCert req = new GetNextCaCert(profile, new NextCaCertificateContentHandler(issuer));
     	
     	return trans.sendMessage(req);
     }
