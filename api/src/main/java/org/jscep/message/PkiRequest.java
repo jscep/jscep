@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,40 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.pkcs7;
+package org.jscep.message;
 
 import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.cms.ContentInfo;
+import org.jscep.transaction.MessageType;
+import org.jscep.transaction.Nonce;
+import org.jscep.transaction.TransactionId;
 
-/**
- * This class represents the SCEP <code>pkcsPKIEnvelope</code> structure.
- * 
- * @author David Grant
- */
-public class PkcsPkiEnvelope extends ContentInfo {
-	private ASN1Encodable msgData;
-	
-	public PkcsPkiEnvelope(ContentInfo info) {
-		super(info.getContentType(), info.getContent());
-	}
-	
-	void setMessageData(ASN1Encodable msgData) {
-		this.msgData = msgData;
-	}
-	
-	public ASN1Encodable getMessageData() {
-		return msgData;
-	}
-	
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		
-		sb.append("pkcsPkiEnvelope [\n");
-		sb.append("\tcontentType: " + getContentType() + "\n");
-		sb.append("\tmessageData: " + msgData.toString().replaceAll("\n", "\n\t") + "\n");
-		sb.append("]");
-		
-		return sb.toString();
+public abstract class PkiRequest<T extends ASN1Encodable> extends PkiMessage<T> {	
+	public PkiRequest(TransactionId transId, MessageType messageType, Nonce senderNonce, T messageData) {
+		super(transId, messageType, senderNonce, messageData);
 	}
 }

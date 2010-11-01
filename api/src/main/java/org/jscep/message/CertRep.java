@@ -21,100 +21,27 @@
  */
 package org.jscep.message;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.SignedData;
-import org.jscep.asn1.ScepObjectIdentifiers;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
 
-public class CertRep extends PkiMessage<SignedData> {
-	private final Nonce recipientNonce;
-	private final PkiStatus pkiStatus;
-	private final FailInfo failInfo;
-	
+public class CertRep extends PkiResponse<SignedData> {
+
 	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus, SignedData messageData) {
 		// SUCCESS
-		super(transId, MessageType.CertRep, senderNonce, messageData);
-	
-		this.recipientNonce = recipientNonce;
-		this.pkiStatus = pkiStatus;
-		this.failInfo = null;
+		super(transId, MessageType.CertRep, senderNonce, recipientNonce, pkiStatus, messageData);
 	}
 	
 	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus, FailInfo failInfo) {
 		// FAILURE
-		super(transId, MessageType.CertRep, senderNonce, null);
-	
-		this.recipientNonce = recipientNonce;
-		this.pkiStatus = pkiStatus;
-		this.failInfo = failInfo;
+		super(transId, MessageType.CertRep, senderNonce, recipientNonce, pkiStatus, failInfo);
 	}
 	
 	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus) {
 		// PENDING
-		super(transId, MessageType.CertRep, senderNonce, null);
-	
-		this.recipientNonce = recipientNonce;
-		this.pkiStatus = pkiStatus;
-		this.failInfo = null;
-	}
-	
-	public Nonce getRecipientNonce() {
-		return recipientNonce;
-	}
-	
-	public PkiStatus getPkiStatus() {
-		return pkiStatus;
-	}
-	
-	public FailInfo getFailInfo() {
-		if (pkiStatus != PkiStatus.FAILURE) {
-			throw new IllegalArgumentException();
-		}
-		return failInfo;
-	}
-	
-	@Override
-	public SignedData getMessageData() {
-		if (pkiStatus != PkiStatus.SUCCESS) {
-			throw new IllegalArgumentException();
-		}
-		return super.getMessageData();
-	}
-	
-	@Override
-	public Collection<Attribute> getAttributes() {
-		final Collection<Attribute> attrs = new HashSet<Attribute>();
-		
-		final Attribute pkiStatusAttr = new Attribute(ScepObjectIdentifiers.pkiStatus, toSet(pkiStatus));
-		final Attribute recipientNonceAttr = new Attribute(ScepObjectIdentifiers.recipientNonce, toSet(recipientNonce));
-		attrs.add(pkiStatusAttr);
-		attrs.add(recipientNonceAttr);
-		
-		if (pkiStatus == PkiStatus.FAILURE) {
-			final Attribute failInfoAttr = new Attribute(ScepObjectIdentifiers.failInfo, toSet(failInfo));
-			attrs.add(failInfoAttr);
-		}
-		
-		attrs.addAll(super.getAttributes());
-		
-		return attrs;
-	}
-
-	private ASN1Set toSet(FailInfo failInfo) {
-		return new DERSet(new DERPrintableString(failInfo.toString()));
-	}
-
-	private ASN1Set toSet(PkiStatus pkiStatus) {
-		return new DERSet(new DERPrintableString(pkiStatus.toString()));
+		super(transId, MessageType.CertRep, senderNonce, recipientNonce, pkiStatus);
 	}
 }
