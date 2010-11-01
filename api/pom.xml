@@ -37,6 +37,10 @@
 			<artifactId>bcprov-jdk16</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcmail-jdk16</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
@@ -56,8 +60,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 			<plugin>

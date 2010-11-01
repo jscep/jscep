@@ -20,7 +20,7 @@ public class GetCaCertTest {
 	@Test
 	public void testNullConstructor() {
 		fixture = new GetCaCert(new CaCertificateContentHandler());
-		Assert.assertNull(fixture.getMessage());
+		Assert.assertEquals("", fixture.getMessage());
 	}
 	
 	@Test

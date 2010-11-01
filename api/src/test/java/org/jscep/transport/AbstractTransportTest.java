@@ -57,11 +57,6 @@ abstract public class AbstractTransportTest {
 	}
 
 	@Test
-	public void testGetProxy() {
-		Assert.assertEquals(proxy, transport.getProxy());
-	}
-
-	@Test
 	public void test404() throws Exception {
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 
@@ -77,7 +72,7 @@ abstract public class AbstractTransportTest {
 		PKCSReq req = new PKCSReq(enc.encode(getCert), new CertRepContentHandler());
 		
 		try {
-			transport.sendMessage(req);
+			transport.sendRequest(req);
 		} catch (IOException e) {
 			Assert.assertEquals(e.getMessage(), "404 Not Found");
 		}

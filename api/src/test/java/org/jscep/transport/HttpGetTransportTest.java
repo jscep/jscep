@@ -12,11 +12,6 @@ public class HttpGetTransportTest extends AbstractTransportTest {
 		Assert.assertEquals(url, transport.getURL());
 	}
 
-	@Test
-	public void testGetProxy() {
-		Assert.assertEquals(proxy, transport.getProxy());
-	}
-
 	@Override
 	protected Method getMethod() {
 		return Method.GET;

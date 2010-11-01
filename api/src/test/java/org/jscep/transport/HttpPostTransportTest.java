@@ -20,12 +20,12 @@ import org.junit.Test;
 public class HttpPostTransportTest extends AbstractTransportTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetCACert() throws IOException {
-		transport.sendMessage(new GetCaCert(null));
+		transport.sendRequest(new GetCaCert(null));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetCACaps() throws IOException {
-		transport.sendMessage(new GetCaCaps(null));
+		transport.sendRequest(new GetCaCaps(null));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -35,7 +35,7 @@ public class HttpPostTransportTest extends AbstractTransportTest {
 		X509Certificate cert = X509Util.createEphemeralCertificate(subject, keyPair);
 		
 		GetNextCaCert nextCa = new GetNextCaCert(new NextCaCertificateContentHandler(cert));
-		transport.sendMessage(nextCa);
+		transport.sendRequest(nextCa);
 	}
 
 	@Override

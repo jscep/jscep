@@ -21,7 +21,7 @@ public class GetCaCapsTest {
 	@Test
 	public void testNullConstructor() {
 		fixture = new GetCaCaps(new CaCapabilitiesContentHandler());
-		Assert.assertNull(fixture.getMessage());
+		Assert.assertEquals("", fixture.getMessage());
 	}
 
 	@Test
