@@ -55,7 +55,7 @@ public class ScepServletTest {
 	public void basicTest() throws Exception {
 		GetCaCaps req = new GetCaCaps(null);
 		Transport transport = Transport.createTransport(method, getURL());
-		Capabilities caps = transport.sendMessage(req);
+		Capabilities caps = transport.sendRequest(req);
 		
 		System.out.println(caps);
 	}

@@ -45,15 +45,15 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.pkcs.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.asn1.IssuerAndSubject;
-import org.jscep.pkcs7.PkiMessage;
-import org.jscep.pkcs7.PkiMessageParser;
-import org.jscep.pkcs7.SignedDataGenerator;
+import org.jscep.message.PkcsPkiEnvelopeDecoder;
+import org.jscep.message.PkiMessage;
+import org.jscep.message.PkiMessageDecoder;
 import org.jscep.request.Operation;
 import org.jscep.response.Capability;
 import org.jscep.transaction.MessageType;
@@ -135,11 +135,19 @@ public abstract class ScepServlet extends HttpServlet {
 			doGetNextCaCert(req, res);
 		} else {
 			res.setHeader("Content-Type", "application/x-pki-message");
-			PkiMessageParser msgParser = new PkiMessageParser();
-			PkiMessage msg = msgParser.parse(getContentInfo(req.getInputStream()));
+			CMSSignedData sd;
+			try {
+				sd = new CMSSignedData(req.getInputStream());
+			} catch (CMSException e) {
+				throw new ServletException(e);
+			}
+			
+			PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(getPrivate());
+			PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+			PkiMessage<? extends ASN1Encodable> msg = decoder.decode(sd);
 			
 			MessageType msgType = msg.getMessageType();
-			ASN1Encodable msgData = msg.getPkcsPkiEnvelope().getMessageData();
+			ASN1Encodable msgData = msg.getMessageData();
 			if (msgType == MessageType.GetCert) {
 				final ASN1Sequence seq = (ASN1Sequence) msgData;
 				final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(seq);
@@ -159,33 +167,36 @@ public abstract class ScepServlet extends HttpServlet {
 				final X509Name subject = ias.getSubject();
 				
 				final X509Certificate cert = doGetCertInitial(issuer, subject);
-				final SignedDataGenerator generator = new SignedDataGenerator();
-				generator.addCertificate(cert);
-				final SignedData signedData = generator.generate();
-				res.getOutputStream().write(signedData.getDEREncoded());
+				
+//				PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(recipient);
+//				
+//				final SignedDataGenerator generator = new SignedDataGenerator();
+//				generator.addCertificate(cert);
+//				final SignedData signedData = generator.generate();
+//				res.getOutputStream().write(signedData.getDEREncoded());
 			} else if (msgType == MessageType.GetCRL) {
-				final ASN1Sequence seq = (ASN1Sequence) msgData;
-				final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(seq);
-				final X500Principal principal = new X500Principal(iasn.getName().getDEREncoded());
-				
-				final X509CRL crl = doGetCrl(principal, iasn.getCertificateSerialNumber().getValue());
-				final SignedDataGenerator generator = new SignedDataGenerator();
-				generator.addCRL(crl);
-				final SignedData signedData = generator.generate();
-				res.getOutputStream().write(signedData.getDEREncoded());
+//				final ASN1Sequence seq = (ASN1Sequence) msgData;
+//				final IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(seq);
+//				final X500Principal principal = new X500Principal(iasn.getName().getDEREncoded());
+//				
+//				final X509CRL crl = doGetCrl(principal, iasn.getCertificateSerialNumber().getValue());
+//				final SignedDataGenerator generator = new SignedDataGenerator();
+//				generator.addCRL(crl);
+//				final SignedData signedData = generator.generate();
+//				res.getOutputStream().write(signedData.getDEREncoded());
 			} else if (msgType == MessageType.PKCSReq) {
-				final PKCS10CertificationRequest certReq = (PKCS10CertificationRequest) msgData;
-				final List<X509Certificate> certs = doEnroll(certReq);
-				
-				SignedDataGenerator dsdGenerator = new SignedDataGenerator();
-				for (X509Certificate cert : certs) {
-					dsdGenerator.addCertificate(cert);
-				}
-				SignedData dsd = dsdGenerator.generate();
-				SignedDataGenerator sdGenerator = new SignedDataGenerator();
-				SignedData sd = sdGenerator.generate(PKCSObjectIdentifiers.data, dsd);
-				
-				res.getOutputStream().write(sd.getDEREncoded());
+//				final PKCS10CertificationRequest certReq = (PKCS10CertificationRequest) msgData;
+//				final List<X509Certificate> certs = doEnroll(certReq);
+//				
+//				SignedDataGenerator dsdGenerator = new SignedDataGenerator();
+//				for (X509Certificate cert : certs) {
+//					dsdGenerator.addCertificate(cert);
+//				}
+//				SignedData dsd = dsdGenerator.generate();
+//				SignedDataGenerator sdGenerator = new SignedDataGenerator();
+//				SignedData sd = sdGenerator.generate(PKCSObjectIdentifiers.data, dsd);
+//				
+//				res.getOutputStream().write(sd.getDEREncoded());
 			}
 		}
 		LOGGER.exiting(getClass().getName(), "service");
@@ -194,12 +205,12 @@ public abstract class ScepServlet extends HttpServlet {
 	private void doGetNextCaCert(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		res.setHeader("Content-Type", "application/x-x509-next-ca-cert");
 		
-		final List<X509Certificate> certs = getNextCaCertificate(req.getParameter(MSG_PARAM));
-		SignedDataGenerator dsdGenerator = new SignedDataGenerator();
-		for (X509Certificate cert : certs) {
-			dsdGenerator.addCertificate(cert);
-		}
-		SignedData dsd = dsdGenerator.generate();
+//		final List<X509Certificate> certs = getNextCaCertificate(req.getParameter(MSG_PARAM));
+//		SignedDataGenerator dsdGenerator = new SignedDataGenerator();
+//		for (X509Certificate cert : certs) {
+//			dsdGenerator.addCertificate(cert);
+//		}
+//		SignedData dsd = dsdGenerator.generate();
 		
 	}
 
@@ -304,6 +315,6 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @param certificationRequest the PKCS #10 CertificationRequest
 	 * @return the certificate chain.
 	 */
-	abstract protected List<X509Certificate> doEnroll(PKCS10CertificationRequest certificationRequest);
+	abstract protected List<X509Certificate> doEnroll(CertificationRequest certificationRequest);
 	abstract protected PrivateKey getPrivate();
 }
