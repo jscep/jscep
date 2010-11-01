@@ -12,13 +12,14 @@ import org.jscep.response.Capabilities;
 import org.jscep.transport.Transport;
 import org.jscep.transport.Transport.Method;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 
-@RunWith(Parameterized.class)
+@Ignore @RunWith(Parameterized.class)
 public class ScepServletTest {
 	private static Server SERVER;
 	private static String PATH = "/scep/pkiclient.exe";
