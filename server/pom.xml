@@ -22,9 +22,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-1.1.0</connection>
-		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-1.1.0</developerConnection>
-		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-1.1.0</url>
+		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-1.1.0/trunk</connection>
+		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-1.1.0/trunk</developerConnection>
+		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-1.1.0/browse</url>
 	</scm>
 	<dependencies>
 		<dependency>

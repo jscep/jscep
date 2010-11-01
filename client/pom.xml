@@ -22,9 +22,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-1.1.0</connection>
-		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-1.1.0</developerConnection>
-		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-1.1.0</url>
+		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-1.1.0/trunk</connection>
+		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-1.1.0/trunk</developerConnection>
+		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-1.1.0/browse</url>
 	</scm>
 	<dependencies>
 		<dependency>
@@ -63,24 +63,6 @@
 					<execution>
 						<goals>
 							<goal>clean</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-5</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
