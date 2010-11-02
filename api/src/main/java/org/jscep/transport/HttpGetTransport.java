@@ -23,15 +23,16 @@
 package org.jscep.transport;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.logging.Logger;
 
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
 import org.jscep.util.LoggingUtil;
-
 
 /**
  * Transport representing the <code>HTTP GET</code> method
@@ -65,8 +66,8 @@ public class HttpGetTransport extends Transport {
 		return response;
 	}
 
-	private URL getUrl(Operation op, String message) throws MalformedURLException {
-		return new URL(getUrl(op).toExternalForm() + "&message=" + message);
+	private URL getUrl(Operation op, String message) throws MalformedURLException, UnsupportedEncodingException {
+		return new URL(getUrl(op).toExternalForm() + "&message=" + URLEncoder.encode(message, "UTF-8"));
 	}
 	
 	/**
