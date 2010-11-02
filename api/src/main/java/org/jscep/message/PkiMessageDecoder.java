@@ -28,12 +28,15 @@ import java.util.Collection;
 import java.util.Hashtable;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
@@ -69,7 +72,7 @@ public class PkiMessageDecoder {
 		
 		CertStore certs;
 		try {
-			certs = signedData.getCertificatesAndCRLs("Collection", null);
+			certs = signedData.getCertificatesAndCRLs("Collection", (String) null);
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
@@ -84,7 +87,7 @@ public class PkiMessageDecoder {
 		if (certColl.size() > 0) {
 			Certificate cert = certColl.iterator().next();
 			try {
-				signerInfo.verify(cert.getPublicKey(), null);
+				signerInfo.verify(cert.getPublicKey(), (String) null);
 			} catch (Exception e) {
 				throw new IOException(e);
 			}
@@ -108,64 +111,45 @@ public class PkiMessageDecoder {
 				
 				return new CertRep(transId, senderNonce, recipientNonce, pkiStatus);
 			} else {
-				byte[] bytes = (byte[]) signedContent.getContent();
-				CMSEnvelopedData envelopedData;
-				try {
-					envelopedData = new CMSEnvelopedData(bytes);
-				} catch (CMSException e) {
-					throw new IOException(e);
-				}
-				// Perhaps we need to wrap this
-				ContentInfo contentInfo = ContentInfo.getInstance(decoder.decode(envelopedData));
+				EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
+				ContentInfo contentInfo = ContentInfo.getInstance(decoder.decode(ed));
 				SignedData messageData = new SignedData((ASN1Sequence) contentInfo.getContent());
 				
 				return new CertRep(transId, senderNonce, recipientNonce, pkiStatus, messageData);
 			}
 		} else if (messageType == MessageType.GetCert) {
-			byte[] bytes = (byte[]) signedContent.getContent();
-			CMSEnvelopedData envelopedData;
-			try {
-				envelopedData = new CMSEnvelopedData(bytes);
-			} catch (CMSException e) {
-				throw new IOException(e);
-			}
-			IssuerAndSerialNumber messageData = IssuerAndSerialNumber.getInstance(decoder.decode(envelopedData));
+			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
+			IssuerAndSerialNumber messageData = IssuerAndSerialNumber.getInstance(decoder.decode(ed));
 			
 			return new GetCert(transId, senderNonce, messageData);
 		} else  if (messageType == MessageType.GetCertInitial) {
-			byte[] bytes = (byte[]) signedContent.getContent();
-			CMSEnvelopedData envelopedData;
-			try {
-				envelopedData = new CMSEnvelopedData(bytes);
-			} catch (CMSException e) {
-				throw new IOException(e);
-			}
-			IssuerAndSubject messageData = IssuerAndSubject.getInstance(decoder.decode(envelopedData));
+			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
+			
+			IssuerAndSubject messageData = IssuerAndSubject.getInstance(decoder.decode(ed));
 			
 			return new GetCertInitial(transId, senderNonce, messageData);
 		} else if (messageType == MessageType.GetCRL) {
-			byte[] bytes = (byte[]) signedContent.getContent();
-			CMSEnvelopedData envelopedData;
-			try {
-				envelopedData = new CMSEnvelopedData(bytes);
-			} catch (CMSException e) {
-				throw new IOException(e);
-			}
-			IssuerAndSerialNumber messageData = IssuerAndSerialNumber.getInstance(decoder.decode(envelopedData));
+			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
+			IssuerAndSerialNumber messageData = IssuerAndSerialNumber.getInstance(decoder.decode(ed));
 			
 			return new GetCRL(transId, senderNonce, messageData);
 		} else {
-			byte[] bytes = (byte[]) signedContent.getContent();
-			CMSEnvelopedData envelopedData;
-			try {
-				envelopedData = new CMSEnvelopedData(bytes);
-			} catch (CMSException e) {
-				throw new IOException(e);
-			}
-			CertificationRequest messageData = CertificationRequest.getInstance(decoder.decode(envelopedData));
+			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
+			CertificationRequest messageData = CertificationRequest.getInstance(decoder.decode(ed));
 			
 			return new PKCSReq(transId, senderNonce, messageData);
 		}
+	}
+	
+	private EnvelopedData getEnvelopedData(byte[] bytes) throws IOException {
+		// We expect the byte array to be a sequence
+		ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(bytes);
+		// ... and that sequence to be a ContentInfo (but might be the EnvelopedData)
+		ContentInfo contentInfo = new ContentInfo(seq);
+		// If it *is* a ContentInfo, the content *should* be EnvelopedData
+		DEREncodable content = contentInfo.getContent();
+		
+		return EnvelopedData.getInstance(content);
 	}
 	
 	private Nonce toNonce(Attribute attr) {

@@ -78,7 +78,7 @@ public class PkiMessageEncoder {
 		}
 		
 		try {
-			return sdGenerator.generate(signable, true, null);
+			return sdGenerator.generate(signable, true, (String) null);
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

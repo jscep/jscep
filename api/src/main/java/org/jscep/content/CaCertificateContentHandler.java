@@ -102,7 +102,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 				ContentInfo ci = ContentInfo.getInstance(ASN1Object.fromByteArray(baos.toByteArray()));
 				CMSSignedData sd = new CMSSignedData(ci.getContent().getDERObject().getEncoded());
 
-				store = sd.getCertificatesAndCRLs("Collection", null);
+				store = sd.getCertificatesAndCRLs("Collection", (String) null);
 			} catch (Exception e) {
 				throw new IOException(e);
 			}

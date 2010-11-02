@@ -116,8 +116,8 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
+						<source>1.5</source>
+						<target>1.5</target>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -138,14 +138,14 @@
 			<version>2.2</version>
  		</dependency>
  		<dependency>
- 			<groupId>bouncycastle</groupId>
- 			<artifactId>bcprov-jdk16</artifactId>
-			<version>140</version>
+ 			<groupId>org.bouncycastle</groupId>
+ 			<artifactId>bcprov-jdk15</artifactId>
+			<version>1.45</version>
  		</dependency>
  		<dependency>
- 			<groupId>bouncycastle</groupId>
- 			<artifactId>bcmail-jdk16</artifactId>
-			<version>140</version>
+ 			<groupId>org.bouncycastle</groupId>
+ 			<artifactId>bcmail-jdk15</artifactId>
+			<version>1.45</version>
  		</dependency>
  		<dependency>
  			<groupId>commons-codec</groupId>

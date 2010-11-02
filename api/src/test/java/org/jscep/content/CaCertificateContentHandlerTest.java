@@ -67,7 +67,7 @@ public class CaCertificateContentHandlerTest {
 		CMSProcessable content = new CMSProcessableByteArray(new byte[0]);
 		CMSSignedDataGenerator sdGen = new CMSSignedDataGenerator();
 		sdGen.addCertificatesAndCRLs(certStore);
-		CMSSignedData sd = sdGen.generate(content, false, null);		
+		CMSSignedData sd = sdGen.generate(content, false, (String) null);		
 		ContentInfo ci = new ContentInfo(PKCSObjectIdentifiers.data, ASN1Object.fromByteArray(sd.getEncoded()));
 		
 		InputStream in = new ByteArrayInputStream(ci.getEncoded());

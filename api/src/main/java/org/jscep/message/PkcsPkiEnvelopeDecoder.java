@@ -22,18 +22,21 @@
 package org.jscep.message;
 
 import java.io.IOException;
-import java.security.NoSuchProviderException;
+import java.security.AlgorithmParameters;
 import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.Security;
-import java.util.Collection;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.RecipientInformation;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.cms.EncryptedContentInfo;
+import org.bouncycastle.asn1.cms.EnvelopedData;
+import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
+import org.bouncycastle.asn1.cms.RecipientInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 public class PkcsPkiEnvelopeDecoder {
 	private final PrivateKey priKey;
@@ -42,36 +45,53 @@ public class PkcsPkiEnvelopeDecoder {
 		this.priKey = priKey;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public ASN1Encodable decode(CMSEnvelopedData envelopedData) throws IOException {
-		Collection<RecipientInformation> recipientInfos = envelopedData.getRecipientInfos().getRecipients();
-		RecipientInformation recipientInfo = recipientInfos.iterator().next();
+	public ASN1Encodable decode(EnvelopedData envelopedData) throws IOException {
+		// Figure out the type of secret key
+		final EncryptedContentInfo contentInfo = envelopedData.getEncryptedContentInfo();
+		final AlgorithmIdentifier contentAlg = contentInfo.getContentEncryptionAlgorithm();
+		final String cipherName = getCipherName(contentAlg.getObjectId().getId());
 
-		byte[] bytes;
-		
-		// Bouncy Castle and JCE appear to deal with different key lengths, so 
-		// this code block tries anything from JCE, then BC specifically.
-		//
-		// Specifically, we see problems when BC creates the key at the peer, so we 
-		// use BC to handle the key at this end.  This is a workaround.
+		Cipher decryptingCipher;
+		AlgorithmParameters params;
 		try {
-			bytes = recipientInfo.getContent(priKey, null);
-		} catch (NoSuchProviderException e) {
+			decryptingCipher = Cipher.getInstance(cipherName + "/CBC/NoPadding");
+			params = AlgorithmParameters.getInstance(cipherName);
+			DEROctetString paramsString = (DEROctetString) contentAlg.getParameters();
+			params.init(paramsString.getEncoded());
+		} catch (Exception e) {
 			throw new IOException(e);
-		} catch (CMSException e) { 
-			Provider provider = new BouncyCastleProvider();
-			Security.addProvider(provider);
-			try {
-				bytes = recipientInfo.getContent(priKey, provider.getName());
-			} catch (NoSuchProviderException ex) {
-				throw new IOException(ex);
-			} catch (CMSException ex) {
-				throw new IOException(ex);
-			} finally {
-				Security.removeProvider(provider.getName());
-			}
 		}
 		
-		return ASN1Object.fromByteArray(bytes);
+		// Make sure we have a recipientInfo to decrypt the key
+		final ASN1Set recipientInfos = envelopedData.getRecipientInfos();
+		if (recipientInfos.size() == 0) {
+			throw new IOException("Invalid RecipientInfos");
+		}
+		
+		byte[] encryptedContentBytes = contentInfo.getEncryptedContent().getOctets();
+		RecipientInfo encodable = RecipientInfo.getInstance(recipientInfos.getObjectAt(0));
+		KeyTransRecipientInfo keyTrans = KeyTransRecipientInfo.getInstance(encodable.getInfo());		
+		byte[] wrappedKey = keyTrans.getEncryptedKey().getOctets();
+		try {
+			// Decrypt the secret key
+			Cipher cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.UNWRAP_MODE, priKey);
+			SecretKey secretKey = (SecretKey) cipher.unwrap(wrappedKey, cipherName, Cipher.SECRET_KEY);
+			// Use the secret key to decrypt the content
+			decryptingCipher.init(Cipher.DECRYPT_MODE, secretKey, params);
+			byte[] contentBytes = decryptingCipher.doFinal(encryptedContentBytes);
+			
+			return ASN1Object.fromByteArray(contentBytes);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+	}
+
+	private String getCipherName(String oid) {
+		if (oid.equals("1.3.14.3.2.7")) {
+			return "DES";
+		} else {
+			return "TripleDES";
+		}
 	}
 }

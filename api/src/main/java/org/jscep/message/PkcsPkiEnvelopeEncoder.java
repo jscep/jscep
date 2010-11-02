@@ -22,6 +22,8 @@
 package org.jscep.message;
 
 import java.io.IOException;
+import java.security.Provider;
+import java.security.Security;
 import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -44,7 +46,12 @@ public class PkcsPkiEnvelopeEncoder {
 		edGenerator.addKeyTransRecipient(recipient);
 		
 		try {
-			return edGenerator.generate(envelopable, CMSEnvelopedGenerator.DES_EDE3_CBC, null);
+			Provider[] providers = Security.getProviders("KeyGenerator.DESEDE");
+			if (providers.length > 0) {
+				return edGenerator.generate(envelopable, CMSEnvelopedGenerator.DES_EDE3_CBC, providers[0]);
+			} else {
+				throw new IOException("No Provider for DESede");
+			}
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
