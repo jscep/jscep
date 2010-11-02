@@ -37,6 +37,7 @@ import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.jscep.util.AlgorithmDictionary;
 
 public class PkcsPkiEnvelopeDecoder {
 	private final PrivateKey priKey;
@@ -49,12 +50,13 @@ public class PkcsPkiEnvelopeDecoder {
 		// Figure out the type of secret key
 		final EncryptedContentInfo contentInfo = envelopedData.getEncryptedContentInfo();
 		final AlgorithmIdentifier contentAlg = contentInfo.getContentEncryptionAlgorithm();
-		final String cipherName = getCipherName(contentAlg.getObjectId().getId());
+		final String transformationName = getCipherName(contentAlg);
+		final String cipherName = AlgorithmDictionary.fromTransformation(transformationName);
 
 		Cipher decryptingCipher;
 		AlgorithmParameters params;
 		try {
-			decryptingCipher = Cipher.getInstance(cipherName + "/CBC/NoPadding");
+			decryptingCipher = Cipher.getInstance(transformationName);
 			params = AlgorithmParameters.getInstance(cipherName);
 			DEROctetString paramsString = (DEROctetString) contentAlg.getParameters();
 			params.init(paramsString.getEncoded());
@@ -87,11 +89,7 @@ public class PkcsPkiEnvelopeDecoder {
 		}
 	}
 
-	private String getCipherName(String oid) {
-		if (oid.equals("1.3.14.3.2.7")) {
-			return "DES";
-		} else {
-			return "TripleDES";
-		}
+	private String getCipherName(AlgorithmIdentifier algId) {
+		return AlgorithmDictionary.lookup(algId);
 	}
 }

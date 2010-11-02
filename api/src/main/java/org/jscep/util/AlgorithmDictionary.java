@@ -70,7 +70,7 @@ public final class AlgorithmDictionary {
 		contents.put(new DERObjectIdentifier("1.2.840.113549.1.1.13"), "sha512withRSA");
 		// Symmetric Ciphers
 		contents.put(SMIMECapabilities.dES_CBC, "DES/CBC/PKCS5Padding"); // DES
-		contents.put(SMIMECapabilities.dES_EDE3_CBC, "3DES/CBC/PKCS5Padding"); // DESEDE
+		contents.put(SMIMECapabilities.dES_EDE3_CBC, "DESede/CBC/PKCS5Padding"); // DESEDE
 		// Message Digests
 		contents.put(X509ObjectIdentifiers.id_SHA1, "SHA");
 		contents.put(new DERObjectIdentifier("1.2.840.113549.2.5"), "MD5");
