@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -129,8 +130,7 @@ public final class SignedDataUtil {
 			}
 			// We've found the right issuer.
 			ASN1OctetString signedDigest = signerInfo.getEncryptedDigest();
-			String hashAlg = AlgorithmDictionary.lookup(signerInfo.getDigestAlgorithm());
-			String sigAlg = AlgorithmDictionary.getRSASignatureAlgorithm(hashAlg);
+			String sigAlg = AlgorithmDictionary.lookup(signerInfo.getDigestAlgorithm());
 			Signature sig;
 			try {
 				sig = Signature.getInstance(sigAlg);

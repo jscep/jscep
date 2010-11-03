@@ -40,6 +40,7 @@ import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSSignedGenerator;
+import org.jscep.transaction.PkiStatus;
 
 public class PkiMessageEncoder {
 	private final PrivateKey senderKey;
@@ -53,9 +54,21 @@ public class PkiMessageEncoder {
 	}
 	
 	public CMSSignedData encode(PkiMessage<? extends ASN1Encodable> message) throws IOException {
-		CMSEnvelopedData ed = encoder.encode(message.getMessageData());
-		CMSProcessable signable = new CMSProcessableByteArray(ed.getEncoded());
-		CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
+		CMSProcessable signable;
+		
+		boolean hasMessageData = true;
+		if (message instanceof PkiResponse<?>) {
+			PkiResponse<?> response = (PkiResponse<?>) message;
+			if (response.getPkiStatus() != PkiStatus.SUCCESS) {
+				hasMessageData = false;
+			}
+		}
+		if (hasMessageData) {
+			CMSEnvelopedData ed = encoder.encode(message.getMessageData());
+			signable = new CMSProcessableByteArray(ed.getEncoded());
+		} else {
+			signable = null;
+		}
 		
 		Hashtable<DERObjectIdentifier, Attribute> table = new Hashtable<DERObjectIdentifier, Attribute>();
 		for (Attribute attr : message.getAttributes()) {
@@ -70,6 +83,7 @@ public class PkiMessageEncoder {
 			throw new IOException(e);
 		}
 		
+		CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
 		sdGenerator.addSigner(senderKey, senderCert, CMSSignedGenerator.DIGEST_SHA1, signedAttrs, null);
 		try {
 			sdGenerator.addCertificatesAndCRLs(store);

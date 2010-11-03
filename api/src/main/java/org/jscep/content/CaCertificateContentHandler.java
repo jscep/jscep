@@ -100,7 +100,11 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 
 			CertStore store;
 			try {
-				ContentInfo ci = ContentInfo.getInstance(ASN1Object.fromByteArray(baos.toByteArray()));
+				byte[] bytes = baos.toByteArray();
+				if (bytes.length == 0) {
+					throw new IOException("Expected a SignedData object, but response was empty");
+				}
+				ContentInfo ci = ContentInfo.getInstance(ASN1Object.fromByteArray(bytes));
 				CMSSignedData sd = new CMSSignedData(ci.getContent().getDERObject().getEncoded());
 
 				store = sd.getCertificatesAndCRLs("Collection", (String) null);

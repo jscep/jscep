@@ -24,7 +24,6 @@ package org.jscep.message;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -35,7 +34,7 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
-public abstract class PkiMessage<T extends ASN1Encodable> {
+public abstract class PkiMessage<T> {
 	private final TransactionId transId;
 	private final MessageType messageType;
 	private final Nonce senderNonce;

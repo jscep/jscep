@@ -104,16 +104,23 @@ public class PkiMessageDecoder {
 			if (pkiStatus == PkiStatus.FAILURE) {
 				FailInfo failInfo = toFailInfo(attrTable.get(ScepObjectIdentifiers.failInfo));
 				
-				return new CertRep(transId, senderNonce, recipientNonce, pkiStatus, failInfo);
+				return new CertRep(transId, senderNonce, recipientNonce, failInfo);
 			} else  if (pkiStatus == PkiStatus.PENDING) {
 				
-				return new CertRep(transId, senderNonce, recipientNonce, pkiStatus);
+				return new CertRep(transId, senderNonce, recipientNonce);
 			} else {
-				EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
-				ContentInfo contentInfo = ContentInfo.getInstance(decoder.decode(ed));
-				SignedData messageData = new SignedData((ASN1Sequence) contentInfo.getContent());
+				final EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
+				final ASN1Encodable envelopedContent = decoder.decode(ed);
+				SignedData messageData;
 				
-				return new CertRep(transId, senderNonce, recipientNonce, pkiStatus, messageData);
+				try {
+					ContentInfo contentInfo = ContentInfo.getInstance(envelopedContent);
+					messageData = new SignedData((ASN1Sequence) contentInfo.getContent());
+				} catch (ClassCastException e) {
+					messageData = SignedData.getInstance(envelopedContent);
+				}
+				
+				return new CertRep(transId, senderNonce, recipientNonce, messageData);
 			}
 		} else if (messageType == MessageType.GetCert) {
 			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());

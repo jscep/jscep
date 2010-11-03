@@ -78,7 +78,7 @@ public class PkiResponse<T extends ASN1Encodable> extends PkiMessage<T> {
 	
 	public FailInfo getFailInfo() {
 		if (pkiStatus != PkiStatus.FAILURE) {
-			throw new IllegalArgumentException();
+			throw new IllegalStateException();
 		}
 		return failInfo;
 	}
@@ -86,7 +86,7 @@ public class PkiResponse<T extends ASN1Encodable> extends PkiMessage<T> {
 	@Override
 	public T getMessageData() {
 		if (pkiStatus != PkiStatus.SUCCESS) {
-			throw new IllegalArgumentException();
+			throw new IllegalStateException();
 		}
 		return super.getMessageData();
 	}

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,10 +62,15 @@ public enum FailInfo {
     	return value;
     }
     
-    @Override
-    public String toString() {
+    public String getDescription() {
     	return desc;
     }
+    
+    @Override
+    public String toString() {
+    	return Integer.toString(value);
+    }
+    
     
     public static FailInfo valueOf(int value) {
     	for (FailInfo failInfo : FailInfo.values()) {

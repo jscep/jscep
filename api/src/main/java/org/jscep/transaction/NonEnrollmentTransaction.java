@@ -29,6 +29,7 @@ import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.content.CertRepContentHandler;
 import org.jscep.message.CertRep;
+import org.jscep.message.GetCRL;
 import org.jscep.message.GetCert;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
@@ -49,7 +50,7 @@ public class NonEnrollmentTransaction extends Transaction {
 		if (msgType == MessageType.GetCert) {
 			this.request = new GetCert(transId, Nonce.nextNonce(), iasn);
 		} else  if (msgType == MessageType.GetCRL) {
-			this.request = new GetCert(transId, Nonce.nextNonce(), iasn);
+			this.request = new GetCRL(transId, Nonce.nextNonce(), iasn);
 		} else {
 			throw new IllegalArgumentException(msgType.toString());
 		}

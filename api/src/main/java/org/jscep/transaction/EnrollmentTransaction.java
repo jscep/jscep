@@ -115,7 +115,7 @@ public class EnrollmentTransaction extends Transaction {
 		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData, handler));
 		
 		CertRep response = (CertRep) decoder.decode(res);
-		validateExchange(request, response);
+		validateExchange(pollReq, response);
 		
 		if (response.getPkiStatus() == PkiStatus.FAILURE) {
 			failInfo = response.getFailInfo();

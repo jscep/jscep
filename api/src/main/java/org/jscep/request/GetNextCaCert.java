@@ -55,6 +55,9 @@ public class GetNextCaCert extends Request<List<X509Certificate>> {
      * {@inheritDoc}
      */
     public String getMessage() {
+    	if (caIdentifier == null) {
+    		return "";
+    	}
         return caIdentifier;
     }
     

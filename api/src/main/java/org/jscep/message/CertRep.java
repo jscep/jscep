@@ -31,36 +31,36 @@ import org.jscep.transaction.TransactionId;
 
 public class CertRep extends PkiResponse<SignedData> {
 
-	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus, SignedData messageData) {
+	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, SignedData messageData) {
 		// SUCCESS
-		super(transId, MessageType.CertRep, senderNonce, recipientNonce, pkiStatus, messageData);
+		super(transId, MessageType.CertRep, senderNonce, recipientNonce, PkiStatus.SUCCESS, messageData);
 	}
 	
-	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus, FailInfo failInfo) {
+	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, FailInfo failInfo) {
 		// FAILURE
-		super(transId, MessageType.CertRep, senderNonce, recipientNonce, pkiStatus, failInfo);
+		super(transId, MessageType.CertRep, senderNonce, recipientNonce, PkiStatus.FAILURE, failInfo);
 	}
 	
-	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus) {
+	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce) {
 		// PENDING
-		super(transId, MessageType.CertRep, senderNonce, recipientNonce, pkiStatus);
+		super(transId, MessageType.CertRep, senderNonce, recipientNonce, PkiStatus.PENDING);
 	}
 	
 	public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req, SignedData messageData) {
 		Nonce senderNonce = Nonce.nextNonce();
 		
-		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), PkiStatus.SUCCESS, messageData);
+		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), messageData);
 	}
 	
 	public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req, FailInfo failInfo) {
 		Nonce senderNonce = Nonce.nextNonce();
 		
-		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), PkiStatus.FAILURE, failInfo);
+		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), failInfo);
 	}
 	
 	public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req) {
 		Nonce senderNonce = Nonce.nextNonce();
 		
-		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), PkiStatus.PENDING);
+		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce());
 	}
 }

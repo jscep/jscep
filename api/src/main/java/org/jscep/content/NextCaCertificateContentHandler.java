@@ -35,15 +35,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
-import org.jscep.pkcs7.SignedDataParser;
 import org.jscep.pkcs7.SignedDataUtil;
 import org.jscep.util.LoggingUtil;
-
 
 /**
  * This class handles responses to <code>GetNextCACert</code> requests.
@@ -88,10 +85,7 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 				// new CA certificate and any new RA certificates, as defined in
 				// Section 5.2.1.1.2, to be used when the current CA certificate
 				// expires.
-				ASN1Encodable sdContentInfo = (ASN1Encodable) sd.getEncapContentInfo();
-				SignedDataParser parser = new SignedDataParser();
-				SignedData dsd = parser.parse(sdContentInfo);
-				CertStore store = SignedDataUtil.extractCertStore(dsd);
+				CertStore store = SignedDataUtil.extractCertStore(sd);
 				collection = store.getCertificates(new X509CertSelector());
 			} catch (GeneralSecurityException e) {
 				final IOException ioe = new IOException(e);
