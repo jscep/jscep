@@ -403,14 +403,18 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @param issuer the issuer name.
 	 * @param serial the serial number.
 	 * @return the identified certificate, if any.
+	 * @throws OperationFailureException if the operation cannot be completed
 	 */
 	abstract protected List<X509Certificate> doGetCert(X509Name issuer, BigInteger serial) throws OperationFailureException;
 	/**
 	 * Get Cert Initial
+	 * <p>
+	 * This method should return an empty list to represent a pending request.
 	 * 
 	 * @param issuer the issuer name.
 	 * @param subject the subject name.
 	 * @return the identified certificate, if any.
+	 * @throws OperationFailureException if the operation cannot be completed
 	 */
 	abstract protected List<X509Certificate> doGetCertInitial(X509Name issuer, X509Name subject) throws OperationFailureException;
 	/**
@@ -419,13 +423,17 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @param issuer the certificate issuer.
 	 * @param serial the certificate serial number.
 	 * @return the CRL.
+	 * @throws OperationFailureException if the operation cannot be completed
 	 */
 	abstract protected X509CRL doGetCrl(X500Principal issuer, BigInteger serial) throws OperationFailureException;
 	/**
 	 * Enroll a certificate into the PKI
+	 * <p>
+	 * This method should return an empty list to represent a pending request.
 	 * 
 	 * @param certificationRequest the PKCS #10 CertificationRequest
 	 * @return the certificate chain.
+	 * @throws OperationFailureException if the operation cannot be completed
 	 */
 	abstract protected List<X509Certificate> doEnroll(CertificationRequest certificationRequest) throws OperationFailureException;
 	abstract protected PrivateKey getPrivate();
