@@ -26,6 +26,10 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
+/**
+ * This class represents PKCSReq PKIMessage, which wraps a PKCS #10
+ * CertificationRequest object.
+ */
 public class PKCSReq extends PkiRequest<CertificationRequest> {
 	public PKCSReq(TransactionId transId, Nonce senderNonce, CertificationRequest messageData) {
 		super(transId, MessageType.PKCSReq, senderNonce, messageData);

@@ -26,6 +26,10 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
+/**
+ * This class represents a GetCRL PKIMessage, which wraps an IssuerAndSerialNumber
+ * object.
+ */
 public class GetCert extends PkiRequest<IssuerAndSerialNumber> {
 	public GetCert(TransactionId transId, Nonce senderNonce, IssuerAndSerialNumber messageData) {
 		super(transId, MessageType.GetCert, senderNonce, messageData);

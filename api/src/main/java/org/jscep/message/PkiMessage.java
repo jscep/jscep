@@ -34,6 +34,12 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
+/**
+ * This class represents an abstract SCEP PkiMessage, which may be either a
+ * request or response.
+ *
+ * @param <T> the MessageData for this message.
+ */
 public abstract class PkiMessage<T> {
 	private final TransactionId transId;
 	private final MessageType messageType;
@@ -76,7 +82,7 @@ public abstract class PkiMessage<T> {
 		return attrs;
 	}
 	
-	protected ASN1Set toSet(Nonce nonce) {
+	ASN1Set toSet(Nonce nonce) {
 		return new DERSet(new DEROctetString(nonce.getBytes()));
 	}
 	
