@@ -33,7 +33,7 @@ import org.jscep.util.LoggingUtil;
 
 
 /**
- * This class handles responses to <code>PKIRequest</code> requests.
+ * This class handles responses to <code>PKCSReq</code> requests.
  * 
  * @author David Grant
  */
