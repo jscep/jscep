@@ -62,6 +62,7 @@ import org.jscep.response.Capabilities;
 import org.jscep.transaction.EnrollmentTransaction;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.NonEnrollmentTransaction;
+import org.jscep.transaction.OperationFailureException;
 import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
@@ -263,7 +264,7 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      * @throws PkiOperationFailureException if the operation fails.
      */
-    public Collection<? extends CRL> getCrl() throws IOException, PkiOperationFailureException {
+    public Collection<? extends CRL> getCrl() throws IOException, OperationFailureException {
     	// TRANSACTIONAL
     	// CRL query
     	final X509Certificate ca = retrieveCA();
@@ -286,7 +287,7 @@ public class Client {
 		} else if (t.getState() == State.CERT_REQ_PENDING) {
 			throw new IllegalStateException();
 		} else {
-			throw new PkiOperationFailureException(t.getFailInfo());
+			throw new OperationFailureException(t.getFailInfo());
 		}
     }
 
@@ -299,7 +300,7 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      * @throws PkiOperationFailureException if the operation fails.
      */
-    public Collection<? extends Certificate> getCertificate(BigInteger serial) throws IOException, PkiOperationFailureException {
+    public Collection<? extends Certificate> getCertificate(BigInteger serial) throws IOException, OperationFailureException {
     	// TRANSACTIONAL
     	// Certificate query
     	final X509Certificate ca = retrieveCA();;
@@ -319,7 +320,7 @@ public class Client {
 		} else if (t.getState() == State.CERT_REQ_PENDING) {
 			throw new IllegalStateException();
 		} else {
-			throw new PkiOperationFailureException(t.getFailInfo());
+			throw new OperationFailureException(t.getFailInfo());
 		}
     }
     

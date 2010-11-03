@@ -14,7 +14,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.security.auth.x500.X500Principal;
 import javax.servlet.ServletException;
 
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
@@ -24,7 +23,6 @@ import org.jscep.response.Capability;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.OperationFailureException;
 import org.jscep.x509.X509Util;
-
 
 public class ScepServletImpl extends ScepServlet {
 	/**
@@ -94,7 +92,7 @@ public class ScepServletImpl extends ScepServlet {
 	}
 
 	@Override
-	protected X509CRL doGetCrl(X500Principal issuer, BigInteger serial) throws OperationFailureException {
+	protected X509CRL doGetCrl(X509Name issuer, BigInteger serial) throws OperationFailureException {
 		return null;
 	}
 

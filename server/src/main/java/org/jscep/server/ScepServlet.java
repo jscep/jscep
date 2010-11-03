@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.security.auth.x500.X500Principal;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
@@ -77,6 +76,10 @@ import org.jscep.transaction.OperationFailureException;
 import org.jscep.transaction.TransactionId;
 import org.jscep.util.LoggingUtil;
 
+/**
+ * This class provides a base Servlet which can be extended using the abstract
+ * methods to implement a SCEP CA (or RA). 
+ */
 public abstract class ScepServlet extends HttpServlet {
 	private final static String GET = "GET";
 	private final static String POST = "POST";
@@ -251,7 +254,7 @@ public abstract class ScepServlet extends HttpServlet {
 				}
 			} else if (msgType == MessageType.GetCRL) {
 				final IssuerAndSerialNumber iasn = (IssuerAndSerialNumber) msgData;
-				final X500Principal issuer = new X500Principal(iasn.getName().getDEREncoded());
+				final X509Name issuer = iasn.getName();
 				final BigInteger serialNumber = iasn.getSerialNumber().getValue();
 
 				try {
@@ -378,27 +381,27 @@ public abstract class ScepServlet extends HttpServlet {
 	/**
 	 * Returns the capabilities of the specified CA.
 	 * 
-	 * @param identifier the CA.
+	 * @param identifier the CA identifier, which may be an empty string.
 	 * @return the capabilities.
 	 */
 	abstract protected Set<Capability> doCapabilities(String identifier);
 	/**
-	 * Returns the certificate of the specified CA.
+	 * Returns the certificate chain of the specified CA.
 	 * 
-	 * @param identifier the CA.
+	 * @param identifier the CA identifier, which may be an empty string.
 	 * @return the CA's certificate.
 	 */
 	abstract protected List<X509Certificate> doGetCaCertificate(String identifier);
 	/**
-	 * Return the next X.509 certificate which will be used by
+	 * Return the chain of the next X.509 certificate which will be used by
 	 * the specified CA.
 	 * 
-	 * @param identifier the CA. 
+	 * @param identifier the CA identifier, which may be an empty string. 
 	 * @return the list of certificates.
 	 */
 	abstract protected List<X509Certificate> getNextCaCertificate(String identifier);
 	/**
-	 * Retrieve the certificate identified by the given parameters.
+	 * Retrieve the certificate chain identified by the given parameters.
 	 * 
 	 * @param issuer the issuer name.
 	 * @param serial the serial number.
@@ -407,9 +410,10 @@ public abstract class ScepServlet extends HttpServlet {
 	 */
 	abstract protected List<X509Certificate> doGetCert(X509Name issuer, BigInteger serial) throws OperationFailureException;
 	/**
-	 * Get Cert Initial
-	 * <p>
-	 * This method should return an empty list to represent a pending request.
+	 * Checks to see if a previously-requested certificate has been issued.  If
+	 * the certificate has been issued, this method will return the appropriate
+	 * certificate chain.  Otherwise, this method should return null or an empty
+	 * list to indicate that the request is still pending.
 	 * 
 	 * @param issuer the issuer name.
 	 * @param subject the subject name.
@@ -425,18 +429,29 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @return the CRL.
 	 * @throws OperationFailureException if the operation cannot be completed
 	 */
-	abstract protected X509CRL doGetCrl(X500Principal issuer, BigInteger serial) throws OperationFailureException;
+	abstract protected X509CRL doGetCrl(X509Name issuer, BigInteger serial) throws OperationFailureException;
 	/**
-	 * Enroll a certificate into the PKI
-	 * <p>
-	 * This method should return an empty list to represent a pending request.
+	 * Enrols a certificate into the PKI represented by this SCEP interface.  If
+	 * the request can be completed immediately, this method returns an appropriate
+	 * certificate chain.  If the request is pending, this method should return null
+	 * or any empty list.
 	 * 
 	 * @param certificationRequest the PKCS #10 CertificationRequest
-	 * @return the certificate chain.
+	 * @return the certificate chain, if any
 	 * @throws OperationFailureException if the operation cannot be completed
 	 */
 	abstract protected List<X509Certificate> doEnroll(CertificationRequest certificationRequest) throws OperationFailureException;
+	/**
+	 * Returns the private key of the entity represented by this SCEP server.
+	 * 
+	 * @return the private key.
+	 */
 	abstract protected PrivateKey getPrivate();
+	/**
+	 * Returns the certificate of the entity represented by this SCEP server.
+	 * 
+	 * @return the certificate.
+	 */
 	abstract protected X509Certificate getSender();
 	
 	private byte[] getBody(ServletInputStream servletIn) throws IOException {
