@@ -148,11 +148,6 @@
 			<version>1.45</version>
  		</dependency>
  		<dependency>
- 			<groupId>commons-codec</groupId>
- 			<artifactId>commons-codec</artifactId>
-			<version>1.4</version>
- 		</dependency>
- 		<dependency>
  			<groupId>org.eclipse.jetty</groupId>
  			<artifactId>test-jetty-servlet</artifactId>
 			<version>7.0.0.v20091005</version>

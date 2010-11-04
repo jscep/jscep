@@ -25,8 +25,8 @@ package org.jscep.request;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.util.encoders.Base64;
 import org.jscep.content.ScepContentHandler;
 
 /**
@@ -55,9 +55,9 @@ public class PKCSReq extends Request<CMSSignedData> {
 	 */
 	public String getMessage() throws IOException {
 		// URL-safe, all on one line.
-		final Base64 base64 = new Base64(-1, new byte[0], false);
-		
-		return base64.encodeToString(messageData.getEncoded());
+//		final Base64 base64 = new Base64(-1, new byte[0], false);
+		byte[] bytes = Base64.encode(messageData.getEncoded());
+		return new String(bytes);
 	}
 	
 	@Override

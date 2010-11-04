@@ -28,9 +28,8 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.PrivateKey;
-import java.security.cert.CRL;
 import java.security.cert.CertStoreException;
-import java.security.cert.Certificate;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashMap;
@@ -212,7 +211,8 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      * @throws PkiOperationFailureException if the operation fails.
      */
-    public Collection<? extends CRL> getRevocationList() throws IOException, OperationFailureException {
+    @SuppressWarnings("unchecked")
+	public Collection<X509CRL> getRevocationList() throws IOException, OperationFailureException {
     	// TRANSACTIONAL
     	// CRL query
     	final X509Certificate ca = retrieveCA();
@@ -229,7 +229,7 @@ public class Client {
     	
     	if (t.getState() == State.CERT_ISSUED) {
 			try {
-				return t.getCertStore().getCRLs(null);
+				return (Collection<X509CRL>) t.getCertStore().getCRLs(null);
 			} catch (CertStoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -249,7 +249,8 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      * @throws PkiOperationFailureException if the operation fails.
      */
-    public Collection<? extends Certificate> getCertificate(BigInteger serial) throws IOException, OperationFailureException {
+    @SuppressWarnings("unchecked")
+	public Collection<X509Certificate> getCertificate(BigInteger serial) throws IOException, OperationFailureException {
     	// TRANSACTIONAL
     	// Certificate query
     	final X509Certificate ca = retrieveCA();;
@@ -263,7 +264,7 @@ public class Client {
     	
 		if (t.getState() == State.CERT_ISSUED) {
 			try {
-				return t.getCertStore().getCertificates(null);
+				return (Collection<X509Certificate>) t.getCertStore().getCertificates(null);
 			} catch (CertStoreException e) {
 				throw new RuntimeException(e);
 			}

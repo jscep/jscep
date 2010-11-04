@@ -25,13 +25,17 @@ package org.jscep.transaction;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.content.CertRepContentHandler;
@@ -64,6 +68,7 @@ public class EnrolmentTransaction extends Transaction {
 	private final org.jscep.message.PKCSReq request;
 	private static NonceQueue QUEUE = new NonceQueue(20);
 	private static Logger LOGGER = LoggingUtil.getLogger(EnrolmentTransaction.class);
+	private X509Certificate issuer;
 
 	public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, CertificationRequest csr) throws IOException {
 		super(transport, encoder, decoder);
@@ -84,8 +89,17 @@ public class EnrolmentTransaction extends Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws PkiOperationFailureException if the operation fails.
 	 */
+	@SuppressWarnings("unchecked")
 	public State send() throws IOException {
 		CMSSignedData signedData = encoder.encode(request);
+		try {
+			CertStore store = signedData.getCertificatesAndCRLs("Collection", (String) null);
+			Collection<X509Certificate> certs = (Collection<X509Certificate>) store.getCertificates(null);
+			issuer = certs.iterator().next();
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+		
 		CertRepContentHandler handler = new CertRepContentHandler();
 		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData, handler));
 
@@ -105,7 +119,7 @@ public class EnrolmentTransaction extends Transaction {
 		return state;
 	}
 	
-	public State poll(X509Certificate issuer) throws IOException {
+	public State poll() throws IOException {
 		X509Name issuerName = X509Util.toX509Name(issuer.getIssuerX500Principal());
 		X509Name subjectName = request.getMessageData().getCertificationRequestInfo().getSubject();
 		IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);

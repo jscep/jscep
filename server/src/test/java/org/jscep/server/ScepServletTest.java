@@ -249,7 +249,7 @@ public class ScepServletTest {
 		EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
 		State s = t.send();
 		System.out.println(s);
-		s = t.poll(getRecipient());
+		s = t.poll();
 		System.out.println(s);
 	}
 	
