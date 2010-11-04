@@ -57,9 +57,8 @@ import org.jscep.x509.X509Util;
  * performing operations.
  * <p>
  * The behaviour of this class changes in accordance with the possible valid states
- * for each transaction operation.  For enrollment operations, clients should inspect 
- * the {@link State} returned by the {@link #enrollCertificate(X509Certificate, KeyPair, char[])}
- * method or the state returned by the callable returned by {@link #getTask()}.
+ * for each transaction operation.  For enrolment operations, clients should inspect 
+ * the {@link State} returned by the {@link #send()} or {@link #poll()}.
  * 
  * @author David Grant
  */
@@ -82,12 +81,10 @@ public class EnrolmentTransaction extends Transaction {
 	}
 	
 	/**
-	 * Performs the given operation inside this transaction.
+	 * Performs a certificate enrolment for the CSR given in the constructor.
 	 * 
-	 * @param op the operation to perform.
-	 * @return a certificate store, containing either certificates or CRLs.
+	 * @return the resulting transaction state.
 	 * @throws IOException if any I/O error occurs.
-	 * @throws PkiOperationFailureException if the operation fails.
 	 */
 	@SuppressWarnings("unchecked")
 	public State send() throws IOException {
@@ -119,6 +116,12 @@ public class EnrolmentTransaction extends Transaction {
 		return state;
 	}
 	
+	/**
+	 * Polls the SCEP server for an update on the enrolment operation.
+	 * 
+	 * @return the resulting transaction state.
+	 * @throws IOException if any I/O error occurs.
+	 */
 	public State poll() throws IOException {
 		X509Name issuerName = X509Util.toX509Name(issuer.getIssuerX500Principal());
 		X509Name subjectName = request.getMessageData().getCertificationRequestInfo().getSubject();

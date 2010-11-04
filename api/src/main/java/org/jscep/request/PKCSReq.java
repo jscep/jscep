@@ -35,37 +35,43 @@ import org.jscep.content.ScepContentHandler;
  * @author David Grant
  */
 public class PKCSReq extends Request<CMSSignedData> {
-	private final CMSSignedData messageData;
+	private final CMSSignedData msgData;
 
 	/**
 	 * Creates a new instance of this class using the provided pkiMessage
-	 * and {@link java.security.KeyPair}.
+	 * and response handler.
 	 * 
 	 * @param msgData the pkiMessage to use.
-	 * @param privKey the private key to use.
+	 * @param handler the response handler for this request.
 	 */
-	public PKCSReq(CMSSignedData messageData, ScepContentHandler<CMSSignedData> handler) {
+	public PKCSReq(CMSSignedData msgData, ScepContentHandler<CMSSignedData> handler) {
 		super(Operation.PKIOperation, handler);
 		
-		this.messageData = messageData;
+		this.msgData = msgData;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getMessage() throws IOException {
-		byte[] bytes = Base64.encode(messageData.getEncoded());
+		byte[] bytes = Base64.encode(msgData.getEncoded());
 		
 		return new String(bytes);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void write(OutputStream out) throws IOException {
-    	out.write(messageData.getEncoded());
+    	out.write(msgData.getEncoded());
     }
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
-		return messageData.toString();
+		return msgData.toString();
 	}
 }

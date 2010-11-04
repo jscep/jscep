@@ -39,8 +39,8 @@ public class GetNextCaCert extends Request<List<X509Certificate>> {
     /**
      * Creates a new GetNextCACert request with the given CA identification string.
      * 
-     * @param issuer the existing CA certificate.
      * @param caIdentifier the CA identification string.
+     * @param handler the response handler for this request.
      */
     public GetNextCaCert(String caIdentifier, ScepContentHandler<List<X509Certificate>> handler) {
     	super(Operation.GetNextCACert, handler);

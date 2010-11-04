@@ -76,15 +76,12 @@ public abstract class Transaction {
 	public enum State {
 		/**
 		 * The transaction is a pending state.
-		 * <p>
-		 * Clients should use {@link Transaction#getTask()} to retrieve
-		 * the task to execute in order to proceed.
 		 */
 		CERT_REQ_PENDING,
 		/**
 		 * The transaction is in a failed state.
 		 * <p>
-		 * Clients should use {@link Transaction#getFailureReason()} to retrieve
+		 * Clients should use {@link Transaction#getFailInfo()} to retrieve
 		 * the failure reason.
 		 */
 		CERT_NON_EXISTANT,
