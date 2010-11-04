@@ -90,7 +90,7 @@ public class Client {
     //
     // The following identity and key pair is used for this case.
     private final X509Certificate identity;
-    private final PrivateKey privKey;
+    private final PrivateKey priKey;
     // A requester MUST have the following information locally configured:
     //
     // 3. The identifying information that is used for authentication of the 
@@ -114,12 +114,12 @@ public class Client {
      * and an InvalidArgumentException if any of the arguments is invalid.
      * 
      * @param url the URL to the SCEP server.
-     * @param identity the certificate to identify this client.
-     * @param privKey the private key for the identity.
+     * @param client the certificate to identify this client.
+     * @param priKey the private key for the identity.
      * @param cbh the callback handler to check the CA identity.
      */
-    public Client(URL url, X509Certificate identity, PrivateKey privKey, CallbackHandler cbh) {
-    	this(url, identity, privKey, cbh, null);
+    public Client(URL url, X509Certificate client, PrivateKey priKey, CallbackHandler cbh) {
+    	this(url, client, priKey, cbh, null);
     }
     
     /**
@@ -130,132 +130,80 @@ public class Client {
      * InvalidArgumentException if any of the arguments is invalid.
      * 
      * @param url the URL to the SCEP server.
-     * @param identity the certificate to identify this client.
-     * @param privKey the private key for the identity.
+     * @param client the certificate to identify this client.
+     * @param priKey the private key for the identity.
      * @param cbh the callback handler to check the CA identity.
      * @param profile the name of the CA profile.
      */
-    public Client(URL url, X509Certificate identity, PrivateKey privKey, CallbackHandler cbh, String profile) {
+    public Client(URL url, X509Certificate client, PrivateKey priKey, CallbackHandler cbh, String profile) {
     	this.url = url;
-    	this.identity = identity;
-    	this.privKey = privKey;
+    	this.identity = client;
+    	this.priKey = priKey;
     	this.cbh = cbh;
     	this.profile = profile;
     	
     	validateInput();
     }
     
+    // INFORMATIONAL REQUESTS
+    
     /**
-     * Returns the URL of the SCEP server used by this client.
+     * Retrieves the set of SCEP capabilities from the CA.
      * 
-     * @return the SCEP server URL.
+     * @return the capabilities of the server.
+     * @throws IOException if any I/O error occurs.
      */
-    @Deprecated
-    public URL getURL() {
-    	return url;
+    public Capabilities getCaCapabilities() throws IOException {
+    	// NON-TRANSACTIONAL
+    	return getCaCapabilities(false);
     }
     
     /**
-     * Returns the profile name of the CA for this client.
+     * Retrieves the CA certificate.
      * <p>
-     * If no profile is set, this method returns <code>null</code>.
+     * If the CA is using an RA, the RA certificate will also
+     * be present in the returned list.
      * 
-     * @return the profile name.
+     * @return the list of certificates.
+     * @throws IOException if any I/O error occurs.
      */
-    @Deprecated
-    public String getProfile() {
-    	return profile;
+    public List<X509Certificate> getCaCertificate() throws IOException {
+    	// NON-TRANSACTIONAL
+    	// CA and RA public key distribution
+    	LOGGER.entering(getClass().getName(), "getCaCertificate");
+    	final GetCaCert req = new GetCaCert(profile, new CaCertificateContentHandler());
+        final Transport trans = Transport.createTransport(Transport.Method.GET, url);
+        
+        final List<X509Certificate> certs = trans.sendRequest(req);
+        verifyCA(selectCA(certs));
+        
+        LOGGER.exiting(getClass().getName(), "getCaCertificate", certs);
+        return certs;
     }
     
     /**
-     * Returns the callback handler in use by this client.
+     * Retrieves the "rollover" certificate to be used by the CA.
+     * <p>
+     * If the CA is using an RA, the RA certificate will be present
+     * in the returned list.
      * 
-     * @return the callback handler.
+     * @return the list of certificates.
+     * @throws IOException if any I/O error occurs.
      */
-    @Deprecated
-    public CallbackHandler getCallbackHandler() {
-    	return cbh;
-    }
-    
-    /**
-     * Returns the certificate in use by this client to identify itself.
-     * 
-     * @return the certificate.
-     */
-    @Deprecated
-    public X509Certificate getIdentity() {
-    	return identity;
-    }
-    
-    /**
-     * Returns the private key in use by this client.
-     * 
-     * @return the private key.
-     */
-    @Deprecated
-    public PrivateKey getPrivateKey() {
-    	return privKey;
-    }
-    
-    /**
-     * Validates all the input to this client.
-     * 
-     * @throws NullPointerException if any member variables are null.
-     * @throws IllegalArgumentException if any member variables are invalid.
-     */
-    private void validateInput() throws NullPointerException, IllegalArgumentException {
-    	// Check for null values first.
-    	if (url == null) {
-    		throw new NullPointerException("URL should not be null");
+    public List<X509Certificate> getRolloverCertificate() throws IOException {
+    	// NON-TRANSACTIONAL
+    	if (getCaCapabilities().isRolloverSupported() == false) {
+    		throw new UnsupportedOperationException();
     	}
-    	if (identity == null) {
-    		throw new NullPointerException("Identity should not be null");
-    	}
-    	if (privKey == null) {
-    		throw new NullPointerException("Private key should not be null");
-    	}
-    	if (cbh == null) {
-    		throw new NullPointerException("Callback handler should not be null");
-    	}
+    	final X509Certificate issuer = retrieveCA();
     	
-    	if (identity.getPublicKey().getAlgorithm().equals("RSA") == false) {
-    		throw new IllegalArgumentException("Public key algorithm should be RSA");
-    	}
-    	if (privKey.getAlgorithm().equals("RSA") == false) {
-    		throw new IllegalArgumentException("Private key algorithm should be RSA");
-    	}
-    	if (url.getProtocol().matches("^https?$") == false) {
-    		throw new IllegalArgumentException("URL protocol should be HTTP or HTTPS");
-    	}
-    	if (url.getPath().endsWith("pkiclient.exe") == false) {
-    		throw new IllegalArgumentException("URL should end with pkiclient.exe");
-    	}
-    	if (url.getRef() != null) {
-    		throw new IllegalArgumentException("URL should contain no reference");
-    	}
-    	if (url.getQuery() != null) {
-    		throw new IllegalArgumentException("URL should contain no query string");
-    	}
-    }
-    
-    private PkiMessageEncoder getEncoder() throws IOException {
-    	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipientCertificate());
+    	final Transport trans = Transport.createTransport(Transport.Method.GET, url);
+    	final GetNextCaCert req = new GetNextCaCert(profile, new NextCaCertificateContentHandler(issuer));
     	
-		return new PkiMessageEncoder(privKey, identity, envEncoder);
+    	return trans.sendRequest(req);
     }
     
-    private PkiMessageDecoder getDecoder() {
-    	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(privKey);
-    	
-		return new PkiMessageDecoder(envDecoder);
-    }
-    
-    /**
-     * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
-     */
-    private boolean supportsDistributionPoints(X509Certificate issuerCertificate) {
-    	return issuerCertificate.getExtensionValue("2.5.29.31") != null;
-    }
+    // TRANSACTIONAL
     
     /**
      * Returns any certificate revocation lists relating to the current CA.
@@ -264,7 +212,7 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      * @throws PkiOperationFailureException if the operation fails.
      */
-    public Collection<? extends CRL> getCrl() throws IOException, OperationFailureException {
+    public Collection<? extends CRL> getRevocationList() throws IOException, OperationFailureException {
     	// TRANSACTIONAL
     	// CRL query
     	final X509Certificate ca = retrieveCA();
@@ -291,7 +239,7 @@ public class Client {
 			throw new OperationFailureException(t.getFailInfo());
 		}
     }
-
+    
     /**
      * Returns the certificate corresponding to the provided serial number, as issued
      * by the current CA.
@@ -326,6 +274,7 @@ public class Client {
 		}
     }
     
+    
     /**
      * Enrolls the provided CSR into a PKI.
      * 
@@ -340,6 +289,66 @@ public class Client {
     	final EnrolmentTransaction t = new EnrolmentTransaction(transport, getEncoder(), getDecoder(), csr);
     	
     	return t;
+    }
+    
+    /**
+     * Validates all the input to this client.
+     * 
+     * @throws NullPointerException if any member variables are null.
+     * @throws IllegalArgumentException if any member variables are invalid.
+     */
+    private void validateInput() throws NullPointerException, IllegalArgumentException {
+    	// Check for null values first.
+    	if (url == null) {
+    		throw new NullPointerException("URL should not be null");
+    	}
+    	if (identity == null) {
+    		throw new NullPointerException("Identity should not be null");
+    	}
+    	if (priKey == null) {
+    		throw new NullPointerException("Private key should not be null");
+    	}
+    	if (cbh == null) {
+    		throw new NullPointerException("Callback handler should not be null");
+    	}
+    	
+    	if (identity.getPublicKey().getAlgorithm().equals("RSA") == false) {
+    		throw new IllegalArgumentException("Public key algorithm should be RSA");
+    	}
+    	if (priKey.getAlgorithm().equals("RSA") == false) {
+    		throw new IllegalArgumentException("Private key algorithm should be RSA");
+    	}
+    	if (url.getProtocol().matches("^https?$") == false) {
+    		throw new IllegalArgumentException("URL protocol should be HTTP or HTTPS");
+    	}
+    	if (url.getPath().endsWith("pkiclient.exe") == false) {
+    		throw new IllegalArgumentException("URL should end with pkiclient.exe");
+    	}
+    	if (url.getRef() != null) {
+    		throw new IllegalArgumentException("URL should contain no reference");
+    	}
+    	if (url.getQuery() != null) {
+    		throw new IllegalArgumentException("URL should contain no query string");
+    	}
+    }
+    
+    private PkiMessageEncoder getEncoder() throws IOException {
+    	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipientCertificate());
+    	
+		return new PkiMessageEncoder(priKey, identity, envEncoder);
+    }
+    
+    private PkiMessageDecoder getDecoder() {
+    	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
+    	
+		return new PkiMessageDecoder(envDecoder);
+    }
+    
+    /**
+     * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
+     */
+    private boolean supportsDistributionPoints(X509Certificate issuerCertificate) {
+    	return issuerCertificate.getExtensionValue("2.5.29.31") != null;
     }
     
     /**
@@ -362,17 +371,6 @@ public class Client {
     	
     	return t;
     }
-
-    /**
-     * Retrieves the set of SCEP capabilities from the CA.
-     * 
-     * @return the capabilities of the server.
-     * @throws IOException if any I/O error occurs.
-     */
-    public Capabilities getCaCapabilities() throws IOException {
-    	// NON-TRANSACTIONAL
-    	return getCaCapabilities(false);
-    }
     
     private Capabilities getCaCapabilities(boolean useCache) throws IOException {
     	// NON-TRANSACTIONAL
@@ -391,29 +389,6 @@ public class Client {
         
         LOGGER.exiting(getClass().getName(), "getCaCapabilities", caps);
         return caps;
-    }
-
-    /**
-     * Retrieves the CA certificate.
-     * <p>
-     * If the CA is using an RA, the RA certificate will also
-     * be present in the returned list.
-     * 
-     * @return the list of certificates.
-     * @throws IOException if any I/O error occurs.
-     */
-    public List<X509Certificate> getCaCertificate() throws IOException {
-    	// NON-TRANSACTIONAL
-    	// CA and RA public key distribution
-    	LOGGER.entering(getClass().getName(), "getCaCertificate");
-    	final GetCaCert req = new GetCaCert(profile, new CaCertificateContentHandler());
-        final Transport trans = Transport.createTransport(Transport.Method.GET, url);
-        
-        final List<X509Certificate> certs = trans.sendRequest(req);
-        verifyCA(selectCA(certs));
-        
-        LOGGER.exiting(getClass().getName(), "getCaCertificate", certs);
-        return certs;
     }
     
     private void verifyCA(X509Certificate cert) throws IOException {
@@ -436,28 +411,6 @@ public class Client {
 		} else {
 			verified.add(cert);
 		}
-    }
-    
-    /**
-     * Retrieves the "rollover" certificate to be used by the CA.
-     * <p>
-     * If the CA is using an RA, the RA certificate will be present
-     * in the returned list.
-     * 
-     * @return the list of certificates.
-     * @throws IOException if any I/O error occurs.
-     */
-    public List<X509Certificate> getRolloverCertificate() throws IOException {
-    	// NON-TRANSACTIONAL
-    	if (getCaCapabilities().isRolloverSupported() == false) {
-    		throw new UnsupportedOperationException();
-    	}
-    	final X509Certificate issuer = retrieveCA();
-    	
-    	final Transport trans = Transport.createTransport(Transport.Method.GET, url);
-    	final GetNextCaCert req = new GetNextCaCert(profile, new NextCaCertificateContentHandler(issuer));
-    	
-    	return trans.sendRequest(req);
     }
     
     private X509Certificate retrieveCA() throws IOException {
