@@ -1,0 +1,13 @@
+org.jscep
+org.jscep.asn1
+org.jscep.client
+org.jscep.content
+org.jscep.message
+org.jscep.pkcs7
+org.jscep.request
+org.jscep.response
+org.jscep.server
+org.jscep.transaction
+org.jscep.transport
+org.jscep.util
+org.jscep.x509
