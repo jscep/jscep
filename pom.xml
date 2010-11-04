@@ -136,31 +136,37 @@
  			<groupId>org.easymock</groupId>
  			<artifactId>easymockclassextension</artifactId>
 			<version>2.2</version>
+			<scope>test</scope>
  		</dependency>
  		<dependency>
  			<groupId>org.bouncycastle</groupId>
  			<artifactId>bcprov-jdk15</artifactId>
 			<version>1.45</version>
+			<scope>runtime</scope>
  		</dependency>
  		<dependency>
  			<groupId>org.bouncycastle</groupId>
  			<artifactId>bcmail-jdk15</artifactId>
 			<version>1.45</version>
+			<scope>runtime</scope>
  		</dependency>
  		<dependency>
  			<groupId>org.eclipse.jetty</groupId>
  			<artifactId>test-jetty-servlet</artifactId>
-			<version>7.0.0.v20091005</version>
+			<version>7.2.0.v20101020</version>
+			<scope>test</scope>
  		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
+			<scope>test</scope>
 		</dependency>
  		<dependency>
  			<groupId>javax.servlet</groupId>
  			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
+			<scope>provided</scope>
  		</dependency>
 	</dependencies>
 	</dependencyManagement>

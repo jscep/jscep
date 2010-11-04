@@ -54,9 +54,8 @@ public class PKCSReq extends Request<CMSSignedData> {
 	 * {@inheritDoc}
 	 */
 	public String getMessage() throws IOException {
-		// URL-safe, all on one line.
-//		final Base64 base64 = new Base64(-1, new byte[0], false);
 		byte[] bytes = Base64.encode(messageData.getEncoded());
+		
 		return new String(bytes);
 	}
 	
