@@ -35,8 +35,10 @@ public abstract class Transaction {
 	protected State state;
 	protected FailInfo failInfo;
 	protected CertStore certStore;
+	protected Transport transport;
 	
-	public Transaction(PkiMessageEncoder encoder, PkiMessageDecoder decoder) {
+	public Transaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder) {
+		this.transport = transport;
 		this.encoder = encoder;
 		this.decoder = decoder;
 	}
@@ -63,7 +65,7 @@ public abstract class Transaction {
 		return state;
 	}
 	
-	public abstract State send(Transport transport) throws IOException;
+	public abstract State send() throws IOException;
 	public abstract TransactionId getId();
 	
 	/**

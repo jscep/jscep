@@ -59,7 +59,7 @@ import org.jscep.request.GetCaCaps;
 import org.jscep.request.GetCaCert;
 import org.jscep.request.GetNextCaCert;
 import org.jscep.response.Capabilities;
-import org.jscep.transaction.EnrollmentTransaction;
+import org.jscep.transaction.EnrolmentTransaction;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.NonEnrollmentTransaction;
 import org.jscep.transaction.OperationFailureException;
@@ -275,8 +275,9 @@ public class Client {
     	X509Name name = new X509Name(ca.getIssuerX500Principal().toString());
     	BigInteger serialNumber = ca.getSerialNumber();
     	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
-    	final Transaction t = new NonEnrollmentTransaction(getEncoder(), getDecoder(), iasn, MessageType.GetCRL);
-    	t.send(createTransport());
+    	Transport transport = createTransport();
+    	final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GetCRL);
+    	t.send();
     	
     	if (t.getState() == State.CERT_ISSUED) {
 			try {
@@ -308,8 +309,9 @@ public class Client {
     	X509Name name = new X509Name(ca.getIssuerX500Principal().toString());
     	BigInteger serialNumber = ca.getSerialNumber();
     	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
-    	final Transaction t = new NonEnrollmentTransaction(getEncoder(), getDecoder(), iasn, MessageType.GetCert);
-		t.send(createTransport());
+    	Transport transport = createTransport();
+    	final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GetCert);
+		t.send();
     	
 		if (t.getState() == State.CERT_ISSUED) {
 			try {
@@ -331,11 +333,11 @@ public class Client {
      * @return the enrollment transaction.
      * @throws IOException if any I/O error occurs.
      */
-    public EnrollmentTransaction enrollCertificate(CertificationRequest csr) throws IOException {
+    public EnrolmentTransaction enrol(CertificationRequest csr) throws IOException {
     	// TRANSACTIONAL
     	// Certificate enrollment
-    	final EnrollmentTransaction t = new EnrollmentTransaction(getEncoder(), getDecoder(), csr);
-    	t.send(createTransport());
+    	final Transport transport = createTransport();
+    	final EnrolmentTransaction t = new EnrolmentTransaction(transport, getEncoder(), getDecoder(), csr);
     	
     	return t;
     }

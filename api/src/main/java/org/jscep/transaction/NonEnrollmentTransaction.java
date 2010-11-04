@@ -43,8 +43,8 @@ public class NonEnrollmentTransaction extends Transaction {
 	private final PkiRequest<? extends ASN1Encodable> request;
 	// Optional
 	
-	public NonEnrollmentTransaction(PkiMessageEncoder encoder, PkiMessageDecoder decoder, IssuerAndSerialNumber iasn, MessageType msgType) {
-		super(encoder, decoder);
+	public NonEnrollmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, IssuerAndSerialNumber iasn, MessageType msgType) {
+		super(transport, encoder, decoder);
 		this.transId = TransactionId.createTransactionId();
 		
 		if (msgType == MessageType.GetCert) {
@@ -60,7 +60,7 @@ public class NonEnrollmentTransaction extends Transaction {
 		return transId;
 	}
 	
-	public State send(Transport transport) throws IOException {
+	public State send() throws IOException {
 		final CMSSignedData signedData = encoder.encode(request);
 		final CertRepContentHandler handler = new CertRepContentHandler();
 		final CMSSignedData inMsg = transport.sendRequest(new PKCSReq(signedData, handler));

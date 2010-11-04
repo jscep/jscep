@@ -59,14 +59,14 @@ import org.jscep.x509.X509Util;
  * 
  * @author David Grant
  */
-public class EnrollmentTransaction extends Transaction {
+public class EnrolmentTransaction extends Transaction {
 	private final TransactionId transId;
 	private final org.jscep.message.PKCSReq request;
 	private static NonceQueue QUEUE = new NonceQueue(20);
-	private static Logger LOGGER = LoggingUtil.getLogger(EnrollmentTransaction.class);
+	private static Logger LOGGER = LoggingUtil.getLogger(EnrolmentTransaction.class);
 
-	public EnrollmentTransaction(PkiMessageEncoder encoder, PkiMessageDecoder decoder, CertificationRequest csr) throws IOException {
-		super(encoder, decoder);
+	public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, CertificationRequest csr) throws IOException {
+		super(transport, encoder, decoder);
 		this.transId = TransactionId.createTransactionId(X509Util.getPublicKey(csr), "SHA-1");
 		this.request = new org.jscep.message.PKCSReq(transId, Nonce.nextNonce(), csr);
 	}
@@ -84,7 +84,7 @@ public class EnrollmentTransaction extends Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 * @throws PkiOperationFailureException if the operation fails.
 	 */
-	public State send(Transport transport) throws IOException {
+	public State send() throws IOException {
 		CMSSignedData signedData = encoder.encode(request);
 		CertRepContentHandler handler = new CertRepContentHandler();
 		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData, handler));
@@ -105,7 +105,7 @@ public class EnrollmentTransaction extends Transaction {
 		return state;
 	}
 	
-	public State poll(Transport transport, X509Certificate issuer) throws IOException {
+	public State poll(X509Certificate issuer) throws IOException {
 		X509Name issuerName = X509Util.toX509Name(issuer.getIssuerX500Principal());
 		X509Name subjectName = request.getMessageData().getCertificationRequestInfo().getSubject();
 		IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);

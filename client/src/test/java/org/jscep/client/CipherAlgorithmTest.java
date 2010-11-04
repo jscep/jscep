@@ -51,7 +51,7 @@ public class CipherAlgorithmTest extends AbstractClientTest {
 	
 	private void testCipher(String cipher) throws Exception {
 		client.setPreferredCipherAlgorithm(cipher);
-		client.enrollCertificate(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password));
+		client.enrol(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password));
 	}
 	
 	private CertificationRequest getCsr(X500Principal subject, PublicKey pubKey, PrivateKey priKey, char[] password) throws GeneralSecurityException, IOException {

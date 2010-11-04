@@ -60,8 +60,8 @@ public class ClientTest extends AbstractClientTest {
 		Assume.assumeTrue(client.getCaCapabilities().isRenewalSupported());
 		
 		CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
-		Transaction t = client.enrollCertificate(csr);
-		if (t.getState() == State.CERT_ISSUED) {
+		Transaction t = client.enrol(csr);
+		if (t.send() == State.CERT_ISSUED) {
 			t.getCertStore();
 		}
 	}
@@ -80,13 +80,13 @@ public class ClientTest extends AbstractClientTest {
 		State state;
 		CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
 		
-		trans = client.enrollCertificate(csr);
+		trans = client.enrol(csr);
 		state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
 		}
 		
-		trans = client.enrollCertificate(csr);
+		trans = client.enrol(csr);
 		state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
@@ -96,7 +96,7 @@ public class ClientTest extends AbstractClientTest {
 	@Test
 	public void testEnroll() throws Exception {
 		CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
-		Transaction trans = client.enrollCertificate(csr);
+		Transaction trans = client.enrol(csr);
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			CertStore store = trans.getCertStore();
@@ -106,7 +106,7 @@ public class ClientTest extends AbstractClientTest {
 	
 	@Test
 	public void testEnrollThenGet() throws Exception {		
-		Transaction trans = client.enrollCertificate(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password));
+		Transaction trans = client.enrol(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password));
 		State state = trans.getState();
 		Assume.assumeTrue(state == State.CERT_ISSUED);
 		identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
@@ -117,7 +117,7 @@ public class ClientTest extends AbstractClientTest {
 	
 	@Test(expected = IOException.class)
 	public void testEnrollInvalidPassword() throws Exception {
-		Transaction trans = client.enrollCertificate(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), new char[0]));
+		Transaction trans = client.enrol(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), new char[0]));
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			trans.getCertStore();

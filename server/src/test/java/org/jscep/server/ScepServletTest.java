@@ -42,7 +42,7 @@ import org.jscep.request.GetCaCaps;
 import org.jscep.request.GetCaCert;
 import org.jscep.request.GetNextCaCert;
 import org.jscep.response.Capabilities;
-import org.jscep.transaction.EnrollmentTransaction;
+import org.jscep.transaction.EnrolmentTransaction;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.NonEnrollmentTransaction;
 import org.jscep.transaction.Transaction.State;
@@ -162,9 +162,10 @@ public class ScepServletTest {
 		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
 		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 		
-		NonEnrollmentTransaction t = new NonEnrollmentTransaction(encoder, decoder, iasn, MessageType.GetCRL);
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		State s = t.send(transport);
+		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GetCRL);
+		State s = t.send();
+		
 		System.out.println(s);
 	}
 	
@@ -177,9 +178,9 @@ public class ScepServletTest {
 		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
 		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 		
-		NonEnrollmentTransaction t = new NonEnrollmentTransaction(encoder, decoder, iasn, MessageType.GetCert);
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		State s = t.send(transport);
+		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GetCert);
+		State s = t.send();
 		
 		System.out.println(s);
 	}
@@ -193,9 +194,9 @@ public class ScepServletTest {
 		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
 		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 		
-		NonEnrollmentTransaction t = new NonEnrollmentTransaction(encoder, decoder, iasn, MessageType.GetCert);
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		State s = t.send(transport);
+		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GetCert);
+		State s = t.send();
 		System.out.println(s);
 	}
 	
@@ -208,10 +209,11 @@ public class ScepServletTest {
 		
 		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
 		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
-		
-		EnrollmentTransaction t = new EnrollmentTransaction(encoder, decoder, csr);
+
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		State s = t.send(transport);
+		EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
+
+		State s = t.send();
 		
 		System.out.println(s);
 	}
@@ -226,9 +228,9 @@ public class ScepServletTest {
 		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
 		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 		
-		EnrollmentTransaction t = new EnrollmentTransaction(encoder, decoder, csr);
 		Transport transport = Transport.createTransport(Method.POST, getURL());
-		State s = t.send(transport);
+		EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
+		State s = t.send();
 		
 		System.out.println(s);
 	}
@@ -243,11 +245,11 @@ public class ScepServletTest {
 		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
 		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 		
-		EnrollmentTransaction t = new EnrollmentTransaction(encoder, decoder, csr);
 		Transport transport = Transport.createTransport(Method.POST, getURL());
-		State s = t.send(transport);
+		EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
+		State s = t.send();
 		System.out.println(s);
-		s = t.poll(transport, getRecipient());
+		s = t.poll(getRecipient());
 		System.out.println(s);
 	}
 	
