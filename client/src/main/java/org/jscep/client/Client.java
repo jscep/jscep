@@ -31,6 +31,7 @@ import java.security.PrivateKey;
 import java.security.cert.CertStoreException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -254,7 +255,7 @@ public class Client {
      * @throws PkiOperationFailureException if the operation fails.
      */
     @SuppressWarnings("unchecked")
-	public Collection<X509Certificate> getCertificate(BigInteger serial) throws IOException, OperationFailureException {
+	public List<X509Certificate> getCertificate(BigInteger serial) throws IOException, OperationFailureException {
     	// TRANSACTIONAL
     	// Certificate query
     	final X509Certificate ca = retrieveCA();;
@@ -268,7 +269,8 @@ public class Client {
     	
 		if (t.getState() == State.CERT_ISSUED) {
 			try {
-				return (Collection<X509Certificate>) t.getCertStore().getCertificates(null);
+				Collection<X509Certificate> certs = (Collection<X509Certificate>) t.getCertStore().getCertificates(null);
+				return new ArrayList<X509Certificate>(certs);
 			} catch (CertStoreException e) {
 				throw new RuntimeException(e);
 			}
