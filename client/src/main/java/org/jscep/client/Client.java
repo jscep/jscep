@@ -205,14 +205,14 @@ public class Client {
     // TRANSACTIONAL
     
     /**
-     * Returns any certificate revocation lists relating to the current CA.
+     * Returns the current CA's certificate revocation list
      *  
      * @return a collection of CRLs
      * @throws IOException if any I/O error occurs.
      * @throws PkiOperationFailureException if the operation fails.
      */
     @SuppressWarnings("unchecked")
-	public Collection<X509CRL> getRevocationList() throws IOException, OperationFailureException {
+	public X509CRL getRevocationList() throws IOException, OperationFailureException {
     	// TRANSACTIONAL
     	// CRL query
     	final X509Certificate ca = retrieveCA();
@@ -229,7 +229,11 @@ public class Client {
     	
     	if (t.getState() == State.CERT_ISSUED) {
 			try {
-				return (Collection<X509CRL>) t.getCertStore().getCRLs(null);
+				Collection<X509CRL> crls = (Collection<X509CRL>) t.getCertStore().getCRLs(null);
+				if (crls.size() == 0) {
+					return null;
+				}
+				return crls.iterator().next();
 			} catch (CertStoreException e) {
 				throw new RuntimeException(e);
 			}
