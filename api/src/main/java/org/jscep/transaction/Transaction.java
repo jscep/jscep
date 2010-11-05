@@ -49,19 +49,22 @@ public abstract class Transaction {
 	 */
 	public FailInfo getFailInfo() {
 		if (state != State.CERT_NON_EXISTANT) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("No failure has been received.  Check state!");
 		}
 		return failInfo;
 	}
 	
 	public CertStore getCertStore() {
 		if (state != State.CERT_ISSUED) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("No certstore has been received.  Check state!");
 		}
 		return certStore;
 	}
 	
 	public State getState() {
+		if (state == null) {
+			throw new IllegalStateException("No request has been sent.");
+		}
 		return state;
 	}
 	
