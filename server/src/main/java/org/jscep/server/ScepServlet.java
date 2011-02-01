@@ -151,21 +151,21 @@ public abstract class ScepServlet extends HttpServlet {
 		LOGGER.fine("Method " + reqMethod + " Allowed for Operation: " + op);
 		
 		if (op == Operation.GetCACaps) {
-			doGetCaCaps(req, res);
+			try {
+				doGetCaCaps(req, res);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
 		} else if (op == Operation.GetCACert) {
 			try {
 				doGetCaCert(req, res);
-			} catch (GeneralSecurityException e) {
-				throw new ServletException(e);
-			} catch (CMSException e) {
+			} catch (Exception e) {
 				throw new ServletException(e);
 			}
 		} else if (op == Operation.GetNextCACert) {
 			try {
 				doGetNextCaCert(req, res);
-			} catch (GeneralSecurityException e) {
-				throw new ServletException(e);
-			} catch (CMSException e) {
+			} catch (Exception e) {
 				throw new ServletException(e);
 			}
 		} else if (op == Operation.PKIOperation) {
@@ -226,9 +226,7 @@ public abstract class ScepServlet extends HttpServlet {
 					}
 				} catch (OperationFailureException e) {
 					certRep = new CertRep(transId, senderNonce, recipientNonce, e.getFailInfo());
-				} catch (GeneralSecurityException e) {
-					throw new ServletException(e);
-				} catch (CMSException e) {
+				} catch (Exception e) {
 					throw new ServletException(e);
 				}
 			} else if (msgType == MessageType.GetCertInitial) {
@@ -250,9 +248,7 @@ public abstract class ScepServlet extends HttpServlet {
 					}
 				}  catch (OperationFailureException e) {
 					certRep = new CertRep(transId, senderNonce, recipientNonce, e.getFailInfo());
-				}catch (GeneralSecurityException e) {
-					throw new ServletException(e);
-				} catch (CMSException e) {
+				} catch (Exception e) {
 					throw new ServletException(e);
 				}
 			} else if (msgType == MessageType.GetCRL) {
@@ -269,9 +265,7 @@ public abstract class ScepServlet extends HttpServlet {
 					certRep = new CertRep(transId, senderNonce, recipientNonce, messageData);
 				} catch (OperationFailureException e) {
 					certRep = new CertRep(transId, senderNonce, recipientNonce, e.getFailInfo());
-				} catch (GeneralSecurityException e) {
-					throw new ServletException(e);
-				} catch (CMSException e) {
+				} catch (Exception e) {
 					throw new ServletException(e);
 				}
 			} else if (msgType == MessageType.PKCSReq) {
@@ -291,9 +285,7 @@ public abstract class ScepServlet extends HttpServlet {
 					}
 				} catch (OperationFailureException e) {
 					 certRep = new CertRep(transId, senderNonce, recipientNonce, e.getFailInfo());
-				} catch (GeneralSecurityException e) {
-					throw new ServletException(e);
-				} catch (CMSException e) {
+				} catch (Exception e) {
 					throw new ServletException(e);
 				}
 			} else {
@@ -323,10 +315,10 @@ public abstract class ScepServlet extends HttpServlet {
 		return SignedData.getInstance(cmsContentInfo.getContent());
 	}
 
-	private void doGetNextCaCert(HttpServletRequest req, HttpServletResponse res) throws GeneralSecurityException, CMSException, IOException {
+	private void doGetNextCaCert(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		res.setHeader("Content-Type", "application/x-x509-next-ca-cert");
 		
-		final List<X509Certificate> certs = getNextCaCertificate(req.getParameter(MSG_PARAM));
+		List<X509Certificate> certs = getNextCaCertificate(req.getParameter(MSG_PARAM));
 		
 		if (certs.size() == 0) {
 			res.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "GetNextCACert Not Supported");
@@ -343,7 +335,7 @@ public abstract class ScepServlet extends HttpServlet {
 		}
 	}
 
-	private void doGetCaCert(HttpServletRequest req, HttpServletResponse res) throws GeneralSecurityException, CMSException, IOException {
+	private void doGetCaCert(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		final List<X509Certificate> certs = doGetCaCertificate(req.getParameter(MSG_PARAM));
 		final byte[] bytes;
 		if (certs.size() == 1) {
@@ -371,7 +363,7 @@ public abstract class ScepServlet extends HttpServlet {
 		return Operation.valueOf(req.getParameter(OP_PARAM));
 	}
 	
-	private void doGetCaCaps(HttpServletRequest req, HttpServletResponse res) throws IOException {
+	private void doGetCaCaps(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		res.setHeader("Content-Type", "text/plain");
 		final Set<Capability> caps = doCapabilities(req.getParameter("message"));
 		for (Capability cap : caps) {
@@ -387,14 +379,14 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @param identifier the CA identifier, which may be an empty string.
 	 * @return the capabilities.
 	 */
-	abstract protected Set<Capability> doCapabilities(String identifier);
+	abstract protected Set<Capability> doCapabilities(String identifier) throws Exception;
 	/**
 	 * Returns the certificate chain of the specified CA.
 	 * 
 	 * @param identifier the CA identifier, which may be an empty string.
 	 * @return the CA's certificate.
 	 */
-	abstract protected List<X509Certificate> doGetCaCertificate(String identifier);
+	abstract protected List<X509Certificate> doGetCaCertificate(String identifier) throws Exception;
 	/**
 	 * Return the chain of the next X.509 certificate which will be used by
 	 * the specified CA.
@@ -402,7 +394,7 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @param identifier the CA identifier, which may be an empty string. 
 	 * @return the list of certificates.
 	 */
-	abstract protected List<X509Certificate> getNextCaCertificate(String identifier);
+	abstract protected List<X509Certificate> getNextCaCertificate(String identifier) throws Exception;
 	/**
 	 * Retrieve the certificate chain identified by the given parameters.
 	 * 
@@ -411,7 +403,7 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @return the identified certificate, if any.
 	 * @throws OperationFailureException if the operation cannot be completed
 	 */
-	abstract protected List<X509Certificate> doGetCert(X509Name issuer, BigInteger serial) throws OperationFailureException;
+	abstract protected List<X509Certificate> doGetCert(X509Name issuer, BigInteger serial) throws OperationFailureException, Exception;
 	/**
 	 * Checks to see if a previously-requested certificate has been issued.  If
 	 * the certificate has been issued, this method will return the appropriate
@@ -423,7 +415,7 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @return the identified certificate, if any.
 	 * @throws OperationFailureException if the operation cannot be completed
 	 */
-	abstract protected List<X509Certificate> doGetCertInitial(X509Name issuer, X509Name subject) throws OperationFailureException;
+	abstract protected List<X509Certificate> doGetCertInitial(X509Name issuer, X509Name subject) throws OperationFailureException, Exception;
 	/**
 	 * Retrieve the CRL covering the given certificate identifiers.
 	 * 
@@ -432,7 +424,7 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @return the CRL.
 	 * @throws OperationFailureException if the operation cannot be completed
 	 */
-	abstract protected X509CRL doGetCrl(X509Name issuer, BigInteger serial) throws OperationFailureException;
+	abstract protected X509CRL doGetCrl(X509Name issuer, BigInteger serial) throws OperationFailureException, Exception;
 	/**
 	 * Enrols a certificate into the PKI represented by this SCEP interface.  If
 	 * the request can be completed immediately, this method returns an appropriate
@@ -443,7 +435,7 @@ public abstract class ScepServlet extends HttpServlet {
 	 * @return the certificate chain, if any
 	 * @throws OperationFailureException if the operation cannot be completed
 	 */
-	abstract protected List<X509Certificate> doEnroll(CertificationRequest certificationRequest) throws OperationFailureException;
+	abstract protected List<X509Certificate> doEnroll(CertificationRequest certificationRequest) throws OperationFailureException, Exception;
 	/**
 	 * Returns the private key of the entity represented by this SCEP server.
 	 * 
