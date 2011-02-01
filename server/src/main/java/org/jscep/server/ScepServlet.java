@@ -215,12 +215,15 @@ public abstract class ScepServlet extends HttpServlet {
 
 				try {
 					List<X509Certificate> issued = doGetCert(principal, serial);
-					certRep = new CertRep(transId, senderNonce, recipientNonce, FailInfo.badCertId);
-					CertStoreParameters params = new CollectionCertStoreParameters(issued);
-					CertStore store = CertStore.getInstance("Collection", params);
-					SignedData messageData = getMessageData(store);
-					
-					certRep = new CertRep(transId, senderNonce, recipientNonce, messageData);
+					if (issued.size() == 0) {
+						certRep = new CertRep(transId, senderNonce, recipientNonce, FailInfo.badCertId);
+					} else {
+						CertStoreParameters params = new CollectionCertStoreParameters(issued);
+						CertStore store = CertStore.getInstance("Collection", params);
+						SignedData messageData = getMessageData(store);
+
+						certRep = new CertRep(transId, senderNonce, recipientNonce, messageData);
+					}
 				} catch (OperationFailureException e) {
 					certRep = new CertRep(transId, senderNonce, recipientNonce, e.getFailInfo());
 				} catch (GeneralSecurityException e) {
