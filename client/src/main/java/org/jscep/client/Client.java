@@ -27,8 +27,12 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.SignatureException;
 import java.security.cert.CertStoreException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -441,6 +445,20 @@ public class Client {
     		return chain.get(raIndex);
     	} else if (numCerts == 1) {
     		return chain.get(0);
+    	} else if (numCerts == 3) {
+    		// Entrust Case, we have CA certificate and two RA 
+    		// certificates (Encryption and Verification) we use the 
+    		// RA Encryption certificate as recipient
+    		int raIndex = 1;
+    		for (int i = 0; i < chain.size(); i++) {
+    			X509Certificate raCert = chain.get(i);
+    			if (raCert.getKeyUsage()[0] == false && raCert.getKeyUsage()[6] == false) {
+    				//this must be the Encryption certificate because 
+    				// no digitalSignature and no CRL sign extension is set
+    				raIndex = i;
+    			}
+    		}
+    		return chain.get(raIndex);
     	} else {
     		// We've either got NO certificates here, or more than 2.
     		// Whatever the case, the server is in error. 
@@ -450,33 +468,30 @@ public class Client {
     
     private X509Certificate selectCA(List<X509Certificate> certs) {
     	if (certs.size() == 1) {
+    		// Only one certificate, so it must be the CA.
     		return certs.get(0);
     	}
-    	// We don't know the order here, but we know the RA certificate MUST
-		// have been issued by the CA certificate.
-		final X509Certificate first = certs.get(0);
-		final X509Certificate second = certs.get(1);
-		try {
-			// First, let's check if the second certificate is the CA.
-			first.verify(second.getPublicKey());
-			
-			return second;
-		} catch (InvalidKeyException e) {
-			// Do nothing here, as we're going to try the reverse now.
-		} catch (Exception e) {
-			// Something else went wrong.
-			throw new RuntimeException(e);
-		}
-		try {
-			// OK, that didn't work out, so let's try the first instead.
-			second.verify(first.getPublicKey());
-			
-			return first;
-		} catch (Exception e) {
-			// Neither certificate was the CA.
-			// TODO
-			throw new RuntimeException(e);
-		}
+    	// We don't know the order in the chain, but we know the RA 
+    	// certificate MUST have been issued by the CA certificate.
+    	for (int i = 0; i < certs.size(); i++) {
+    		// Hypothetical CA
+    		X509Certificate ca = certs.get(i);
+    		for (int j = 0; j < certs.size(); j++) {
+    			// Hypothetical RA
+    			X509Certificate ra = certs.get(j);
+    			try {
+    				// If the hypothetical RA is signed by the
+    				// hypothetical CA, the CA is legitimate.
+					ra.verify(ca.getPublicKey());
+					
+					// No exception, so return.
+					return ca;
+				} catch (Exception e) {
+					// Problem verifying, move on.
+				}
+    		}
+    	}
+    	throw new IllegalStateException("No CA in chain");
     }
     
     void setPreferredCipherAlgorithm(String algorithm) {
