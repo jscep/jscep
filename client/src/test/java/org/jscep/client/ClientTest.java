@@ -1,8 +1,10 @@
 package org.jscep.client;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
@@ -15,8 +17,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
-
-import junit.framework.Assert;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -38,7 +38,6 @@ import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class ClientTest extends AbstractClientTest {
 	/**
 	 * The requester MUST use RSA keys for all symmetric key operations.
@@ -54,7 +53,7 @@ public class ClientTest extends AbstractClientTest {
 		new Client(url, identity, keyPair.getPrivate(), new NoSecurityCallbackHandler());
 	}
 	
-	@Test
+	@Ignore @Test
 	public void testRenewalEnrollAllowed() throws Exception {
 		// Ignore this test if the CA doesn't support renewal.
 		Assume.assumeTrue(client.getCaCapabilities().isRenewalSupported());
@@ -71,7 +70,7 @@ public class ClientTest extends AbstractClientTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = IOException.class)
+	@Ignore @Test(expected = IOException.class)
 	public void testRenewalSameCAEnrollDisallowed() throws Exception {
 		// Ignore if renewal is supported.
 		Assume.assumeThat(client.getCaCapabilities().isRenewalSupported(), is(false));
@@ -93,7 +92,7 @@ public class ClientTest extends AbstractClientTest {
 		}
 	}
 
-	@Test
+	@Ignore @Test
 	public void testEnroll() throws Exception {
 		CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
 		Transaction trans = client.enrol(csr);
@@ -104,7 +103,7 @@ public class ClientTest extends AbstractClientTest {
 		}
 	}
 	
-	@Test
+	@Ignore @Test
 	public void testEnrollThenGet() throws Exception {		
 		Transaction trans = client.enrol(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password));
 		State state = trans.getState();
@@ -112,16 +111,26 @@ public class ClientTest extends AbstractClientTest {
 		identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
 		Certificate retrieved = client.getCertificate(identity.getSerialNumber()).iterator().next();
 		
-		Assert.assertEquals(identity, retrieved);
+		assertEquals(identity, retrieved);
 	}
 	
-	@Test(expected = IOException.class)
+	@Ignore @Test(expected = IOException.class)
 	public void testEnrollInvalidPassword() throws Exception {
 		Transaction trans = client.enrol(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), new char[0]));
 		State state = trans.getState();
 		if (state == State.CERT_ISSUED) {
 			trans.getCertStore();
 		}
+	}
+	
+	@Test
+	public void cgiProgIsIgnoredForIssue24() throws GeneralSecurityException, MalformedURLException {
+		final KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+		final X509Certificate identity = X509Util.createEphemeralCertificate(new X500Principal("CN=jscep.org"), keyPair);
+		final URL url = new URL("http://someurl/certsrv/mscep/mscep.dll");
+		
+		Client c = new Client(url, identity, keyPair.getPrivate(), new NoSecurityCallbackHandler());
+		assertNotNull(c);
 	}
 	
 	private CertificationRequest getCsr(X500Principal subject, PublicKey pubKey, PrivateKey priKey, char[] password) throws GeneralSecurityException, IOException {
