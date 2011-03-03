@@ -332,9 +332,6 @@ public class Client {
     	if (url.getProtocol().matches("^https?$") == false) {
     		throw new IllegalArgumentException("URL protocol should be HTTP or HTTPS");
     	}
-    	if (url.getPath().endsWith("pkiclient.exe") == false) {
-    		throw new IllegalArgumentException("URL should end with pkiclient.exe");
-    	}
     	if (url.getRef() != null) {
     		throw new IllegalArgumentException("URL should contain no reference");
     	}
