@@ -120,6 +120,11 @@
 						<target>1.5</target>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>com.googlecode.maven-gcu-plugin</groupId>
+					<artifactId>maven-gcu-plugin</artifactId>
+					<version>1.0</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<extensions>
