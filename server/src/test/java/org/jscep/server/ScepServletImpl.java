@@ -70,6 +70,7 @@ public class ScepServletImpl extends ScepServlet {
 		return generator.generate(priKey);
 	}
 	
+	@Override
 	protected List<X509Certificate> doEnroll(CertificationRequest csr) throws OperationFailureException {
 		try {
 			X509Name subject = csr.getCertificationRequestInfo().getSubject();
