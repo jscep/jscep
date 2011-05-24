@@ -78,6 +78,7 @@ public enum FailInfo {
     			return failInfo;
     		}
     	}
-    	throw new IllegalArgumentException();
+    	// Fall back to bad request (see issue 39).
+    	return FailInfo.badRequest;
     }
 }

@@ -13,8 +13,8 @@ public class FailInfoTest {
 		}
 	}
 
-	@Test(expected=IllegalArgumentException.class)
-	public void testInvalid() {
-		FailInfo.valueOf(-1);
+	@Test
+	public void testFallback() {
+		Assert.assertEquals(FailInfo.badRequest, FailInfo.valueOf(-1));
 	}
 }

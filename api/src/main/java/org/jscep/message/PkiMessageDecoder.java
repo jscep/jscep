@@ -151,6 +151,10 @@ public class PkiMessageDecoder {
 	}
 	
 	private Nonce toNonce(Attribute attr) {
+		// Sometimes we don't get a sender nonce.
+		if (attr == null) {
+			return null;
+		}
 		final DEROctetString octets = (DEROctetString) attr.getAttrValues().getObjectAt(0);
 		
 		return new Nonce(octets.getOctets());

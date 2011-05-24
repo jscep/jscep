@@ -182,6 +182,10 @@ public class EnrolmentTransaction extends Transaction {
 			LOGGER.throwing(getClass().getName(), "validateResponse", e);
 			throw e;
 		}
+		
+		if (res.getSenderNonce() == null) {
+			return;
+		}
 
 		// http://tools.ietf.org/html/draft-nourse-scep-20#section-8.5
 		// Check that the nonce has not been encountered before.
