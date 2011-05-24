@@ -337,7 +337,11 @@ public abstract class ScepServlet extends HttpServlet {
 	private void doGetCaCert(HttpServletRequest req, HttpServletResponse res) throws Exception {
 		final List<X509Certificate> certs = doGetCaCertificate(req.getParameter(MSG_PARAM));
 		final byte[] bytes;
-		if (certs.size() == 1) {
+		if (certs.size() == 0) {
+			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					"GetCaCert failed to obtain CA from store");
+			bytes = new byte[0];
+		} else if (certs.size() == 1) {
 			res.setHeader("Content-Type", "application/x-x509-ca-cert");
 			bytes = certs.get(0).getEncoded();
 		} else {
