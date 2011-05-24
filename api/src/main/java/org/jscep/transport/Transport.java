@@ -52,7 +52,7 @@ public abstract class Transport {
 	/**
 	 * Represents the <code>HTTP</code> method to be used for transport. 
 	 */
-	public enum Method {
+	public static enum Method {
 		/**
 		 * The <code>HTTP GET</code> method.
 		 */

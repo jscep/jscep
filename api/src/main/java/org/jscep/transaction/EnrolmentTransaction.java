@@ -24,15 +24,11 @@ package org.jscep.transaction;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSException;
@@ -44,7 +40,6 @@ import org.jscep.message.GetCertInitial;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.pkcs7.SignedDataUtil;
 import org.jscep.request.PKCSReq;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
@@ -86,17 +81,8 @@ public class EnrolmentTransaction extends Transaction {
 	 * @return the resulting transaction state.
 	 * @throws IOException if any I/O error occurs.
 	 */
-	@SuppressWarnings("unchecked")
 	public State send() throws IOException {
 		CMSSignedData signedData = encoder.encode(request);
-		try {
-			CertStore store = signedData.getCertificatesAndCRLs("Collection", (String) null);
-			Collection<X509Certificate> certs = (Collection<X509Certificate>) store.getCertificates(null);
-			issuer = certs.iterator().next();
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-		
 		CertRepContentHandler handler = new CertRepContentHandler();
 		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData, handler));
 
@@ -123,7 +109,7 @@ public class EnrolmentTransaction extends Transaction {
 	 * @throws IOException if any I/O error occurs.
 	 */
 	public State poll() throws IOException {
-		X509Name issuerName = X509Util.toX509Name(issuer.getIssuerX500Principal());
+		X509Name issuerName = X509Util.toX509Name(issuer.getSubjectX500Principal());
 		X509Name subjectName = request.getMessageData().getCertificationRequestInfo().getSubject();
 		IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
 		final GetCertInitial pollReq = new GetCertInitial(transId, Nonce.nextNonce(), ias);
@@ -197,5 +183,9 @@ public class EnrolmentTransaction extends Transaction {
 		} else {
 			QUEUE.offer(res.getSenderNonce());
 		}
+	}
+	
+	public void setIssuer(X509Certificate ca) {
+		issuer = ca;
 	}
 }

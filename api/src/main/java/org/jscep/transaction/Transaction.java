@@ -76,7 +76,7 @@ public abstract class Transaction {
 	 * 
 	 * @author David Grant
 	 */
-	public enum State {
+	public static enum State {
 		/**
 		 * The transaction is a pending state.
 		 */

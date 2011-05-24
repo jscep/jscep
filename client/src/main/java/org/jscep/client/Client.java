@@ -199,7 +199,7 @@ public class Client {
     	if (getCaCapabilities().isRolloverSupported() == false) {
     		throw new UnsupportedOperationException();
     	}
-    	final X509Certificate issuer = retrieveCA();
+    	final X509Certificate issuer = getRecipientCertificate();
     	
     	final Transport trans = Transport.createTransport(Transport.Method.GET, url);
     	final GetNextCaCert req = new GetNextCaCert(profile, new NextCaCertificateContentHandler(issuer));
@@ -297,7 +297,15 @@ public class Client {
     	// TRANSACTIONAL
     	// Certificate enrollment
     	final Transport transport = createTransport();
-    	final EnrolmentTransaction t = new EnrolmentTransaction(transport, getEncoder(), getDecoder(), csr);
+    	List<X509Certificate> cas = getCaCertificate();
+    	X509Certificate encoderCa = selectRecipient(cas);
+    	X509Certificate ca = selectCA(cas);
+    	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(encoderCa);
+    	PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, identity, envEncoder);
+    	
+    	
+    	final EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, getDecoder(), csr);
+    	t.setIssuer(ca);
     	
     	return t;
     }

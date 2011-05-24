@@ -248,6 +248,7 @@ public class ScepServletTest {
 		Transport transport = Transport.createTransport(Method.POST, getURL());
 		EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
 		State s = t.send();
+		t.setIssuer(sender);
 		System.out.println(s);
 		s = t.poll();
 		System.out.println(s);
