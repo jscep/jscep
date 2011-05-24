@@ -22,6 +22,7 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.jscep.x509.X509Util;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -59,7 +60,7 @@ public class CaCertificateContentHandlerTest {
 		fixture.getContent(in, "application/x-x509-ca-ra-cert");
 	}
 	
-	@Test
+	@Ignore @Test
 	public void testMultipleCertificates() throws Exception {
 		CertStoreParameters params = new CollectionCertStoreParameters(Collections.singleton(getCertificate()));
 		CertStore certStore = CertStore.getInstance("Collection", params);

@@ -26,6 +26,7 @@ import java.security.GeneralSecurityException;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.content.CertRepContentHandler;
 import org.jscep.message.CertRep;
@@ -71,8 +72,11 @@ public class NonEnrollmentTransaction extends Transaction {
 			state = State.CERT_NON_EXISTANT;
 		} else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
 			try {
-				certStore = SignedDataUtil.extractCertStore(response.getMessageData());
+				CMSSignedData responseSd = response.getCMSSignedData();
+				certStore = responseSd.getCertificatesAndCRLs("Collection", (String) null);
 			} catch (GeneralSecurityException e) {
+				throw new IOException(e);
+			} catch (CMSException e) {
 				throw new IOException(e);
 			}
 			state = State.CERT_ISSUED;

@@ -104,13 +104,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 				if (bytes.length == 0) {
 					throw new IOException("Expected a SignedData object, but response was empty");
 				}
-				ContentInfo ci = ContentInfo.getInstance(ASN1Object.fromByteArray(bytes));
-				CMSSignedData sd;
-				try {
-					sd = new CMSSignedData(ci.getEncoded());
-				} catch (ClassCastException e) {
-					sd = new CMSSignedData(ci.getContent().getDERObject().getEncoded());
-				}
+				CMSSignedData sd = new CMSSignedData(bytes);
 
 				store = sd.getCertificatesAndCRLs("Collection", (String) null);
 			} catch (Exception e) {

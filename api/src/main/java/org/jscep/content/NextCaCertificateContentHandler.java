@@ -39,6 +39,9 @@ import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.cms.CMSContentInfoParser;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.pkcs7.SignedDataUtil;
 import org.jscep.util.LoggingUtil;
 
@@ -70,10 +73,11 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 			
 			Collection<? extends Certificate> collection;
 			try {
-				ContentInfo ci = ContentInfo.getInstance(ASN1Object.fromByteArray(getBytes(in)));
-				ASN1Sequence seq = (ASN1Sequence) ci.getContent();
+				CMSSignedData cmsMessageData = new CMSSignedData(getBytes(in));
+				ContentInfo cmsContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(cmsMessageData.getEncoded()));
+
 				// TODO: This must be signed by the current CA.
-				final SignedData sd = new SignedData(seq);
+				final SignedData sd = SignedData.getInstance(cmsContentInfo.getContent());
 				if (SignedDataUtil.isSignedBy(sd, issuer) == false) {
 					IOException ioe = new IOException("Invalid Signer");
 					
@@ -88,6 +92,11 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 				CertStore store = SignedDataUtil.extractCertStore(sd);
 				collection = store.getCertificates(new X509CertSelector());
 			} catch (GeneralSecurityException e) {
+				final IOException ioe = new IOException(e);
+				
+				LOGGER.throwing(getClass().getName(), "getContent", ioe);
+				throw ioe;
+			} catch (CMSException e) {
 				final IOException ioe = new IOException(e);
 				
 				LOGGER.throwing(getClass().getName(), "getContent", ioe);

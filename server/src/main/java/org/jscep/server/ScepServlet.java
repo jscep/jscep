@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.SignedData;
@@ -220,7 +221,7 @@ public abstract class ScepServlet extends HttpServlet {
 					} else {
 						CertStoreParameters params = new CollectionCertStoreParameters(issued);
 						CertStore store = CertStore.getInstance("Collection", params);
-						SignedData messageData = getMessageData(store);
+						DEROctetString messageData = getMessageData(store);
 
 						certRep = new CertRep(transId, senderNonce, recipientNonce, messageData);
 					}
@@ -242,7 +243,7 @@ public abstract class ScepServlet extends HttpServlet {
 					} else {
 						CertStoreParameters params = new CollectionCertStoreParameters(issued);
 						CertStore store = CertStore.getInstance("Collection", params);
-						SignedData messageData = getMessageData(store);
+						DEROctetString messageData = getMessageData(store);
 						
 						certRep = new CertRep(transId, senderNonce, recipientNonce, messageData);
 					}
@@ -260,7 +261,7 @@ public abstract class ScepServlet extends HttpServlet {
 					X509CRL crl = doGetCrl(issuer, serialNumber);
 					CertStoreParameters params = new CollectionCertStoreParameters(Collections.singleton(crl));
 					CertStore store = CertStore.getInstance("Collection", params);
-					SignedData messageData = getMessageData(store);
+					DEROctetString messageData = getMessageData(store);
 					
 					certRep = new CertRep(transId, senderNonce, recipientNonce, messageData);
 				} catch (OperationFailureException e) {
@@ -279,7 +280,7 @@ public abstract class ScepServlet extends HttpServlet {
 					} else {
 						CertStoreParameters params = new CollectionCertStoreParameters(issued);
 						CertStore store = CertStore.getInstance("Collection", params);
-						SignedData messageData = getMessageData(store);
+						DEROctetString messageData = getMessageData(store);
 						
 						certRep = new CertRep(transId, senderNonce, recipientNonce, messageData);
 					}
@@ -305,14 +306,12 @@ public abstract class ScepServlet extends HttpServlet {
 		LOGGER.exiting(getClass().getName(), "service");
 	}
 	
-	private SignedData getMessageData(CertStore store) throws GeneralSecurityException, CMSException, IOException {
+	private DEROctetString getMessageData(CertStore store) throws GeneralSecurityException, CMSException, IOException {
 		CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
 		generator.addCertificatesAndCRLs(store);
+		CMSSignedData signed = generator.generate(null, (String) null);
 		
-		CMSSignedData cmsMessageData = generator.generate(null, (String) null);
-		ContentInfo cmsContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(cmsMessageData.getEncoded()));
-		
-		return SignedData.getInstance(cmsContentInfo.getContent());
+		return new DEROctetString(signed.getEncoded());
 	}
 
 	private void doGetNextCaCert(HttpServletRequest req, HttpServletResponse res) throws Exception {

@@ -22,16 +22,18 @@
 package org.jscep.message;
 
 import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
 
-public class CertRep extends PkiResponse<SignedData> {
+public class CertRep extends PkiResponse<DEROctetString> {
 
-	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, SignedData messageData) {
+	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, DEROctetString messageData) {
 		// SUCCESS
 		super(transId, MessageType.CertRep, senderNonce, recipientNonce, PkiStatus.SUCCESS, messageData);
 	}
@@ -46,7 +48,7 @@ public class CertRep extends PkiResponse<SignedData> {
 		super(transId, MessageType.CertRep, senderNonce, recipientNonce, PkiStatus.PENDING);
 	}
 	
-	public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req, SignedData messageData) {
+	public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req, DEROctetString messageData) {
 		Nonce senderNonce = Nonce.nextNonce();
 		
 		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), messageData);
@@ -62,5 +64,9 @@ public class CertRep extends PkiResponse<SignedData> {
 		Nonce senderNonce = Nonce.nextNonce();
 		
 		return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce());
+	}
+	
+	public CMSSignedData getCMSSignedData() throws CMSException {
+		return new CMSSignedData(getMessageData().getOctets());
 	}
 }

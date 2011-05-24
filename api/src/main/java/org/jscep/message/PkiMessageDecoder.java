@@ -111,14 +111,7 @@ public class PkiMessageDecoder {
 			} else {
 				final EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
 				final ASN1Encodable envelopedContent = decoder.decode(ed);
-				SignedData messageData;
-				
-				try {
-					ContentInfo contentInfo = ContentInfo.getInstance(envelopedContent);
-					messageData = new SignedData((ASN1Sequence) contentInfo.getContent());
-				} catch (ClassCastException e) {
-					messageData = SignedData.getInstance(envelopedContent);
-				}
+				DEROctetString messageData = new DEROctetString(envelopedContent);
 				
 				return new CertRep(transId, senderNonce, recipientNonce, messageData);
 			}

@@ -113,14 +113,6 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<source>6</source>
-						<target>6</target>
-					</configuration>
-				</plugin>
-				<plugin>
 					<groupId>com.googlecode.maven-gcu-plugin</groupId>
 					<artifactId>maven-gcu-plugin</artifactId>
 					<version>1.0</version>

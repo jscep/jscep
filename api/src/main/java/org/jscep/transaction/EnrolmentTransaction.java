@@ -148,11 +148,16 @@ public class EnrolmentTransaction extends Transaction {
 	}
 
 	private CertStore extractCertStore(CertRep response) throws IOException {
-		final SignedData signedData = response.getMessageData();
-		CertStore cs;
+		CertStore cs = null;
 		try {
-			cs = SignedDataUtil.extractCertStore(signedData);
+			CMSSignedData signedData = response.getCMSSignedData();
+			cs = signedData.getCertificatesAndCRLs("Collection", (String) null);
 		} catch (GeneralSecurityException e) {
+			IOException ioe = new IOException(e);
+			
+			LOGGER.throwing(getClass().getName(), "getContent", ioe);
+			throw ioe;
+		} catch (CMSException e) {
 			IOException ioe = new IOException(e);
 			
 			LOGGER.throwing(getClass().getName(), "getContent", ioe);

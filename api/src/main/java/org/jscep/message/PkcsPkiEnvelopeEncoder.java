@@ -27,6 +27,7 @@ import java.security.Security;
 import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSEnvelopedGenerator;
@@ -42,7 +43,16 @@ public class PkcsPkiEnvelopeEncoder {
 	
 	public CMSEnvelopedData encode(ASN1Encodable messageData) throws IOException {
 		CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
-		CMSProcessable envelopable = new CMSProcessableByteArray(messageData.getEncoded());
+		
+		byte[] payload;
+		if (messageData instanceof DEROctetString) {
+			DEROctetString oct = (DEROctetString) messageData;
+			payload = oct.getOctets();
+		} else {
+			payload = messageData.getEncoded();
+		}
+		
+		CMSProcessable envelopable = new CMSProcessableByteArray(payload);
 		edGenerator.addKeyTransRecipient(recipient);
 		
 		try {
