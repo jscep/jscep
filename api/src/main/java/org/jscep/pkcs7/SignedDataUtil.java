@@ -125,7 +125,7 @@ public final class SignedDataUtil {
 			SignerIdentifier signerId = signerInfo.getSID();
 			IssuerAndSerialNumber iasn = IssuerAndSerialNumber.getInstance(signerId.getId());
 			
-			if (issuerIasn.equals(iasn) == false) {
+			if (areEqual(issuerIasn, iasn) == false) {
 				continue;
 			}
 			// We've found the right issuer.
@@ -162,5 +162,13 @@ public final class SignedDataUtil {
 		dos.close();
 
 		return baos.toByteArray();
+	}
+	
+	private static boolean areEqual(IssuerAndSerialNumber one, IssuerAndSerialNumber two) {
+		if (one.getSerialNumber().equals(two.getSerialNumber())) {
+			return one.getName().equals(two.getName());
+		} else {
+			return false;
+		}
 	}
 }
