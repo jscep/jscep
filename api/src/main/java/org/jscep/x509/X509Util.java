@@ -37,6 +37,8 @@ import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -101,7 +103,12 @@ public final class X509Util {
 	 * @return the converted name.
 	 */
 	public static X509Name toX509Name(X500Principal principal) {
-		return new X509Name(principal.getName());
+		try {
+			byte[] bytes = principal.getEncoded();
+			return new X509Name((ASN1Sequence) ASN1Object.fromByteArray(bytes));
+		} catch (IOException e) {
+			return null;
+		}
 	}
 	
 	/**
