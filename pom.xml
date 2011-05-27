@@ -3,7 +3,7 @@
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep</artifactId>
 	<packaging>pom</packaging>
-	<version>1.1.5-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<name>jscep</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>
