@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.google.code.jscep</groupId>
 		<artifactId>jscep</artifactId>
-		<version>1.2-SNAPSHOT</version>
+		<version>1.2</version>
 	</parent>
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>server</artifactId>
@@ -23,9 +22,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://jscep.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/trunk/</developerConnection>
-		<url>http://code.google.com/p/jscep/source/browse/</url>
+		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-1.2/trunk</connection>
+		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-1.2/trunk</developerConnection>
+		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-1.2/browse</url>
 	</scm>
 	<dependencies>
 		<dependency>
