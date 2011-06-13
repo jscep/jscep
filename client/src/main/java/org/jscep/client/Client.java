@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
@@ -210,7 +211,7 @@ public class Client {
      * @throws PkiOperationFailureException if the operation fails.
      */
     @SuppressWarnings("unchecked")
-	public X509CRL getRevocationList() throws IOException, OperationFailureException {
+	public X509CRL getRevocationList(X500Principal issuer, BigInteger serial) throws IOException, OperationFailureException {
     	// TRANSACTIONAL
     	// CRL query
     	final X509Certificate ca = retrieveCA();
@@ -218,9 +219,8 @@ public class Client {
     		throw new RuntimeException("Unimplemented");
     	}
     	
-    	X509Name name = new X509Name(ca.getIssuerX500Principal().toString());
-    	BigInteger serialNumber = ca.getSerialNumber();
-    	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
+    	X509Name name = new X509Name(issuer.getName());
+    	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
     	Transport transport = createTransport();
     	final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GetCRL);
     	t.send();
