@@ -26,13 +26,8 @@ package org.jscep.client;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
-import java.security.SignatureException;
 import java.security.cert.CertStoreException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -79,8 +74,6 @@ public class Client {
 	private static Logger LOGGER = LoggingUtil.getLogger(Client.class);
 	private Map<String, Capabilities> capabilitiesCache = new HashMap<String, Capabilities>();
 	private Set<X509Certificate> verified = new HashSet<X509Certificate>(1);
-	private String preferredDigestAlg;
-	private String preferredCipherAlg;
 	
 	// A requester MUST have the following information locally configured:
 	//
@@ -497,13 +490,5 @@ public class Client {
     		}
     	}
     	throw new IllegalStateException("No CA in chain");
-    }
-    
-    void setPreferredCipherAlgorithm(String algorithm) {
-    	preferredCipherAlg = algorithm;
-    }
-    
-    void setPreferredDigestAlgorithm(String algorithm) {
-    	preferredDigestAlg = algorithm;
     }
 }
