@@ -35,12 +35,10 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 
 /**
@@ -55,8 +53,6 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 	 * {@inheritDoc}
 	 */
 	public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
-		LOGGER.entering(getClass().getName(), "getContent", new Object[] {in, mimeType});
-		
 		final List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
 		final CertificateFactory cf;
 		try {
@@ -64,7 +60,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 		} catch (CertificateException e) {
 			IOException ioe = new IOException(e);
 			
-			LOGGER.throwing(getClass().getName(), "getContent", ioe);
+			LOGGER.error("getContent", ioe);
 			throw ioe;
 		}
 
@@ -79,7 +75,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			} catch (CertificateException ce) {
 				IOException ioe = new IOException(ce);
 				
-				LOGGER.throwing(getClass().getName(), "getContent", ioe);
+				LOGGER.error("getContent", ioe);
 				throw ioe;
 			}
 		} else if (mimeType.equals("application/x-x509-ca-ra-cert")) {
@@ -121,18 +117,16 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			} catch (CertStoreException e) {
 				IOException ioe = new IOException(e);
 				
-				LOGGER.throwing(getClass().getName(), "getContent", ioe);
+				LOGGER.error("getContent", ioe);
 				throw ioe;
 			}
 		} else {
 			IOException ioe = new IOException("Invalid Content Type");
 			
-			LOGGER.throwing(getClass().getName(), "getContent", ioe);
+			LOGGER.error("getContent", ioe);
 			throw ioe;
 		}
 
-		LOGGER.exiting(getClass().getName(), "getContent", certs);
-		
 		return certs;
 	}
 }

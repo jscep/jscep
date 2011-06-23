@@ -28,11 +28,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.logging.Logger;
 
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
 import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 /**
  * Transport representing the <code>HTTP GET</code> method
@@ -41,28 +41,25 @@ import org.jscep.util.LoggingUtil;
  */
 public class HttpGetTransport extends Transport {
 	private static Logger LOGGER = LoggingUtil.getLogger(HttpGetTransport.class);
-
 	HttpGetTransport(URL url) {
 		super(url);
 	}
 
 	@Override
 	public <T> T sendRequest(Request<T> msg) throws IOException {
-		LOGGER.entering(getClass().getName(), "sendMessage", msg);
-		
 		final URL url = getUrl(msg.getOperation(), msg.getMessage());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Sending {} to {}", msg, url);
+		}
 		final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-			IOException ioe = new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
-			
-			LOGGER.throwing(getClass().getName(), "sendMessage", ioe);
-			throw ioe;
+			LOGGER.error("Received a {} when sending {} to {}", new Object[] {conn.getResponseCode(), msg, url});
+			throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
 		}
 
 		final T response = msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
 		
-		LOGGER.exiting(getClass().getName(), "sendMessage", response);
 		return response;
 	}
 

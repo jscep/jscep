@@ -19,6 +19,7 @@
 		<module>api</module>
 		<module>client</module>
 		<module>server</module>
+		<module>example</module>
 	</modules>
 	<issueManagement>
 		<system>Google Code</system>
@@ -162,6 +163,12 @@
  			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
 			<scope>provided</scope>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>org.slf4j</groupId>
+ 			<artifactId>slf4j-api</artifactId>
+ 			<version>1.6.1</version>
+ 			<scope>compile</scope>
  		</dependency>
 	</dependencies>
 	</dependencyManagement>

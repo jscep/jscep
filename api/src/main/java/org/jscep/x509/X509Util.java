@@ -33,7 +33,6 @@ import java.security.spec.KeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -46,7 +45,6 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.x509.X509V1CertificateGenerator;
-import org.jscep.util.LoggingUtil;
 
 
 /**
@@ -56,8 +54,6 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public final class X509Util {
-	private static Logger LOGGER = LoggingUtil.getLogger(X509Util.class);
-	
 	private X509Util() {
 		// This constructor will never be invoked.
 	}
@@ -74,7 +70,6 @@ public final class X509Util {
 	 * @throws GeneralSecurityException if any security problem occurs.
 	 */
 	public static X509Certificate createEphemeralCertificate(X500Principal subject, KeyPair keyPair) throws GeneralSecurityException {
-		LOGGER.entering(X509Util.class.getName(), "createEphemeralCertificate", new Object[] {subject, keyPair});
 		final Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
 		final Date notBefore = cal.getTime();
@@ -92,7 +87,6 @@ public final class X509Util {
 
 		X509Certificate cert = gen.generate(keyPair.getPrivate());
 		
-		LOGGER.exiting(X509Util.class.getName(), "createEphemeralCertificate", cert);
 		return cert;
 	}
 	

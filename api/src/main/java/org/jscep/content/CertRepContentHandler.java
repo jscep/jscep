@@ -25,11 +25,9 @@ package org.jscep.content;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Logger;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.util.LoggingUtil;
 
 
 /**
@@ -38,15 +36,11 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class CertRepContentHandler implements ScepContentHandler<CMSSignedData> {
-	private static Logger LOGGER = LoggingUtil.getLogger(CertRepContentHandler.class);
-	
 	/**
 	 * {@inheritDoc}
 	 * @throws IOException 
 	 */
 	public CMSSignedData getContent(InputStream in, String mimeType) throws IOException {
-		LOGGER.entering(getClass().getName(), "getContent", new Object[] {in, mimeType});
-		
 		if (mimeType.equals("application/x-pki-message")) {
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -63,10 +57,7 @@ public class CertRepContentHandler implements ScepContentHandler<CMSSignedData> 
 				throw new IOException(e);
 			}
 		} else {
-			IOException ioe = new IOException("Invalid Content Type");
-			
-			LOGGER.throwing(getClass().getName(), "getContent", ioe);
-			throw ioe;
+			throw new IOException("Invalid Content Type");
 		}
 	}
 }

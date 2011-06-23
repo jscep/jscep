@@ -37,7 +37,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -67,6 +66,7 @@ import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 /**
  * This class represents a SCEP client, or Requester.
@@ -168,14 +168,12 @@ public class Client {
     public List<X509Certificate> getCaCertificate() throws IOException {
     	// NON-TRANSACTIONAL
     	// CA and RA public key distribution
-    	LOGGER.entering(getClass().getName(), "getCaCertificate");
     	final GetCaCert req = new GetCaCert(profile, new CaCertificateContentHandler());
         final Transport trans = Transport.createTransport(Transport.Method.GET, url);
         
         final List<X509Certificate> certs = trans.sendRequest(req);
         verifyCA(selectCA(certs));
         
-        LOGGER.exiting(getClass().getName(), "getCaCertificate", certs);
         return certs;
     }
     
@@ -367,8 +365,6 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     private Transport createTransport() throws IOException {
-    	LOGGER.entering(getClass().getName(), "createTransport");
-    	
     	final Transport t;
     	if (getCaCapabilities(true).isPostSupported()) {
     		t = Transport.createTransport(Transport.Method.POST, url);
@@ -376,17 +372,16 @@ public class Client {
     		t = Transport.createTransport(Transport.Method.GET, url);
     	}
     	
-    	LOGGER.exiting(getClass().getName(), "createTransport", t);
-    	
     	return t;
     }
     
     private Capabilities getCaCapabilities(boolean useCache) throws IOException {
     	// NON-TRANSACTIONAL
-    	LOGGER.entering(getClass().getName(), "getCaCapabilities", useCache);
-    	
     	Capabilities caps = null;
     	if (useCache == true) {
+    		if (LOGGER.isDebugEnabled()) {
+    			LOGGER.debug("Retrieving capabilities from cache");
+    		}
     		caps = capabilitiesCache.get(profile);
     	}
     	if (caps == null) {
@@ -396,17 +391,16 @@ public class Client {
 	        capabilitiesCache.put(profile, caps);
     	}
         
-        LOGGER.exiting(getClass().getName(), "getCaCapabilities", caps);
         return caps;
     }
     
     private void verifyCA(X509Certificate cert) throws IOException {
     	// Cache
     	if (verified.contains(cert)) {
-    		LOGGER.finer("Verification Cache Hit.");
+    		LOGGER.trace("Verification Cache Hit.");
     		return;
     	} else {
-    		LOGGER.finer("Verification Cache Missed.");
+    		LOGGER.trace("Verification Cache Missed.");
     	}
 
 		CertificateVerificationCallback callback = new CertificateVerificationCallback(cert);

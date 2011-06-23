@@ -24,10 +24,8 @@ package org.jscep.transaction;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.logging.Logger;
 
 import org.jscep.util.HexUtil;
-import org.jscep.util.LoggingUtil;
 
 
 /**
@@ -37,7 +35,6 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class Nonce {
-	private static Logger LOGGER = LoggingUtil.getLogger(Nonce.class);
 	private static final Random RND = new SecureRandom();
 	private byte[] nonce;
 	
@@ -84,15 +81,9 @@ public class Nonce {
 	 * @see java.security.SecureRandom
 	 */
 	public static Nonce nextNonce() {
-		LOGGER.entering(Nonce.class.getName(), "nextNonce");
-		
 		byte[] bytes = new byte[16];
 		RND.nextBytes(bytes);
 
-		final Nonce nonce = new Nonce(bytes);
-		
-		LOGGER.exiting(Nonce.class.getName(), "nextNonce", nonce);
-		
-		return nonce;
+		return new Nonce(bytes);
 	}
 }

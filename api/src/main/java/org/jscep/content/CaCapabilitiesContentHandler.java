@@ -25,12 +25,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.jscep.response.Capabilities;
 import org.jscep.response.Capability;
 import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 
 /**
@@ -45,26 +44,29 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
 	 * {@inheritDoc}
 	 */
 	public Capabilities getContent(InputStream in, String mimeType) throws IOException {
-		LOGGER.entering(getClass().getName(), "getContent", new Object[] {in, mimeType});
-
 		if (mimeType.equals("text/plain") == false) {
-			LOGGER.log(Level.WARNING, "capabilities.mime.warning", mimeType);
+			LOGGER.warn("capabilities.mime.warning", mimeType);
 		}
 
 		final Capabilities caps = new Capabilities();
 
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Parsing capabilities...");
+		}
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		String capability;
 		while ((capability = reader.readLine()) != null) {
 			for (Capability enumValue : Capability.values()) {
 				if (enumValue.toString().equals(capability)) {
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("SCEP server supports " + enumValue.getDescription());
+					}
 					caps.add(enumValue);
 				}
 			}
 		}
 		reader.close();
 
-		LOGGER.exiting(getClass().getName(), "getContent", caps);
 		return caps;
 	}
 }

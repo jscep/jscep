@@ -23,7 +23,9 @@ package org.jscep.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides logging facilities.
@@ -63,7 +65,7 @@ public final class LoggingUtil {
 	 */
 	public static Logger getLogger(String packageName) {
 		if (cache.containsKey(packageName) == false) {
-			cache.put(packageName, Logger.getLogger(packageName, packageName + ".messages"));
+			cache.put(packageName, LoggerFactory.getLogger(packageName));
 		}
 		
 		return cache.get(packageName);

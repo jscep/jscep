@@ -26,11 +26,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
-import org.jscep.util.LoggingUtil;
 
 
 /**
@@ -48,7 +46,6 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public abstract class Transport {
-	private static Logger LOGGER = LoggingUtil.getLogger(Transport.class);
 	/**
 	 * Represents the <code>HTTP</code> method to be used for transport. 
 	 */
@@ -99,8 +96,6 @@ public abstract class Transport {
 	 * @return a new Transport instance.
 	 */
 	public static Transport createTransport(Method method, URL url, Proxy proxy) {
-		LOGGER.entering(Transport.class.getName(), "createTransport", new Object[] { method, url, proxy });
-		
 		final Transport t;
 		
 		if (method.equals(Method.GET)) {
@@ -109,7 +104,6 @@ public abstract class Transport {
 			t = new HttpPostTransport(url);
 		}
 		
-		LOGGER.exiting(Transport.class.getName(), "createTransport", t);
 		return t;
 	}
 	
@@ -122,12 +116,8 @@ public abstract class Transport {
 	 * @return a new Transport instance.
 	 */
 	public static Transport createTransport(Method method, URL url) {
-		LOGGER.entering(Transport.class.getName(), "createTransport", new Object[] {method, url});
+		return createTransport(method, url, Proxy.NO_PROXY);
 		
-		final Transport t = createTransport(method, url, Proxy.NO_PROXY);
-		
-		LOGGER.exiting(Transport.class.getName(), "createTransport", t);
-		return t;
 	}
 	
 	URL getUrl(Operation op) throws MalformedURLException {

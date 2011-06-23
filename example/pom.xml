@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.google.code.jscep</groupId>
 		<artifactId>jscep</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.2.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.google.code.jscep</groupId>
-	<artifactId>jscep-example</artifactId>
+	<artifactId>example</artifactId>
 	<packaging>jar</packaging>
-	<name>jSCEP Example</name>
+	<name>jscep::example</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>
 	<properties>
@@ -29,7 +29,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>jscep-client</artifactId>
+			<artifactId>client</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -43,16 +43,22 @@
 			<artifactId>bcprov-jdk16</artifactId>
 			<version>140</version>
 		</dependency>
+		<dependency>
+ 			<groupId>org.slf4j</groupId>
+ 			<artifactId>slf4j-log4j12</artifactId>
+ 			<version>1.6.1</version>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>log4j</groupId>
+ 			<artifactId>log4j</artifactId>
+ 			<version>1.2.16</version>
+ 		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

@@ -35,7 +35,6 @@ import org.jscep.message.GetCert;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.message.PkiRequest;
-import org.jscep.pkcs7.SignedDataUtil;
 import org.jscep.request.PKCSReq;
 import org.jscep.transport.Transport;
 

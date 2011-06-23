@@ -40,7 +40,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -49,11 +48,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.X509Name;
@@ -76,6 +72,7 @@ import org.jscep.transaction.Nonce;
 import org.jscep.transaction.OperationFailureException;
 import org.jscep.transaction.TransactionId;
 import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 /**
  * This class provides a base Servlet which can be extended using the abstract
@@ -97,8 +94,6 @@ public abstract class ScepServlet extends HttpServlet {
 	 */
 	@Override
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		LOGGER.entering(getClass().getName(), "service");
-		
 		byte[] body = getMessageBytes(req);
 		
 		final Operation op;
@@ -125,7 +120,7 @@ public abstract class ScepServlet extends HttpServlet {
 			return;
 		}
 		
-		LOGGER.fine("Incoming Operation: " + op);
+		LOGGER.debug("Incoming Operation: " + op);
 		
 		final String reqMethod = req.getMethod();
 			
@@ -149,7 +144,7 @@ public abstract class ScepServlet extends HttpServlet {
 			}
 		}
 		
-		LOGGER.fine("Method " + reqMethod + " Allowed for Operation: " + op);
+		LOGGER.debug("Method " + reqMethod + " Allowed for Operation: " + op);
 		
 		if (op == Operation.GetCACaps) {
 			try {
@@ -303,7 +298,6 @@ public abstract class ScepServlet extends HttpServlet {
 		} else {
 			res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown Operation");
 		}
-		LOGGER.exiting(getClass().getName(), "service");
 	}
 	
 	private DEROctetString getMessageData(CertStore store) throws GeneralSecurityException, CMSException, IOException {
@@ -475,6 +469,9 @@ public abstract class ScepServlet extends HttpServlet {
 				String msg = req.getParameter(MSG_PARAM);
 				if (msg.isEmpty()) {
 					return new byte[0];
+				}
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Decoding {}", msg);
 				}
 				return Base64.decode(msg);
 			} else {

@@ -26,10 +26,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Logger;
 
 import org.jscep.util.HexUtil;
-import org.jscep.util.LoggingUtil;
 
 
 /**
@@ -38,7 +36,6 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public final class TransactionId {
-	private static Logger LOGGER = LoggingUtil.getLogger(TransactionId.class);
 	private static final AtomicLong ID_SOURCE = new AtomicLong();
 	private final byte[] id;
 	
@@ -79,12 +76,7 @@ public final class TransactionId {
 	 * @return the new Transaction Id
 	 */
 	public static TransactionId createTransactionId(PublicKey pubKey, String digestAlgorithm) {
-		LOGGER.entering(TransactionId.class.getName(), "createTransactionId", new Object[] {pubKey, digestAlgorithm});
-		
-		TransactionId t = new TransactionId(pubKey, digestAlgorithm);
-
-		LOGGER.exiting(TransactionId.class.getName(), "createTransactionId", t);
-		return t;
+		return new TransactionId(pubKey, digestAlgorithm);
 	}
 	
 	/**
@@ -95,12 +87,7 @@ public final class TransactionId {
 	 * @return the new Transaction Id
 	 */
 	public static TransactionId createTransactionId() {
-		LOGGER.entering(TransactionId.class.getName(), "createTransactionId");
-		
-		TransactionId t =  new TransactionId();
-		
-		LOGGER.exiting(TransactionId.class.getName(), "createTransactionId", t);
-		return t;
+		return new TransactionId();
 	}
 	
 	@Override

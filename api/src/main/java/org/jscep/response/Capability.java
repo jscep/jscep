@@ -30,45 +30,47 @@ public enum Capability {
 	/**
 	 * CA Supports the GetNextCACert message.
 	 */
-    GET_NEXT_CA_CERT("GetNextCACert"),
+    GET_NEXT_CA_CERT("GetNextCACert", "Certificate Rollover"),
     /**
      * PKIOPeration messages may be sent via HTTP POST.
      */
-    POST_PKI_OPERATION("POSTPKIOperation"),
+    POST_PKI_OPERATION("POSTPKIOperation", "HTTP POST"),
     /**
      * Clients may use current certificate and key to authenticate an enrollment request for a new certificate.
      */
-    RENEWAL("Renewal"),
+    RENEWAL("Renewal", "Certificate Renewal"),
     /**
      * CA Supports the SHA-512 hashing algorithm in signatures and fingerprints.
      */
-    SHA_512("SHA-512"),
+    SHA_512("SHA-512", "SHA-512 Message Digest"),
     /**
      * CA Supports the SHA-256 hashing algorithm in signatures and fingerprints.
      */
-    SHA_256("SHA-256"),
+    SHA_256("SHA-256", "SHA-256 Message Digest"),
     /**
      * CA Supports the SHA-1 hashing algorithm in signatures and fingerprints.
      */
-    SHA_1("SHA-1"),
+    SHA_1("SHA-1", "SHA-1 Message Digest"),
     /**
      * CA Supports triple-DES for encryption.
      */
-    TRIPLE_DES("DES3");
+    TRIPLE_DES("DES3", "Triple DES Encryption");
     
     /**
      * Member variable to hold the name of the capability as
      * defined in the SCEP Internet-Draft.
      */
-    private String capability;
+    private final String capability;
+    private final String description;
     
     /**
      * Constructs a new instance of this enum.
      * 
      * @param capability the name of the capability.
      */
-    private Capability(String capability) {
+    private Capability(String capability, String description) {
     	this.capability = capability;
+    	this.description = description;
     }
     
     /**
@@ -80,5 +82,9 @@ public enum Capability {
     @Override
     public String toString() {
     	return capability;
+    }
+    
+    public String getDescription() {
+    	return description;
     }
 }

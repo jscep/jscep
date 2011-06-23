@@ -28,11 +28,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import org.jscep.request.PKCSReq;
 import org.jscep.request.Request;
-import org.jscep.util.LoggingUtil;
 
 
 /**
@@ -41,25 +39,18 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class HttpPostTransport extends Transport {
-	private static Logger LOGGER = LoggingUtil.getLogger(HttpPostTransport.class);
-	
 	HttpPostTransport(URL url) {
 		super(url);
 	}
 	
 	@Override
 	public <T> T sendRequest(Request<T> msg) throws IOException, MalformedURLException {
-		LOGGER.entering(getClass().getName(), "sendMessage", msg);
-		
 		if (msg instanceof PKCSReq == false) {
 			// Appendix F
 			//
 			// This is allowed for any SCEP message except GetCACert, 
 			// GetNextCACert, or GetCACaps.
-			IllegalArgumentException e = new IllegalArgumentException("POST transport may not be used for " + msg.getOperation() + " messages.");
-			LOGGER.throwing(getClass().getName(), "sendMessage", e);
-			
-			throw e;
+			throw new IllegalArgumentException("POST transport may not be used for " + msg.getOperation() + " messages.");
 		}
 		
         final URL url = getUrl(msg.getOperation());
@@ -72,16 +63,10 @@ public class HttpPostTransport extends Transport {
         stream.close();
 
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-        	IOException ioe = new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
-        	
-        	LOGGER.throwing(getClass().getName(), "sendMessage", ioe);
-        	throw ioe;
+        	throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
         }
         
-        T response  = msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
-        
-        LOGGER.exiting(getClass().getName(), "sendMessage", response);
-        return response;
+        return msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
 	}
 	
 	/**

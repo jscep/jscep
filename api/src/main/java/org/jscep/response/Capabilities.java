@@ -24,11 +24,8 @@ package org.jscep.response;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.EnumSet;
-import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
-
-import org.jscep.util.LoggingUtil;
 
 
 /**
@@ -38,7 +35,6 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class Capabilities {
-	private static Logger LOGGER = LoggingUtil.getLogger(Capabilities.class);
 	private EnumSet<Capability> capabilities;
 
 	/**
@@ -115,8 +111,6 @@ public class Capabilities {
 	 * @return the strongest cipher algorithm supported by the server and client.
 	 */
 	public String getStrongestCipher() {
-		LOGGER.entering(getClass().getName(), "getStrongestCipher");
-
 		final String cipher;
 		if (cipherExists("DESede") && capabilities.contains(Capability.TRIPLE_DES)) {
 			cipher = "DESede";
@@ -124,7 +118,6 @@ public class Capabilities {
 			cipher = "DES";
 		}
 		
-		LOGGER.exiting(getClass().getName(), "getStrongestCipher", cipher);
 		return cipher;
 	}
 	
@@ -162,7 +155,6 @@ public class Capabilities {
 			digest = "MD5";
 		}
 		
-		LOGGER.exiting(getClass().getName(), "getStrongestMessageDigest()", digest);
 		return digest;
 	}
 	

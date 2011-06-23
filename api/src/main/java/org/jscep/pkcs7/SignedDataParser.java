@@ -22,13 +22,11 @@
 package org.jscep.pkcs7;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
-import org.jscep.util.LoggingUtil;
 
 
 /**
@@ -38,8 +36,6 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class SignedDataParser {
-	private static Logger LOGGER = LoggingUtil.getLogger(SignedDataParser.class);
-
 	/**
 	 * Parses the provided ASN1 object and extracts a degenerate SignedData
 	 * instance.
@@ -49,18 +45,11 @@ public class SignedDataParser {
 	 * @throws IOException if any I/O error occurs.
 	 */
 	public SignedData parse(ASN1Encodable signedData) throws IOException {
-		LOGGER.entering(getClass().getName(), "parse", signedData);
-		
 		try {
 			ContentInfo ci = ContentInfo.getInstance(signedData);
 			ASN1Sequence seq = (ASN1Sequence) ci.getContent();
-			final SignedData sd = new SignedData(seq);
-
-			LOGGER.exiting(getClass().getName(), "parse", sd);
-			return sd;
+			return new SignedData(seq);
 		} catch (Exception e) {
-			
-			LOGGER.throwing(getClass().getName(), "parse", e);
 			throw new IOException(e);
 		}
 	}

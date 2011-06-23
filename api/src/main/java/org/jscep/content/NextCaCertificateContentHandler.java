@@ -33,17 +33,13 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
-import org.bouncycastle.cms.CMSContentInfoParser;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.pkcs7.SignedDataUtil;
-import org.jscep.util.LoggingUtil;
 
 /**
  * This class handles responses to <code>GetNextCACert</code> requests.
@@ -51,7 +47,6 @@ import org.jscep.util.LoggingUtil;
  * @author David Grant
  */
 public class NextCaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
-	private static Logger LOGGER = LoggingUtil.getLogger(NextCaCertificateContentHandler.class);
 	private final X509Certificate issuer;
 	
 	public NextCaCertificateContentHandler(X509Certificate issuer) {
@@ -62,8 +57,6 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 	 * {@inheritDoc}
 	 */
 	public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
-		LOGGER.entering(getClass().getName(), "getContent", new Object[] {in, mimeType});
-		
 		if (mimeType.equals("application/x-x509-next-ca-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 
@@ -79,10 +72,7 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 				// TODO: This must be signed by the current CA.
 				final SignedData sd = SignedData.getInstance(cmsContentInfo.getContent());
 				if (SignedDataUtil.isSignedBy(sd, issuer) == false) {
-					IOException ioe = new IOException("Invalid Signer");
-					
-					LOGGER.throwing(getClass().getName(), "getContent", ioe);
-					throw ioe;
+					throw new IOException("Invalid Signer");
 				}
 				// The content of the SignedData PKCS#7 [RFC2315] is a degenerate
 				// certificates-only Signed-data (Section 3.3) message containing the
@@ -92,28 +82,17 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 				CertStore store = SignedDataUtil.extractCertStore(sd);
 				collection = store.getCertificates(new X509CertSelector());
 			} catch (GeneralSecurityException e) {
-				final IOException ioe = new IOException(e);
-				
-				LOGGER.throwing(getClass().getName(), "getContent", ioe);
-				throw ioe;
+				throw new IOException(e);
 			} catch (CMSException e) {
-				final IOException ioe = new IOException(e);
-				
-				LOGGER.throwing(getClass().getName(), "getContent", ioe);
-				throw ioe;
+				throw new IOException(e);
 			}
 			
 			for (Certificate cert : collection) {
 				certs.add((X509Certificate) cert);
 			}
-
-			LOGGER.exiting(getClass().getName(), "getContent", certs);
 			return certs;
 		} else {
-			IOException ioe = new IOException("Invalid Content Type");
-			
-			LOGGER.throwing(getClass().getName(), "getContent", ioe);
-			throw ioe;
+			throw new IOException("Invalid Content Type");
 		}
 	}
 	

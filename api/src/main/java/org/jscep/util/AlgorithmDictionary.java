@@ -24,7 +24,6 @@ package org.jscep.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 
@@ -47,7 +46,6 @@ import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
  * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html
  */
 public final class AlgorithmDictionary {
-	private static Logger LOGGER = LoggingUtil.getLogger(AlgorithmDictionary.class);
 	/**
 	 * JCA standards RECOMMEND NoPadding and PKCS5Padding to Providers.
 	 * 
@@ -113,11 +111,7 @@ public final class AlgorithmDictionary {
 	 * @return the corresponding OID, or null.
 	 */
 	public static DERObjectIdentifier getOid(String algorithm) {
-		LOGGER.entering(AlgorithmDictionary.class.getName(), "getOid", new Object[] {algorithm});
-		
 		final DERObjectIdentifier oid = oids.get(algorithm);
-		
-		LOGGER.exiting(AlgorithmDictionary.class.getName(), "getOid");
 		
 		return oid;
 	}
