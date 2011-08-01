@@ -41,7 +41,7 @@ public class CertRepContentHandler implements ScepContentHandler<CMSSignedData> 
 	 * @throws IOException 
 	 */
 	public CMSSignedData getContent(InputStream in, String mimeType) throws IOException {
-		if (mimeType.equals("application/x-pki-message")) {
+		if (mimeType.startsWith("application/x-pki-message")) {
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 			int b;

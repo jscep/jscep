@@ -64,7 +64,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			throw ioe;
 		}
 
-		if (mimeType.equals("application/x-x509-ca-cert")) {
+		if (mimeType.startsWith("application/x-x509-ca-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.1
 			try {
 
@@ -78,7 +78,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 				LOGGER.error("getContent", ioe);
 				throw ioe;
 			}
-		} else if (mimeType.equals("application/x-x509-ca-ra-cert")) {
+		} else if (mimeType.startsWith("application/x-x509-ca-ra-cert")) {
 			// If an RA is in use, a certificates-only PKCS#7 SignedData
 			// with a certificate chain consisting of both RA and CA certificates is
 			// returned.

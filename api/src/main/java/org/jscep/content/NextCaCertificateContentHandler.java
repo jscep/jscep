@@ -57,7 +57,7 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 	 * {@inheritDoc}
 	 */
 	public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
-		if (mimeType.equals("application/x-x509-next-ca-cert")) {
+		if (mimeType.startsWith("application/x-x509-next-ca-cert")) {
 			// http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 
 			// The response consists of a SignedData PKCS#7 [RFC2315], 

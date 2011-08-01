@@ -35,6 +35,14 @@ public class CaCapabilitiesContentHandlerTest {
 		final Capabilities caps = fixture.getContent(is, "text/plain");
 		Assert.assertEquals("DESede", caps.getStrongestCipher());
 	}
+
+    @Test
+    public void charsetIsIgnored() throws IOException {
+        final InputStream is = getStreamForCapabilities("DES3");
+		final Capabilities caps = fixture.getContent(is, "text/plain;charset=UTF-8");
+
+        Assert.assertEquals("DESede", caps.getStrongestCipher());
+    }
 	
 	private InputStream getStreamForCapabilities(String... capabilities) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
