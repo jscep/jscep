@@ -44,7 +44,7 @@ public final class TransactionId {
 	}
 	
 	private TransactionId(PublicKey pubKey, String digestAlgorithm) {
-    	MessageDigest digest = null;
+    	MessageDigest digest;
         try {
             digest = MessageDigest.getInstance(digestAlgorithm);
         } catch (NoSuchAlgorithmException e) {
@@ -61,18 +61,14 @@ public final class TransactionId {
 		return id;
 	}
 	
-	@Override
-	public boolean equals(Object o) {
-		TransactionId transId = (TransactionId) o;
-		
-		return Arrays.equals(transId.getBytes(), getBytes());
-	}
-	
+
 	/**
 	 * Creates a new Transaction Id
 	 * <p>
 	 * Each call to this method will return the same transaction ID for the same parameters.
-	 * 
+	 *
+     * @param pubKey public key
+     * @param digestAlgorithm digest algorithm
 	 * @return the new Transaction Id
 	 */
 	public static TransactionId createTransactionId(PublicKey pubKey, String digestAlgorithm) {
@@ -94,4 +90,21 @@ public final class TransactionId {
 	public String toString() {
 		return new String(id);
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TransactionId that = (TransactionId) o;
+
+        if (!Arrays.equals(id, that.id)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? Arrays.hashCode(id) : 0;
+    }
 }
