@@ -56,15 +56,7 @@ public class Nonce {
 		return nonce;
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(Object o) {
-		Nonce n = (Nonce) o;
-		
-		return Arrays.equals(n.nonce, nonce);
-	}
+
 	
 	@Override
 	public String toString() {
@@ -86,4 +78,24 @@ public class Nonce {
 
 		return new Nonce(bytes);
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Nonce nonce1 = (Nonce) o;
+
+        if (!Arrays.equals(nonce, nonce1.nonce)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return nonce != null ? Arrays.hashCode(nonce) : 0;
+    }
 }
