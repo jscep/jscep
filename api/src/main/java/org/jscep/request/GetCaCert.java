@@ -22,6 +22,7 @@
  */
 package org.jscep.request;
 
+import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
@@ -32,20 +33,20 @@ import org.jscep.content.ScepContentHandler;
  * 
  * @author David Grant
  */
-public final class GetCaCert extends Request<List<X509Certificate>> {
+public final class GetCaCert extends Request<CertStore> {
 	private final String caIdentifier;
 	/**
 	 * Creates a new GetCACert request with the given CA identification string.
 	 * 
 	 * @param caIdentifier the CA identification string.
 	 */
-	public GetCaCert(String caIdentifier, ScepContentHandler<List<X509Certificate>> handler) {
+	public GetCaCert(String caIdentifier, ScepContentHandler<CertStore> handler) {
 		super(Operation.GetCACert, handler);
 		
 		this.caIdentifier = caIdentifier;
 	}
 	
-	public GetCaCert(ScepContentHandler<List<X509Certificate>> handler) {
+	public GetCaCert(ScepContentHandler<CertStore> handler) {
 		this(null, handler);
 	}
 

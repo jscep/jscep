@@ -11,7 +11,7 @@ public class NonceTest {
 		final byte[] bytes = new byte[0];
 		final Nonce nonce = new Nonce(bytes);
 		
-		Assert.assertSame(bytes, nonce.getBytes());
+		Assert.assertArrayEquals(bytes, nonce.getBytes());
 	}
 
 	@Test

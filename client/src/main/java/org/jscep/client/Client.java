@@ -27,9 +27,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.PrivateKey;
-import java.security.cert.CertStoreException;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,6 +65,7 @@ import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
+import sun.security.krb5.internal.crypto.KeyUsage;
 
 /**
  * This class represents a SCEP client, or Requester.
@@ -165,16 +164,16 @@ public class Client {
      * @return the list of certificates.
      * @throws IOException if any I/O error occurs.
      */
-    public List<X509Certificate> getCaCertificate() throws IOException {
+    public CertStore getCaCertificate() throws IOException {
     	// NON-TRANSACTIONAL
     	// CA and RA public key distribution
     	final GetCaCert req = new GetCaCert(profile, new CaCertificateContentHandler());
         final Transport trans = Transport.createTransport(Transport.Method.GET, url);
         
-        final List<X509Certificate> certs = trans.sendRequest(req);
-        verifyCA(selectCA(certs));
+        final CertStore store = trans.sendRequest(req);
+        verifyCA(selectCA(store));
         
-        return certs;
+        return store;
     }
     
     /**
@@ -206,7 +205,7 @@ public class Client {
      *  
      * @return a collection of CRLs
      * @throws IOException if any I/O error occurs.
-     * @throws PkiOperationFailureException if the operation fails.
+     * @throws OperationFailureException if the operation fails.
      */
     @SuppressWarnings("unchecked")
 	public X509CRL getRevocationList(X500Principal issuer, BigInteger serial) throws IOException, OperationFailureException {
@@ -247,7 +246,7 @@ public class Client {
      * @param serial the serial number.
      * @return the certificate.
      * @throws IOException if any I/O error occurs.
-     * @throws PkiOperationFailureException if the operation fails.
+     * @throws OperationFailureException if the operation fails.
      */
     @SuppressWarnings("unchecked")
 	public List<X509Certificate> getCertificate(BigInteger serial) throws IOException, OperationFailureException {
@@ -288,9 +287,9 @@ public class Client {
     	// TRANSACTIONAL
     	// Certificate enrollment
     	final Transport transport = createTransport();
-    	List<X509Certificate> cas = getCaCertificate();
-    	X509Certificate encoderCa = selectRecipient(cas);
-    	X509Certificate ca = selectCA(cas);
+    	CertStore store = getCaCertificate();
+    	X509Certificate encoderCa = selectRecipient(store);
+    	X509Certificate ca = selectCA(store);
     	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(encoderCa);
     	PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, identity, envEncoder);
     	
@@ -421,68 +420,54 @@ public class Client {
     }
     
     private X509Certificate getRecipientCertificate() throws IOException {
-    	final List<X509Certificate> certs = getCaCertificate();
+    	final CertStore store = getCaCertificate();
     	// The CA or RA
-    	return selectRecipient(certs);
+    	return selectRecipient(store);
     }
     
-    private X509Certificate selectRecipient(List<X509Certificate> chain) {
-    	int numCerts = chain.size();
-    	if (numCerts == 2) {
-    		final X509Certificate ca = selectCA(chain);
-    		// The RA certificate is the other one.
-    		int caIndex = chain.indexOf(ca);
-    		int raIndex = 1 - caIndex;
-    		
-    		return chain.get(raIndex);
-    	} else if (numCerts == 1) {
-    		return chain.get(0);
-    	} else if (numCerts == 3) {
-    		// Entrust Case, we have CA certificate and two RA 
-    		// certificates (Encryption and Verification) we use the 
-    		// RA Encryption certificate as recipient
-    		int raIndex = 1;
-    		for (int i = 0; i < chain.size(); i++) {
-    			X509Certificate raCert = chain.get(i);
-    			if (raCert.getKeyUsage()[0] == false && raCert.getKeyUsage()[6] == false) {
-    				//this must be the Encryption certificate because 
-    				// no digitalSignature and no CRL sign extension is set
-    				raIndex = i;
-    			}
-    		}
-    		return chain.get(raIndex);
-    	} else {
-    		// We've either got NO certificates here, or more than 2.
-    		// Whatever the case, the server is in error. 
-    		throw new IllegalStateException();
-    	}
+    private X509Certificate selectRecipient(CertStore store) {
+        X509CertSelector signingSelector = new X509CertSelector();
+        boolean[] keyUsage = new boolean[9];
+        keyUsage[3] = true;
+        signingSelector.setKeyUsage(keyUsage);
+
+        try {
+            Collection<? extends Certificate> certs = store.getCertificates(signingSelector);
+            if (certs.size() > 0) {
+                return (X509Certificate) certs.iterator().next();
+            } else {
+                keyUsage[3] = false;
+                signingSelector.setKeyUsage(keyUsage);
+                signingSelector.setBasicConstraints(0);
+
+                certs = store.getCertificates(signingSelector);
+                return (X509Certificate) certs.iterator().next();
+            }
+        } catch (CertStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
     
-    private X509Certificate selectCA(List<X509Certificate> certs) {
-    	if (certs.size() == 1) {
-    		// Only one certificate, so it must be the CA.
-    		return certs.get(0);
-    	}
-    	// We don't know the order in the chain, but we know the RA 
-    	// certificate MUST have been issued by the CA certificate.
-    	for (int i = 0; i < certs.size(); i++) {
-    		// Hypothetical CA
-    		X509Certificate ca = certs.get(i);
-    		for (int j = 0; j < certs.size(); j++) {
-    			// Hypothetical RA
-    			X509Certificate ra = certs.get(j);
-    			try {
-    				// If the hypothetical RA is signed by the
-    				// hypothetical CA, the CA is legitimate.
-					ra.verify(ca.getPublicKey());
-					
-					// No exception, so return.
-					return ca;
-				} catch (Exception e) {
-					// Problem verifying, move on.
-				}
-    		}
-    	}
-    	throw new IllegalStateException("No CA in chain");
+    private X509Certificate selectCA(CertStore store) {
+    	X509CertSelector signingSelector = new X509CertSelector();
+        boolean[] keyUsage = new boolean[9];
+        keyUsage[0] = true;
+        signingSelector.setKeyUsage(keyUsage);
+
+        try {
+            Collection<? extends Certificate> certs = store.getCertificates(signingSelector);
+            if (certs.size() > 0) {
+                return (X509Certificate) certs.iterator().next();
+            } else {
+                keyUsage[0] = false;
+                signingSelector.setKeyUsage(keyUsage);
+                signingSelector.setBasicConstraints(0);
+
+                certs = store.getCertificates(signingSelector);
+                return (X509Certificate) certs.iterator().next();
+            }
+        } catch (CertStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

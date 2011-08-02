@@ -70,8 +70,6 @@
 				<configuration>
 					<notimestamp>true</notimestamp>
 					<detectLinks />
-					<reportOutputDirectory>.</reportOutputDirectory>
-					<destDir>docs</destDir>
 					<links>
 						<link>http://download.oracle.com/javase/6/docs/api/</link>
 						<link>http://www.bouncycastle.org/docs/docs1.6/</link>

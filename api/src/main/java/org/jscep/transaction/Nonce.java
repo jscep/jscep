@@ -44,7 +44,7 @@ public class Nonce {
 	 * @param nonce the byte array.
 	 */
 	public Nonce(byte[] nonce) {
-		this.nonce = nonce;
+		this.nonce = copy(nonce);
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class Nonce {
 	 * @return the byte array.
 	 */
 	public byte[] getBytes() {
-		return nonce;
+		return copy(nonce);
 	}
 	
 
@@ -97,5 +97,12 @@ public class Nonce {
     @Override
     public int hashCode() {
         return nonce != null ? Arrays.hashCode(nonce) : 0;
+    }
+
+    private static byte[] copy(byte[] source) {
+        byte[] dest = new byte[source.length];
+        System.arraycopy(source, 0, dest, 0, source.length);
+
+        return dest;
     }
 }

@@ -45,7 +45,7 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
 	 */
 	public Capabilities getContent(InputStream in, String mimeType) throws IOException {
 		if (mimeType.startsWith("text/plain") == false) {
-			LOGGER.warn("capabilities.mime.warning", mimeType);
+			LOGGER.warn("Capabilities is not plain text", mimeType);
 		}
 
 		final Capabilities caps = new Capabilities();

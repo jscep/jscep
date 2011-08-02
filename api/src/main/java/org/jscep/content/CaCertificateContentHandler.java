@@ -25,18 +25,12 @@ package org.jscep.content;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.CertSelector;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509CertSelector;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.security.GeneralSecurityException;
+import java.security.cert.*;
+import java.util.*;
 
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
 
@@ -46,17 +40,16 @@ import org.slf4j.Logger;
  * 
  * @author David Grant
  */
-public class CaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
+public class CaCertificateContentHandler implements ScepContentHandler<CertStore> {
 	private static Logger LOGGER = LoggingUtil.getLogger(CaCertificateContentHandler.class);
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
-		final List<X509Certificate> certs = new ArrayList<X509Certificate>(2);
+	public CertStore getContent(InputStream in, String mimeType) throws IOException {
 		final CertificateFactory cf;
 		try {
-			cf = CertificateFactory.getInstance("X.509");
+			cf = CertificateFactory.getInstance("X.509", new BouncyCastleProvider());
 		} catch (CertificateException e) {
 			IOException ioe = new IOException(e);
 			
@@ -69,11 +62,13 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			try {
 
 				X509Certificate ca = (X509Certificate) cf.generateCertificate(in);
+                Collection<X509Certificate> caSet = Collections.singleton(ca);
+                CertStoreParameters storeParams = new CollectionCertStoreParameters(caSet);
+                CertStore store = CertStore.getInstance("Collection", storeParams);
 
-				// There should only ever be one certificate in this response.
-				certs.add(ca);
-			} catch (CertificateException ce) {
-				IOException ioe = new IOException(ce);
+                return store;
+			} catch (GeneralSecurityException e) {
+				IOException ioe = new IOException(e);
 				
 				LOGGER.error("getContent", ioe);
 				throw ioe;
@@ -102,23 +97,9 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 				}
 				CMSSignedData sd = new CMSSignedData(bytes);
 
-				store = sd.getCertificatesAndCRLs("Collection", (String) null);
+				return sd.getCertificatesAndCRLs("Collection", (String) null);
 			} catch (Exception e) {
 				throw new IOException(e);
-			}
-			
-			CertSelector selector = new X509CertSelector();
-			try {
-				@SuppressWarnings("unchecked")
-				Collection<X509Certificate> certsCollection = (Collection<X509Certificate>) store.getCertificates(selector);
-				for (X509Certificate cert : certsCollection) {
-					certs.add(cert);
-				}
-			} catch (CertStoreException e) {
-				IOException ioe = new IOException(e);
-				
-				LOGGER.error("getContent", ioe);
-				throw ioe;
 			}
 		} else {
 			IOException ioe = new IOException("Invalid Content Type");
@@ -126,7 +107,5 @@ public class CaCertificateContentHandler implements ScepContentHandler<List<X509
 			LOGGER.error("getContent", ioe);
 			throw ioe;
 		}
-
-		return certs;
 	}
 }

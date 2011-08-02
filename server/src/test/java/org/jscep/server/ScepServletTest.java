@@ -10,7 +10,11 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -118,9 +122,15 @@ public class ScepServletTest {
 		CaCertificateContentHandler handler = new CaCertificateContentHandler();
 		GetCaCert req = new GetCaCert(handler);
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		List<X509Certificate> certs = transport.sendRequest(req);
-		
-		return certs.get(0);
+		CertStore store = transport.sendRequest(req);
+
+        Collection<? extends Certificate> certs = store.getCertificates(new X509CertSelector());
+
+        if (certs.size() > 0) {
+            return (X509Certificate) certs.iterator().next();
+        } else {
+            return null;
+        }
 	}
 	
 	@Test
@@ -197,7 +207,6 @@ public class ScepServletTest {
 		Transport transport = Transport.createTransport(Method.GET, getURL());
 		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GetCert);
 		State s = t.send();
-		System.out.println(s);
 	}
 	
 	@Test

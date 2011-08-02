@@ -1,59 +1,67 @@
 package org.jscep.example;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.Security;
 import java.security.cert.X509Certificate;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.x500.X500Principal;
+import javax.security.cert.Certificate;
 
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jscep.CertificateVerificationCallback;
 import org.jscep.client.Client;
+import org.jscep.transaction.EnrolmentTransaction;
+import org.jscep.transaction.Transaction;
 
 public class SimpleExample {
 	public static void main(String[] args) throws Exception {
 		final KeyStore store = KeyStore.getInstance("JKS");
-		store.load(new FileInputStream("src/main/resources/example.jks"), "jscep.org".toCharArray());
+		store.load(new FileInputStream("example/src/main/resources/example.jks"), "jscep.org".toCharArray());
 		
-		final URL url = new URL("http://jscep.org/scep/pkiclient.exe");
+		final URL url = new URL("http://pilotonsiteipsec.verisign.com/cgi-bin/pkiclient.exe");
 		final X509Certificate identity = (X509Certificate) store.getCertificate("jscep");
 		final PrivateKey privKey = (PrivateKey) store.getKey("jscep", "jscep.org".toCharArray());
 		final CallbackHandler cbh = new ConsoleCallbackHandler();
-		
-		final Client scepClient = new Client(url, identity, privKey, cbh);
-		scepClient.enrol(null);
+
+        String signatureAlgorithm = "SHA1withRSA";
+        X500Principal subject = new X500Principal("CN=alpha.jscep.org");
+        DERObjectIdentifier attrType = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
+        ASN1Set attrValues = new DERSet(new DERPrintableString("challenge"));
+        DEREncodable password = new Attribute(attrType, attrValues);
+        ASN1Set attributes = new DERSet(password);
+
+        Security.addProvider(new BouncyCastleProvider());
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(signatureAlgorithm, subject, identity.getPublicKey(), attributes, privKey);
+
+		final Client scepClient = new Client(url, identity, privKey, cbh, "jscep.org");
+		EnrolmentTransaction trans = scepClient.enrol(csr);
+        Transaction.State state = trans.send();
+        if (state == Transaction.State.CERT_NON_EXISTANT) {
+            System.out.println(trans.getFailInfo());
+        }
 	}
 	
 	private static class ConsoleCallbackHandler implements CallbackHandler {
 		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 			for (int i = 0; i < callbacks.length; i++) {
-//				if (callbacks[i] instanceof FingerprintVerificationCallback) {
-//					final FingerprintVerificationCallback callback = (FingerprintVerificationCallback) callbacks[i];
-//					byte[] fingerprint;
-//					try {
-//						fingerprint = callback.getFingerprint("MD5");
-//					} catch (Exception e) {
-//						continue;
-//					}
-//					final Console console = System.console();
-//					if (console == null) {
-//						continue;
-//					}
-//					final PrintWriter writer = console.writer();
-//					writer.write("Is this the MD5 hash of your CA's certificate?\n");
-//					writer.write(new String(fingerprint) + "\n");
-//					writer.write("[yes/no]: ");
-//					writer.flush();
-//					final String reply = console.readLine();
-//					if (reply.equals("yes")) {
-//						callback.setVerified(true);
-//					}
-//				} else {
+                if (callbacks[i] instanceof CertificateVerificationCallback) {
+                    CertificateVerificationCallback callback = (CertificateVerificationCallback) callbacks[i];
+                    callback.setVerified(true);
+                } else {
 					throw new UnsupportedCallbackException(callbacks[i]);
-//				}
+				}
 			}
 		}
 		

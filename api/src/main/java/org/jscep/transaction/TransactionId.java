@@ -40,7 +40,7 @@ public final class TransactionId {
 	private final byte[] id;
 	
 	public TransactionId(byte[] id) {
-		this.id = id;
+		this.id = copy(id);
 	}
 	
 	private TransactionId(PublicKey pubKey, String digestAlgorithm) {
@@ -58,7 +58,7 @@ public final class TransactionId {
 	}
 	
 	public byte[] getBytes() {
-		return id;
+		return copy(id);
 	}
 	
 
@@ -106,5 +106,12 @@ public final class TransactionId {
     @Override
     public int hashCode() {
         return id != null ? Arrays.hashCode(id) : 0;
+    }
+
+        private static byte[] copy(byte[] source) {
+        byte[] dest = new byte[source.length];
+        System.arraycopy(source, 0, dest, 0, source.length);
+
+        return dest;
     }
 }
