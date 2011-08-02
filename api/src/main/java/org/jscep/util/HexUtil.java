@@ -124,7 +124,7 @@ public final class HexUtil {
 				sb.append("\n\t");
 			}
 			sb.append(c[i]);
-			if (i % 2 == 1) {
+			if (i % 2 != 0) {
 				sb.append(" ");
 			}
 		}
