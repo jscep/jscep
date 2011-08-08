@@ -65,7 +65,6 @@ import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
-import sun.security.krb5.internal.crypto.KeyUsage;
 
 /**
  * This class represents a SCEP client, or Requester.

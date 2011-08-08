@@ -4,7 +4,7 @@
 	<artifactId>jscep</artifactId>
 	<packaging>pom</packaging>
 	<version>1.2.1-SNAPSHOT</version>
-	<name>jscep</name>
+	<name>jscep Parent POM</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://code.google.com/p/jscep</url>
 	<parent>
