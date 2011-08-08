@@ -426,48 +426,14 @@ public class Client {
     }
     
     private X509Certificate selectRecipient(CertStore store) {
-        X509CertSelector signingSelector = new X509CertSelector();
-        boolean[] keyUsage = new boolean[9];
-        keyUsage[3] = true;
-        signingSelector.setKeyUsage(keyUsage);
+        X509CertificatePair certPair = X509CertificatePairFactory.createPair(store);
 
-        try {
-            Collection<? extends Certificate> certs = store.getCertificates(signingSelector);
-            if (certs.size() > 0) {
-                return (X509Certificate) certs.iterator().next();
-            } else {
-                keyUsage[3] = false;
-                signingSelector.setKeyUsage(keyUsage);
-                signingSelector.setBasicConstraints(0);
-
-                certs = store.getCertificates(signingSelector);
-                return (X509Certificate) certs.iterator().next();
-            }
-        } catch (CertStoreException e) {
-            throw new RuntimeException(e);
-        }
+        return certPair.getEncryption();
     }
     
     private X509Certificate selectCA(CertStore store) {
-    	X509CertSelector signingSelector = new X509CertSelector();
-        boolean[] keyUsage = new boolean[9];
-        keyUsage[0] = true;
-        signingSelector.setKeyUsage(keyUsage);
+        X509CertificatePair certPair = X509CertificatePairFactory.createPair(store);
 
-        try {
-            Collection<? extends Certificate> certs = store.getCertificates(signingSelector);
-            if (certs.size() > 0) {
-                return (X509Certificate) certs.iterator().next();
-            } else {
-                keyUsage[0] = false;
-                signingSelector.setKeyUsage(keyUsage);
-                signingSelector.setBasicConstraints(0);
-
-                certs = store.getCertificates(signingSelector);
-                return (X509Certificate) certs.iterator().next();
-            }
-        } catch (CertStoreException e) {
-            throw new RuntimeException(e);
-        }
+        return certPair.getSigning();
     }
 }
