@@ -64,9 +64,8 @@ public class CaCertificateContentHandler implements ScepContentHandler<CertStore
 				X509Certificate ca = (X509Certificate) cf.generateCertificate(in);
                 Collection<X509Certificate> caSet = Collections.singleton(ca);
                 CertStoreParameters storeParams = new CollectionCertStoreParameters(caSet);
-                CertStore store = CertStore.getInstance("Collection", storeParams);
 
-                return store;
+                return CertStore.getInstance("Collection", storeParams);
 			} catch (GeneralSecurityException e) {
 				IOException ioe = new IOException(e);
 				
@@ -89,7 +88,6 @@ public class CaCertificateContentHandler implements ScepContentHandler<CertStore
 			
 			// This area needs testing!
 
-			CertStore store;
 			try {
 				byte[] bytes = baos.toByteArray();
 				if (bytes.length == 0) {

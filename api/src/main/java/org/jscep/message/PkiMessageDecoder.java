@@ -61,9 +61,6 @@ public class PkiMessageDecoder {
 	@SuppressWarnings("unchecked")
 	public PkiMessage<? extends ASN1Encodable> decode(CMSSignedData signedData) throws IOException {
 		String contentType = signedData.getSignedContentTypeOID();
-		if (PKCSObjectIdentifiers.data.toString().equals(contentType)) {
-			// OK
-		}
 		// The signed content is always an octet string
 		CMSProcessable signedContent = signedData.getSignedContent();
 		

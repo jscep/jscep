@@ -22,11 +22,9 @@
  */
 package org.jscep.request;
 
-import java.security.cert.CertStore;
-import java.security.cert.X509Certificate;
-import java.util.List;
-
 import org.jscep.content.ScepContentHandler;
+
+import java.security.cert.CertStore;
 
 /**
  * This class represents a <code>GetCACert</code> request.
