@@ -23,6 +23,7 @@ package org.jscep.message;
 
 import java.io.IOException;
 import java.security.AlgorithmParameters;
+import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 
 import javax.crypto.Cipher;
@@ -60,7 +61,7 @@ public class PkcsPkiEnvelopeDecoder {
 			params = AlgorithmParameters.getInstance(cipherName);
 			DEROctetString paramsString = (DEROctetString) contentAlg.getParameters();
 			params.init(paramsString.getEncoded());
-		} catch (Exception e) {
+		} catch (GeneralSecurityException e) {
 			throw new IOException(e);
 		}
 		
@@ -84,7 +85,7 @@ public class PkcsPkiEnvelopeDecoder {
 			byte[] contentBytes = decryptingCipher.doFinal(encryptedContentBytes);
 			
 			return ASN1Object.fromByteArray(contentBytes);
-		} catch (Exception e) {
+		} catch (GeneralSecurityException e) {
 			throw new IOException(e);
 		}
 	}

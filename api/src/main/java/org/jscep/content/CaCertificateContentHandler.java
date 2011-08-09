@@ -29,6 +29,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.*;
 import java.util.*;
 
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jscep.util.LoggingUtil;
@@ -96,10 +97,12 @@ public class CaCertificateContentHandler implements ScepContentHandler<CertStore
 				CMSSignedData sd = new CMSSignedData(bytes);
 
 				return sd.getCertificatesAndCRLs("Collection", (String) null);
-			} catch (Exception e) {
+			} catch (GeneralSecurityException e) {
 				throw new IOException(e);
-			}
-		} else {
+			} catch (CMSException e) {
+                throw new IOException(e);
+            }
+        } else {
 			IOException ioe = new IOException("Invalid Content Type");
 			
 			LOGGER.error("getContent", ioe);

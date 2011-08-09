@@ -59,8 +59,11 @@ public class HttpPostTransport extends Transport {
         conn.setDoOutput(true);
         
     	final OutputStream stream = new BufferedOutputStream(conn.getOutputStream());
-    	msg.write(stream);
-        stream.close();
+        try {
+    	    msg.write(stream);
+        } finally {
+            stream.close();
+        }
 
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
         	throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());

@@ -251,7 +251,7 @@ public class Client {
 	public List<X509Certificate> getCertificate(BigInteger serial) throws IOException, OperationFailureException {
     	// TRANSACTIONAL
     	// Certificate query
-    	final X509Certificate ca = retrieveCA();;
+    	final X509Certificate ca = retrieveCA();
     	
     	X509Name name = new X509Name(ca.getIssuerX500Principal().toString());
     	BigInteger serialNumber = ca.getSerialNumber();

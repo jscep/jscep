@@ -21,6 +21,8 @@
  */
 package org.jscep.util;
 
+import java.util.Locale;
+
 /**
  * This class provides utilities for converting between byte
  * arrays and hexadecimal strings.
@@ -117,7 +119,7 @@ public final class HexUtil {
 	 */
 	public static String formatHex(byte[] hex) {
 		StringBuilder sb = new StringBuilder();
-		String s = new String(hex).toUpperCase();
+		String s = new String(hex).toUpperCase(Locale.ENGLISH);
 		char[] c = s.toCharArray();
 		for (int i = 0; i < c.length; i++) {
 			if (i % 32 == 0) {

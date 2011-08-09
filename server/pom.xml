@@ -5,7 +5,6 @@
 		<artifactId>jscep</artifactId>
 		<version>1.2.1-SNAPSHOT</version>
 	</parent>
-	<groupId>com.google.code.jscep</groupId>
 	<artifactId>server</artifactId>
 	<packaging>jar</packaging>
 	<name>jscep Server</name>
@@ -28,24 +27,17 @@
 	</scm>
 	<dependencies>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymockclassextension</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>test-jetty-servlet</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -54,19 +46,14 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
  			<groupId>org.slf4j</groupId>
  			<artifactId>slf4j-log4j12</artifactId>
- 			<version>1.6.1</version>
- 			<scope>test</scope>
  		</dependency>
  		<dependency>
  			<groupId>log4j</groupId>
  			<artifactId>log4j</artifactId>
- 			<version>1.2.16</version>
- 			<scope>test</scope>
  		</dependency>
 	</dependencies>
 	<build>

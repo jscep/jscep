@@ -39,7 +39,6 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
@@ -60,7 +59,6 @@ public class PkiMessageDecoder {
 	
 	@SuppressWarnings("unchecked")
 	public PkiMessage<? extends ASN1Encodable> decode(CMSSignedData signedData) throws IOException {
-		String contentType = signedData.getSignedContentTypeOID();
 		// The signed content is always an octet string
 		CMSProcessable signedContent = signedData.getSignedContent();
 		

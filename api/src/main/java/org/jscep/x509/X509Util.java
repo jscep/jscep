@@ -116,9 +116,9 @@ public final class X509Util {
     		cert.verify(cert.getPublicKey());
     		
     		return true;
-    	} catch (Exception e) {
-    		return false;
-    	}
+    	} catch (GeneralSecurityException e) {
+            return false;
+        }
 	}
 
 	/**
