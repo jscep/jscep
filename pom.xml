@@ -7,7 +7,7 @@
     <version>1.2.1-SNAPSHOT</version>
     <name>jscep Parent POM</name>
     <description>Java implementation of the Simple Certificate Enrollment Protocol</description>
-    <url>http://code.google.com/p/jscep</url>
+    <url>http://jscep.org/</url>
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
@@ -40,14 +40,14 @@
     </scm>
     <mailingLists>
         <mailingList>
-            <name>jSCEP Support</name>
+            <name>jscep Support</name>
             <post>jscep-support@googlegroups.com</post>
             <archive>http://groups.google.com/group/jscep-support</archive>
         </mailingList>
     </mailingLists>
     <developers>
         <developer>
-            <id>davidjgrant1978</id>
+            <id>david@grant.org.uk</id>
             <email>david@grant.org.uk</email>
             <name>David Grant</name>
         </developer>

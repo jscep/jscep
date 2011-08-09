@@ -21,6 +21,9 @@
  */
 package org.jscep.transaction;
 
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
+
 import java.util.AbstractQueue;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -35,6 +38,7 @@ import java.util.Queue;
  * @author David Grant
  */
 public class NonceQueue extends AbstractQueue<Nonce> {
+    private static Logger LOGGER = LoggingUtil.getLogger(NonceQueue.class);
 	private final int size;
 	private final Queue<Nonce> backingQueue;
 	
@@ -66,7 +70,10 @@ public class NonceQueue extends AbstractQueue<Nonce> {
 	 */
 	public boolean offer(Nonce nonce) {
 		if (size() == size) {
-			backingQueue.poll();
+			Nonce removedNonce = backingQueue.poll();
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Removed " + removedNonce + " from head of queue.");
+            }
 		}
 		return backingQueue.offer(nonce);
 	}
