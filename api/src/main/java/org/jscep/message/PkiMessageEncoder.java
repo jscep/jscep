@@ -83,7 +83,7 @@ public class PkiMessageEncoder {
 		}
 		
 		CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
-        LOGGER.debug("Signing message with certificate '{}'", senderCert.getSubjectDN());
+        LOGGER.debug("Signing message using key belonging to '{}'", senderCert.getSubjectDN());
 		sdGenerator.addSigner(senderKey, senderCert, CMSSignedGenerator.DIGEST_SHA1, signedAttrs, null);
 		try {
 			sdGenerator.addCertificatesAndCRLs(store);
@@ -92,6 +92,7 @@ public class PkiMessageEncoder {
 		}
 		
 		try {
+            LOGGER.debug("Signing {} content", signable);
 			return sdGenerator.generate(signable, true, (String) null);
 		} catch (Exception e) {
 			throw new IOException(e);

@@ -99,7 +99,7 @@ public abstract class Transport {
 	 * @return a new Transport instance.
 	 */
 	public static Transport createTransport(Method method, URL url, Proxy proxy) {
-        LOGGER.debug("Creating {} transport for {}", method, url);
+        LOGGER.trace("Creating {} transport for {}", method, url);
 		final Transport t;
 
 		if (method.equals(Method.GET)) {

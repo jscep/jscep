@@ -30,6 +30,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -45,27 +47,30 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
 	 */
 	public Capabilities getContent(InputStream in, String mimeType) throws IOException {
 		if (mimeType.startsWith("text/plain") == false) {
-			LOGGER.warn("GetCACaps response content-type was not text/plain ({})", mimeType);
+			LOGGER.warn("Content-Type mismatch: was '{}', expected 'text/plain'", mimeType);
 		}
 
 		final Capabilities caps = new Capabilities();
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Parsing capabilities...");
+			LOGGER.debug("CA capabilities:");
 		}
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        Set<String> caCaps = new HashSet<String>();
 		String capability;
 		while ((capability = reader.readLine()) != null) {
-			for (Capability enumValue : Capability.values()) {
-				if (enumValue.toString().equals(capability)) {
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("SCEP server supports " + enumValue.getDescription());
-					}
-					caps.add(enumValue);
-				}
-			}
-		}
-		reader.close();
+            caCaps.add(capability);
+        }
+        reader.close();
+
+        for (Capability enumValue : Capability.values()) {
+            if (caCaps.contains(enumValue.toString())) {
+                LOGGER.debug("[\u2713] {}", enumValue.getDescription());
+                caps.add(enumValue);
+            } else {
+                LOGGER.debug("[\u2717] {}", enumValue.getDescription());
+            }
+        }
 
 		return caps;
 	}

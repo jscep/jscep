@@ -132,16 +132,14 @@ public class EnrolmentTransaction extends Transaction {
 	}
 
 	private CertStore extractCertStore(CertRep response) throws IOException {
-		CertStore cs = null;
 		try {
 			CMSSignedData signedData = response.getCMSSignedData();
-			cs = signedData.getCertificatesAndCRLs("Collection", (String) null);
+			return signedData.getCertificatesAndCRLs("Collection", (String) null);
 		} catch (GeneralSecurityException e) {
 			throw new IOException(e);
 		} catch (CMSException e) {
 			throw new IOException(e);
 		}
-		return cs;
 	}
 
 	private void validateExchange(PkiMessage<?> req, CertRep res) throws IOException {

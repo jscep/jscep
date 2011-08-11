@@ -162,7 +162,7 @@ public class Client {
         final Transport trans = Transport.createTransport(Transport.Method.GET, url);
         
         final CertStore store = trans.sendRequest(req);
-        verifyCA(selectVerificationCertificate(store));
+        verifyCA(selectIssuerCertificate(store));
         
         return store;
     }
@@ -279,14 +279,14 @@ public class Client {
     	// Certificate enrollment
     	final Transport transport = createTransport();
     	CertStore store = getCaCertificate();
-    	X509Certificate encoderCa = selectEncryptionCertificate(store);
-    	X509Certificate ca = selectVerificationCertificate(store);
-    	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(encoderCa);
+    	X509Certificate encryptCert = selectEncryptionCertificate(store);
+    	X509Certificate verifyCert = selectVerificationCertificate(store);
+    	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(encryptCert);
     	PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, identity, envEncoder);
     	
     	
     	final EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, getDecoder(), csr);
-    	t.setIssuer(ca);
+    	t.setIssuer(verifyCert);
     	
     	return t;
     }
@@ -421,14 +421,20 @@ public class Client {
     }
     
     private X509Certificate selectEncryptionCertificate(CertStore store) {
-        X509CertificatePair certPair = X509CertificatePairFactory.createPair(store);
+        X509CertificateTuple certPair = X509CertificateTupleFactory.createTuple(store);
 
         return certPair.getEncryption();
     }
     
     private X509Certificate selectVerificationCertificate(CertStore store) {
-        X509CertificatePair certPair = X509CertificatePairFactory.createPair(store);
+        X509CertificateTuple certPair = X509CertificateTupleFactory.createTuple(store);
 
         return certPair.getVerification();
+    }
+
+    private X509Certificate selectIssuerCertificate(CertStore store) {
+        X509CertificateTuple certPair = X509CertificateTupleFactory.createTuple(store);
+
+        return certPair.getIssuer();
     }
 }
