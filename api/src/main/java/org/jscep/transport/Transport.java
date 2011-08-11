@@ -29,6 +29,8 @@ import java.net.URL;
 
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 
 /**
@@ -46,6 +48,7 @@ import org.jscep.request.Request;
  * @author David Grant
  */
 public abstract class Transport {
+    private static Logger LOGGER = LoggingUtil.getLogger(Transport.class);
 	/**
 	 * Represents the <code>HTTP</code> method to be used for transport. 
 	 */
@@ -96,8 +99,9 @@ public abstract class Transport {
 	 * @return a new Transport instance.
 	 */
 	public static Transport createTransport(Method method, URL url, Proxy proxy) {
+        LOGGER.debug("Creating {} transport for {}", method, url);
 		final Transport t;
-		
+
 		if (method.equals(Method.GET)) {
 			t = new HttpGetTransport(url);
 		} else {

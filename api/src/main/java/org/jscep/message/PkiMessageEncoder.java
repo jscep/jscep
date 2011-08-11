@@ -34,6 +34,7 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -41,19 +42,23 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSSignedGenerator;
 import org.jscep.transaction.PkiStatus;
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 public class PkiMessageEncoder {
+    private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageEncoder.class);
 	private final PrivateKey senderKey;
 	private final X509Certificate senderCert;
 	private final PkcsPkiEnvelopeEncoder encoder;
 	
-	public PkiMessageEncoder(PrivateKey priKey, X509Certificate sender, PkcsPkiEnvelopeEncoder encoder) {
+	public PkiMessageEncoder(PrivateKey priKey, X509Certificate sender, PkcsPkiEnvelopeEncoder enveloper) {
 		this.senderKey = priKey;
 		this.senderCert = sender;
-		this.encoder = encoder;
+		this.encoder = enveloper;
 	}
 	
 	public CMSSignedData encode(PkiMessage<? extends ASN1Encodable> message) throws IOException {
+        LOGGER.debug("Encoding {}", message);
 		CMSProcessable signable;
 		
 		boolean hasMessageData = true;
@@ -84,6 +89,7 @@ public class PkiMessageEncoder {
 		}
 		
 		CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
+        LOGGER.debug("Signing message with certificate '{}'", senderCert.getSubjectDN());
 		sdGenerator.addSigner(senderKey, senderCert, CMSSignedGenerator.DIGEST_SHA1, signedAttrs, null);
 		try {
 			sdGenerator.addCertificatesAndCRLs(store);

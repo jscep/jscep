@@ -170,7 +170,7 @@ public class Client {
         final Transport trans = Transport.createTransport(Transport.Method.GET, url);
         
         final CertStore store = trans.sendRequest(req);
-        verifyCA(selectCA(store));
+        verifyCA(selectVerificationCertificate(store));
         
         return store;
     }
@@ -287,8 +287,8 @@ public class Client {
     	// Certificate enrollment
     	final Transport transport = createTransport();
     	CertStore store = getCaCertificate();
-    	X509Certificate encoderCa = selectRecipient(store);
-    	X509Certificate ca = selectCA(store);
+    	X509Certificate encoderCa = selectEncryptionCertificate(store);
+    	X509Certificate ca = selectVerificationCertificate(store);
     	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(encoderCa);
     	PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, identity, envEncoder);
     	
@@ -403,36 +403,40 @@ public class Client {
 
 		CertificateVerificationCallback callback = new CertificateVerificationCallback(cert);
 		try {
+            LOGGER.debug("Requesting certificate verification.");
 			cbh.handle(new Callback[] {callback});
 		} catch (UnsupportedCallbackException e) {
+            LOGGER.debug("Certificate verification failed.");
 			throw new RuntimeException(e);
 		}
 		if (callback.isVerified() == false) {
+            LOGGER.debug("Certificate verification failed.");
 			throw new IOException("CA certificate fingerprint could not be verified.");
 		} else {
+            LOGGER.debug("Certificate verification passed.");
 			verified.add(cert);
 		}
     }
     
     private X509Certificate retrieveCA() throws IOException {
-    	return selectCA(getCaCertificate());
+    	return selectVerificationCertificate(getCaCertificate());
     }
     
     private X509Certificate getRecipientCertificate() throws IOException {
     	final CertStore store = getCaCertificate();
     	// The CA or RA
-    	return selectRecipient(store);
+    	return selectEncryptionCertificate(store);
     }
     
-    private X509Certificate selectRecipient(CertStore store) {
+    private X509Certificate selectEncryptionCertificate(CertStore store) {
         X509CertificatePair certPair = X509CertificatePairFactory.createPair(store);
 
         return certPair.getEncryption();
     }
     
-    private X509Certificate selectCA(CertStore store) {
+    private X509Certificate selectVerificationCertificate(CertStore store) {
         X509CertificatePair certPair = X509CertificatePairFactory.createPair(store);
 
-        return certPair.getSigning();
+        return certPair.getVerification();
     }
 }

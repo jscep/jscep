@@ -31,14 +31,14 @@ public class SimpleExample {
 		store.load(new FileInputStream("example/src/main/resources/example.jks"), "jscep.org".toCharArray());
 		
 		final URL url = new URL("http://pilotonsiteipsec.verisign.com/cgi-bin/pkiclient.exe");
-		final X509Certificate identity = (X509Certificate) store.getCertificate("jscep");
-		final PrivateKey privKey = (PrivateKey) store.getKey("jscep", "jscep.org".toCharArray());
+		final X509Certificate identity = (X509Certificate) store.getCertificate("example.jscep.org");
+		final PrivateKey privKey = (PrivateKey) store.getKey("example.jscep.org", "jscep.org".toCharArray());
 		final CallbackHandler cbh = new ConsoleCallbackHandler();
 
         String signatureAlgorithm = "SHA1withRSA";
-        X500Principal subject = new X500Principal("CN=alpha.jscep.org");
+        X500Principal subject = new X500Principal("CN=example.jscep.org");
         DERObjectIdentifier attrType = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
-        ASN1Set attrValues = new DERSet(new DERPrintableString("challenge"));
+        ASN1Set attrValues = new DERSet(new DERPrintableString("95835B16B498"));
         DEREncodable password = new Attribute(attrType, attrValues);
         ASN1Set attributes = new DERSet(password);
 

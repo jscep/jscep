@@ -41,7 +41,9 @@ import org.jscep.message.PkiMessageEncoder;
 import org.jscep.request.PKCSReq;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
+import org.jscep.util.LoggingUtil;
 import org.jscep.x509.X509Util;
+import org.slf4j.Logger;
 
 
 /**
@@ -55,6 +57,7 @@ import org.jscep.x509.X509Util;
  * @author David Grant
  */
 public class EnrolmentTransaction extends Transaction {
+    private static Logger LOGGER = LoggingUtil.getLogger(EnrolmentTransaction.class);
 	private final TransactionId transId;
 	private final org.jscep.message.PKCSReq request;
 	private static NonceQueue QUEUE = new NonceQueue(20);
@@ -79,11 +82,15 @@ public class EnrolmentTransaction extends Transaction {
 	 */
 	public State send() throws IOException {
 		CMSSignedData signedData = encoder.encode(request);
+        LOGGER.debug("Sending {}", signedData);
 		CertRepContentHandler handler = new CertRepContentHandler();
 		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData, handler));
+        LOGGER.debug("Received response {}", res);
 
 		CertRep response = (CertRep) decoder.decode(res);
 		validateExchange(request, response);
+
+        LOGGER.debug("Response: {}", response);
 		
 		if (response.getPkiStatus() == PkiStatus.FAILURE) {
 			failInfo = response.getFailInfo();
@@ -143,17 +150,24 @@ public class EnrolmentTransaction extends Transaction {
 	}
 
 	private void validateExchange(PkiMessage<?> req, CertRep res) throws IOException {
+        LOGGER.debug("Validating SCEP message exchange");
+
 		if (res.getTransactionId().equals(req.getTransactionId()) == false) {
 			throw new IOException("Transaction ID Mismatch");
-		}
+		} else {
+            LOGGER.debug("Matched transaction IDs");
+        }
 
 		// The requester SHOULD verify that the recipientNonce of the reply
 		// matches the senderNonce it sent in the request.
 		if (res.getRecipientNonce().equals(req.getSenderNonce()) == false) {
 			throw new InvalidNonceException("Response recipient nonce and request sender nonce are not equal");
-		}
+		} else {
+            LOGGER.debug("Matched request senderNonce and response recipientNonce");
+        }
 		
 		if (res.getSenderNonce() == null) {
+            LOGGER.warn("Response senderNonce is null");
 			return;
 		}
 
@@ -163,7 +177,10 @@ public class EnrolmentTransaction extends Transaction {
 			throw new InvalidNonceException("This nonce has been encountered before.  Possible replay attack?");
 		} else {
 			QUEUE.offer(res.getSenderNonce());
+            LOGGER.debug("Nonce has not been encountered before");
 		}
+
+        LOGGER.debug("SCEP message exchange validated successfully");
 	}
 	
 	public void setIssuer(X509Certificate ca) {

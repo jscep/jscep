@@ -20,7 +20,7 @@ public class CertificatePairTest {
 
     @Test
     public void signingCertificateShouldBeSame() {
-        Assert.assertEquals(signing, fixture.getSigning());
+        Assert.assertEquals(signing, fixture.getVerification());
     }
 
     @Test

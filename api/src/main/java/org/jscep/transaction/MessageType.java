@@ -71,6 +71,6 @@ public enum MessageType {
     
     @Override
     public String toString() {
-    	return Integer.toString(value);
+    	return name();
     }
 }

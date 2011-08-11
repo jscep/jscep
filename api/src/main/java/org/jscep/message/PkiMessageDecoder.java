@@ -39,6 +39,7 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
+import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
@@ -49,8 +50,11 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 public class PkiMessageDecoder {
+    private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageEncoder.class);
 	private final PkcsPkiEnvelopeDecoder decoder;
 	
 	public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder) {

@@ -21,9 +21,11 @@
  */
 package org.jscep.message;
 
+import java.io.ObjectStreamClass;
 import java.util.Collection;
 import java.util.HashSet;
 
+import com.google.common.base.Objects;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -91,6 +93,15 @@ public abstract class PkiMessage<T> {
 	}
 	
 	private ASN1Set toSet(MessageType messageType) {
-		return new DERSet(new DERPrintableString(messageType.toString()));
+		return new DERSet(new DERPrintableString(Integer.toString(messageType.getValue())));
 	}
+
+    public String toString() {
+        return Objects.toStringHelper(this)
+            .add("type", messageType)
+            .add("transId", transId)
+            .add("msgData", messageData)
+            .add("nonce", senderNonce)
+            .toString();
+    }
 }

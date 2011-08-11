@@ -59,6 +59,6 @@ public class X509CertificatePairFactoryTest {
         X509CertificatePair certPair = X509CertificatePairFactory.createPair(store);
 
         Assert.assertEquals(encryption, certPair.getEncryption().getSubjectDN().getName());
-        Assert.assertEquals(signing, certPair.getSigning().getSubjectDN().getName());
+        Assert.assertEquals(signing, certPair.getVerification().getSubjectDN().getName());
     }
 }

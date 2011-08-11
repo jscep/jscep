@@ -53,8 +53,8 @@ public class HttpGetTransport extends Transport {
 		}
 		final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
+        LOGGER.debug("Received '{} {}' when sending {} to {}", new Object[] {conn.getResponseCode(), conn.getResponseMessage(), msg, url});
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-			LOGGER.error("Received a {} when sending {} to {}", new Object[] {conn.getResponseCode(), msg, url});
 			throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
 		}
 

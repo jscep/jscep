@@ -28,13 +28,17 @@ import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSEnvelopedGenerator;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 public class PkcsPkiEnvelopeEncoder {
+    private static Logger LOGGER = LoggingUtil.getLogger(PkcsPkiEnvelopeEncoder.class);
 	private final X509Certificate recipient;
 	
 	public PkcsPkiEnvelopeEncoder(X509Certificate recipient) {
@@ -42,6 +46,7 @@ public class PkcsPkiEnvelopeEncoder {
 	}
 	
 	public CMSEnvelopedData encode(ASN1Encodable messageData) throws IOException {
+        LOGGER.debug("Enveloping: {}", ASN1Dump.dumpAsString(messageData));
 		CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
 		
 		byte[] payload;
@@ -51,9 +56,10 @@ public class PkcsPkiEnvelopeEncoder {
 		} else {
 			payload = messageData.getEncoded();
 		}
-		
+
 		CMSProcessable envelopable = new CMSProcessableByteArray(payload);
 		edGenerator.addKeyTransRecipient(recipient);
+        LOGGER.debug("Addressing envelope to '{}'", recipient.getSubjectDN());
 		
 		try {
 			Provider[] providers = Security.getProviders("KeyGenerator.DESEDE");

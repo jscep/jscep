@@ -24,6 +24,7 @@ package org.jscep.message;
 import java.util.Collection;
 import java.util.HashSet;
 
+import com.google.common.base.Objects;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -111,10 +112,18 @@ public class PkiResponse<T extends ASN1Encodable> extends PkiMessage<T> {
 	}
 
 	private ASN1Set toSet(FailInfo failInfo) {
-		return new DERSet(new DERPrintableString(failInfo.toString()));
+		return new DERSet(new DERPrintableString(Integer.toString(failInfo.getValue())));
 	}
 
 	private ASN1Set toSet(PkiStatus pkiStatus) {
-		return new DERSet(new DERPrintableString(pkiStatus.toString()));
+		return new DERSet(new DERPrintableString(Integer.toString(pkiStatus.getValue())));
 	}
+
+    public String toString() {
+        return Objects.toStringHelper(this)
+            .add("pkiStatus", pkiStatus)
+            .add("rcptNonce", recipientNonce)
+            .add("failInfo", failInfo)
+            .toString();
+    }
 }

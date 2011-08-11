@@ -39,8 +39,11 @@ import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.jscep.util.AlgorithmDictionary;
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 public class PkcsPkiEnvelopeDecoder {
+    private static Logger LOGGER = LoggingUtil.getLogger(PkcsPkiEnvelopeDecoder.class);
 	private final PrivateKey priKey;
 	
 	public PkcsPkiEnvelopeDecoder(PrivateKey priKey) {
@@ -48,6 +51,7 @@ public class PkcsPkiEnvelopeDecoder {
 	}
 	
 	public ASN1Encodable decode(EnvelopedData envelopedData) throws IOException {
+        LOGGER.debug("Opening envelope {}", envelopedData);
 		// Figure out the type of secret key
 		final EncryptedContentInfo contentInfo = envelopedData.getEncryptedContentInfo();
 		final AlgorithmIdentifier contentAlg = contentInfo.getContentEncryptionAlgorithm();

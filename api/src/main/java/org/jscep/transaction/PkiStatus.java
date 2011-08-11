@@ -63,6 +63,6 @@ public enum PkiStatus {
     
     @Override
     public String toString() {
-    	return Integer.toString(value);
+    	return name();
     }
 }
