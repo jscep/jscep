@@ -21,22 +21,17 @@
  */
 package org.jscep.transaction;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.content.CertRepContentHandler;
-import org.jscep.message.CertRep;
-import org.jscep.message.GetCRL;
-import org.jscep.message.GetCert;
-import org.jscep.message.PkiMessageDecoder;
-import org.jscep.message.PkiMessageEncoder;
-import org.jscep.message.PkiRequest;
+import org.jscep.message.*;
 import org.jscep.request.PKCSReq;
 import org.jscep.transport.Transport;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public class NonEnrollmentTransaction extends Transaction {
 	private final TransactionId transId;

@@ -22,12 +22,12 @@
  */
 package org.jscep.request;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.util.encoders.Base64;
 import org.jscep.content.ScepContentHandler;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * This class represents a <code>PKCSReq</code> request.

@@ -22,11 +22,6 @@
  */
 package org.jscep.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.crypto.Cipher;
-
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
@@ -34,6 +29,10 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.smime.SMIMECapabilities;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
+
+import javax.crypto.Cipher;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class provides a utility to lookup a friendly name for an algorithm given

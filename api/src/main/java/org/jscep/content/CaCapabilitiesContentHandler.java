@@ -21,15 +21,15 @@
  */
 package org.jscep.content;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import org.jscep.response.Capabilities;
 import org.jscep.response.Capability;
 import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 
 /**

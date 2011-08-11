@@ -22,10 +22,10 @@
  */
 package org.jscep.request;
 
+import org.jscep.content.ScepContentHandler;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.jscep.content.ScepContentHandler;
 
 
 /**

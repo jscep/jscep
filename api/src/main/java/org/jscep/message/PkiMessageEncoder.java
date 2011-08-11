@@ -21,6 +21,15 @@
  */
 package org.jscep.message;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.cms.*;
+import org.jscep.transaction.PkiStatus;
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
+
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.CertStore;
@@ -29,21 +38,6 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Hashtable;
-
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.util.ASN1Dump;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.CMSProcessable;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.CMSSignedGenerator;
-import org.jscep.transaction.PkiStatus;
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
 
 public class PkiMessageEncoder {
     private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageEncoder.class);

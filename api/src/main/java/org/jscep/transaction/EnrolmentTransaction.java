@@ -22,28 +22,23 @@
  */
 package org.jscep.transaction;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.cert.CertStore;
-import java.security.cert.X509Certificate;
-
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.content.CertRepContentHandler;
-import org.jscep.message.CertRep;
-import org.jscep.message.GetCertInitial;
-import org.jscep.message.PkiMessage;
-import org.jscep.message.PkiMessageDecoder;
-import org.jscep.message.PkiMessageEncoder;
+import org.jscep.message.*;
 import org.jscep.request.PKCSReq;
-import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
 import org.jscep.x509.X509Util;
 import org.slf4j.Logger;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.cert.CertStore;
+import java.security.cert.X509Certificate;
 
 
 /**

@@ -22,8 +22,8 @@
  */
 package org.jscep;
 
-import java.security.cert.X509Certificate;
 import javax.security.auth.callback.Callback;
+import java.security.cert.X509Certificate;
 
 /**
  * This class is used to obtain verification of a CA certificate.

@@ -23,24 +23,6 @@
 
 package org.jscep.client;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.URL;
-import java.security.PrivateKey;
-import java.security.cert.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.x500.X500Principal;
-
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.X509Name;
@@ -56,15 +38,25 @@ import org.jscep.request.GetCaCaps;
 import org.jscep.request.GetCaCert;
 import org.jscep.request.GetNextCaCert;
 import org.jscep.response.Capabilities;
-import org.jscep.transaction.EnrolmentTransaction;
-import org.jscep.transaction.MessageType;
-import org.jscep.transaction.NonEnrollmentTransaction;
-import org.jscep.transaction.OperationFailureException;
-import org.jscep.transaction.Transaction;
+import org.jscep.transaction.*;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.x500.X500Principal;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.URL;
+import java.security.PrivateKey;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
+import java.util.*;
 
 /**
  * This class represents a SCEP client, or Requester.

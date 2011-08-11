@@ -21,13 +21,13 @@
  */
 package org.jscep.transaction;
 
+import org.jscep.util.HexUtil;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.jscep.util.HexUtil;
 
 
 /**

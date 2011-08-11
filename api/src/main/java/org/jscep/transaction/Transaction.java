@@ -22,12 +22,12 @@
  */
 package org.jscep.transaction;
 
-import java.io.IOException;
-import java.security.cert.CertStore;
-
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.transport.Transport;
+
+import java.io.IOException;
+import java.security.cert.CertStore;
 
 public abstract class Transaction {
 	protected final PkiMessageEncoder encoder;

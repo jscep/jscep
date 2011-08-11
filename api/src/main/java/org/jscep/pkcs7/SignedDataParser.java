@@ -21,12 +21,12 @@
  */
 package org.jscep.pkcs7;
 
-import java.io.IOException;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
+
+import java.io.IOException;
 
 
 /**

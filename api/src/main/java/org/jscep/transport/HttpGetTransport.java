@@ -22,17 +22,17 @@
  */
 package org.jscep.transport;
 
+import org.jscep.request.Operation;
+import org.jscep.request.Request;
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-
-import org.jscep.request.Operation;
-import org.jscep.request.Request;
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
 
 /**
  * Transport representing the <code>HTTP GET</code> method

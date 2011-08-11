@@ -25,11 +25,7 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.transaction.FailInfo;
-import org.jscep.transaction.MessageType;
-import org.jscep.transaction.Nonce;
-import org.jscep.transaction.PkiStatus;
-import org.jscep.transaction.TransactionId;
+import org.jscep.transaction.*;
 
 public class CertRep extends PkiResponse<DEROctetString> {
 

@@ -22,15 +22,15 @@
  */
 package org.jscep.transport;
 
+import org.jscep.request.PKCSReq;
+import org.jscep.request.Request;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.jscep.request.PKCSReq;
-import org.jscep.request.Request;
 
 
 /**

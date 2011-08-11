@@ -21,11 +21,10 @@
  */
 package org.jscep.response;
 
+import javax.crypto.Cipher;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.EnumSet;
-
-import javax.crypto.Cipher;
 
 
 /**

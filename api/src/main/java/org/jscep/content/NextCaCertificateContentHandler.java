@@ -22,6 +22,13 @@
  */
 package org.jscep.content;
 
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
+import org.jscep.pkcs7.SignedDataUtil;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,13 +40,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.SignedData;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.pkcs7.SignedDataUtil;
 
 /**
  * This class handles responses to <code>GetNextCACert</code> requests.

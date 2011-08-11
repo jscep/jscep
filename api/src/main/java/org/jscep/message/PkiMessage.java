@@ -21,10 +21,6 @@
  */
 package org.jscep.message;
 
-import java.io.ObjectStreamClass;
-import java.util.Collection;
-import java.util.HashSet;
-
 import com.google.common.base.Objects;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEROctetString;
@@ -35,6 +31,9 @@ import org.jscep.asn1.ScepObjectIdentifiers;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * This class represents an abstract SCEP PkiMessage, which may be either a

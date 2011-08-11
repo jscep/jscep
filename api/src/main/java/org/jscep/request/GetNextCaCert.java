@@ -22,10 +22,10 @@
  */
 package org.jscep.request;
 
+import org.jscep.content.ScepContentHandler;
+
 import java.security.cert.X509Certificate;
 import java.util.List;
-
-import org.jscep.content.ScepContentHandler;
 
 
 /**
