@@ -206,4 +206,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <ciManagement>
+        <system>jenkins</system>
+        <url>https://jscep.ci.cloudbees.com/</url>
+    </ciManagement>
 </project>
