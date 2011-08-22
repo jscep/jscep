@@ -1,0 +1,2507 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://dublincore.org/documents/2008/08/04/dc-html/">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="robots" content="index,follow" />
+    <meta name="creator" content="rfcmarkup version 1.95" />
+    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+<meta name="DC.Identifier" content="urn:ietf:id:nourse-scep" />
+<meta name="DC.Description.Abstract" content="This document specifies the Simple Certificate Enrollment Protocol, a\nPKI communication protocol which leverages existing technology by\nusing PKCS#7 and PKCS#10 over HTTP. SCEP is the evolution of the\nenrollment protocol developed by VeriSign, Inc. for Cisco Systems,\nInc. It now enjoys wide support in both client and CA implementations." />
+<meta name="DC.Creator" content="Pritikin, Max" />
+<meta name="DC.Creator" content="Nourse, Andrew" />
+<meta name="DC.Creator" content="Vilhuber, J" />
+<meta name="DC.Date.Issued" content="2011-03-07" />
+<meta name="DC.Title" content="Cisco Systems\x27 Simple Certificate Enrollment Protocol" />
+
+    <link rel="icon" href="/images/id.png" type="image/png" />
+    <link rel="shortcut icon" href="/images/id.png" type="image/png" />
+    <title>draft-nourse-scep-22 - Cisco Systems\x27 Simple Certificate Enrollment Protocol</title>
+    
+    
+    <style type="text/css">
+	body {
+	    margin: 0px 8px;
+            font-size: 1em;
+	}
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	    font-weight: bold;
+            line-height: 0pt;
+            display: inline;
+            white-space: pre;
+            font-family: monospace;
+            font-size: 1em;
+	    font-weight: bold;
+        }
+        pre {
+            font-size: 1em;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+	.pre {
+	    white-space: pre;
+	    font-family: monospace;
+	}
+	.header{
+	    font-weight: bold;
+	}
+        .newpage {
+            page-break-before: always;
+        }
+        .invisible {
+            text-decoration: none;
+            color: white;
+        }
+        @media print {
+            body {
+                font-size: 10.5pt;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                font-size: 10.5pt;
+            }
+        
+            a:link, a:visited {
+                color: inherit;
+                text-decoration: none;
+            }
+            .noprint {
+                display: none;
+            }
+        }
+	@media screen {
+	    .grey, .grey a:link, .grey a:visited {
+		color: #777;
+	    }
+            .docinfo {
+                background-color: #EEE;
+            }
+            .top {
+                border-top: 7px solid #EEE;
+            }
+            .bgwhite  { background-color: white; }
+            .bgred    { background-color: #F44; }
+            .bggrey   { background-color: #666; }
+            .bgbrown  { background-color: #840; }            
+            .bgorange { background-color: #FA0; }
+            .bgyellow { background-color: #EE0; }
+            .bgmagenta{ background-color: #F4F; }
+            .bgblue   { background-color: #66F; }
+            .bgcyan   { background-color: #4DD; }
+            .bggreen  { background-color: #4F4; }
+
+            .legend   { font-size: 90%; }
+            .cplate   { font-size: 70%; border: solid grey 1px; }
+	}
+    </style>
+    <!--[if IE]>
+    <style>
+    body {
+       font-size: 13px;
+       margin: 10px 10px;
+    }
+    </style>
+    <![endif]-->
+
+    <script type="text/javascript"><!--
+    function addHeaderTags() {
+	var spans = document.getElementsByTagName("span");
+	for (var i=0; i < spans.length; i++) {
+	    var elem = spans[i];
+	    if (elem) {
+		var level = elem.getAttribute("class");
+                if (level == "h1" || level == "h2" || level == "h3" || level == "h4" || level == "h5" || level == "h6") {
+                    elem.innerHTML = "<"+level+">"+elem.innerHTML+"</"+level+">";		
+                }
+	    }
+	}
+    }
+    var legend_html = "Colour legend:<br />      <table>         <tr><td>Unknown:</td>          <td><span class='cplate bgwhite'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Draft:</td>            <td><span class='cplate bgred'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Informational:</td>    <td><span class='cplate bgorange'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Experimental:</td>     <td><span class='cplate bgyellow'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Best Common Practice:</td><td><span class='cplate bgmagenta'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Proposed Standard:</td><td><span class='cplate bgblue'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Draft Standard:</td>   <td><span class='cplate bgcyan'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Standard:</td>         <td><span class='cplate bggreen'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Historic:</td>         <td><span class='cplate bggrey'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Obsolete:</td>         <td><span class='cplate bgbrown'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>     </table>";
+    function showElem(id) {
+        var elem = document.getElementById(id);
+        elem.innerHTML = eval(id+"_html");
+        elem.style.visibility='visible';
+    }
+    function hideElem(id) {
+        var elem = document.getElementById(id);
+        elem.style.visibility='hidden';        
+        elem.innerHTML = "";
+    }
+    // -->
+    </script>
+</head>
+<body onload="addHeaderTags()">
+   <div style="height: 13px;">
+      <div onmouseover="this.style.cursor='pointer';"
+         onclick="showElem('legend');"
+         onmouseout="hideElem('legend')"
+	 style="height: 6px; position: absolute;"
+         class="pre noprint docinfo bgred"
+         title="Click for colour legend." >                                                                        </div>
+      <div id="legend"
+           class="docinfo noprint pre legend"
+           style="position:absolute; top: 4px; left: 4ex; visibility:hidden; background-color: white; padding: 4px 9px 5px 7px; border: solid #345 1px; "
+           onmouseover="showElem('legend');"
+           onmouseout="hideElem('legend');">
+      </div>
+   </div>
+<span class="pre noprint docinfo top">[<a href="../html/" title="Document search and retrieval page">Docs</a>] [<a href="http://tools.ietf.org/id/draft-nourse-scep-22.txt" title="Plaintext version of this document">txt</a>|<a href="/pdf/draft-nourse-scep-22.txt" title="PDF version of this document">pdf</a>] [<a href='https://datatracker.ietf.org/doc/draft-nourse-scep' title='IESG Datatracker information for this document'>Tracker</a>] [<a href="mailto:draft-nourse-scep@tools.ietf.org?subject=draft-nourse-scep%20" title="Send email to the document authors">Email</a>] [<a href="/rfcdiff?difftype=--hwdiff&amp;url2=draft-nourse-scep-22.txt" title="Inline diff (wdiff)">Diff1</a>] [<a href="/rfcdiff?url2=draft-nourse-scep-22.txt" title="Side-by-side diff">Diff2</a>] [<a href="/idnits?url=http://tools.ietf.org/id/draft-nourse-scep-22.txt" title="Run an idnits check of this document">Nits</a>] [<a href="https://datatracker.ietf.org/ipr/search/?option=document_search&document_search=draft-nourse-scep" title="IPR disclosures related to this document">IPR</a>]         </span><br />
+<span class="pre noprint docinfo">                                                                        </span><br />
+<span class="pre noprint docinfo">Versions: <a href="./draft-nourse-scep-00">00</a> <a href="./draft-nourse-scep-01">01</a> <a href="./draft-nourse-scep-02">02</a> <a href="./draft-nourse-scep-03">03</a> <a href="./draft-nourse-scep-04">04</a> <a href="./draft-nourse-scep-05">05</a> <a href="./draft-nourse-scep-06">06</a> <a href="./draft-nourse-scep-07">07</a> <a href="./draft-nourse-scep-08">08</a> <a href="./draft-nourse-scep-09">09</a> <a href="./draft-nourse-scep-10">10</a> <a href="./draft-nourse-scep-11">11</a>                           
+          <a href="./draft-nourse-scep-12">12</a> <a href="./draft-nourse-scep-13">13</a> <a href="./draft-nourse-scep-14">14</a> <a href="./draft-nourse-scep-15">15</a> <a href="./draft-nourse-scep-16">16</a> <a href="./draft-nourse-scep-17">17</a> <a href="./draft-nourse-scep-18">18</a> <a href="./draft-nourse-scep-19">19</a> <a href="./draft-nourse-scep-20">20</a> <a href="./draft-nourse-scep-21">21</a> <a href="./draft-nourse-scep-22">22</a>                              </span><br />
+<span class="pre noprint docinfo">                                                                        </span><br />
+<pre>
+Internet Engineering Task Force                         M. Pritikin, Ed.
+Internet-Draft                                                 A. Nourse
+Intended status: Informational                               J. Vilhuber
+Expires: September 8, 2011                            Cisco Systems, Inc
+                                                           March 7, 2011
+
+
+         <span class="h1">Cisco Systems' Simple Certificate Enrollment Protocol</span>
+                          <span class="h1">draft-nourse-scep-22</span>
+
+Abstract
+
+   This document specifies the Simple Certificate Enrollment Protocol, a
+   PKI communication protocol which leverages existing technology by
+   using PKCS#7 and PKCS#10 over HTTP.  SCEP is the evolution of the
+   enrollment protocol developed by VeriSign, Inc. for Cisco Systems,
+   Inc. It now enjoys wide support in both client and CA
+   implementations.
+
+Status of this Memo
+
+   This Internet-Draft is submitted to IETF in full conformance with the
+   provisions of <a href="./bcp78">BCP 78</a> and <a href="./bcp79">BCP 79</a>.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   <a href="http://www.ietf.org/ietf/1id-abstracts.txt">http://www.ietf.org/ietf/1id-abstracts.txt</a>.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   <a href="http://www.ietf.org/shadow.html">http://www.ietf.org/shadow.html</a>.
+
+   This Internet-Draft will expire on September 8, 2011.
+
+Copyright Notice
+
+   Copyright (c) 2011 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to <a href="./bcp78">BCP 78</a> and the IETF Trust's Legal
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011               [Page 1]</span>
+</pre><pre class='newpage'><a name="page-2" id="page-2" href="#page-2" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   Provisions Relating to IETF Documents
+   (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in <a href="#section-4">Section 4</a>.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the BSD License.
+
+   This document may contain material from IETF Documents or IETF
+   Contributions published or made publicly available before November
+   10, 2008.  The person(s) controlling the copyright in some of this
+   material may not have granted the IETF Trust the right to allow
+   modifications of such material outside the IETF Standards Process.
+   Without obtaining an adequate license from the person(s) controlling
+   the copyright in such materials, this document may not be modified
+   outside the IETF Standards Process, and derivative works of it may
+   not be created outside the IETF Standards Process, except to format
+   it for publication as an RFC or to translate it into languages other
+   than English.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011               [Page 2]</span>
+</pre><pre class='newpage'><a name="page-3" id="page-3" href="#page-3" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+Table of Contents
+
+   <a href="#section-1">1</a>.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  <a href="#page-5">5</a>
+     <a href="#section-1.1">1.1</a>.  Requirements Language  . . . . . . . . . . . . . . . . . .  <a href="#page-6">6</a>
+   <a href="#section-2">2</a>.  SCEP Overview  . . . . . . . . . . . . . . . . . . . . . . . .  <a href="#page-6">6</a>
+     <a href="#section-2.1">2.1</a>.  SCEP Entities  . . . . . . . . . . . . . . . . . . . . . .  <a href="#page-6">6</a>
+       <a href="#section-2.1.1">2.1.1</a>.  Requester  . . . . . . . . . . . . . . . . . . . . . .  <a href="#page-6">6</a>
+       <a href="#section-2.1.2">2.1.2</a>.  Certification Authority  . . . . . . . . . . . . . . .  <a href="#page-7">7</a>
+       <a href="#section-2.1.3">2.1.3</a>.  Registration Authority . . . . . . . . . . . . . . . .  <a href="#page-8">8</a>
+     <a href="#section-2.2">2.2</a>.  Requester authentication . . . . . . . . . . . . . . . . .  <a href="#page-8">8</a>
+     <a href="#section-2.3">2.3</a>.  Enrollment authorization . . . . . . . . . . . . . . . . .  <a href="#page-9">9</a>
+     <a href="#section-2.4">2.4</a>.  CA/RA Certificate Distribution . . . . . . . . . . . . . . <a href="#page-11">11</a>
+     <a href="#section-2.5">2.5</a>.  Certificate Enrollment . . . . . . . . . . . . . . . . . . <a href="#page-11">11</a>
+       <a href="#section-2.5.1">2.5.1</a>.  Client State Transitions . . . . . . . . . . . . . . . <a href="#page-12">12</a>
+     <a href="#section-2.6">2.6</a>.  Certificate Access . . . . . . . . . . . . . . . . . . . . <a href="#page-13">13</a>
+     <a href="#section-2.7">2.7</a>.  CRL Access . . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-14">14</a>
+     <a href="#section-2.8">2.8</a>.  Certificate Revocation . . . . . . . . . . . . . . . . . . <a href="#page-15">15</a>
+   <a href="#section-3">3</a>.  SCEP Secure Message Objects  . . . . . . . . . . . . . . . . . <a href="#page-15">15</a>
+     <a href="#section-3.1">3.1</a>.  SCEP pkiMessage  . . . . . . . . . . . . . . . . . . . . . <a href="#page-16">16</a>
+       <a href="#section-3.1.1">3.1.1</a>.  Signed Transaction Attributes  . . . . . . . . . . . . <a href="#page-17">17</a>
+         <a href="#section-3.1.1.1">3.1.1.1</a>.  transactionID  . . . . . . . . . . . . . . . . . . <a href="#page-18">18</a>
+         <a href="#section-3.1.1.2">3.1.1.2</a>.  messageType  . . . . . . . . . . . . . . . . . . . <a href="#page-18">18</a>
+         <a href="#section-3.1.1.3">3.1.1.3</a>.  pkiStatus  . . . . . . . . . . . . . . . . . . . . <a href="#page-18">18</a>
+         <a href="#section-3.1.1.4">3.1.1.4</a>.  failInfo . . . . . . . . . . . . . . . . . . . . . <a href="#page-19">19</a>
+         <a href="#section-3.1.1.5">3.1.1.5</a>.  senderNonce and recipientNonce . . . . . . . . . . <a href="#page-19">19</a>
+         <a href="#section-3.1.1.6">3.1.1.6</a>.  signingTime Attribute  . . . . . . . . . . . . . . <a href="#page-19">19</a>
+       <a href="#section-3.1.2">3.1.2</a>.  SCEP pkcsPKIEnvelope . . . . . . . . . . . . . . . . . <a href="#page-20">20</a>
+     <a href="#section-3.2">3.2</a>.  SCEP pkiMessage types  . . . . . . . . . . . . . . . . . . <a href="#page-20">20</a>
+       <a href="#section-3.2.1">3.2.1</a>.  PKCSReq  . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-20">20</a>
+       <a href="#section-3.2.2">3.2.2</a>.  CertRep  . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-21">21</a>
+         <a href="#section-3.2.2.1">3.2.2.1</a>.  CertRep SUCCESS  . . . . . . . . . . . . . . . . . <a href="#page-21">21</a>
+         <a href="#section-3.2.2.2">3.2.2.2</a>.  CertRep FAILURE  . . . . . . . . . . . . . . . . . <a href="#page-22">22</a>
+         <a href="#section-3.2.2.3">3.2.2.3</a>.  CertRep PENDING  . . . . . . . . . . . . . . . . . <a href="#page-22">22</a>
+       <a href="#section-3.2.3">3.2.3</a>.  GetCertInitial . . . . . . . . . . . . . . . . . . . . <a href="#page-22">22</a>
+         <a href="#section-3.2.3.1">3.2.3.1</a>.  IssuerAndSubject . . . . . . . . . . . . . . . . . <a href="#page-23">23</a>
+       <a href="#section-3.2.4">3.2.4</a>.  GetCert  . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-23">23</a>
+       <a href="#section-3.2.5">3.2.5</a>.  GetCRL . . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-23">23</a>
+     <a href="#section-3.3">3.3</a>.  Degenerate certificates-only PKCS#7 Signed-data  . . . . . <a href="#page-24">24</a>
+   <a href="#section-4">4</a>.  SCEP Transactions  . . . . . . . . . . . . . . . . . . . . . . <a href="#page-24">24</a>
+     <a href="#section-4.1">4.1</a>.  Get CA Certificate . . . . . . . . . . . . . . . . . . . . <a href="#page-24">24</a>
+       <a href="#section-4.1.1">4.1.1</a>.  Get CA Certificate Response Message Format . . . . . . <a href="#page-25">25</a>
+         <a href="#section-4.1.1.1">4.1.1.1</a>.  CA Certificate Response Message Format . . . . . . <a href="#page-25">25</a>
+         <a href="#section-4.1.1.2">4.1.1.2</a>.  CA/RA Certificate Response Message Format  . . . . <a href="#page-25">25</a>
+     <a href="#section-4.2">4.2</a>.  Certificate Enrollment . . . . . . . . . . . . . . . . . . <a href="#page-25">25</a>
+       <a href="#section-4.2.1">4.2.1</a>.  Certificate Enrollment Response Message  . . . . . . . <a href="#page-25">25</a>
+     <a href="#section-4.3">4.3</a>.  Poll for Requester Initial Certificate . . . . . . . . . . <a href="#page-26">26</a>
+       <a href="#section-4.3.1">4.3.1</a>.  Polling Response Message Format  . . . . . . . . . . . <a href="#page-26">26</a>
+     <a href="#section-4.4">4.4</a>.  Certificate Access . . . . . . . . . . . . . . . . . . . . <a href="#page-27">27</a>
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011               [Page 3]</span>
+</pre><pre class='newpage'><a name="page-4" id="page-4" href="#page-4" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+       <a href="#section-4.4.1">4.4.1</a>.  Certificate Access Response Message Format . . . . . . <a href="#page-27">27</a>
+     <a href="#section-4.5">4.5</a>.  CRL Access . . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-27">27</a>
+       <a href="#section-4.5.1">4.5.1</a>.  CRL Access Response Message Format . . . . . . . . . . <a href="#page-27">27</a>
+     <a href="#section-4.6">4.6</a>.  Get Next Certification Authority Certificate . . . . . . . <a href="#page-27">27</a>
+       <a href="#section-4.6.1">4.6.1</a>.  Get Next CA Response Message Format  . . . . . . . . . <a href="#page-28">28</a>
+   <a href="#section-5">5</a>.  SCEP Transport . . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-28">28</a>
+     <a href="#section-5.1">5.1</a>.  HTTP "GET" Message Format  . . . . . . . . . . . . . . . . <a href="#page-28">28</a>
+       <a href="#section-5.1.1">5.1.1</a>.  Response Message Format  . . . . . . . . . . . . . . . <a href="#page-29">29</a>
+     <a href="#section-5.2">5.2</a>.  SCEP HTTP Messages . . . . . . . . . . . . . . . . . . . . <a href="#page-29">29</a>
+       <a href="#section-5.2.1">5.2.1</a>.  GetCACert  . . . . . . . . . . . . . . . . . . . . . . <a href="#page-29">29</a>
+         <a href="#section-5.2.1.1">5.2.1.1</a>.  GetCACert Response . . . . . . . . . . . . . . . . <a href="#page-29">29</a>
+       <a href="#section-5.2.2">5.2.2</a>.  PKCSReq  . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-30">30</a>
+         <a href="#section-5.2.2.1">5.2.2.1</a>.  PKCSReq Response . . . . . . . . . . . . . . . . . <a href="#page-30">30</a>
+       <a href="#section-5.2.3">5.2.3</a>.  GetCertInitial . . . . . . . . . . . . . . . . . . . . <a href="#page-30">30</a>
+         <a href="#section-5.2.3.1">5.2.3.1</a>.  GetCertInitial Response  . . . . . . . . . . . . . <a href="#page-30">30</a>
+       <a href="#section-5.2.4">5.2.4</a>.  GetCert  . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-30">30</a>
+         <a href="#section-5.2.4.1">5.2.4.1</a>.  GetCert Response . . . . . . . . . . . . . . . . . <a href="#page-30">30</a>
+       <a href="#section-5.2.5">5.2.5</a>.  GetCRL . . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-31">31</a>
+         <a href="#section-5.2.5.1">5.2.5.1</a>.  GetCRL Response  . . . . . . . . . . . . . . . . . <a href="#page-31">31</a>
+       <a href="#section-5.2.6">5.2.6</a>.  GetNextCACert  . . . . . . . . . . . . . . . . . . . . <a href="#page-31">31</a>
+         <a href="#section-5.2.6.1">5.2.6.1</a>.  GetNextCACert Response . . . . . . . . . . . . . . <a href="#page-31">31</a>
+   <a href="#section-6">6</a>.  Contributors/Acknowledgements  . . . . . . . . . . . . . . . . <a href="#page-31">31</a>
+   <a href="#section-7">7</a>.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . <a href="#page-32">32</a>
+   <a href="#section-8">8</a>.  Security Considerations  . . . . . . . . . . . . . . . . . . . <a href="#page-32">32</a>
+     <a href="#section-8.1">8.1</a>.  General Security . . . . . . . . . . . . . . . . . . . . . <a href="#page-33">33</a>
+     <a href="#section-8.2">8.2</a>.  Use of the CA keypair  . . . . . . . . . . . . . . . . . . <a href="#page-33">33</a>
+     <a href="#section-8.3">8.3</a>.  ChallengePassword  . . . . . . . . . . . . . . . . . . . . <a href="#page-33">33</a>
+     <a href="#section-8.4">8.4</a>.  transactionID  . . . . . . . . . . . . . . . . . . . . . . <a href="#page-34">34</a>
+     <a href="#section-8.5">8.5</a>.  Nonces and Replay  . . . . . . . . . . . . . . . . . . . . <a href="#page-34">34</a>
+     <a href="#section-8.6">8.6</a>.  Key Usage Issues . . . . . . . . . . . . . . . . . . . . . <a href="#page-34">34</a>
+     <a href="#section-8.7">8.7</a>.  GetCACaps Issues . . . . . . . . . . . . . . . . . . . . . <a href="#page-34">34</a>
+     <a href="#section-8.8">8.8</a>.  Unnecessary cryptography . . . . . . . . . . . . . . . . . <a href="#page-35">35</a>
+     <a href="#section-8.9">8.9</a>.  GetNextCACert  . . . . . . . . . . . . . . . . . . . . . . <a href="#page-35">35</a>
+   <a href="#section-9">9</a>.  Normative References . . . . . . . . . . . . . . . . . . . . . <a href="#page-35">35</a>
+   <a href="#appendix-A">Appendix A</a>.  Private OID Definitions . . . . . . . . . . . . . . . <a href="#page-36">36</a>
+   <a href="#appendix-B">Appendix B</a>.  SCEP State Transitions  . . . . . . . . . . . . . . . <a href="#page-37">37</a>
+   <a href="#appendix-C">Appendix C</a>.  CA Capabilities . . . . . . . . . . . . . . . . . . . <a href="#page-39">39</a>
+     <a href="#appendix-C.1">C.1</a>.  GetCACaps HTTP Message Format  . . . . . . . . . . . . . . <a href="#page-39">39</a>
+     <a href="#appendix-C.2">C.2</a>.  CA Capabilities Response Format  . . . . . . . . . . . . . <a href="#page-39">39</a>
+   <a href="#appendix-D">Appendix D</a>.  Client Certificate Renewal  . . . . . . . . . . . . . <a href="#page-40">40</a>
+   <a href="#appendix-E">Appendix E</a>.  CA Key Rollover . . . . . . . . . . . . . . . . . . . <a href="#page-41">41</a>
+   <a href="#appendix-F">Appendix F</a>.  PKIOperation via HTTP POST Message  . . . . . . . . . <a href="#page-41">41</a>
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . <a href="#page-42">42</a>
+
+
+
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011               [Page 4]</span>
+</pre><pre class='newpage'><a name="page-5" id="page-5" href="#page-5" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h2"><a name="section-1">1</a>.  Introduction</span>
+
+   Public key technology is widely available and increasingly widely
+   deployed.  X.509 certificates serve as the basis for several
+   standards-based security protocols in the IETF, such as IKE [<a href="./rfc2409" title='"The Internet Key Exchange (IKE)"'>RFC2409</a>]
+   and IKEv2 [<a href="./rfc4306" title='"Internet Key Exchange (IKEv2) Protocol"'>RFC4306</a>], and TLS [<a href="./rfc4346" title='"The Transport Layer Security (TLS) Protocol Version 1.1"'>RFC4346</a>].  When an X.509 certificate is
+   issued by other than the certificate subject (a self-issued
+   certificate), there typically is a need for a certificate management
+   protocol.  Such a protocol enables a PKI client to request a
+   certificate, certificate renewal, or certificate revocation from a
+   certification authority.  Often there also is a need for protocols to
+   request a certificate or certificate revocation status information,
+   although these functions are often provided by distinct protocols,
+   e.g.  CRLs [<a href="./rfc4523">RFC4523</a>] or OCSP [<a href="./rfc2560">RFC2560</a>] for X.509 certificates.
+
+   This specification defines a protocol, SCEP, for certificate
+   management and certificate and CRL queries in a closed environment.
+   While widely deployed, this protocol omits some certificate
+   management features, e.g. in-band certificate revocation
+   transactions, which can significantly enhance the security achieved
+   in a PKI.  The IETF protocol suite currently includes two certificate
+   management protocols with more comprehensive functionality: CMP
+   [<a href="./rfc4210" title='"Internet X.509 Public Key Infrastructure Certificate Management Protocol (CMP)"'>RFC4210</a>] and Certificate Management over CMS [<a href="./rfc5272" title='"Certificate Management over CMS (CMC)"'>RFC5272</a>].
+   Environments that do not require interoperability with SCEP
+   implementations SHOULD use the above-mentioned, PKIX-standard
+   certificate management protocols.  Even when interoperability with
+   the installed base of SCEP implementations is required, implementers
+   are encouraged to support one of these comprehensive standards track
+   certificate management protocols in addition to the protocol defined
+   in this specification.  This implementation strategy balances near-
+   term requirements for interoperability with-longer term security
+   goals.
+
+   As a reflection of the history of SCEP implementations some of the
+   operations described in this document are indicated as 'SHOULD' or
+   'MAY' where a stricter protocol specification might have indicated a
+   'MUST'.
+
+   The protocol supports the following general operations:
+
+   o  CA and RA public key distribution
+
+   o  Certificate enrollment
+
+   o  Certificate query
+
+   o  CRL query
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011               [Page 5]</span>
+</pre><pre class='newpage'><a name="page-6" id="page-6" href="#page-6" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   SCEP makes extensive use of PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] and PKCS#10 [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>].
+
+<span class="h3"><a name="section-1.1">1.1</a>.  Requirements Language</span>
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [<a href="./rfc2119" title='"Key words for use in RFCs to Indicate Requirement Levels"'>RFC2119</a>].
+
+
+<span class="h2"><a name="section-2">2</a>.  SCEP Overview</span>
+
+   This section provides a high level overview of the functionality of
+   SCEP.
+
+<span class="h3"><a name="section-2.1">2.1</a>.  SCEP Entities</span>
+
+   The entity types defined in SCEP are
+
+   o  the Requester (<a href="#section-2.1.1">Section 2.1.1</a>) (e.g., IPSEC clients)
+
+   o  the Server, which may be either a Certification Authority (CA)
+      (<a href="#section-2.1.2">Section 2.1.2</a>) or a Registration Authority (RA) (<a href="#section-2.1.3">Section 2.1.3</a>)
+
+<span class="h4"><a name="section-2.1.1">2.1.1</a>.  Requester</span>
+
+   The requester is sometimes called a "client" in this document.  It is
+   the client of the SCEP exchange.
+
+   The requester MAY submit SCEP messages for itself or it MAY submit
+   SCEP messages on behalf of peers as described in Registration
+   Authority (<a href="#section-2.1.3">Section 2.1.3</a>).  This section focuses on the requester
+   that is obtaining certificates for its own use.
+
+   Before a requester can start a PKI transaction, it MUST have at least
+   one appropriate key pair (e.g.  RSA) for use when signing the SCEP
+   pkiMessage (<a href="#section-3.1">Section 3.1</a>).
+
+   The message types, being based on PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] and PKCS#10
+   [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>] fully support algorithm agility but the requester has to
+   use a key type that is supported by the server.  RSA is the only
+   algorithm supported by current implementations.
+
+   A requester MUST have the following information locally configured:
+
+   1.  The Certification Authority IP address or fully qualified domain
+       name
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011               [Page 6]</span>
+</pre><pre class='newpage'><a name="page-7" id="page-7" href="#page-7" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   2.  The Certification Authority HTTP CGI script path
+
+   3.  The identifying information that is used for authentication of
+       the Certification Authority in <a href="#section-4.1.1">Section 4.1.1</a>.  This information
+       MAY be obtained from the user, or presented to the end user for
+       manual authorization during the protocol exchange (e.g. the user
+       indicates acceptance of a fingerprint via a user-interface
+       element).
+
+   The requester MUST have MESSAGE information configured if the
+   Certification Authority requires it (see <a href="#section-5.1">Section 5.1</a>).
+
+   The requester MAY maintain multiple independent configurations
+   appropriate for multiple Certification Authorities.  Doing so does
+   not effect the protocol operation and is not in scope of this
+   document.
+
+   Certificate requests for certificates whose purpose is a specific
+   solution are encouraged to conform to the solution's profile, e.g.
+   <a href="./rfc4945#section-5">[RFC4945] Section&nbsp;5</a> for IKE/IPsec certificates.
+
+<span class="h4"><a name="section-2.1.2">2.1.2</a>.  Certification Authority</span>
+
+   An SCEP Certification Authority (CA) is the entity that signs client
+   certificates.  The CAs name appears in the issuer field of resulting
+   certificates.
+
+   Before any PKI operations can occur, the SCEP CA server obtains a
+   'CA' certificate that matches the profile in [<a href="./rfc5280" title='"Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile"'>RFC5280</a>].  This MAY be
+   a CA certificate that was issued by a higher level CA.
+
+   The SCEP server CA certificate MUST be provided out-of-band to the
+   SCEP requester.  The CA certificate fingerprint MAY be used to
+   authenticate a CA Certificate distributed by the GetCACert response
+   (<a href="#section-4.1.1">Section 4.1.1</a>).  The fingerprint is created by calculating a SHA-1,
+   SHA-256, SHA-512, or MD5 hash on the whole CA certificate.
+
+   The certification authority MUST either include a
+   cRLDistributionPoint extension in every certificate it issues or
+   answer CRL queries itself, in which case it SHOULD be online at all
+   times.  The certification authority SHOULD either answer certificate
+   queries or make certificates available via LDAP.
+
+   A certification authority may enforce any arbitrary policies,
+   including name uniqueness policies, and apply them to certification
+   requests.  The certification authority MAY reject any request.  If
+   the client has already been issued a certificate for this keypair the
+   server MAY return the previously created certificate.  The requester
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011               [Page 7]</span>
+</pre><pre class='newpage'><a name="page-8" id="page-8" href="#page-8" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   MUST NOT assume any of the fields in the certification request,
+   except for the public key, will be the same in the certificate
+   issued.
+
+   If a client times out from polling for a pending request it can
+   resynchronize by reissuing the original request with the original
+   subject name, key, and transaction ID.  The CA SHOULD return the
+   status of the original transaction, including the certificate if it
+   was granted.  The CA SHOULD NOT create a new transaction unless the
+   original certificate has been revoked, or the transaction arrives
+   more than halfway through the validity period of the original
+   certificate.
+
+<span class="h4"><a name="section-2.1.3">2.1.3</a>.  Registration Authority</span>
+
+   An SCEP Registration Authority (RA) is an SCEP server that performs
+   validation and authorization checks of the SCEP requester but
+   forwards the certification requests to the CA.  The RAs name does not
+   appear in the issuer field of resulting certificates.
+
+   The RA MUST return the RA certificate, in addition to the CA
+   certificate, in the GetCACert Response (see <a href="#section-5.2.1.1.2">Section 5.2.1.1.2</a>).  The
+   existence of an RA certificate in this response indicates to the
+   client that an RA is in use.  In order to securely communicate with
+   an RA using SCEP Secure Message Objects (<a href="#section-3">Section 3</a>) the client MUST
+   use the RA's keys instead of the CA's keys to sign the messages.
+
+   In order to service certification requests the RA must pass the
+   requests to the CA server for signing.  The RA MAY use SCEP to
+   communicate with the CA, in which case the RA acts as both an SCEP
+   server (between the client and the RA) and an SCEP requester (between
+   the RA and the CA).  The RA MAY respond to client certificate
+   requests with a PENDING response while communicating with the CA; for
+   example if the CA must manually authorize a certification request and
+   thus returns PENDING to the RA the RA may respond with PENDING to the
+   client while polling the CA.
+
+   Communication between the RA and the CA MAY be over other protocols
+   such as Certificate Management over CMS [<a href="./rfc5272" title='"Certificate Management over CMS (CMC)"'>RFC5272</a>].
+
+<span class="h3"><a name="section-2.2">2.2</a>.  Requester authentication</span>
+
+   As with every protocol that uses public-key cryptography, the
+   association between the public keys used in the protocol and the
+   identities with which they are associated must be authenticated in a
+   cryptographically secure manner.  This requirement is needed to
+   prevent a "man-in-the-middle" attack, in which an adversary can
+   manipulate the data as it travels between the protocol participants
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011               [Page 8]</span>
+</pre><pre class='newpage'><a name="page-9" id="page-9" href="#page-9" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   and subvert the security of the protocol.
+
+   The communication between the requester and the certification
+   authority are secured using SCEP Secure Message Objects (<a href="#section-3">Section 3</a>)
+   which specifies how PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] is used to encrypt and sign the
+   data.  In order to perform the signing operation the client uses an
+   appropriate local certificate:
+
+   1.  If the requesting system already has a certificate issued by the
+       SCEP server, and the server supports renewal (see <a href="#appendix-C">Appendix C</a>),
+       that certificate SHOULD be used.
+
+   2.  If the requesting system has no certificate issued by the new CA,
+       but has credentials from an alternate CA the certificate issued
+       by the alternate CA MAY be used.  Policy settings on the new CA
+       will determine if the request can be accepted or not.  This is
+       useful when enrolling with a new administrative domain; by using
+       a certificate from the old domain as credentials.
+
+   3.  If the requester does not have an appropriate existing
+       certificate, then a locally generated self-signed certificate
+       MUST be used instead.  The self-signed certificate MUST use the
+       same subject name as in the PKCS#10 request.
+
+   During the certificate enrollment, the requester MUST use the
+   selected certificate to sign the PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] (see <a href="#section-3">Section 3</a>).
+   The server CertResp uses this signing certificate when encrypting the
+   response (see <a href="#section-3.2.2">Section 3.2.2</a>).
+
+   When the certification authority creates the PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>]
+   envelope on the issued certificate, it SHOULD use the public key,
+   issuer name, and serial number conveyed in the above included
+   certificate.  This will inform the end entity of which private key
+   should be used to open the envelope.  Note that when a client enrolls
+   for separate encryption and signature certificates, it MAY use the
+   signature certificate to sign both requests, and then expect its
+   signature key to be used to encrypt both responses.  In any case, the
+   RecipientInfo on the envelope MUST reflect the key used to encrypt
+   the request.
+
+<span class="h3"><a name="section-2.3">2.3</a>.  Enrollment authorization</span>
+
+   There are two mechanisms for automated enrollment authorization.
+
+   When the client uses a certificate which is not self-signed to sign
+   SCEP messages the server MAY use this certificate to authenticate the
+   client and determine the appropriate authorization.  In addition to
+   the policy requirements implied by optional support of renewal, see
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011               [Page 9]</span>
+</pre><pre class='newpage'><a name="page-10" id="page-10" href="#page-10" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   <a href="#appendix-D">Appendix D</a>, the SCEP server SHOULD implement appropriate logic to
+   support client authentication and automated enrollment using existing
+   client credentials that were issued by an alternate PKI hierarchy.
+   The SCEP server MUST NOT attempt to authenticate a client based on a
+   self-signed certificate.
+
+   PKCS#10 [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>] specifies a PKCS#9 [<a href="./rfc2985" title='"PKCS #9: Selected Object Classes and Attribute Types Version 2.0"'>RFC2985</a>] challengePassword
+   attribute to be sent as part of the enrollment request.  SCEP
+   optionally uses this challengePassword to allow for unauthenticated
+   authorization of enrollment requests.  The PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] envelope
+   protects the privacy of the challenge password.
+
+   When utilizing the challengePassword, the server distributes a shared
+   secret to the requester which will uniquely associate the enrollment
+   request with the requester.  The distribution of the secret must be
+   private: only the end entity should know this secret.  The actual
+   binding mechanism between the requester and the secret is subject to
+   the server policy and implementation.
+
+   A client that is performing certificate renewal as per <a href="#appendix-D">Appendix D</a>
+   SHOULD send an empty challenge password (i.e. use the empty string as
+   the challenge password) but MAY send the originally distributed
+   challenge password in the challengePassword attribute.  In the former
+   case the SCEP CA MUST authenticate the request based on the
+   certificate used to sign the renewal request.  In the latter case the
+   SCEP CA MAY use either the challengePassword or the previously issued
+   certificate (or both) to authenticate the request.
+
+   In the manual mode the requester's messages are placed in the PENDING
+   state until the CA operator authorizes or rejects them.  Manual
+   authorization is used when the client has only a self-signed
+   certificate and/or a challengePassword is not available.  The SCEP
+   server MAY either reject unauthorized certification requests or mark
+   them for manual authorization according to server configuration.
+
+   The requester generates a SHA-1, SHA-256, SHA-512, or MD5
+   'fingerprint' of the PKCS#10 [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>] (before PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>]
+   enveloping and signing).  This fingerprint is sent to the CA operator
+   using an out-of-band method.  The CA operator MUST compared this
+   fingerprint to a locally generated fingerprint based on the message
+   received during the SCEP exchange.
+
+   SCEP clients and CAs (or RAs, if appropriate) MUST support display of
+   this fingerprint to the operator to enable this authorization method.
+   The out-of-band distribution and comparison of fingerprints is not
+   covered by this document.
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 10]</span>
+</pre><pre class='newpage'><a name="page-11" id="page-11" href="#page-11" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h3"><a name="section-2.4">2.4</a>.  CA/RA Certificate Distribution</span>
+
+   If the CA and/or RA certificates have not previously been acquired by
+   the requester in some other means, the requester MUST retrieve the
+   CA/RA certificates before any PKI operation (<a href="#section-3">Section 3</a>) can be
+   started.
+
+   Since no public key has yet been exchanged between the requester and
+   the CA/RA, the messages cannot be secured using PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>], and
+   the data is instead transferred in the clear.
+
+   If an RA is in use, a certificates-only PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] SignedData
+   with a certificate chain consisting of both RA and CA certificates is
+   returned.  Otherwise the CA certificate itself is returned.  The
+   transport protocol (<a href="#section-5">Section 5</a>) MUST indicate which one is returned.
+
+   After the requester gets the CA certificate, it MUST authenticate the
+   CA certificate by comparing the CA certificate fingerprint (see
+   <a href="#section-2.1.2">Section 2.1.2</a>) with the locally configured, out-of-band distributed,
+   identifying information.
+
+   Since the optional RA certificates are signed by the CA there is no
+   need to authenticate them against the out-of-band data.  Clients MUST
+   verify the RA certificate signature before use during protocol
+   exchanges.  Clients MUST verify the authorization of the RA
+   certificates.  The authorization mechanism is specified by the CA
+   administrator and is out of scope for this document.
+
+   Because a long time can pass between queries from a requester to a
+   CA/RA and because RA certificates can change at any time, it is
+   recommended that a requester not store RA certificates.  Instead, the
+   requester SHOULD retrieve the CA/RA certificates before each
+   operation.
+
+<span class="h3"><a name="section-2.5">2.5</a>.  Certificate Enrollment</span>
+
+   A requester starts an enrollment (<a href="#section-3.2.1">Section 3.2.1</a>) transaction by
+   creating a certificate request using PKCS#10 [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>] and sends it
+   to the CA/RA enveloped using the PKCS#7 (<a href="#section-3">Section 3</a>).
+
+   It is up to local CA policy (and CA implementation) as to whether a
+   certificate is granted automatically, or whether it is manually
+   granted by the administrator.  The challengePassword MAY be used to
+   automatically authorize the request.
+
+   If the CA/RA returns a CertRep (<a href="#section-3.2.2">Section 3.2.2</a>) message with status
+   set to PENDING, the requester enters into polling mode by
+   periodically sending a GetCertInitial (<a href="#section-3.2.3">Section 3.2.3</a>) PKI message to
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 11]</span>
+</pre><pre class='newpage'><a name="page-12" id="page-12" href="#page-12" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   the CA/RA, until the CA/RA operator completes the manual
+   authentication (approving or denying the request).
+
+   In general, the requester will send a single PKCSReq (<a href="#section-3.2.1">Section 3.2.1</a>)
+   message, followed by 0 or more GetCertInitial (<a href="#section-3.2.3">Section 3.2.3</a>)
+   messages, if polling mode is entered.
+
+   In general, the CA/RA will send 0 or more CertRep (<a href="#section-3.2.2">Section 3.2.2</a>)
+   messages with status set to PENDING, followed by a single CertRep
+   (<a href="#section-3.2.2">Section 3.2.2</a>) with status set to either SUCCESS or FAILURE.
+
+<span class="h4"><a name="section-2.5.1">2.5.1</a>.  Client State Transitions</span>
+
+   The requester state transitions during enrollment operation are
+   indicated in Figure 1.
+                         GetCertInitial
+                           +----&lt;---+
+                           |        | CertRep(PENDING),
+                           |        | GetCertInitial send-timeout,
+                           |        | new-poll timer
+                           |        |
+   [CERT-NONEXISTANT] -----+---&gt; [CERT-REQ-PENDING]      [CERT-ISSUED]
+         ^             PKCSReq      |          |               ^
+         |                          |          |               |
+         |                          |          +---------------+
+         |                          |           CertRep(SUCCESS)
+         +--------------------------+
+         CertRep(FAILURE),
+         PKCSReq send-timeout,
+         max-time/max-polls exceeded
+
+                    Figure 1: State Transition Diagram
+
+   Certificate enrollment starts at the state CERT-NONEXISTANT.
+
+   Sending a PKCSReq message changes the state to CERT-REQ-PENDING.  If
+   there is no response, or sending is not possible, the state reverts
+   back to CERT-NONEXISTANT.
+
+   Receiving a CertRep message with pkiStatus set to SUCCESS changes the
+   state to CERT-ISSUED.
+
+   Receiving a CertRep message with pkiStatus set to FAILURE changes the
+   state to CERT-NONEXISTANT.
+
+   If the server sends back a CertRep message with pkiStatus set to
+   PENDING, the requester will keep polling by sending a GetCertInitial
+   message to the server, until either a CertRep message with status set
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 12]</span>
+</pre><pre class='newpage'><a name="page-13" id="page-13" href="#page-13" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   to SUCCESS or FAILURE is received, or the maximum number of polls has
+   been exceeded.
+
+   If the maximum number of polls has been exceeded or a CertRep message
+   with pkiStatus set to FAILURE is received while in the CERT-REQ-
+   PENDING state, the end entity will transition to the CERT-NONEXISTANT
+   state, and the SCEP client can eventually initiate another enrollment
+   request.  It is important to note that, as long as the requester does
+   not change its subject name or keys, the same transaction ID will be
+   used in the "new" transaction.  This is important because based on
+   this transaction ID, the certification authority can recognize this
+   as an existing transaction instead of a new one.
+
+   A successful transaction in automatic mode:
+            REQUESTER                           CA SERVER
+
+        PKCSReq: PKI cert. enrollment msg
+        --------------------------------&gt; CertRep: pkiStatus = SUCCESS
+                                          certificate attached
+                                         &lt;------------------------------
+        Receive issued certificate.
+
+                   Figure 2: Automatic mode transaction
+
+   A successful transaction in manual mode:
+           REQUESTER                           CA SERVER
+       PKCSReq: PKI cert. enrollment msg
+       --------------------------------&gt; CertRep: pkiStatus = PENDING
+                                         &lt;------------------------------
+       GetCertInitial: polling msg
+       --------------------------------&gt; CertRep: pkiStatus = PENDING
+                                         &lt;------------------------------
+       ................ &lt;manual identity authentication&gt;...............
+
+       GetCertInitial: polling msg
+       --------------------------------&gt; CertRep: pkiStatus = SUCCESS
+                                         certificate attached
+                                         &lt;------------------------------
+       Receive issued certificate.
+
+                     Figure 3: Manual mode transaction
+
+<span class="h3"><a name="section-2.6">2.6</a>.  Certificate Access</span>
+
+   A certificate query message is defined for clients to retrieve a copy
+   of their own certificates from the CA.  It allows clients that do not
+   store their certificate locally to obtain a copy when needed.  This
+   functionality is not intended to provide a general purpose
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 13]</span>
+</pre><pre class='newpage'><a name="page-14" id="page-14" href="#page-14" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   certificate directory service.
+
+   To query a certificate from the certification authority, a requester
+   sends a request consisting of the certificate's issuer name and
+   serial number.  This assumes that the requester has saved the issuer
+   name and the serial number of the issued certificate from the
+   previous enrollment transaction.  The transaction to query a
+   certificate consists of one GetCert (<a href="#section-3.2.4">Section 3.2.4</a>) message and one
+   CertRep (<a href="#section-3.2.2">Section 3.2.2</a>) message, as shown in Figure 4.
+           REQUESTER                           CA SERVER
+        GetCert: PKI certificate query msg
+        -------------------------------&gt; CertRep:  pkiStatus = SUCCESS
+                                         certificate attached
+                                         &lt;-----------------------------
+        Receive the certificate.
+
+                       Figure 4: GetCert Transaction
+
+<span class="h3"><a name="section-2.7">2.7</a>.  CRL Access</span>
+
+   SCEP clients request a CRL via one of two methods:
+
+   1.  If the CA supports CRL Distribution Points [<a href="./rfc5280" title='"Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile"'>RFC5280</a>] (<a href="#section-4.2.1.13">Section</a>
+       <a href="#section-4.2.1.13">4.2.1.13</a>), then the CRL MUST be retrieved via the mechanism
+       specified in the CDP.
+
+   2.  If the CA does not support CDP's, a CRL query is composed by
+       creating a GetCRL message consisting of the issuer name and
+       serial number from a certificate within the scope of the CRL to
+       be retrieved (e.g. from a certificate to be validated).
+
+   The server SHOULD NOT support the GetCRL method because:
+
+   o  it does not scale well due to the unnecessary cryptography (see,
+      <a href="#section-8.8">Section 8.8</a>)
+
+   o  it requires the CA to be a high-availability service
+
+   o  only limited information to determine the CRL scope is provided
+      (see <a href="./rfc5280#section-5">[RFC5280] Section&nbsp;5</a>).
+
+   The message is sent to the SCEP server in the same way as the other
+   SCEP requests: The transaction to retrieve a CRL consists of one
+   GetCRL PKI message and one CertRep PKI message, which contains only
+   the CRL (no certificates), as shown in Figure 5.
+
+   On receipt of this message, the SCEP server MAY use the
+   IssuerAndSerial information to return an appropriate CRL.
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 14]</span>
+</pre><pre class='newpage'><a name="page-15" id="page-15" href="#page-15" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+            REQUESTER                           CA SERVER
+        GetCRL: PKI CRL query msg
+     ----------------------------------&gt;
+                                       CertRep:  CRL attached
+                                    &lt;--------------------------------
+
+                       Figure 5: GetCRL Transaction
+
+<span class="h3"><a name="section-2.8">2.8</a>.  Certificate Revocation</span>
+
+   SCEP does not specify a method to request certificate revocation.
+
+   In order to revoke a certificate, the requester must contact the CA
+   server operator using a non-SCEP defined mechanism.  Although the
+   PKCS#10 [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>] challengePassword is used by SCEP for enrollment
+   authorization (see Enrollment authorization (<a href="#section-2.3">Section 2.3</a>)) this does
+   not inhibit the CA server from maintaining a record of the
+   challengePassword to use during subsequent revocation operations as
+   implied by [<a href="./rfc2985" title='"PKCS #9: Selected Object Classes and Attribute Types Version 2.0"'>RFC2985</a>].
+
+
+<span class="h2"><a name="section-3">3</a>.  SCEP Secure Message Objects</span>
+
+   PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] is a general enveloping mechanism that enables both
+   signed and encrypted transmission of arbitrary data.
+
+   All messages MUST be valid PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] structures, unless
+   otherwise noted.
+
+   SCEP messages that require confidentiality use two layers of PKCS#7,
+   as shown in Figure 6.  By applying both enveloping and signing
+   transformations, the SCEP message is protected both for the integrity
+   of its end-to-end transaction information and the confidentiality of
+   its information portion.  The advantage of this technique over the
+   conventional transaction message format is that the signed
+   transaction type information and the status of the transaction can be
+   determined prior to invoking security handling procedures specific to
+   the information portion being processed.
+
+   Some messages do not require enveloping, in which case the
+   EnvelopedData in Figure 6 is omitted.
+
+
+
+
+
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 15]</span>
+</pre><pre class='newpage'><a name="page-16" id="page-16" href="#page-16" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   ContentType = SignedData (called pkiMessage)
+     SignerInfo
+        Signature
+        authenticatedAttributes
+           transactionID
+           messageType
+           pkiStatus
+           failInfo
+           senderNonce
+           recipientNonce
+           etc
+     ContentInfo type = EnvelopedData (called pkcsPKIEnvelope; optional)
+        RecipientInfo
+        ContentInfo type = Data
+           messageData
+
+                         Figure 6: PKCS#7 Layering
+
+   Description:
+
+   o  The outer PKCS#7 is a pkiMessage (<a href="#section-3.1">Section 3.1</a>).
+
+   o  The SignedData ContentInfo, if present (e.g.  FAILURE and PENDING
+      CertRep messages will lack any signed content), MUST be a
+      pkcsPKIEnvelope (<a href="#section-3.1.2">Section 3.1.2</a>).
+
+   When a particular SCEP message carries data, this data is carried in
+   the messageData.
+
+   Note: The remainder of this document will refer only to
+   'messageData', but it is understood to always be encapsulated in the
+   pkcsPKIEnvelope (<a href="#section-3.1.2">Section 3.1.2</a>).  The format of the data in the
+   messageData is defined by the messageType attribute (see
+   <a href="#section-3.1.1">Section 3.1.1</a>) of the SignedData.  If there is no messageData to be
+   transmitted, the entire pkcsPKIEnvelope MUST be omitted.
+
+<span class="h3"><a name="section-3.1">3.1</a>.  SCEP pkiMessage</span>
+
+   The basic building block of all secured SCEP messages is the SCEP
+   pkiMessage.  It consists of an PKCS#7 signed-data content type, as
+   defined in PKCS#7 <a href="./rfc2315#section-9">[RFC2315] Section&nbsp;9</a>.  The following restrictions
+   apply:
+
+   o  version MUST be 1
+
+   o  the contentType in contentInfo MUST be data ({pkcs-7 1}) as
+      defined in PKCS#7 <a href="./rfc2315#section-8">[RFC2315] Section&nbsp;8</a>.
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 16]</span>
+</pre><pre class='newpage'><a name="page-17" id="page-17" href="#page-17" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   o  The signed content, if present (e.g.  FAILURE and PENDING CertRep
+      messages will lack any signed content), MUST be a pkcsPKIEnvelope
+      (<a href="#section-3.1.2">Section 3.1.2</a>), and must match the messageType attribute.
+
+   o  The SignerInfo MUST contain a set of authenticatedAttributes (see
+      PKCS#7 <a href="./rfc2315#section-9.2">[RFC2315] Section&nbsp;9.2</a> as well as <a href="#section-3.1.1">Section 3.1.1</a> in this
+      document).  All messages MUST contain
+
+      *  an SCEP transactionID attribute
+
+      *  an SCEP messageType attribute
+
+      *  an SCEP senderNonce attribute
+
+      *  any attributes required by PKCS#7 <a href="./rfc2315#section-9.2">[RFC2315] Section&nbsp;9.2</a>
+
+      If the message is a response, it MUST also include
+
+      *  an SCEP pkiStatus attribute
+
+      *  an SCEP recipientNonce attribute
+
+<span class="h4"><a name="section-3.1.1">3.1.1</a>.  Signed Transaction Attributes</span>
+
+   The following transaction attributes are encoded as authenticated
+   attributes, and are carried, as specified in PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] <a href="#section-9.2">Section</a>
+   <a href="#section-9.2">9.2</a>, in the SignerInfo for this signedData.
+
+   Please refer to <a href="#appendix-A">Appendix A</a> for the OID definitions.
+
+     +----------------+-----------------+---------------------------+
+     | Attribute      | Encoding        | Comment                   |
+     +----------------+-----------------+---------------------------+
+     | transactionID  | PrintableString | Hash value as a string    |
+     | messageType    | PrintableString | Decimal value as a string |
+     | pkiStatus      | PrintableString | Decimal value as a string |
+     | failInfo       | PrintableString | Decimal value as a string |
+     | senderNonce    | OCTET STRING    |                           |
+     | recipientNonce | OCTET STRING    |                           |
+     +----------------+-----------------+---------------------------+
+
+                          Transaction Attributes
+
+   The attributes are detailed in the following sections.
+
+
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 17]</span>
+</pre><pre class='newpage'><a name="page-18" id="page-18" href="#page-18" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h5"><a name="section-3.1.1.1">3.1.1.1</a>.  transactionID</span>
+
+   A PKI operation is a transaction consisting of the messages exchanged
+   between a requester and the server.  The transaction identifier is a
+   string generated by the client when starting a transaction.  The
+   client MUST generate a unique string as the transaction identifier,
+   which MUST be used for all PKI messages exchanged for a given
+   enrollment, encoded as a PrintableString.
+
+   The transactionID SHOULD be generated as a SHA-1, SHA-256, SHA-512 or
+   MD5 hash on the public key value for which the enrollment request is
+   made.  This allows the SCEP client to automatically generate the same
+   transactionID for any given keypair.  The SCEP protocol requires that
+   transactionIDs be unique, so that subsequent polling queries can be
+   matched with previous transactions.  When separate signing and
+   encryption certificates are requested by the client, using distinct
+   keypairs ensures that distinct transactionIDs are also used.
+
+   When using the certificate query and CRL query messages defined in
+   this protocol, the transactionID is required so that the requester
+   can match the response message with the outstanding request message.
+   When using LDAP to query the certificate and the CRL, the behavior is
+   specified by the LDAP protocol.  For a non-enrollment message (for
+   example GetCert and GetCRL), the transactionID SHOULD be a number
+   unique to the client.
+
+<span class="h5"><a name="section-3.1.1.2">3.1.1.2</a>.  messageType</span>
+
+   The messageType attribute specifies the type of operation performed
+   by the transaction.  This attribute MUST be included in all PKI
+   messages.  Currently, the following message types are defined:
+
+   o  PKCSReq (19) -- PKCS#10 [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>] certificate request
+
+   o  CertRep (3) -- Response to certificate or CRL request
+
+   o  GetCertInitial (20) -- Certificate polling in manual enrollment
+
+   o  GetCert (21) -- Retrieve a certificate
+
+   o  GetCRL (22) -- Retrieve a CRL
+
+<span class="h5"><a name="section-3.1.1.3">3.1.1.3</a>.  pkiStatus</span>
+
+   All response messages MUST include transaction status information,
+   which is defined as pkiStatus attribute:
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 18]</span>
+</pre><pre class='newpage'><a name="page-19" id="page-19" href="#page-19" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   o  SUCCESS (0) -- request granted
+
+   o  FAILURE (2) -- request rejected.  When pkiStatus is FAILURE, the
+      failInfo attribute, as defined in <a href="#section-3.1.1.4">Section 3.1.1.4</a>, MUST also be
+      present.
+
+   o  PENDING (3) -- request pending for manual approval
+
+<span class="h5"><a name="section-3.1.1.4">3.1.1.4</a>.  failInfo</span>
+
+   The failInfo attribute MUST contain one of the following failure
+   reasons:
+
+   o  badAlg (0) -- Unrecognized or unsupported algorithm identifier
+
+   o  badMessageCheck (1) -- integrity check failed
+
+   o  badRequest (2) -- transaction not permitted or supported
+
+   o  badTime (3) -- The signingTime attribute from the PKCS#7
+      authenticatedAttributes was not sufficiently close to the system
+      time (see <a href="#section-3.1.1.6">Section 3.1.1.6</a>).
+
+   o  badCertId (4) -- No certificate could be identified matching the
+      provided criteria
+
+<span class="h5"><a name="section-3.1.1.5">3.1.1.5</a>.  senderNonce and recipientNonce</span>
+
+   The attributes of senderNonce and recipientNonce are a 16 byte random
+   number generated for each transaction.  These are intended to prevent
+   replay attacks.
+
+   When a requester sends a PKI message to the server, a senderNonce
+   MUST be included in the message.
+
+   The recipient SHOULD copy the senderNonce into the recipientNonce of
+   the reply as a proof of liveliness.
+
+   The requester SHOULD verify that the recipientNonce of the reply
+   matches the senderNonce it sent in the request.
+
+<span class="h5"><a name="section-3.1.1.6">3.1.1.6</a>.  signingTime Attribute</span>
+
+   The signingTime attribute is defined in <a href="./rfc2985#section-5.3.3">[RFC2985] Section&nbsp;5.3.3</a>, and
+   is carried as specified in <a href="./rfc2315#section-9.2">[RFC2315] Section&nbsp;9.2</a>.  This attribute is
+   optional.
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 19]</span>
+</pre><pre class='newpage'><a name="page-20" id="page-20" href="#page-20" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h4"><a name="section-3.1.2">3.1.2</a>.  SCEP pkcsPKIEnvelope</span>
+
+   The information portion of a SCEP message is carried inside an
+   enveloped-data content type, as defined in PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] <a href="#section-10">Section</a>
+   <a href="#section-10">10</a>, with the following restrictions:
+
+   o  version MUST be 0
+
+   o  contentType in encryptedContentInfo MUST be data ({pkcs-7 1}) as
+      defined in PKCS#7 <a href="./rfc2315#section-8">[RFC2315] Section&nbsp;8</a>.
+
+   o  encryptedContent MUST be the SCEP message being transported (see
+      <a href="#section-4">Section 4</a>), and must match the messageType authenticated Attribute
+      in the pkiMessage.
+
+   The PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] content-encryption key (see <a href="#section-10">Section 10</a>, step 2)
+   is encrypted using the public key of the recipient of the message,
+   i.e. the RA or the CA public key (if sent from the requester), or the
+   requester public key (if sent as a reply to the requester).
+
+<span class="h3"><a name="section-3.2">3.2</a>.  SCEP pkiMessage types</span>
+
+   All of the messages in this section are pkiMessages (<a href="#section-3.1">Section 3.1</a>),
+   where the type of the message MUST be specified in the 'messageType'
+   authenticated Attribute.  Each section defines a valid message type,
+   the corresponding messageData formats, and mandatory authenticated
+   attributes for that type.
+
+<span class="h4"><a name="section-3.2.1">3.2.1</a>.  PKCSReq</span>
+
+   The messageData for this type consists of a DER-encoded PKCS#10
+   Certification Request [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>].  The certification request MAY
+   contain any fields defined in PKCS#10 [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>], and MUST contain at
+   least the following items:
+
+   o  the subject Distinguished Name
+
+   o  the subject public key
+
+   o  a challengePassword attribute.  The Challenge Password may be used
+      to (out-of-band) authenticate the enrollment request itself, or in
+      an out-of-band revocation request for the issued certificate.
+
+   In addition to the authenticatedAttributes required for a valid
+   PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>], this pkiMessage MUST include the following
+   attributes:
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 20]</span>
+</pre><pre class='newpage'><a name="page-21" id="page-21" href="#page-21" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   o  a transactionID (<a href="#section-3.1.1.1">Section 3.1.1.1</a>) attribute
+
+   o  a messageType (<a href="#section-3.1.1.2">Section 3.1.1.2</a>) attribute set to PKCSReq
+
+   o  a senderNonce (<a href="#section-3.1.1.5">Section 3.1.1.5</a>) attribute
+
+   The pkcsPKIEnvelope for this message type is protected using the
+   public key of the recipient as detailed in <a href="#section-3.1.2">Section 3.1.2</a>, e.g. either
+   the CA or RA public key.
+
+<span class="h4"><a name="section-3.2.2">3.2.2</a>.  CertRep</span>
+
+   The messageData for this type consists of a DER-encoded degenerate
+   certificates-only Signed-data (<a href="#section-3.3">Section 3.3</a>).  The exact content
+   required for they reply depends on the type of request this message
+   is a reply to.  They are detailed in Table 1 and in <a href="#section-4">Section 4</a>.
+
+   In addition to the authenticatedAttributes required for a valid
+   PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>], this pkiMessage MUST include the following
+   attributes:
+
+   o  the transactionID (<a href="#section-3.1.1.1">Section 3.1.1.1</a>) attribute copied from the
+      request we are responding to
+
+   o  a messageType (<a href="#section-3.1.1.2">Section 3.1.1.2</a>) attribute set to CertRep
+
+   o  a senderNonce (<a href="#section-3.1.1.5">Section 3.1.1.5</a>) attribute
+
+   o  a recipientNonce attribute (<a href="#section-3.1.1.5">Section 3.1.1.5</a>) copied from the
+      senderNonce from the request we are responding to.
+
+   o  a pkiStatus (<a href="#section-3.1.1.3">Section 3.1.1.3</a>) set to the status of the reply.
+
+   The pkcsPKIEnvelope for this message type is protected using the
+   public key of the recipient as detailed in <a href="#section-3.1.2">Section 3.1.2</a>.  For
+   example if a self-signed certificate was used to send the original
+   request then this self-signed certificate's public key is used to
+   encrypt the content-encryption key of the SUCCESS response's
+   pkcsPKIEnvelope.
+
+<span class="h5"><a name="section-3.2.2.1">3.2.2.1</a>.  CertRep SUCCESS</span>
+
+   When the pkiStatus attribute is set to SUCCESS, the messageData for
+   this message consists of a DER-encoded degenerate certificates-only
+   Signed-data (<a href="#section-3.3">Section 3.3</a>).  The content of this degenerate
+   certificates-only Signed-Data depends on what the original request
+   was, as outlined in Table 1.
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 21]</span>
+</pre><pre class='newpage'><a name="page-22" id="page-22" href="#page-22" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   +----------------+--------------------------------------------------+
+   | Request-type   | Reply-contents                                   |
+   +----------------+--------------------------------------------------+
+   | PKCSReq        | the reply MUST contain at least the issued       |
+   |                | certificate in the certificates field of the     |
+   |                | Signed-Data.  The reply MAY contain additional   |
+   |                | certificates, but the issued certificate MUST be |
+   |                | the first in the list.  The reply MUST NOT       |
+   |                | contain a CRL.  All returned certificates MUST   |
+   |                | conform to [<a href="./rfc5280" title='"Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile"'>RFC5280</a>].                            |
+   | GetCertInitial | same as PKCSReq                                  |
+   | GetCert        | the reply MUST contain at least the requested    |
+   |                | certificate in the certificates field of the     |
+   |                | Signed-Data.  The reply MAY contain additional   |
+   |                | certificates, but the requested certificate MUST |
+   |                | be the first in the list.  The reply MUST NOT    |
+   |                | contain a CRL.  All returned certificates MUST   |
+   |                | conform to [<a href="./rfc5280" title='"Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile"'>RFC5280</a>].                            |
+   | GetCRL         | the reply MUST contain the CRL in the crls field |
+   |                | of the Signed-Data.  The reply MUST NOT contain  |
+   |                | a certificate.  The CRL MUST be a valid CRL      |
+   |                | according to [<a href="./rfc5280" title='"Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile"'>RFC5280</a>].                          |
+   +----------------+--------------------------------------------------+
+
+                          Table 1: CertRep Types
+
+<span class="h5"><a name="section-3.2.2.2">3.2.2.2</a>.  CertRep FAILURE</span>
+
+   When the pkiStatus attribute is set to FAILURE, the reply MUST also
+   contain a failInfo (<a href="#section-3.1.1.4">Section 3.1.1.4</a>) attribute set to the appropriate
+   error condition describing the failure.  The pkcsPKIEnvelope
+   (<a href="#section-3.1.2">Section 3.1.2</a>) MUST be omitted.
+
+<span class="h5"><a name="section-3.2.2.3">3.2.2.3</a>.  CertRep PENDING</span>
+
+   When the pkiStatus attribute is set to PENDING, the pkcsPKIEnvelope
+   (<a href="#section-3.1.2">Section 3.1.2</a>) MUST be omitted.
+
+<span class="h4"><a name="section-3.2.3">3.2.3</a>.  GetCertInitial</span>
+
+   The messageData for this type consists of a DER-encoded
+   IssuerAndSubject (<a href="#section-3.2.3.1">Section 3.2.3.1</a>).  The issuer is set to the
+   issuerName from the certification authority from which we are issued
+   certificates.  The Subject is set to the SubjectName we used when
+   requesting the certificate.
+
+   In addition to the authenticatedAttributes required for a valid
+   PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>], this pkiMessage MUST include the following
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 22]</span>
+</pre><pre class='newpage'><a name="page-23" id="page-23" href="#page-23" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   attributes:
+
+   o  the same transactionID (<a href="#section-3.1.1.1">Section 3.1.1.1</a>) attribute from original
+      PKCSReq message
+
+   o  a messageType (<a href="#section-3.1.1.2">Section 3.1.1.2</a>) attribute set to GetCertInitial
+
+   o  a senderNonce (<a href="#section-3.1.1.5">Section 3.1.1.5</a>) attribute
+
+<span class="h5"><a name="section-3.2.3.1">3.2.3.1</a>.  IssuerAndSubject</span>
+
+   Similar to the IssuerAndSerial defined in PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] <a href="#section-6.7">Section</a>
+   <a href="#section-6.7">6.7</a>, we need to define an IssuerAndSubject ASN.1 type (Figure 7).
+
+   The ASN.1 definition of the issuerAndSubject type is as follows:
+   issuerAndSubject ::= SEQUENCE {
+       issuer Name,
+       subject Name
+   }
+
+                     Figure 7: IssuerAndSubject ASN.1
+
+<span class="h4"><a name="section-3.2.4">3.2.4</a>.  GetCert</span>
+
+   The messageData for this type consists of a DER-encoded
+   IssuerAndSerial as defined in PKCS#7 <a href="./rfc2315#section-6.7">[RFC2315] Section&nbsp;6.7</a> containing
+   the "distinguished name of the certificate issuer and an issuer-
+   specific certificate serial number" which uniquely identifies the
+   certificate being requested.
+
+   In addition to the authenticatedAttributes required for a valid
+   PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>], this pkiMessage MUST include the following
+   attributes:
+
+   o  a transactionID (<a href="#section-3.1.1.1">Section 3.1.1.1</a>) attribute
+
+   o  a messageType (<a href="#section-3.1.1.2">Section 3.1.1.2</a>) attribute set to GetCert
+
+   o  a senderNonce (<a href="#section-3.1.1.5">Section 3.1.1.5</a>) attribute
+
+   A self-signed certificate MAY be used in the signed envelope.  This
+   enables the requester to request their own certificate if they were
+   unable to store it previously.
+
+<span class="h4"><a name="section-3.2.5">3.2.5</a>.  GetCRL</span>
+
+   The messageData for this type consists of a DER-encoded
+   IssuerAndSerial as defined in PKCS#7 <a href="./rfc2315#section-6.7">[RFC2315] Section&nbsp;6.7</a> along with
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 23]</span>
+</pre><pre class='newpage'><a name="page-24" id="page-24" href="#page-24" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   the issuer name and serial number from the certificate to be
+   validated.
+
+   In addition to the authenticatedAttributes required for a valid
+   PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>], this pkiMessage MUST include the following
+   attributes:
+
+   o  a transactionID (<a href="#section-3.1.1.1">Section 3.1.1.1</a>) attribute
+
+   o  a messageType (<a href="#section-3.1.1.2">Section 3.1.1.2</a>) attribute set to GetCRL
+
+   o  a senderNonce (<a href="#section-3.1.1.5">Section 3.1.1.5</a>) attribute
+
+<span class="h3"><a name="section-3.3">3.3</a>.  Degenerate certificates-only PKCS#7 Signed-data</span>
+
+   [<a name="ref-RFC2315" id="ref-RFC2315">RFC2315</a>] <a href="#section-9">Section 9</a> includes a degenerate case of the PKCS#7 Signed-
+   data content type, in which there are no signers.  The use of such a
+   degenerate case is to disseminate certificates and certificate-
+   revocation lists.  For SCEP the content field of the ContentInfo
+   value of a degenerate certificates-only Signed-Data MUST be omitted.
+
+   When carrying certificates, the certificates are included in the
+   'certificates' field of the Signed-Data.  When carrying a CRL, the
+   CRL will be included in the 'crls' field of the Signed-Data.
+
+
+<span class="h2"><a name="section-4">4</a>.  SCEP Transactions</span>
+
+   This section describes the SCEP Transactions, without explaining the
+   transport.  The transport of each message is discussed in <a href="#section-5">Section 5</a>.
+   Some of the transaction-requests have no data to send, i.e. the only
+   data is the message-type itself (e.g. a GetCACert message has no
+   additional data).  The use of such messages will become clearer in
+   <a href="#section-5">Section 5</a>.
+
+   In this section, each SCEP transaction is specified in terms of the
+   complete messages exchanged during the transaction.
+
+   The order of the transactions in this section is mirrored in
+   <a href="#section-5.2">Section 5.2</a> for better organization and readability.
+
+<span class="h3"><a name="section-4.1">4.1</a>.  Get CA Certificate</span>
+
+   To get the CA certificate(s), the requester sends a GetCACert message
+   to the server.  There is no request data associated with this message
+   (see <a href="#section-5.2.1">Section 5.2.1</a>).
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 24]</span>
+</pre><pre class='newpage'><a name="page-25" id="page-25" href="#page-25" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h4"><a name="section-4.1.1">4.1.1</a>.  Get CA Certificate Response Message Format</span>
+
+   The response depends on whether the responding server has RA
+   certificates or only a single CA certificate.  The server MUST
+   indicate which response it is sending via the transport protocol used
+   (see <a href="#section-5.2.1">Section 5.2.1</a>).
+
+   All returned certificates MUST conform to [<a href="./rfc5280" title='"Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile"'>RFC5280</a>].
+
+   A fingerprint is generated using the SHA1, SHA256, SHA512 or MD5 hash
+   algorithm on the whole CA certificate received by the requester
+   (regardless of the presence of RA certificates).  If the requester
+   does not have a certificate path to a trust anchor certificate, this
+   fingerprint may be used to verify the certificate, by some positive
+   out-of-band means, such as a phone call or prior configuration.
+
+<span class="h5"><a name="section-4.1.1.1">4.1.1.1</a>.  CA Certificate Response Message Format</span>
+
+   If the server is a certification authority and does not have any RA
+   Certificates, the response consists of a single DER-encoded X.509 CA
+   certificate.
+
+<span class="h5"><a name="section-4.1.1.2">4.1.1.2</a>.  CA/RA Certificate Response Message Format</span>
+
+   If the server has RA Certificates, the response consists of a DER-
+   encoded degenerate certificates-only Signed-data (<a href="#section-3.3">Section 3.3</a>)
+   containing the CA certificate and RA certificates.
+
+<span class="h3"><a name="section-4.2">4.2</a>.  Certificate Enrollment</span>
+
+   A PKCSReq (<a href="#section-3.2.1">Section 3.2.1</a>) message is used to perform a certificate
+   enrollment transaction.
+
+   The reply MUST be a CertRep (<a href="#section-3.2.2">Section 3.2.2</a>) message sent back from
+   the server, indicating SUCCESS, FAILURE, or PENDING.
+
+   Precondition: Both the requester and the certification authority have
+   completed their initialization process.  The requester has already
+   been configured with the CA/RA certificate.
+
+   Postcondition: The requester recieves the certificate, the request is
+   rejected, or the request is pending.  A pending response might
+   indicate that manual authentication is necessary.
+
+<span class="h4"><a name="section-4.2.1">4.2.1</a>.  Certificate Enrollment Response Message</span>
+
+   If the request is granted, a CertRep (<a href="#section-3.2.2">Section 3.2.2</a>) message with
+   pkiStatus set to SUCCESS is returned.  The reply MUST also contain
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 25]</span>
+</pre><pre class='newpage'><a name="page-26" id="page-26" href="#page-26" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   the certificate (and MAY contain any other certificates needed by the
+   requester).  The issued certificate MUST be the first in the list.
+
+   If the request is rejected, a CertRep (<a href="#section-3.2.2">Section 3.2.2</a>) message with
+   pkiStatus set to FAILURE is returned.  The reply MUST also contain a
+   failInfo attribute.
+
+   If the the CA is configured to manually authenticate the requester, a
+   CertRep (<a href="#section-3.2.2">Section 3.2.2</a>) message with pkiStatus set to PENDING MAY be
+   returned.  The CA MAY return a PENDING for other reasons.
+
+<span class="h3"><a name="section-4.3">4.3</a>.  Poll for Requester Initial Certificate</span>
+
+   Triggered by a CertRep (<a href="#section-3.2.2">Section 3.2.2</a>) with pkiStatus set to PENDING,
+   a requester will enter the polling state by periodically sending
+   GetCertInitial (<a href="#section-3.2.3">Section 3.2.3</a>) to the server, until either the
+   request is granted and the certificate is sent back, or the request
+   is rejected, or the configured time limit for polling (or maximum
+   number of polls) is exceeded.
+
+   Since GetCertInitial is part of the enrollment, the messages
+   exchanged during the polling period MUST carry the same transactionID
+   attribute as the previous PKCSReq.  A server receiving a
+   GetCertInitial for which it does not have a matching PKCSReq MUST
+   ignore this request.
+
+   Since at this time the certificate has not been issued, the requester
+   can only use its own subject name (which was contained in the
+   original PKCS#10 sent via PKCSReq) to identify the polled certificate
+   request.  Since there can be multiple outstanding requests from one
+   requester (for example, if different keys and different key-usages
+   were used to request multiple certificates), the transaction ID must
+   also be included, to disambiguate between multiple requests.
+
+   PreCondition: The requester has received a CertRep with pkiStatus set
+   to PENDING.
+
+   PostCondition: The requester has either received a valid response,
+   which could be either a valid certificate (pkiStatus = SUCCESS), or a
+   FAILURE message, or the polling period times out.
+
+<span class="h4"><a name="section-4.3.1">4.3.1</a>.  Polling Response Message Format</span>
+
+   The response messages for GetCertInitial are the same as in
+   <a href="#section-4.2.1">Section 4.2.1</a>.
+
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 26]</span>
+</pre><pre class='newpage'><a name="page-27" id="page-27" href="#page-27" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h3"><a name="section-4.4">4.4</a>.  Certificate Access</span>
+
+   A requester can query an issued certificate from the SCEP server, as
+   long as the requester knows the issuer name and the issuer assigned
+   certificate serial number.  This transaction is not intended to
+   provide a generic certificate directory service.
+
+   This transaction consists of one GetCert (<a href="#section-3.2.4">Section 3.2.4</a>) message sent
+   to the server by a requester, and one CertRep (<a href="#section-3.2.2">Section 3.2.2</a>) message
+   sent back from the server.
+
+   PreCondition: The certification authority has issued the queried
+   certificate and the issuer assigned serial number is known.
+
+   PostCondition: Either the certificate is sent back or the request is
+   rejected.
+
+<span class="h4"><a name="section-4.4.1">4.4.1</a>.  Certificate Access Response Message Format</span>
+
+   In this case, the CertRep from the server is same as in
+   <a href="#section-4.2.1">Section 4.2.1</a>, except that the server will only either grant the
+   request (SUCCESS) or reject the request (FAILURE).
+
+<span class="h3"><a name="section-4.5">4.5</a>.  CRL Access</span>
+
+   Clients MAY request a CRL from the SCEP server as described in
+   <a href="#section-2.7">Section 2.7</a>.
+
+   PreCondition: The certification authority certificate has been
+   downloaded to the end entity.
+
+   PostCondition: CRL sent back to the requester.
+
+<span class="h4"><a name="section-4.5.1">4.5.1</a>.  CRL Access Response Message Format</span>
+
+   The CRL is sent back to the requester in a CertRep (<a href="#section-3.2.2">Section 3.2.2</a>)
+   message.  The information portion of this message is a degenerate
+   certificates-only Signed-data (<a href="#section-3.3">Section 3.3</a>) that contains only the
+   most recent CRL in the crls field of the Signed-Data.
+
+   The server MAY return any appropriate CRL.
+
+<span class="h3"><a name="section-4.6">4.6</a>.  Get Next Certification Authority Certificate</span>
+
+   When a CA certificate is about to expire, clients need to retrieve
+   the CA's next CA certificate (i.e. the Rollover Certificate).  This
+   is done via the GetNextCACert message.  There is no request data
+   associated with this message (see <a href="#section-5.2.6">Section 5.2.6</a>).
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 27]</span>
+</pre><pre class='newpage'><a name="page-28" id="page-28" href="#page-28" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h4"><a name="section-4.6.1">4.6.1</a>.  Get Next CA Response Message Format</span>
+
+   The response consists of a SignedData PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>], signed by the
+   current CA (or RA) signing key.
+
+   Clients MUST validate the signature on the the SignedData PKCS#7
+   [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] before accepting any of its contents.
+
+   The content of the SignedData PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] is a degenerate
+   certificates-only Signed-data (<a href="#section-3.3">Section 3.3</a>) message containing the
+   new CA certificate and any new RA certificates, as defined in
+   <a href="#section-5.2.1.1.2">Section 5.2.1.1.2</a>, to be used when the current CA certificate
+   expires.
+
+   If the CA (or RA) does not have the Rollover certificate(s) it MUST
+   reject the request.  It SHOULD also remove the GetNextCACert setting
+   from the capabilities until it does have rollover certificates.
+
+   If there are any RA certificates in this response, clients MUST check
+   that these RA certificates are signed by the CA, and MUST check
+   authorization of these RA certificates (see <a href="#section-2.1.3">Section 2.1.3</a>).
+
+
+<span class="h2"><a name="section-5">5</a>.  SCEP Transport</span>
+
+   HTTP is used as the transport protocol for SCEP Message Objects.
+
+<span class="h3"><a name="section-5.1">5.1</a>.  HTTP "GET" Message Format</span>
+
+   SCEP uses the HTTP "GET" messages to request information from the CA.
+   The following defines the syntax of a HTTP GET message sent from a
+   requester to a certification authority server:
+   "GET" CGI-PATH CGI-PROG "?operation=" OPERATION "&amp;message=" MESSAGE
+
+   where:
+
+   o  CGI-PATH defines the actual CGI path to invoke the CGI program
+      that parses the request.
+
+   o  CGI-PROG is set to be the string "pkiclient.exe".  This is
+      intended to be the program that the CA will use to handle the SCEP
+      transactions, though the CA may ignore CGI-PROG and use only the
+      CGI-PATH.
+
+   o  OPERATION depends on the SCEP transaction and is defined in the
+      following sections.
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 28]</span>
+</pre><pre class='newpage'><a name="page-29" id="page-29" href="#page-29" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   o  MESSAGE depends on the SCEP transaction and is defined in the
+      following sections.
+
+   If the CA supports it, requests SHOULD be done via an HTTP POST.
+   This is described in <a href="#appendix-F">Appendix F</a>.
+
+<span class="h4"><a name="section-5.1.1">5.1.1</a>.  Response Message Format</span>
+
+   For each GET operation, the CA/RA server MUST return a Content-Type
+   and appropriate response data, if any.
+
+<span class="h3"><a name="section-5.2">5.2</a>.  SCEP HTTP Messages</span>
+
+   This section describes the OPERATION and MESSAGE values for SCEP
+   exchanges.
+
+<span class="h4"><a name="section-5.2.1">5.2.1</a>.  GetCACert</span>
+
+   The OPERATION MUST be set to "GetCACert".
+
+   The MESSAGE MAY be omitted, or it MAY be a string that represents the
+   certification authority issuer identifier.  A CA Administrator
+   defined string allows for multiple CAs supported by one SCEP server.
+
+<span class="h5"><a name="section-5.2.1.1">5.2.1.1</a>.  GetCACert Response</span>
+
+   The response for GetCACert is different between the case where the CA
+   directly communicates with the requester during the enrollment, and
+   the case where a RA exists and the requester communicates with the RA
+   during the enrollment.
+
+<span class="h6"><a name="section-5.2.1.1.1">5.2.1.1.1</a>.  CA Certificate Only Response</span>
+
+   The response will have a Content-Type of "application/
+   x-x509-ca-cert".
+
+   The body of this response consists of a DER-encoded X.509 CA
+   certificate, as defined in <a href="#section-4.1.1.1">Section 4.1.1.1</a>.
+   "Content-Type:application/x-x509-ca-cert\n\n"&lt;DER-encoded X.509&gt;
+
+<span class="h6"><a name="section-5.2.1.1.2">5.2.1.1.2</a>.  CA and RA Certificates Response</span>
+
+   The response will have a Content-Type of "application/
+   x-x509-ca-ra-cert".
+
+   The body of this response consists of a DER-encoded degenerate
+   certificates-only Signed-data (<a href="#section-3.3">Section 3.3</a>) containing both CA and RA
+   certificates, as defined in <a href="#section-4.1.1.2">Section 4.1.1.2</a>.
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 29]</span>
+</pre><pre class='newpage'><a name="page-30" id="page-30" href="#page-30" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   "Content-Type:application/x-x509-ca-ra-cert\n\n"&lt;DER-encoded PKCS7&gt;
+
+<span class="h4"><a name="section-5.2.2">5.2.2</a>.  PKCSReq</span>
+
+   The OPERATION MUST be set to "PKIOperation".
+
+   The MESSAGE consists of a base64-encoded DER-encoded PKCSReq SCEP
+   message.
+
+   An example PKIOperation request might look as follows:
+ GET /cgi-bin/pkiclient.exe?operation=PKIOperation&amp;message=MIAGCSqGSIb3D
+ QEHA6CAMIACAQAxgDCBzAIBADB2MGIxETAPBgNVBAcTCE ......AAAAAA== HTTP/1.0
+
+<span class="h5"><a name="section-5.2.2.1">5.2.2.1</a>.  PKCSReq Response</span>
+
+   The response will have a Content-Type of "application/x-pki-message".
+
+   The body of this response consists of a DER-encoded CertRep SCEP
+   message defined in <a href="#section-4.2.1">Section 4.2.1</a>.  The following is an example of the
+   response:
+   "Content-Type:application/x-pki-message\n\n"&lt;DER-encoded CertRep msg&gt;
+
+<span class="h4"><a name="section-5.2.3">5.2.3</a>.  GetCertInitial</span>
+
+   The OPERATION MUST be set to "PKIOperation".
+
+   The MESSAGE consists of a base64-encoded DER-encoded GetCertInitial
+   SCEP message.
+
+<span class="h5"><a name="section-5.2.3.1">5.2.3.1</a>.  GetCertInitial Response</span>
+
+   The body of this response consists of a DER-encoded CertRep SCEP
+   message defined in <a href="#section-4.3.1">Section 4.3.1</a>.
+
+<span class="h4"><a name="section-5.2.4">5.2.4</a>.  GetCert</span>
+
+   The OPERATION MUST be set to "PKIOperation".
+
+   The MESSAGE consists of a base64-encoded DER-encoded GetCert SCEP
+   message.
+
+<span class="h5"><a name="section-5.2.4.1">5.2.4.1</a>.  GetCert Response</span>
+
+   The body of this response consists of a DER-encoded CertRep SCEP
+   message defined in <a href="#section-4.4.1">Section 4.4.1</a>.
+
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 30]</span>
+</pre><pre class='newpage'><a name="page-31" id="page-31" href="#page-31" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h4"><a name="section-5.2.5">5.2.5</a>.  GetCRL</span>
+
+   The OPERATION MUST be set to "PKIOperation".
+
+   The MESSAGE consists of a base64-encoded DER-encoded GetCRL SCEP
+   message.
+
+<span class="h5"><a name="section-5.2.5.1">5.2.5.1</a>.  GetCRL Response</span>
+
+   The body of this response consists of a DER-encoded CertRep SCEP
+   message defined in <a href="#section-4.5.1">Section 4.5.1</a>.
+
+<span class="h4"><a name="section-5.2.6">5.2.6</a>.  GetNextCACert</span>
+
+   The OPERATION MUST be set to "GetNextCACert".
+
+   The MESSAGE MAY be ommitted, or it MAY be a string that represents
+   the certification authority issuer identifier, if such has been set
+   by the CA Administrator.
+
+<span class="h5"><a name="section-5.2.6.1">5.2.6.1</a>.  GetNextCACert Response</span>
+
+   The response will have a Content-Type of "application/
+   x-x509-next-ca-cert".
+
+   The body of this response consists of a SignedData PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>],
+   as defined in <a href="#section-4.6.1">Section 4.6.1</a>.  (This is similar to the GetCert
+   response but does not include any of the attributes defined in
+   <a href="#section-3.1.1">Section 3.1.1</a>.)
+   "Content-Type:application/x-x509-next-ca-cert\n\n"
+   &lt;BER-encoded SignedData&lt;DER-encoded degenerate PKCS7&gt;&gt;
+
+
+<span class="h2"><a name="section-6">6</a>.  Contributors/Acknowledgements</span>
+
+   The editor would like to thank all the previous editors, authors and
+   contributors: Cheryl Madson, Xiaoyi Liu, David McGrew, David Cooper,
+   Andy Nourse etc for their work maintaining the draft over the years.
+   Numerous other people have contributed during the long life cycle of
+   the draft and all deserve thanks.
+
+   The authors would like to thank Peter William of ValiCert, Inc.
+   (formerly of VeriSign, Inc.) and Alex Deacon of VeriSign, Inc. and
+   Christopher Welles of IRE, Inc. for their contributions to early
+   versions of this protocol and this document.
+
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 31]</span>
+</pre><pre class='newpage'><a name="page-32" id="page-32" href="#page-32" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h2"><a name="section-7">7</a>.  IANA Considerations</span>
+
+   This memo includes no request to IANA.
+
+
+<span class="h2"><a name="section-8">8</a>.  Security Considerations</span>
+
+   The security goals of SCEP are that no adversary can:
+
+   o  subvert the public key/identity binding from that intended,
+
+   o  discover the identity information in the enrollment requests and
+      issued certificates,
+
+   o  cause the revocation of certificates with any non-negligible
+      probability.
+
+   Here an adversary is any entity other than the requester and the CA
+   (and optionally the RA) participating in the protocol.  The adversary
+   is computationally limited, but that can manipulate data during
+   transmission (that is, can act as a man-in-the-middle).  The precise
+   meaning of 'computationally limited' depends on the implementer's
+   choice of one-way hash functions and cryptographic algorithms.  The
+   mandatory to implement algorithms are RSA, DES and MD5.  Depending on
+   the CA capabilities, Triple-DES MAY be used instead of DES, and
+   SHA-1, SHA-256, or SHA-512 MAY be used instead of MD5 (see
+   <a href="#appendix-C">Appendix C</a>).
+
+   The first and second goals are met through the use of PKCS#7
+   [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] and PKCS#10 [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>] encryption and digital signatures
+   using authenticated public keys.  The CA's public key is
+   authenticated via the checking of the CA fingerprint, as specified in
+   <a href="#section-2.1.2">Section 2.1.2</a>, and the SCEP client's public key is authenticated
+   through the manual authentication or pre-shared secret
+   authentication, as specified in <a href="#section-2.2">Section 2.2</a>.  The third goal is met
+   through the use of a challenge password for revocation, which is
+   chosen by the SCEP client and communicated to the CA protected by the
+   PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] encryptedData, as specified in <a href="#section-2.8">Section 2.8</a>.
+
+   The motivation of the first security goal is straightforward.  The
+   motivation for the second security goal is to protect the identity
+   information in the enrollment requests and issued certificates.
+   Subsequent protocols can use the certificate in ways that either
+   expose the identity information, or protect it, depending on the
+   security requirements of those protocols.  The motivation for the
+   third security goal is to protect the SCEP clients from denial of
+   service attacks.
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 32]</span>
+</pre><pre class='newpage'><a name="page-33" id="page-33" href="#page-33" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h3"><a name="section-8.1">8.1</a>.  General Security</span>
+
+   Common key-management considerations such as keeping private keys
+   truly private and using adequate lengths for symmetric and asymmetric
+   keys must be followed in order to maintain the security of this
+   protocol.
+
+   This is especially true for CA keys, which, when compromised,
+   compromise the security of all relying parties.
+
+<span class="h3"><a name="section-8.2">8.2</a>.  Use of the CA keypair</span>
+
+   A CA key pair is generally meant for (and is usually flagged as)
+   certificate signing ("keyCertSign") exclusively, rather than data
+   signing ("digitalSignature") or data encryption
+   ("dataEnchipherment").  The SCEP protocol, however, uses the CA
+   private key to both encrypt and sign PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] transport
+   messages.  This is generally considered undesirable, as it widens the
+   possibility of an implementation weakness, and provides
+
+   o  another place that the private key must be used (and hence is
+      slightly more vulnerable to exposure),
+
+   o  another place where a side channel attack (say, timing or power
+      analysis) might be used,
+
+   o  another place that the attacker might somehow insert his own text,
+      and get it signed by the private key.
+
+   While the CA key pair can be generated with the data encryption and
+   data signing flags set, this is operationally not encouraged.  It
+   would make using the key as a PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] transport key 'legal',
+   but the discussion from the previous paragraph still applies.
+
+   A solution is to use RA keys to secure the SCEP transport (i.e.
+   message signing and encrypting), which allows the CA keys to be used
+   only for their intended purpose of certificate signing.
+
+   An RA can be implemented in two ways: physically separate or
+   implicit.  In the implicit case, the CA simply creates an extra key
+   pair.  A physically separate RA allows the CA to be inside the secure
+   network, not accessible to hackers at all.
+
+<span class="h3"><a name="section-8.3">8.3</a>.  ChallengePassword</span>
+
+   The challengePassword sent in the PKCS#10 enrollment request is
+   signed and encrypted by way of being encapsulated in a pkiMessage.
+   When saved by the CA, care should be taken to protect this password.
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 33]</span>
+</pre><pre class='newpage'><a name="page-34" id="page-34" href="#page-34" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   If the challengePassword is used to automatically authenticate an
+   enrollment request, it is recommended that some form of one-time
+   password be used to minimize damage in the event the data is
+   compromised.
+
+<span class="h3"><a name="section-8.4">8.4</a>.  transactionID</span>
+
+   A well-written CA/RA SHOULD NOT rely on the transactionID to be
+   correct or as specified in this document.  Requesters with buggy
+   software might add additional undetected duplicate requests to the
+   CA's queue (or worse).  A well-written CA/RA should never assume the
+   data from a requester is well-formed.
+
+<span class="h3"><a name="section-8.5">8.5</a>.  Nonces and Replay</span>
+
+   In order to detect replay attacks, both sides need to maintain state
+   information sufficient to detect an unexpected nonce value.
+
+   Since existing implementations do not copy the senderNonce from a
+   CertRep into subsequent GetCertinitial requests, the server will
+   never see its own nonce reflected back to it.  The transactionID can
+   be used to link together the GetCertInitial and PKCSReq messages.
+
+<span class="h3"><a name="section-8.6">8.6</a>.  Key Usage Issues</span>
+
+   Key pairs may be intended for particular purposes, such as encryption
+   only or signing only.  The usage of any associated certificate can be
+   restricted by adding key usage and extended key usage attributes to
+   the PKCS#10 [<a href="./rfc2986" title='"PKCS #10: Certification Request Syntax Specification Version 1.7"'>RFC2986</a>].  If key usage is not present, the public key
+   is assumed to be a general purpose key that may be used for all
+   purposes.
+
+   When building a pkiMessage, clients MUST have a certificate to sign
+   the PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] signed-data (because PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>] requires
+   it).  Clients MUST either use an existing certificate, or create a
+   self-signed certificate (see <a href="#section-2.3">Section 2.3</a>).  If the certificate has a
+   key usage extension in it, then both the SCEP client and SCEP server
+   MUST ignore the key usage for the duration of the transaction (the
+   key will be used for signing during the creation of the PKCSReq
+   message, and for encryption during the creation of the CertRep
+   message).
+
+<span class="h3"><a name="section-8.7">8.7</a>.  GetCACaps Issues</span>
+
+   The GetCACaps response is not signed.  This allows an attacker to use
+   downgrade attacks (as well as "upgrade attacks") on the cryptographic
+   capabilities of the CA.
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 34]</span>
+</pre><pre class='newpage'><a name="page-35" id="page-35" href="#page-35" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+<span class="h3"><a name="section-8.8">8.8</a>.  Unnecessary cryptography</span>
+
+   Some of the SCEP exchanges use signing and encryption operations that
+   are not necessary.  In particular the GetCert and GetCRL exchanges
+   are encrypted and signed in both directions.  The information
+   requested is public and thus signing the requests is of questionable
+   value but also CRLs and Certificates, i.e. the respective responses,
+   are already signed by the CA and can be verified by the recipient
+   without requiring additional signing and encryption.
+
+   This may affect performance and scalability of the CA and could be
+   used as an attack vector on the CA (though not an anonymous one).
+   The use of CDPs is recommended for CRL access, as well as other ways
+   of retrieving certificates (LDAP, direct HTTP access, etc.).
+
+<span class="h3"><a name="section-8.9">8.9</a>.  GetNextCACert</span>
+
+   Servers implementing early versions of the SCEP draft might return an
+   unsigned GetNextCACert response by erroneously mirroring the
+   (unsigned) functionality of GetCACert.  Client receiving such
+   responses MUST ignored them.
+
+   GetNextCACert depends on a 'flag moment' at which every client in the
+   PKI infrastructure switches from the current CA certificate (and
+   client certificate) to the new CA certificate and client
+   certificates.  Proper monitoring of the network infrastructure can
+   ensure that this will proceed as expected but any errors in
+   processing or implementation can result in a failure of the PKI
+   infrastructure.
+
+
+<span class="h2"><a name="section-9">9</a>.  Normative References</span>
+
+   [<a name="ref-RFC2119" id="ref-RFC2119">RFC2119</a>]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", <a href="./bcp14">BCP 14</a>, <a href="./rfc2119">RFC 2119</a>, March 1997.
+
+   [<a name="ref-RFC2315" id="ref-RFC2315">RFC2315</a>]  Kaliski, B., "PKCS #7: Cryptographic Message Syntax
+              Version 1.5", <a href="./rfc2315">RFC 2315</a>, March 1998.
+
+   [<a name="ref-RFC2409" id="ref-RFC2409">RFC2409</a>]  Harkins, D. and D. Carrel, "The Internet Key Exchange
+              (IKE)", <a href="./rfc2409">RFC 2409</a>, November 1998.
+
+   [<a name="ref-RFC2985" id="ref-RFC2985">RFC2985</a>]  Nystrom, M. and B. Kaliski, "PKCS #9: Selected Object
+              Classes and Attribute Types Version 2.0", <a href="./rfc2985">RFC 2985</a>,
+              November 2000.
+
+   [<a name="ref-RFC2986" id="ref-RFC2986">RFC2986</a>]  Nystrom, M. and B. Kaliski, "PKCS #10: Certification
+              Request Syntax Specification Version 1.7", <a href="./rfc2986">RFC 2986</a>,
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 35]</span>
+</pre><pre class='newpage'><a name="page-36" id="page-36" href="#page-36" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+              November 2000.
+
+   [<a name="ref-RFC4210" id="ref-RFC4210">RFC4210</a>]  Adams, C., Farrell, S., Kause, T., and T. Mononen,
+              "Internet X.509 Public Key Infrastructure Certificate
+              Management Protocol (CMP)", <a href="./rfc4210">RFC 4210</a>, September 2005.
+
+   [<a name="ref-RFC4306" id="ref-RFC4306">RFC4306</a>]  Kaufman, C., "Internet Key Exchange (IKEv2) Protocol",
+              <a href="./rfc4306">RFC 4306</a>, December 2005.
+
+   [<a name="ref-RFC4346" id="ref-RFC4346">RFC4346</a>]  Dierks, T. and E. Rescorla, "The Transport Layer Security
+              (TLS) Protocol Version 1.1", <a href="./rfc4346">RFC 4346</a>, April 2006.
+
+   [<a name="ref-RFC4945" id="ref-RFC4945">RFC4945</a>]  Korver, B., "The Internet IP Security PKI Profile of
+              IKEv1/ISAKMP, IKEv2, and PKIX", <a href="./rfc4945">RFC 4945</a>, August 2007.
+
+   [<a name="ref-RFC5272" id="ref-RFC5272">RFC5272</a>]  Schaad, J. and M. Myers, "Certificate Management over CMS
+              (CMC)", <a href="./rfc5272">RFC 5272</a>, June 2008.
+
+   [<a name="ref-RFC5280" id="ref-RFC5280">RFC5280</a>]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
+              Housley, R., and W. Polk, "Internet X.509 Public Key
+              Infrastructure Certificate and Certificate Revocation List
+              (CRL) Profile", <a href="./rfc5280">RFC 5280</a>, May 2008.
+
+
+<span class="h2"><a name="appendix-A">Appendix A</a>.  Private OID Definitions</span>
+
+   The OIDs used in SCEP are VeriSign self-maintained OIDs.
+
+   +-------------------+-----------------------------------------------+
+   | Name              | ASN.1 Definition                              |
+   +-------------------+-----------------------------------------------+
+   | id-VeriSign       | OBJECT_IDENTIFIER ::= {2 16 US(840) 1         |
+   |                   | VeriSign(113733)}                             |
+   | id-pki            | OBJECT_IDENTIFIER ::= {id-VeriSign pki(1)}    |
+   | id-attributes     | OBJECT_IDENTIFIER ::= {id-pki attributes(9)}  |
+   | id-messageType    | OBJECT_IDENTIFIER ::= {id-attributes          |
+   |                   | messageType(2)}                               |
+   | id-pkiStatus      | OBJECT_IDENTIFIER ::= {id-attributes          |
+   |                   | pkiStatus(3)}                                 |
+   | id-failInfo       | OBJECT_IDENTIFIER ::= {id-attributes          |
+   |                   | failInfo(4)}                                  |
+   | id-senderNonce    | OBJECT_IDENTIFIER ::= {id-attributes          |
+   |                   | senderNonce(5)}                               |
+   | id-recipientNonce | OBJECT_IDENTIFIER ::= {id-attributes          |
+   |                   | recipientNonce(6)}                            |
+   | id-transId        | OBJECT_IDENTIFIER ::= {id-attributes          |
+   |                   | transId(7)}                                   |
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 36]</span>
+</pre><pre class='newpage'><a name="page-37" id="page-37" href="#page-37" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   | id-extensionReq   | OBJECT_IDENTIFIER ::= {id-attributes          |
+   |                   | extensionReq(8)}                              |
+   +-------------------+-----------------------------------------------+
+
+
+<span class="h2"><a name="appendix-B">Appendix B</a>.  SCEP State Transitions</span>
+
+   SCEP state transitions are indexed by the transactionID attribute.
+   The design goal is to ensure the synchronization between the CA and
+   the requester under various error situations.
+
+   Each enrollment transaction is uniquely associated with a transaction
+   identifier (carried in the transactionID signed attribute (see
+   <a href="#section-3.1.1.1">Section 3.1.1.1</a>).  Because the enrollment transaction could be
+   interrupted by various errors, including network connection errors or
+   client reboot, the SCEP client generates a transaction identifier by
+   calculating a hash on the public key value for which the enrollment
+   is requested.  The requester generates the transaction identifier
+   which is included in PKCSReq.  If the CA returns a response of
+   PENDING, the requester will poll by periodically sending out
+   GetCertInitial with the same transaction identifier until either a
+   response other than PENDING is obtained, or the configured maximum
+   time has elapsed.  This mechanism retains the same transaction
+   identifier throughout the enrollment transaction.
+
+   If the client times out or the client reboots, the client
+   administrator will start another enrollment transaction with the same
+   key pair.  The second enrollment will have the same transaction
+   identifier.  At the server side, instead of accepting the PKCSReq as
+   a new enrollment request, it can respond as if another GetCertInitial
+   message had been sent with that transaction ID.  The second PKCSReq
+   should be taken as a resynchronization message to allow the
+   enrollment to resume as the same transaction.
+
+   The following gives several examples of client to CA transactions.
+
+   Client actions are indicated in the left column, CA actions are
+   indicated in the right column.  A blank action signifies that no
+   message was received.
+
+   The first transaction, for example, would read like this:
+
+   "Client Sends PKCSReq message with transaction ID 1 to the CA.  The
+   CA signs the certificate and constructs a CertRep Message containing
+   the signed certificate with a transaction ID 1.  The client receives
+   the message and installs the certificate locally."
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 37]</span>
+</pre><pre class='newpage'><a name="page-38" id="page-38" href="#page-38" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   Successful Enrollment Case: no manual authentication
+   PKCSReq (1)             ----------&gt; CA Signs Cert
+   Client Installs Cert    &lt;---------- CertRep (1) SIGNED CERT
+
+   Successful Enrollment Case: manual authentication required
+   PKCSReq (10)            ----------&gt; Cert Request goes into Queue
+   Client Polls            &lt;---------- CertRep (10) PENDING
+   GetCertInitial (10)     ----------&gt; Still pending
+   Client Polls            &lt;---------- CertRep (10) PENDING
+   GetCertInitial (10)     ----------&gt; Still pending
+   Client Polls            &lt;---------- CertRep (10) PENDING
+   GetCertInitial (10)     ----------&gt; Still pending
+   Client Polls            &lt;---------- CertRep (10) PENDING
+   GetCertInitial (10)     ----------&gt; Cert has been signed
+                           &lt;---------- CertRep (10) SIGNED CERT
+   Client Installs Cert
+
+   Resync Case 1 - CA Receives PKCSReq, sends PENDING, eventually grants
+   the certificate and returns SUCCESS, with the certificate.  The
+   SUCCESS gets lost:
+   PKCSReq (3)           ----------&gt; Cert Request goes into queue
+                         &lt;---------- CertRep (3) PENDING
+   GetCertInitial (3)    ----------&gt; Still pending
+                         &lt;---------- CertRep (3) PENDING
+   GetCertInitial (3)    -----------&gt; Cert has been signed
+                           X-------- CertRep(3) SIGNED CERT
+   (Time Out)
+   PKCSReq (3)           ----------&gt; Cert already granted
+                         &lt;---------- CertRep (3) SIGNED CERT
+   Client Installs Cert
+
+   Resync Case 2 - CA Receives PKCSReq, sends PENDING, PENDING reply
+   gets lost:
+   PKCSReq (3)           ----------&gt; Cert Request goes into queue
+                           X-------- CertRep (3) PENDING
+   (Time Out)
+   PKCSReq (3)           ----------&gt;
+                         &lt;---------- CertRep (3) PENDING
+   etc...
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 38]</span>
+</pre><pre class='newpage'><a name="page-39" id="page-39" href="#page-39" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   Case when the Certificate is lost, the CA arbitrarily refuses to sign
+   a replacement (enforcing name-uniqueness) until the original
+   certificate has been revoked (there is no change of name
+   information):
+   PKCSReq (4)           ----------&gt; CA Signs Cert
+                         &lt;---------- CertRep (4) SIGNED CERT
+   Client Installs Cert
+   (Client looses Cert)
+   PKCSReq (5)           ----------&gt; There is already a valid cert with
+                                     this DN.
+                         &lt;---------- CertRep (5) BAD REQUEST
+                                     Admin Revokes
+   PKCSReq (5)           ----------&gt; CA Signs Cert
+                         &lt;---------- CertRep (5) SIGNED CERT
+   Client Installs Cert
+
+
+<span class="h2"><a name="appendix-C">Appendix C</a>.  CA Capabilities</span>
+
+<span class="h1"><a name="appendix-C.1">C.1</a>.  GetCACaps HTTP Message Format</span>
+
+   "GET" CGI-PATH CGI-PROG "?operation=GetCACaps" "&amp;message=" CA-IDENT
+
+   This message requests capabilities from CA.  The response is a list
+   of text capabilities, as defined in <a href="#appendix-C.2">Appendix C.2</a>.  CA servers SHOULD
+   support the GetCACaps message and MUST support it when they support
+   certificate renewal using the method described in <a href="#appendix-D">Appendix D</a>.
+
+<span class="h1"><a name="appendix-C.2">C.2</a>.  CA Capabilities Response Format</span>
+
+   The response for a GetCACaps message is a list of CA capabilities, in
+   plain text, separated by &lt;LF&gt; characters, as follows (quotation marks
+   are NOT sent):
+
+   +--------------------+----------------------------------------------+
+   | Keyword            | Description                                  |
+   +--------------------+----------------------------------------------+
+   | "GetNextCACert"    | CA Supports the GetNextCACert message.       |
+   | "POSTPKIOperation" | PKIOPeration messages may be sent via HTTP   |
+   |                    | POST.                                        |
+   | "Renewal"          | Clients may use current certificate and key  |
+   |                    | to authenticate an enrollment request for a  |
+   |                    | new certificate.                             |
+   | "SHA-512"          | CA Supports the SHA-512 hashing algorithm.   |
+   | "SHA-256"          | CA Supports the SHA-256 hashing algorithm.   |
+   | "SHA-1"            | CA Supports the SHA-1 hashing algorithm.     |
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 39]</span>
+</pre><pre class='newpage'><a name="page-40" id="page-40" href="#page-40" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   | "DES3"             | CA Supports the triple-DES encryption        |
+   |                    | algorithm.                                   |
+   +--------------------+----------------------------------------------+
+
+   The client SHOULD use SHA-1, SHA-256, or SHA-512 in preference to MD5
+   hashing if it is supported by the CA.
+
+   The server MUST use the texual case specified here, but clients
+   SHOULD ignore the textual case when processing this message.  A
+   client MUST be able to accept and ignore any unknown keywords that
+   might be sent back by a CA.
+
+   If the CA supports none of the above capabilities the SCEP server
+   SHOULD return an empty message.  A server MAY simply return an HTTP
+   Error.  A client that receives an empty message or an HTTP error
+   SHOULD interpret the response as if none of the requested
+   capabilities are supported by the CA.
+
+   The Content-type of the reply SHOULD be "text/plain".  Clients SHOULD
+   ignore the Content-type, as older server implementations of SCEP may
+   send various Content-types.
+
+   Example:
+   GET /cgi-bin/pkiclient.exe?operation=GetCACaps&amp;message=myca
+
+   might return:
+   GetNextCACert&lt;LF&gt;POSTPKIOperation
+
+   This means that the CA supports the GetNextCACert message and allows
+   PKIOperation messages (PKCSreq, GetCert, GetCertInitial, ...) to be
+   sent using HTTP POST.
+
+
+<span class="h2"><a name="appendix-D">Appendix D</a>.  Client Certificate Renewal</span>
+
+   An enrollment request that occurs more than halfway through the
+   validity period of an existing certificate for the same subject name
+   and key usage MAY be interpreted as a re-enrollment or renewal
+   request and be accepted.  A new certificate with new validity dates
+   can be issued, even though the old one is still valid, if the CA
+   policy permits.  The server MAY automatically revoke the old client
+   certificate.  Clients MUST use GetCACaps (see <a href="#appendix-C">Appendix C</a>) to
+   determine if the CA supports renewal.  Clients MUST support servers
+   that do not implement renewal, or that reject renewal requests.
+
+   To renew a client certificate, the client uses the PKCSreq message
+   and signs it with the existing client certificate.  The client SHOULD
+   use a new keypair when requesting a new certificate.  The client MAY
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 40]</span>
+</pre><pre class='newpage'><a name="page-41" id="page-41" href="#page-41" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   request a new certicate using the old keypair.
+
+
+<span class="h2"><a name="appendix-E">Appendix E</a>.  CA Key Rollover</span>
+
+   When the CA certificate expires all certificates that have been
+   signed by it are no longer valid.  CA key rollover provides a
+   mechanism by which the server MAY distribute a new CA certificate
+   which is valid in the future; when the current certificate has
+   expired.  Clients MUST use GetCACaps (see <a href="#appendix-C">Appendix C</a>) to determine if
+   the CA supports GetNextCACert.
+
+   To obtain the new CA certificate prior to the expiration of the
+   current one, the client uses the GetNextCACert message.
+
+   To obtain a new client certificate signed by the new CA certificate,
+   use the new CA or RA certificate in the PKCSreq message envelope.
+
+   Clients MUST store the not-yet-valid CA certificate, and any not-yet-
+   valid client certificates obitained, until such time that they are
+   valid.  At which point clients switch over to using the newly valid
+   certificates.
+
+   Example:
+
+GetNextCACert           ----------&gt;
+                        &lt;---------- New CA certificate
+
+PKCSReq*                ----------&gt; CA Signs certificate with NEW key
+Client Stores Cert      &lt;---------- CertRep - Certificate issued
+for installation when               from NEW CA certificate and key pair
+existing cert expires.
+
+*enveloped for new CA or RA cert and key pair.  The CA will use the
+envelope to determine which key and certificate to use to issue the
+client certificate.
+
+
+<span class="h2"><a name="appendix-F">Appendix F</a>.  PKIOperation via HTTP POST Message</span>
+
+   If the remote CA supports it, any of the PKCS#7 [<a href="./rfc2315" title='"PKCS #7: Cryptographic Message Syntax Version 1.5"'>RFC2315</a>]-encoded
+   SCEP messages may be sent via HTTP POST instead of HTTP GET.  This is
+   allowed for any SCEP message except GetCACert, GetNextCACert, or
+   GetCACaps.  In this form of the message, Base 64 encoding is not
+   used.
+
+
+
+
+
+
+<span class="grey">Pritikin, et al.        Expires September 8, 2011              [Page 41]</span>
+</pre><pre class='newpage'><a name="page-42" id="page-42" href="#page-42" class="invisible"> </a>
+<span class="grey">Internet-Draft                    SCEP                        March 2011</span>
+
+
+   POST /cgi-bin/pkiclient.exe?operation=PKIOperation HTTP/1.0
+   Content-Length: &lt;length of data&gt;
+
+   &lt;binary PKCS#7 data&gt;
+
+                            General POST Syntax
+
+   The client can verify that the CA supports SCEP messages via POST by
+   looking for the "POSTPKIOperation" capability (See <a href="#appendix-C">Appendix C</a>).
+
+
+Authors' Addresses
+
+   Max Pritikin (editor)
+   Cisco Systems, Inc
+
+   Email: pritikin@cisco.com
+
+
+   Andrew Nourse
+   Cisco Systems, Inc
+
+   Email: nourse@cisco.com
+
+
+   Jan Vilhuber
+   Cisco Systems, Inc
+
+   Email: vilhuber@cisco.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pritikin, et al.        Expires September 8, 2011              [Page 42]
+</pre><pre class='newpage'>
+
+</pre><br />
+<span class="noprint"><small><small>Html markup produced by rfcmarkup 1.95, available from
+<a href="http://tools.ietf.org/tools/rfcmarkup/">http://tools.ietf.org/tools/rfcmarkup/</a>
+</small></small></span>
+</body></html>
