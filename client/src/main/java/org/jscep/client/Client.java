@@ -178,7 +178,7 @@ public class Client {
      */
     public List<X509Certificate> getRolloverCertificate() throws IOException {
     	// NON-TRANSACTIONAL
-    	if (getCaCapabilities().isRolloverSupported() == false) {
+    	if (!getCaCapabilities().isRolloverSupported()) {
     		throw new UnsupportedOperationException();
     	}
     	final X509Certificate issuer = getRecipientCertificate();
@@ -312,13 +312,13 @@ public class Client {
     		throw new NullPointerException("Callback handler should not be null");
     	}
     	
-    	if (identity.getPublicKey().getAlgorithm().equals("RSA") == false) {
+    	if (!identity.getPublicKey().getAlgorithm().equals("RSA")) {
     		throw new IllegalArgumentException("Public key algorithm should be RSA");
     	}
-    	if (priKey.getAlgorithm().equals("RSA") == false) {
+    	if (!priKey.getAlgorithm().equals("RSA")) {
     		throw new IllegalArgumentException("Private key algorithm should be RSA");
     	}
-    	if (url.getProtocol().matches("^https?$") == false) {
+    	if (!url.getProtocol().matches("^https?$")) {
     		throw new IllegalArgumentException("URL protocol should be HTTP or HTTPS");
     	}
     	if (url.getRef() != null) {
@@ -365,10 +365,10 @@ public class Client {
     	return t;
     }
     
-    private Capabilities getCaCapabilities(boolean useCache) throws IOException {
+    private Capabilities getCaCapabilities(boolean useCache) {
     	// NON-TRANSACTIONAL
     	Capabilities caps = null;
-    	if (useCache == true) {
+    	if (useCache) {
     		if (LOGGER.isDebugEnabled()) {
     			LOGGER.debug("Retrieving capabilities from cache");
     		}
@@ -377,7 +377,11 @@ public class Client {
     	if (caps == null) {
 	    	final GetCaCaps req = new GetCaCaps(profile, new CaCapabilitiesContentHandler());
 	        final Transport trans = Transport.createTransport(Transport.Method.GET, url);
-	        caps = trans.sendRequest(req);
+            try {
+	            caps = trans.sendRequest(req);
+            } catch (IOException e) {
+                caps = new Capabilities();
+            }
 	        capabilitiesCache.put(profile, caps);
     	}
         
@@ -401,7 +405,7 @@ public class Client {
             LOGGER.debug("Certificate verification failed.");
 			throw new RuntimeException(e);
 		}
-		if (callback.isVerified() == false) {
+		if (!callback.isVerified()) {
             LOGGER.debug("Certificate verification failed.");
 			throw new IOException("CA certificate fingerprint could not be verified.");
 		} else {
