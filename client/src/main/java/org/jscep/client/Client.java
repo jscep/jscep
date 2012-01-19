@@ -156,6 +156,7 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public CertStore getCaCertificate() throws IOException {
+        LOGGER.debug("Retriving current CA certificate");
     	// NON-TRANSACTIONAL
     	// CA and RA public key distribution
     	final GetCaCert req = new GetCaCert(profile, new CaCertificateContentHandler());
@@ -177,6 +178,7 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public List<X509Certificate> getRolloverCertificate() throws IOException {
+        LOGGER.debug("Retriving next CA certificate from CA");
     	// NON-TRANSACTIONAL
     	if (!getCaCapabilities().isRolloverSupported()) {
     		throw new UnsupportedOperationException();
@@ -200,6 +202,7 @@ public class Client {
      */
     @SuppressWarnings("unchecked")
 	public X509CRL getRevocationList(X500Principal issuer, BigInteger serial) throws IOException, OperationFailureException {
+        LOGGER.debug("Retriving CRL from CA");
     	// TRANSACTIONAL
     	// CRL query
     	final X509Certificate ca = retrieveCA();
@@ -241,6 +244,7 @@ public class Client {
      */
     @SuppressWarnings("unchecked")
 	public List<X509Certificate> getCertificate(BigInteger serial) throws IOException, OperationFailureException {
+        LOGGER.debug("Retriving certificate from CA");
     	// TRANSACTIONAL
     	// Certificate query
     	final X509Certificate ca = retrieveCA();
@@ -275,6 +279,7 @@ public class Client {
      * @throws IOException if any I/O error occurs.
      */
     public EnrolmentTransaction enrol(CertificationRequest csr) throws IOException {
+        LOGGER.debug("Enrolling certificate with CA");
     	// TRANSACTIONAL
     	// Certificate enrollment
     	final Transport transport = createTransport();
@@ -366,6 +371,7 @@ public class Client {
     }
     
     private Capabilities getCaCapabilities(boolean useCache) {
+        LOGGER.debug("Determining capabilities of SCEP server");
     	// NON-TRANSACTIONAL
     	Capabilities caps = null;
     	if (useCache) {
@@ -373,6 +379,11 @@ public class Client {
     			LOGGER.debug("Retrieving capabilities from cache");
     		}
     		caps = capabilitiesCache.get(profile);
+            if (caps == null) {
+                LOGGER.debug("Cache MISS");
+            } else {
+                LOGGER.debug("Cache HIT");
+            }
     	}
     	if (caps == null) {
 	    	final GetCaCaps req = new GetCaCaps(profile, new CaCapabilitiesContentHandler());
@@ -380,8 +391,10 @@ public class Client {
             try {
 	            caps = trans.sendRequest(req);
             } catch (IOException e) {
+                LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
                 caps = new Capabilities();
             }
+            LOGGER.debug("Caching capabilities");
 	        capabilitiesCache.put(profile, caps);
     	}
         
@@ -391,10 +404,10 @@ public class Client {
     private void verifyCA(X509Certificate cert) throws IOException {
     	// Cache
     	if (verified.contains(cert)) {
-    		LOGGER.trace("Verification Cache Hit.");
+    		LOGGER.trace("Verification Cache HIT");
     		return;
     	} else {
-    		LOGGER.trace("Verification Cache Missed.");
+    		LOGGER.trace("Verification Cache MISS");
     	}
 
 		CertificateVerificationCallback callback = new CertificateVerificationCallback(cert);

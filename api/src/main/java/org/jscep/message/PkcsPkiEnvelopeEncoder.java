@@ -42,7 +42,7 @@ public class PkcsPkiEnvelopeEncoder {
 	}
 	
 	public CMSEnvelopedData encode(ASN1Encodable messageData) throws IOException {
-        LOGGER.debug("Enveloping: {}", messageData);
+        LOGGER.debug("Encrypting message: {}", messageData.getDEREncoded());
 		CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
 		
 		byte[] payload;
@@ -55,13 +55,15 @@ public class PkcsPkiEnvelopeEncoder {
 
 		CMSProcessable envelopable = new CMSProcessableByteArray(payload);
 		edGenerator.addKeyTransRecipient(recipient);
-        LOGGER.debug("Encrypting message key using key from '{}' certificate", recipient.getSubjectDN());
+        LOGGER.debug("Encrypting session key using key belonging to '{}'", recipient.getSubjectDN());
 		
 		try {
 			Provider[] providers = Security.getProviders("KeyGenerator.DESEDE");
 			if (providers.length > 0) {
                 LOGGER.debug("Using '{}' for DESede key generation", providers[0]);
-				return edGenerator.generate(envelopable, CMSEnvelopedGenerator.DES_EDE3_CBC, providers[0]);
+				CMSEnvelopedData data = edGenerator.generate(envelopable, CMSEnvelopedGenerator.DES_EDE3_CBC, providers[0]);
+                LOGGER.debug("Encrypted to: {}", data.getEncoded());
+                return data;
 			} else {
 				throw new IOException("No Provider for DESede");
 			}

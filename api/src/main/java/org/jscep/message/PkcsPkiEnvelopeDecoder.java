@@ -50,12 +50,13 @@ public class PkcsPkiEnvelopeDecoder {
 	}
 	
 	public ASN1Encodable decode(EnvelopedData envelopedData) throws IOException {
-        LOGGER.debug("Opening envelope {}", envelopedData);
+        LOGGER.debug("Decrypting message: {}", envelopedData.getDEREncoded());
 		// Figure out the type of secret key
 		final EncryptedContentInfo contentInfo = envelopedData.getEncryptedContentInfo();
 		final AlgorithmIdentifier contentAlg = contentInfo.getContentEncryptionAlgorithm();
 		final String transformationName = getCipherName(contentAlg);
 		final String cipherName = AlgorithmDictionary.fromTransformation(transformationName);
+        LOGGER.debug("Decrypting using {}", cipherName);
 
 		Cipher decryptingCipher;
 		AlgorithmParameters params;
@@ -76,7 +77,7 @@ public class PkcsPkiEnvelopeDecoder {
 		
 		byte[] encryptedContentBytes = contentInfo.getEncryptedContent().getOctets();
 		RecipientInfo encodable = RecipientInfo.getInstance(recipientInfos.getObjectAt(0));
-		KeyTransRecipientInfo keyTrans = KeyTransRecipientInfo.getInstance(encodable.getInfo());		
+		KeyTransRecipientInfo keyTrans = KeyTransRecipientInfo.getInstance(encodable.getInfo());
 		byte[] wrappedKey = keyTrans.getEncryptedKey().getOctets();
 		try {
 			// Decrypt the secret key
@@ -86,7 +87,8 @@ public class PkcsPkiEnvelopeDecoder {
 			// Use the secret key to decrypt the content
 			decryptingCipher.init(Cipher.DECRYPT_MODE, secretKey, params);
 			byte[] contentBytes = decryptingCipher.doFinal(encryptedContentBytes);
-			
+
+            LOGGER.debug("Decrypted to: {}", contentBytes);
 			return ASN1Object.fromByteArray(contentBytes);
 		} catch (GeneralSecurityException e) {
 			throw new IOException(e);

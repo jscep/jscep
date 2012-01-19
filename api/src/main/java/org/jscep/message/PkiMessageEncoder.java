@@ -52,7 +52,7 @@ public class PkiMessageEncoder {
 	}
 	
 	public CMSSignedData encode(PkiMessage<? extends ASN1Encodable> message) throws IOException {
-        LOGGER.debug("Encoding {}", message);
+        LOGGER.debug("Encoding message: {}", message);
 		CMSProcessable signable;
 		
 		boolean hasMessageData = true;
@@ -93,7 +93,9 @@ public class PkiMessageEncoder {
 		
 		try {
             LOGGER.debug("Signing {} content", signable);
-			return sdGenerator.generate(signable, true, (String) null);
+			CMSSignedData sd = sdGenerator.generate(signable, true, (String) null);
+            LOGGER.debug("Encoded to: {}", sd.getEncoded());
+            return sd;
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

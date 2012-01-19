@@ -33,14 +33,18 @@ import org.bouncycastle.cms.SignerInformation;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.asn1.ScepObjectIdentifiers;
 import org.jscep.transaction.*;
+import org.jscep.util.LoggingUtil;
 
 import java.io.IOException;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Hashtable;
+import java.util.logging.Logger;
 
 public class PkiMessageDecoder {
+    private static org.slf4j.Logger LOGGER = LoggingUtil.getLogger(PkiMessageDecoder.class);
 	private final PkcsPkiEnvelopeDecoder decoder;
 	
 	public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder) {
@@ -49,6 +53,7 @@ public class PkiMessageDecoder {
 	
 	@SuppressWarnings("unchecked")
 	public PkiMessage<? extends ASN1Encodable> decode(CMSSignedData signedData) throws IOException {
+        LOGGER.debug("Decoding message: {}", signedData.getEncoded());
 		// The signed content is always an octet string
 		CMSProcessable signedContent = signedData.getSignedContent();
 		
@@ -67,20 +72,24 @@ public class PkiMessageDecoder {
 			throw new IOException(e);
 		}
 		if (certColl.size() > 0) {
-			Certificate cert = certColl.iterator().next();
+			X509Certificate cert = (X509Certificate) certColl.iterator().next();
+            LOGGER.debug("Verifying message using key belonging to '{}'", cert.getSubjectDN());
 			try {
 				signerInfo.verify(cert.getPublicKey(), (String) null);
 			} catch (Exception e) {
 				throw new IOException(e);
 			}
-		}
+		} else {
+            LOGGER.error("Unable to verify message");
+        }
 		
 		Hashtable<DERObjectIdentifier, Attribute> attrTable = signerInfo.getSignedAttributes().toHashtable();
 		
 		MessageType messageType = toMessageType(attrTable.get(ScepObjectIdentifiers.messageType));
 		Nonce senderNonce = toNonce(attrTable.get(ScepObjectIdentifiers.senderNonce));
 		TransactionId transId = toTransactionId(attrTable.get(ScepObjectIdentifiers.transId));
-		
+
+        PkiMessage<? extends ASN1Encodable> decoded;
 		if (messageType == MessageType.CertRep) {
 			PkiStatus pkiStatus = toPkiStatus(attrTable.get(ScepObjectIdentifiers.pkiStatus));
 			Nonce recipientNonce = toNonce(attrTable.get(ScepObjectIdentifiers.recipientNonce));
@@ -88,39 +97,42 @@ public class PkiMessageDecoder {
 			if (pkiStatus == PkiStatus.FAILURE) {
 				FailInfo failInfo = toFailInfo(attrTable.get(ScepObjectIdentifiers.failInfo));
 				
-				return new CertRep(transId, senderNonce, recipientNonce, failInfo);
+				decoded = new CertRep(transId, senderNonce, recipientNonce, failInfo);
 			} else  if (pkiStatus == PkiStatus.PENDING) {
 				
-				return new CertRep(transId, senderNonce, recipientNonce);
+				decoded = new CertRep(transId, senderNonce, recipientNonce);
 			} else {
 				final EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
 				final ASN1Encodable envelopedContent = decoder.decode(ed);
 				DEROctetString messageData = new DEROctetString(envelopedContent);
 				
-				return new CertRep(transId, senderNonce, recipientNonce, messageData);
+				decoded = new CertRep(transId, senderNonce, recipientNonce, messageData);
 			}
 		} else if (messageType == MessageType.GetCert) {
 			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
 			IssuerAndSerialNumber messageData = IssuerAndSerialNumber.getInstance(decoder.decode(ed));
 			
-			return new GetCert(transId, senderNonce, messageData);
+			decoded = new GetCert(transId, senderNonce, messageData);
 		} else  if (messageType == MessageType.GetCertInitial) {
 			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
 			
 			IssuerAndSubject messageData = IssuerAndSubject.getInstance(decoder.decode(ed));
 			
-			return new GetCertInitial(transId, senderNonce, messageData);
+			decoded = new GetCertInitial(transId, senderNonce, messageData);
 		} else if (messageType == MessageType.GetCRL) {
 			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
 			IssuerAndSerialNumber messageData = IssuerAndSerialNumber.getInstance(decoder.decode(ed));
 			
-			return new GetCRL(transId, senderNonce, messageData);
+			decoded = new GetCRL(transId, senderNonce, messageData);
 		} else {
 			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
 			CertificationRequest messageData = CertificationRequest.getInstance(decoder.decode(ed));
 			
-			return new PKCSReq(transId, senderNonce, messageData);
+			decoded = new PKCSReq(transId, senderNonce, messageData);
 		}
+
+        LOGGER.debug("Decoded to: {}", decoded);
+        return decoded;
 	}
 	
 	private EnvelopedData getEnvelopedData(byte[] bytes) throws IOException {
