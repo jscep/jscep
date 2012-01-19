@@ -46,7 +46,7 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
 	 * {@inheritDoc}
 	 */
 	public Capabilities getContent(InputStream in, String mimeType) throws IOException {
-		if (mimeType.startsWith("text/plain") == false) {
+		if (mimeType == null || mimeType.startsWith("text/plain") == false) {
 			LOGGER.warn("Content-Type mismatch: was '{}', expected 'text/plain'", mimeType);
 		}
 
