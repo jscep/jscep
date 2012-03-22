@@ -1,6 +1,5 @@
 package org.jscep.transaction;
 
-import org.jscep.transaction.Nonce;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -23,7 +23,6 @@ package org.jscep.message;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.util.ASN1Dump;
 import org.bouncycastle.cms.*;
 import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;

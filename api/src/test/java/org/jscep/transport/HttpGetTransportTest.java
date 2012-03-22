@@ -1,7 +1,6 @@
 package org.jscep.transport;
 
 import junit.framework.Assert;
-
 import org.jscep.transport.Transport.Method;
 import org.junit.Test;
 

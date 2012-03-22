@@ -110,9 +110,7 @@ public final class AlgorithmDictionary {
 	 * @return the corresponding OID, or null.
 	 */
 	public static DERObjectIdentifier getOid(String algorithm) {
-		final DERObjectIdentifier oid = oids.get(algorithm);
-		
-		return oid;
+		return oids.get(algorithm);
 	}
 	
 	/**

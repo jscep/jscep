@@ -1,29 +1,6 @@
 package org.jscep.client;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.cert.CertStore;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-
-import javax.security.auth.x500.X500Principal;
-
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -37,6 +14,19 @@ import org.jscep.x509.X509Util;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import javax.security.auth.x500.X500Principal;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.*;
+import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ClientTest extends AbstractClientTest {
 	/**
@@ -68,7 +58,7 @@ public class ClientTest extends AbstractClientTest {
 	/**
 	 * CAs that do advertise support for renewal should not perform it!
 	 * 
-	 * @throws Exception
+	 * @throws Exception if a problem occurs
 	 */
 	@Ignore @Test(expected = IOException.class)
 	public void testRenewalSameCAEnrollDisallowed() throws Exception {

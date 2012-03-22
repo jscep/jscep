@@ -52,14 +52,13 @@ public class SimpleExample {
 	
 	private static class ConsoleCallbackHandler implements CallbackHandler {
 		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-			for (int i = 0; i < callbacks.length; i++) {
-                if (callbacks[i] instanceof CertificateVerificationCallback) {
-                    CertificateVerificationCallback callback = (CertificateVerificationCallback) callbacks[i];
-                    callback.setVerified(true);
+            for (Callback callback : callbacks) {
+                if (callback instanceof CertificateVerificationCallback) {
+                    ((CertificateVerificationCallback) callback).setVerified(true);
                 } else {
-					throw new UnsupportedCallbackException(callbacks[i]);
-				}
-			}
+                    throw new UnsupportedCallbackException(callback);
+                }
+            }
 		}
 		
 	}

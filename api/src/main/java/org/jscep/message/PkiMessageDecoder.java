@@ -41,7 +41,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.logging.Logger;
 
 public class PkiMessageDecoder {
     private static org.slf4j.Logger LOGGER = LoggingUtil.getLogger(PkiMessageDecoder.class);

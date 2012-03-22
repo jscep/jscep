@@ -58,9 +58,7 @@ public class HttpGetTransport extends Transport {
 			throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
 		}
 
-		final T response = msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
-		
-		return response;
+		return msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
 	}
 
 	private URL getUrl(Operation op, String message) throws MalformedURLException, UnsupportedEncodingException {

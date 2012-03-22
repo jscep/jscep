@@ -84,9 +84,7 @@ public final class X509Util {
 		gen.setSignatureAlgorithm("SHA1with" + keyPair.getPublic().getAlgorithm());
 		gen.setSubjectDN(subject);
 
-		X509Certificate cert = gen.generate(keyPair.getPrivate());
-		
-		return cert;
+		return gen.generate(keyPair.getPrivate());
 	}
 	
 	/**

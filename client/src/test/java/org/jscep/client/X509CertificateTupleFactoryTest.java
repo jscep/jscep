@@ -7,7 +7,10 @@ import org.junit.runners.Parameterized;
 
 import java.io.InputStream;
 import java.security.KeyStore;
-import java.security.cert.*;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreParameters;
+import java.security.cert.Certificate;
+import java.security.cert.CollectionCertStoreParameters;
 import java.util.*;
 
 @RunWith(Parameterized.class)
@@ -17,7 +20,6 @@ public class X509CertificateTupleFactoryTest {
         InputStream keyStoreIn = X509CertificateTupleFactoryTest.class.getClassLoader().getResourceAsStream("store.jks");
         KeyStore testStore = KeyStore.getInstance("JKS");
         testStore.load(keyStoreIn, "password".toCharArray());
-        Enumeration<String> aliases = testStore.aliases();
 
         List<Object[]> configs = new ArrayList<Object[]>();
 

@@ -196,6 +196,8 @@ public class Client {
     /**
      * Returns the current CA's certificate revocation list
      *  
+     * @param issuer the issuer X500 name
+     * @param serial the serial number of the certificate
      * @return a collection of CRLs
      * @throws IOException if any I/O error occurs.
      * @throws OperationFailureException if the operation fails.
@@ -347,7 +349,9 @@ public class Client {
     }
     
     /**
+     * @param issuerCertificate certificate to test
      * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
+     * @return true if the certificate supports distribution points, false otherwise
      */
     private boolean supportsDistributionPoints(X509Certificate issuerCertificate) {
     	return issuerCertificate.getExtensionValue("2.5.29.31") != null;

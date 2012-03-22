@@ -1,21 +1,5 @@
 package org.jscep.server;
 
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
-import java.util.Collections;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.ServletException;
-
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.x509.X509V1CertificateGenerator;
@@ -23,6 +7,13 @@ import org.jscep.response.Capability;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.OperationFailureException;
 import org.jscep.x509.X509Util;
+
+import javax.servlet.ServletException;
+import java.math.BigInteger;
+import java.security.*;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
+import java.util.*;
 
 public class ScepServletImpl extends ScepServlet {
 	/**
@@ -76,7 +67,7 @@ public class ScepServletImpl extends ScepServlet {
 			X509Name subject = csr.getCertificationRequestInfo().getSubject();
 			
 			if (subject.equals(pollName)) {
-				return Collections.<X509Certificate>emptyList();
+				return Collections.emptyList();
 			}
 			PublicKey pubKey = X509Util.getPublicKey(csr);
 			X509Certificate issued = generateCertificate(pubKey, subject, name, BigInteger.TEN);
@@ -117,7 +108,7 @@ public class ScepServletImpl extends ScepServlet {
 	@Override
 	protected List<X509Certificate> doGetCertInitial(X509Name issuer, X509Name subject) throws OperationFailureException {
 		if (subject.equals(pollName)) {
-			return Collections.<X509Certificate>emptyList();
+			return Collections.emptyList();
 		}
 		try {
 			return Collections.singletonList(generateCertificate(pubKey, subject, issuer, goodSerial));
@@ -131,7 +122,7 @@ public class ScepServletImpl extends ScepServlet {
 		if (identifier == null || identifier.isEmpty()) {
 			return Collections.singletonList(ca);
 		}
-		return Collections.<X509Certificate>emptyList();
+		return Collections.emptyList();
 	}
 
 	@Override

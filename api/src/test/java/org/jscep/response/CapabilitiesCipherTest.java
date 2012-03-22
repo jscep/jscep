@@ -1,16 +1,14 @@
 package org.jscep.response;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.jscep.response.Capabilities;
-import org.jscep.response.Capability;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class CapabilitiesCipherTest {

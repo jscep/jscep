@@ -109,7 +109,7 @@ public abstract class ScepServlet extends HttpServlet {
 		final String reqMethod = req.getMethod();
 			
 		if (op == Operation.PKIOperation) {
-			if (reqMethod.equals(POST) == false && reqMethod.equals(GET) == false) {
+			if (!reqMethod.equals(POST) && !reqMethod.equals(GET)) {
 				// PKIOperation must be sent using GET or POST
 			
 				res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -118,7 +118,7 @@ public abstract class ScepServlet extends HttpServlet {
 				return;
 			}
 		} else {
-			if (reqMethod.equals(GET) == false) {
+			if (!reqMethod.equals(GET)) {
 				// Operations other than PKIOperation must be sent using GET
 				
 				res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -359,6 +359,7 @@ public abstract class ScepServlet extends HttpServlet {
 	 * 
 	 * @param identifier the CA identifier, which may be an empty string.
 	 * @return the capabilities.
+     * @throws Exception if any problem occurs
 	 */
 	abstract protected Set<Capability> doCapabilities(String identifier) throws Exception;
 	/**
@@ -366,6 +367,7 @@ public abstract class ScepServlet extends HttpServlet {
 	 * 
 	 * @param identifier the CA identifier, which may be an empty string.
 	 * @return the CA's certificate.
+     * @throws Exception if any problem occurs
 	 */
 	abstract protected List<X509Certificate> doGetCaCertificate(String identifier) throws Exception;
 	/**
@@ -374,6 +376,7 @@ public abstract class ScepServlet extends HttpServlet {
 	 * 
 	 * @param identifier the CA identifier, which may be an empty string. 
 	 * @return the list of certificates.
+     * @throws Exception if any problem occurs
 	 */
 	abstract protected List<X509Certificate> getNextCaCertificate(String identifier) throws Exception;
 	/**

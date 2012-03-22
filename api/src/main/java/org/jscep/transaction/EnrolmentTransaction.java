@@ -145,7 +145,7 @@ public class EnrolmentTransaction extends Transaction {
 	private void validateExchange(PkiMessage<?> req, CertRep res) throws IOException {
         LOGGER.debug("Validating SCEP message exchange");
 
-		if (res.getTransactionId().equals(req.getTransactionId()) == false) {
+		if (!res.getTransactionId().equals(req.getTransactionId())) {
 			throw new IOException("Transaction ID Mismatch");
 		} else {
             LOGGER.debug("Matched transaction IDs");
@@ -153,7 +153,7 @@ public class EnrolmentTransaction extends Transaction {
 
 		// The requester SHOULD verify that the recipientNonce of the reply
 		// matches the senderNonce it sent in the request.
-		if (res.getRecipientNonce().equals(req.getSenderNonce()) == false) {
+		if (!res.getRecipientNonce().equals(req.getSenderNonce())) {
 			throw new InvalidNonceException("Response recipient nonce and request sender nonce are not equal");
 		} else {
             LOGGER.debug("Matched request senderNonce and response recipientNonce");

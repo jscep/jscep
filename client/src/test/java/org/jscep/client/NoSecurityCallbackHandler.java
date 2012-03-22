@@ -1,21 +1,19 @@
 package org.jscep.client;
 
-import java.io.IOException;
+import org.jscep.CertificateVerificationCallback;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-
-import org.jscep.CertificateVerificationCallback;
+import java.io.IOException;
 
 public class NoSecurityCallbackHandler implements CallbackHandler {
 	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-		for (int i = 0; i < callbacks.length; i++) {
-			if (callbacks[i] instanceof CertificateVerificationCallback) {
-				CertificateVerificationCallback callback = (CertificateVerificationCallback) callbacks[i];
-				callback.setVerified(true);
+		for (Callback callback : callbacks) {
+			if (callback instanceof CertificateVerificationCallback) {
+				((CertificateVerificationCallback) callback).setVerified(true);
 			} else {
-				throw new UnsupportedCallbackException(callbacks[i]);
+				throw new UnsupportedCallbackException(callback);
 			}
 		}
 	}

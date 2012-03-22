@@ -1,11 +1,10 @@
 package org.jscep.transaction;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-
-import org.jscep.transaction.TransactionId;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 
 public class TransactionIdTest {
 

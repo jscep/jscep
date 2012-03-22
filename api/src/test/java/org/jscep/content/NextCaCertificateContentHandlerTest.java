@@ -1,5 +1,10 @@
 package org.jscep.content;
 
+import org.jscep.x509.X509Util;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,21 +12,13 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.X509Certificate;
 
-import javax.security.auth.x500.X500Principal;
-
-import org.jscep.x509.X509Util;
-import org.junit.Before;
-import org.junit.Test;
-
 public class NextCaCertificateContentHandlerTest {
 	private NextCaCertificateContentHandler fixture;
-	private X509Certificate ca;
-	private KeyPair keyPair;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		keyPair = getKeyPair();
-		ca = getCertificate(keyPair);
+		KeyPair keyPair = getKeyPair();
+		X509Certificate ca = getCertificate(keyPair);
 		fixture = new NextCaCertificateContentHandler(ca);
 	}
 	
@@ -77,9 +74,7 @@ public class NextCaCertificateContentHandlerTest {
 	
 	private X509Certificate getCertificate(KeyPair keyPair) throws Exception {
 		X500Principal subject = new X500Principal("CN=example.org");
-		X509Certificate cert = X509Util.createEphemeralCertificate(subject, keyPair);
-		
-		return cert;
+		return X509Util.createEphemeralCertificate(subject, keyPair);
 	}
 	
 	private KeyPair getKeyPair() throws Exception {

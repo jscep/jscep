@@ -24,6 +24,7 @@ package org.jscep.response;
 import javax.crypto.Cipher;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.util.Collections;
 import java.util.EnumSet;
 
 
@@ -44,10 +45,7 @@ public class Capabilities {
 	 */
 	public Capabilities(Capability... capabilities) {
 		this.capabilities = EnumSet.noneOf(Capability.class);
-
-		for (Capability capability : capabilities) {
-			this.capabilities.add(capability);
-		}
+        Collections.addAll(this.capabilities, capabilities);
 	}
 	
 	/**

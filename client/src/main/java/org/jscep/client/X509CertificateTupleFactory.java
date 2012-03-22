@@ -77,7 +77,6 @@ public class X509CertificateTupleFactory {
         keyUsage[DIGITAL_SIGNATURE] = true;
         signingSelector.setKeyUsage(keyUsage);
 
-        X509Certificate signing;
         try {
             LOGGER.debug("Selecting certificate with digitalSignature keyUsage");
             Collection<? extends Certificate> certs = store.getCertificates(signingSelector);

@@ -64,7 +64,7 @@ public final class LoggingUtil {
 	 * @return a logger for the given package name.
 	 */
 	public static Logger getLogger(String packageName) {
-		if (cache.containsKey(packageName) == false) {
+		if (!cache.containsKey(packageName)) {
 			cache.put(packageName, LoggerFactory.getLogger(packageName));
 		}
 		

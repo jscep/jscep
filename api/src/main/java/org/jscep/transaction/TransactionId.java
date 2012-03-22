@@ -98,9 +98,8 @@ public final class TransactionId {
 
         TransactionId that = (TransactionId) o;
 
-        if (!Arrays.equals(id, that.id)) return false;
+        return Arrays.equals(id, that.id);
 
-        return true;
     }
 
     @Override

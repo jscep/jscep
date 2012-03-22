@@ -89,9 +89,7 @@ public class Nonce {
 
         Nonce nonce1 = (Nonce) o;
 
-        if (!Arrays.equals(nonce, nonce1.nonce)) return false;
-
-        return true;
+        return Arrays.equals(nonce, nonce1.nonce);
     }
 
     @Override

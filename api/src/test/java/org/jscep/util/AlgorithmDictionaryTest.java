@@ -1,15 +1,10 @@
 package org.jscep.util;
 
-import java.security.AlgorithmParameters;
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.Signature;
+import org.junit.Test;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
-
-import org.junit.Test;
+import java.security.*;
 
 /**
  * This is a sanity test for the algorithms recognised by the algorithm

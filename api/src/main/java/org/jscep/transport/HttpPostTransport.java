@@ -44,8 +44,8 @@ public class HttpPostTransport extends Transport {
 	}
 	
 	@Override
-	public <T> T sendRequest(Request<T> msg) throws IOException, MalformedURLException {
-		if (msg instanceof PKCSReq == false) {
+	public <T> T sendRequest(Request<T> msg) throws IOException {
+		if (!(msg instanceof PKCSReq)) {
 			// Appendix F
 			//
 			// This is allowed for any SCEP message except GetCACert, 

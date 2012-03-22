@@ -1,11 +1,11 @@
 package org.jscep.transport;
 
-import java.net.URL;
-
 import org.jscep.request.Operation;
 import org.jscep.transport.Transport.Method;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.net.URL;
 
 public class TransportTest {
 

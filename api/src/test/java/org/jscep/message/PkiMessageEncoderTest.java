@@ -1,25 +1,18 @@
 package org.jscep.message;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.cert.X509Certificate;
-
-import javax.security.auth.x500.X500Principal;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.asn1.IssuerAndSubject;
-import org.jscep.message.GetCertInitial;
-import org.jscep.message.PkcsPkiEnvelopeDecoder;
-import org.jscep.message.PkcsPkiEnvelopeEncoder;
-import org.jscep.message.PkiMessage;
-import org.jscep.message.PkiMessageDecoder;
-import org.jscep.message.PkiMessageEncoder;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 import org.jscep.x509.X509Util;
 import org.junit.Test;
+
+import javax.security.auth.x500.X500Principal;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.cert.X509Certificate;
 
 public class PkiMessageEncoderTest {
 	@Test

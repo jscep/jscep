@@ -37,6 +37,7 @@ public final class GetCaCert extends Request<CertStore> {
 	 * Creates a new GetCACert request with the given CA identification string.
 	 * 
 	 * @param caIdentifier the CA identification string.
+     * @param handler handler for GetCACert responses
 	 */
 	public GetCaCert(String caIdentifier, ScepContentHandler<CertStore> handler) {
 		super(Operation.GetCACert, handler);

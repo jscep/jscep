@@ -1,11 +1,11 @@
 package org.jscep.request;
 
-import java.io.IOException;
-
 import org.jscep.content.CaCertificateContentHandler;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class GetCaCertTest {
 	private GetCaCert fixture;

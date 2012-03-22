@@ -1,12 +1,10 @@
 package org.jscep.transaction;
 
-import java.util.Iterator;
-
-import org.jscep.transaction.Nonce;
-import org.jscep.transaction.NonceQueue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Iterator;
 
 public class NonceQueueTest {
 	private static final int SIZE = 1;

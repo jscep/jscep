@@ -1,7 +1,5 @@
 package org.jscep.response;
 
-import org.jscep.response.Capabilities;
-import org.jscep.response.Capability;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -71,7 +71,7 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 
 				// TODO: This must be signed by the current CA.
 				final SignedData sd = SignedData.getInstance(cmsContentInfo.getContent());
-				if (SignedDataUtil.isSignedBy(sd, issuer) == false) {
+				if (!SignedDataUtil.isSignedBy(sd, issuer)) {
 					throw new IOException("Invalid Signer");
 				}
 				// The content of the SignedData PKCS#7 [RFC2315] is a degenerate
