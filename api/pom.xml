@@ -93,23 +93,21 @@
 					<uploads>
 						<upload>
 							<file>${project.build.directory}/${project.artifactId}-${project.version}-sources.${project.packaging}</file>
-							<summary>jscep-api Source Code for v${project.version}</summary>
+							<summary>jscep-api ${project.version} (javadoc)</summary>
 							<labels>
-								<label>Featured</label>
 								<label>Type-Sources</label>
 							</labels>
 						</upload>
 						<upload>
 							<file>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.${project.packaging}</file>
-							<summary>jscep-api Javadoc for ${project.version}</summary>
+							<summary>jscep-api ${project.version} (javadoc)</summary>
 							<labels>
-								<label>Featured</label>
 								<label>Type-Docs</label>
 							</labels>
 						</upload>
 						<upload>
 							<file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file>
-							<summary>jscep-api JAR for v${project.version}</summary>
+							<summary>jscep-api ${project.version}</summary>
 							<labels>
 								<label>Featured</label>
 								<label>Type-Library</label>
