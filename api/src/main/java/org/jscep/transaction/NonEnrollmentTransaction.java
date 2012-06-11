@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -42,9 +43,9 @@ public class NonEnrollmentTransaction extends Transaction {
 		super(transport, encoder, decoder);
 		this.transId = TransactionId.createTransactionId();
 		
-		if (msgType == MessageType.GetCert) {
+		if (msgType == MessageType.GET_CERT) {
 			this.request = new GetCert(transId, Nonce.nextNonce(), iasn);
-		} else  if (msgType == MessageType.GetCRL) {
+		} else  if (msgType == MessageType.GET_CRL) {
 			this.request = new GetCRL(transId, Nonce.nextNonce(), iasn);
 		} else {
 			throw new IllegalArgumentException(msgType.toString());

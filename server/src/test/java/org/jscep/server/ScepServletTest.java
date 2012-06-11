@@ -159,7 +159,7 @@ public class ScepServletTest {
 		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 		
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GetCRL);
+		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CRL);
 		State s = t.send();
 		
 		System.out.println(s);
@@ -175,7 +175,7 @@ public class ScepServletTest {
 		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 		
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GetCert);
+		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CERT);
 		State s = t.send();
 		
 		System.out.println(s);
@@ -191,7 +191,7 @@ public class ScepServletTest {
 		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 		
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GetCert);
+		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CERT);
 		t.send();
 	}
 	

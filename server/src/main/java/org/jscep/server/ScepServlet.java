@@ -188,7 +188,7 @@ public abstract class ScepServlet extends HttpServlet {
 			Nonce recipientNonce = msg.getSenderNonce();
 			CertRep certRep;
 			
-			if (msgType == MessageType.GetCert) {
+			if (msgType == MessageType.GET_CERT) {
 				final IssuerAndSerialNumber iasn = (IssuerAndSerialNumber) msgData;
 				final X509Name principal = iasn.getName();
 				final BigInteger serial = iasn.getSerialNumber().getValue();
@@ -209,7 +209,7 @@ public abstract class ScepServlet extends HttpServlet {
 				} catch (Exception e) {
 					throw new ServletException(e);
 				}
-			} else if (msgType == MessageType.GetCertInitial) {
+			} else if (msgType == MessageType.GET_CERT_INITIAL) {
 				final IssuerAndSubject ias = (IssuerAndSubject) msgData;
 				final X509Name issuer = ias.getIssuer();
 				final X509Name subject = ias.getSubject();
@@ -231,7 +231,7 @@ public abstract class ScepServlet extends HttpServlet {
 				} catch (Exception e) {
 					throw new ServletException(e);
 				}
-			} else if (msgType == MessageType.GetCRL) {
+			} else if (msgType == MessageType.GET_CRL) {
 				final IssuerAndSerialNumber iasn = (IssuerAndSerialNumber) msgData;
 				final X509Name issuer = iasn.getName();
 				final BigInteger serialNumber = iasn.getSerialNumber().getValue();
@@ -248,7 +248,7 @@ public abstract class ScepServlet extends HttpServlet {
 				} catch (Exception e) {
 					throw new ServletException(e);
 				}
-			} else if (msgType == MessageType.PKCSReq) {
+			} else if (msgType == MessageType.PKCS_REQ) {
 				final CertificationRequest certReq = (CertificationRequest) msgData;
 				
 				try {

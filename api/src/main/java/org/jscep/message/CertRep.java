@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,20 +29,39 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.transaction.*;
 
 public class CertRep extends PkiResponse<DEROctetString> {
-
+	/**
+	 * Creates a new CertRep to indicate <em>success</em> state.
+	 * 
+	 * @param transId
+	 * @param senderNonce
+	 * @param recipientNonce
+	 * @param messageData
+	 */
 	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, DEROctetString messageData) {
-		// SUCCESS
-		super(transId, MessageType.CertRep, senderNonce, recipientNonce, PkiStatus.SUCCESS, messageData);
+		super(transId, MessageType.CERT_REP, senderNonce, recipientNonce, PkiStatus.SUCCESS, messageData, null);
 	}
 	
+	/**
+	 * Creates a new CertRep to indicate <em>failure</em> state.
+	 * 
+	 * @param transId
+	 * @param senderNonce
+	 * @param recipientNonce
+	 * @param failInfo
+	 */
 	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, FailInfo failInfo) {
-		// FAILURE
-		super(transId, MessageType.CertRep, senderNonce, recipientNonce, PkiStatus.FAILURE, failInfo);
+		super(transId, MessageType.CERT_REP, senderNonce, recipientNonce, PkiStatus.FAILURE, null, failInfo);
 	}
 	
+	/**
+	 * Creates a new CertRep to indicate <em>pending</em> state.
+	 * 
+	 * @param transId
+	 * @param senderNonce
+	 * @param recipientNonce
+	 */
 	public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce) {
-		// PENDING
-		super(transId, MessageType.CertRep, senderNonce, recipientNonce, PkiStatus.PENDING);
+		super(transId, MessageType.CERT_REP, senderNonce, recipientNonce, PkiStatus.PENDING, null, null);
 	}
 	
 	public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req, DEROctetString messageData) {

@@ -215,7 +215,7 @@ public class Client {
     	X509Name name = new X509Name(issuer.getName());
     	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
     	Transport transport = createTransport();
-    	final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GetCRL);
+    	final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GET_CRL);
     	t.send();
     	
     	if (t.getState() == State.CERT_ISSUED) {
@@ -255,7 +255,7 @@ public class Client {
     	BigInteger serialNumber = ca.getSerialNumber();
     	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
     	Transport transport = createTransport();
-    	final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GetCert);
+    	final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GET_CERT);
 		t.send();
     	
 		if (t.getState() == State.CERT_ISSUED) {

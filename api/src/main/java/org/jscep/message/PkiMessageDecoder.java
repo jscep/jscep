@@ -90,7 +90,7 @@ public class PkiMessageDecoder {
 		TransactionId transId = toTransactionId(attrTable.get(ScepObjectIdentifiers.transId));
 
         PkiMessage<? extends ASN1Encodable> decoded;
-		if (messageType == MessageType.CertRep) {
+		if (messageType == MessageType.CERT_REP) {
 			PkiStatus pkiStatus = toPkiStatus(attrTable.get(ScepObjectIdentifiers.pkiStatus));
 			Nonce recipientNonce = toNonce(attrTable.get(ScepObjectIdentifiers.recipientNonce));
 
@@ -108,18 +108,18 @@ public class PkiMessageDecoder {
 				
 				decoded = new CertRep(transId, senderNonce, recipientNonce, messageData);
 			}
-		} else if (messageType == MessageType.GetCert) {
+		} else if (messageType == MessageType.GET_CERT) {
 			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
 			IssuerAndSerialNumber messageData = IssuerAndSerialNumber.getInstance(decoder.decode(ed));
 			
 			decoded = new GetCert(transId, senderNonce, messageData);
-		} else  if (messageType == MessageType.GetCertInitial) {
+		} else  if (messageType == MessageType.GET_CERT_INITIAL) {
 			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
 			
 			IssuerAndSubject messageData = IssuerAndSubject.getInstance(decoder.decode(ed));
 			
 			decoded = new GetCertInitial(transId, senderNonce, messageData);
-		} else if (messageType == MessageType.GetCRL) {
+		} else if (messageType == MessageType.GET_CRL) {
 			EnvelopedData ed = getEnvelopedData((byte[]) signedContent.getContent());
 			IssuerAndSerialNumber messageData = IssuerAndSerialNumber.getInstance(decoder.decode(ed));
 			

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,31 +39,23 @@ public class PkiResponse<T extends ASN1Encodable> extends PkiMessage<T> {
 	private final PkiStatus pkiStatus;
 	private final FailInfo failInfo;
 	
-	public PkiResponse(TransactionId transId, MessageType messageType, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus, T messageData) {
-		// SUCCESS
+	/**
+	 * Creates a new PkiResponse to indicate <em>success</em> state.
+	 * 
+	 * @param transId
+	 * @param messageType
+	 * @param senderNonce
+	 * @param recipientNonce
+	 * @param pkiStatus
+	 * @param messageData
+	 * @param failInfo
+	 */
+	public PkiResponse(TransactionId transId, MessageType messageType, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus, T messageData, FailInfo failInfo) {
 		super(transId, messageType, senderNonce, messageData);
 	
 		this.recipientNonce = recipientNonce;
 		this.pkiStatus = pkiStatus;
-		this.failInfo = null;
-	}
-	
-	public PkiResponse(TransactionId transId, MessageType messageType, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus, FailInfo failInfo) {
-		// FAILURE
-		super(transId, messageType, senderNonce, null);
-	
-		this.recipientNonce = recipientNonce;
-		this.pkiStatus = pkiStatus;
 		this.failInfo = failInfo;
-	}
-	
-	public PkiResponse(TransactionId transId, MessageType messageType, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus) {
-		// PENDING
-		super(transId, messageType, senderNonce, null);
-	
-		this.recipientNonce = recipientNonce;
-		this.pkiStatus = pkiStatus;
-		this.failInfo = null;
 	}
 	
 	public Nonce getRecipientNonce() {

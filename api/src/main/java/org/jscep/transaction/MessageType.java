@@ -32,23 +32,23 @@ public enum MessageType {
 	/**
 	 * Response to certificate or CRL request
 	 */
-	CertRep(3),
+	CERT_REP(3),
 	/**
 	 * PKCS #10 certificate request
 	 */
-	PKCSReq(19),
+	PKCS_REQ(19),
 	/**
 	 * Certificate polling in manual enrollment
 	 */
-	GetCertInitial(20),
+	GET_CERT_INITIAL(20),
 	/**
 	 * Retrieve a certificate
 	 */
-	GetCert(21),
+	GET_CERT(21),
 	/**
 	 * Retrieve a CRL
 	 */
-	GetCRL(22);
+	GET_CRL(22);
 	
 	private final int value;
 	

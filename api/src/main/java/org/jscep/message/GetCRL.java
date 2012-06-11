@@ -32,6 +32,6 @@ import org.jscep.transaction.TransactionId;
  */
 public class GetCRL extends PkiRequest<IssuerAndSerialNumber> {
 	public GetCRL(TransactionId transId, Nonce senderNonce, IssuerAndSerialNumber messageData) {
-		super(transId, MessageType.GetCRL, senderNonce, messageData);
+		super(transId, MessageType.GET_CRL, senderNonce, messageData);
 	}
 }
