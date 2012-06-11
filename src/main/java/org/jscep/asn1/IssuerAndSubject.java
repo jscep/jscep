@@ -27,7 +27,7 @@ import org.bouncycastle.asn1.x509.X509Name;
 
 /**
  * This class represents the SCEP <code>IssuerAndSubject</code> ASN.1 object.
- * <p>
+ * <p/>
  * This object is defined by the following ASN.1 notation:
  * <pre>
  * IssuerAndSubject ::= SEQUENCE {
@@ -35,44 +35,44 @@ import org.bouncycastle.asn1.x509.X509Name;
  *     subject Name,
  * }
  * </pre>
- * 
+ *
  * @author David Grant
  */
 public class IssuerAndSubject extends ASN1Encodable {
-	private final X509Name issuer;
-	private final X509Name subject;
+    private final X509Name issuer;
+    private final X509Name subject;
 
-	public IssuerAndSubject(ASN1Sequence seq) {
-		issuer = X509Name.getInstance(seq.getObjectAt(0));
-		subject = X509Name.getInstance(seq.getObjectAt(1));
-	}
-	
-	public IssuerAndSubject(X509Name issuer, X509Name subject) {
-		this.issuer = issuer;
-		this.subject = subject;
-	}
+    public IssuerAndSubject(ASN1Sequence seq) {
+        issuer = X509Name.getInstance(seq.getObjectAt(0));
+        subject = X509Name.getInstance(seq.getObjectAt(1));
+    }
 
-	public X509Name getIssuer() {
-		return issuer;
-	}
+    public IssuerAndSubject(X509Name issuer, X509Name subject) {
+        this.issuer = issuer;
+        this.subject = subject;
+    }
 
-	public X509Name getSubject() {
-		return subject;
-	}
+    public X509Name getIssuer() {
+        return issuer;
+    }
 
-	@Override
-	public DERObject toASN1Object() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
-		
-		v.add(issuer);
-		v.add(subject);
-		
-		return new DERSequence(v);
-	}
-	
-	public static IssuerAndSubject getInstance(ASN1Encodable encodable) {
-		final ASN1Sequence seq = DERSequence.getInstance(encodable);
-		
-		return new IssuerAndSubject(seq);
-	}
+    public X509Name getSubject() {
+        return subject;
+    }
+
+    @Override
+    public DERObject toASN1Object() {
+        ASN1EncodableVector v = new ASN1EncodableVector();
+
+        v.add(issuer);
+        v.add(subject);
+
+        return new DERSequence(v);
+    }
+
+    public static IssuerAndSubject getInstance(ASN1Encodable encodable) {
+        final ASN1Sequence seq = DERSequence.getInstance(encodable);
+
+        return new IssuerAndSubject(seq);
+    }
 }

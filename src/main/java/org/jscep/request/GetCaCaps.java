@@ -25,37 +25,37 @@ package org.jscep.request;
 
 /**
  * This class represents a <code>GetCACaps</code> request.
- * 
+ *
  * @author David Grant
  */
 public final class GetCaCaps extends Request {
-	private final String caIdentifier;
+    private final String caIdentifier;
 
-	public GetCaCaps() {
-		this(null);
-	}
-	
-	public GetCaCaps(String caIdentifier) {
-		super(Operation.GET_CA_CAPS);
-		this.caIdentifier = caIdentifier;
-	}
+    public GetCaCaps() {
+        this(null);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getMessage() {
-		if (caIdentifier == null) {
-			return "";
-		}
-		return caIdentifier;
-	}
-	
-	@Override
-	public String toString() {
-		if (caIdentifier != null) {
-			return "GetCACaps(" + caIdentifier + ")";
-		} else {
-			return "GetCACaps";
-		}
-	}
+    public GetCaCaps(String caIdentifier) {
+        super(Operation.GET_CA_CAPS);
+        this.caIdentifier = caIdentifier;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getMessage() {
+        if (caIdentifier == null) {
+            return "";
+        }
+        return caIdentifier;
+    }
+
+    @Override
+    public String toString() {
+        if (caIdentifier != null) {
+            return "GetCACaps(" + caIdentifier + ")";
+        } else {
+            return "GetCACaps";
+        }
+    }
 }

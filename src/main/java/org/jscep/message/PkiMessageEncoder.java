@@ -41,63 +41,63 @@ import java.util.Hashtable;
 
 public class PkiMessageEncoder {
     private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageEncoder.class);
-	private final PrivateKey senderKey;
-	private final X509Certificate senderCert;
-	private final PkcsPkiEnvelopeEncoder encoder;
-	
-	public PkiMessageEncoder(PrivateKey priKey, X509Certificate sender, PkcsPkiEnvelopeEncoder enveloper) {
-		this.senderKey = priKey;
-		this.senderCert = sender;
-		this.encoder = enveloper;
-	}
-	
-	public CMSSignedData encode(PkiMessage<? extends ASN1Encodable> message) throws IOException {
+    private final PrivateKey senderKey;
+    private final X509Certificate senderCert;
+    private final PkcsPkiEnvelopeEncoder encoder;
+
+    public PkiMessageEncoder(PrivateKey priKey, X509Certificate sender, PkcsPkiEnvelopeEncoder enveloper) {
+        this.senderKey = priKey;
+        this.senderCert = sender;
+        this.encoder = enveloper;
+    }
+
+    public CMSSignedData encode(PkiMessage<? extends ASN1Encodable> message) throws IOException {
         LOGGER.debug("Encoding message: {}", message);
-		CMSProcessable signable;
-		
-		boolean hasMessageData = true;
-		if (message instanceof PkiResponse<?>) {
-			PkiResponse<?> response = (PkiResponse<?>) message;
-			if (response.getPkiStatus() != PkiStatus.SUCCESS) {
-				hasMessageData = false;
-			}
-		}
-		if (hasMessageData) {
-			CMSEnvelopedData ed = encoder.encode(message.getMessageData());
-			signable = new CMSProcessableByteArray(ed.getEncoded());
-		} else {
-			signable = null;
-		}
-		
-		Hashtable<DERObjectIdentifier, Attribute> table = new Hashtable<DERObjectIdentifier, Attribute>();
-		for (Attribute attr : message.getAttributes()) {
-			table.put(attr.getAttrType(), attr);
-		}
-		AttributeTable signedAttrs = new AttributeTable(table);
-		Collection<X509Certificate> certColl = Collections.singleton(senderCert);
-		CertStore store;
-		try {
-			store = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certColl));
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-		
-		CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
+        CMSProcessable signable;
+
+        boolean hasMessageData = true;
+        if (message instanceof PkiResponse<?>) {
+            PkiResponse<?> response = (PkiResponse<?>) message;
+            if (response.getPkiStatus() != PkiStatus.SUCCESS) {
+                hasMessageData = false;
+            }
+        }
+        if (hasMessageData) {
+            CMSEnvelopedData ed = encoder.encode(message.getMessageData());
+            signable = new CMSProcessableByteArray(ed.getEncoded());
+        } else {
+            signable = null;
+        }
+
+        Hashtable<DERObjectIdentifier, Attribute> table = new Hashtable<DERObjectIdentifier, Attribute>();
+        for (Attribute attr : message.getAttributes()) {
+            table.put(attr.getAttrType(), attr);
+        }
+        AttributeTable signedAttrs = new AttributeTable(table);
+        Collection<X509Certificate> certColl = Collections.singleton(senderCert);
+        CertStore store;
+        try {
+            store = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certColl));
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+
+        CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
         LOGGER.debug("Signing message using key belonging to '{}'", senderCert.getSubjectDN());
-		sdGenerator.addSigner(senderKey, senderCert, CMSSignedGenerator.DIGEST_SHA1, signedAttrs, null);
-		try {
-			sdGenerator.addCertificatesAndCRLs(store);
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-		
-		try {
+        sdGenerator.addSigner(senderKey, senderCert, CMSSignedGenerator.DIGEST_SHA1, signedAttrs, null);
+        try {
+            sdGenerator.addCertificatesAndCRLs(store);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+
+        try {
             LOGGER.debug("Signing {} content", signable);
-			CMSSignedData sd = sdGenerator.generate(signable, true, (String) null);
+            CMSSignedData sd = sdGenerator.generate(signable, true, (String) null);
             LOGGER.debug("Encoded to: {}", sd.getEncoded());
             return sd;
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-	}
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
 }

@@ -34,40 +34,40 @@ import java.security.cert.X509Certificate;
 
 public class PkcsPkiEnvelopeEncoder {
     private static Logger LOGGER = LoggingUtil.getLogger(PkcsPkiEnvelopeEncoder.class);
-	private final X509Certificate recipient;
-	
-	public PkcsPkiEnvelopeEncoder(X509Certificate recipient) {
-		this.recipient = recipient;
-	}
-	
-	public CMSEnvelopedData encode(ASN1Encodable messageData) throws IOException {
-        LOGGER.debug("Encrypting message: {}", messageData.getDEREncoded());
-		CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
-		
-		byte[] payload;
-		if (messageData instanceof DEROctetString) {
-			DEROctetString oct = (DEROctetString) messageData;
-			payload = oct.getOctets();
-		} else {
-			payload = messageData.getEncoded();
-		}
+    private final X509Certificate recipient;
 
-		CMSProcessable envelopable = new CMSProcessableByteArray(payload);
-		edGenerator.addKeyTransRecipient(recipient);
+    public PkcsPkiEnvelopeEncoder(X509Certificate recipient) {
+        this.recipient = recipient;
+    }
+
+    public CMSEnvelopedData encode(ASN1Encodable messageData) throws IOException {
+        LOGGER.debug("Encrypting message: {}", messageData.getDEREncoded());
+        CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
+
+        byte[] payload;
+        if (messageData instanceof DEROctetString) {
+            DEROctetString oct = (DEROctetString) messageData;
+            payload = oct.getOctets();
+        } else {
+            payload = messageData.getEncoded();
+        }
+
+        CMSProcessable envelopable = new CMSProcessableByteArray(payload);
+        edGenerator.addKeyTransRecipient(recipient);
         LOGGER.debug("Encrypting session key using key belonging to '{}'", recipient.getSubjectDN());
-		
-		try {
-			Provider[] providers = Security.getProviders("KeyGenerator.DESEDE");
-			if (providers.length > 0) {
+
+        try {
+            Provider[] providers = Security.getProviders("KeyGenerator.DESEDE");
+            if (providers.length > 0) {
                 LOGGER.debug("Using '{}' for DESede key generation", providers[0]);
-				CMSEnvelopedData data = edGenerator.generate(envelopable, CMSEnvelopedGenerator.DES_EDE3_CBC, providers[0]);
+                CMSEnvelopedData data = edGenerator.generate(envelopable, CMSEnvelopedGenerator.DES_EDE3_CBC, providers[0]);
                 LOGGER.debug("Encrypted to: {}", data.getEncoded());
                 return data;
-			} else {
-				throw new IOException("No Provider for DESede");
-			}
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-	}
+            } else {
+                throw new IOException("No Provider for DESede");
+            }
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
 }

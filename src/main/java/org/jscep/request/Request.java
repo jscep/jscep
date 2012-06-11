@@ -28,38 +28,39 @@ import java.io.OutputStream;
 
 /**
  * This interface represents a SCEP request.
- * <p>
+ * <p/>
  * Once an instance of a <code>Request</code> implementation has been obtained,
- * it can be sent to a SCEP server by using an instance of 
+ * it can be sent to a SCEP server by using an instance of
  * {@link org.jscep.transport.Transport}.
- * 
+ *
  * @author David Grant
- * @see org.jscep.transport.Transport#sendRequest(Request, ScepContentHandler)
+ * @see org.jscep.transport.Transport#sendRequest(Request, org.jscep.content.ScepContentHandler)
  */
 public abstract class Request {
-	private final Operation operation;
-	
-	public Request(Operation operation) {
-		this.operation = operation;
-	}
-	
-	/**
-	 * Returns the name of this operation.
-	 * 
-	 * @return the name of this operation.
-	 */
-	public Operation getOperation() {
-		return operation;
-	}
+    private final Operation operation;
+
+    public Request(Operation operation) {
+        this.operation = operation;
+    }
+
+    /**
+     * Returns the name of this operation.
+     *
+     * @return the name of this operation.
+     */
+    public Operation getOperation() {
+        return operation;
+    }
+
     /**
      * Returns the message for this request.
-     * 
+     *
      * @return the message.
      * @throws IOException if any I/O error occurs.
      */
     public abstract String getMessage() throws IOException;
-    
+
     public void write(OutputStream out) throws IOException {
-    	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 }

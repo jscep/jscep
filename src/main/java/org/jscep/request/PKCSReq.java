@@ -22,55 +22,54 @@
  */
 package org.jscep.request;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.util.encoders.Base64;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * This class represents a <code>PKCSReq</code> request.
- * 
+ *
  * @author David Grant
  */
 public class PKCSReq extends Request implements Postable {
-	private final CMSSignedData msgData;
+    private final CMSSignedData msgData;
 
-	/**
-	 * Creates a new instance of this class using the provided pkiMessage
-	 * and response handler.
-	 * 
-	 * @param msgData the pkiMessage to use.
-	 * @param handler the response handler for this request.
-	 */
-	public PKCSReq(CMSSignedData msgData) {
-		super(Operation.PKI_OPERATION);
-		
-		this.msgData = msgData;
-	}
+    /**
+     * Creates a new instance of this class using the provided pkiMessage
+     * and response handler.
+     *
+     * @param msgData the pkiMessage to use.
+     */
+    public PKCSReq(CMSSignedData msgData) {
+        super(Operation.PKI_OPERATION);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getMessage() throws IOException {
-		byte[] bytes = Base64.encode(msgData.getEncoded());
-		
-		return new String(bytes);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void write(OutputStream out) throws IOException {
-    	out.write(msgData.getEncoded());
+        this.msgData = msgData;
     }
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		return msgData.toString();
-	}
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getMessage() throws IOException {
+        byte[] bytes = Base64.encode(msgData.getEncoded());
+
+        return new String(bytes);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(OutputStream out) throws IOException {
+        out.write(msgData.getEncoded());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return msgData.toString();
+    }
 }

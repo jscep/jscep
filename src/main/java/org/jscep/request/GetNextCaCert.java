@@ -23,10 +23,9 @@
 package org.jscep.request;
 
 
-
 /**
  * This class represents a <code>GetNextCACert</code> request.
- * 
+ *
  * @author David Grant
  */
 public class GetNextCaCert extends Request {
@@ -34,35 +33,34 @@ public class GetNextCaCert extends Request {
 
     /**
      * Creates a new GetNextCACert request with the given CA identification string.
-     * 
+     *
      * @param caIdentifier the CA identification string.
-     * @param handler the response handler for this request.
      */
     public GetNextCaCert(String caIdentifier) {
-    	super(Operation.GET_NEXT_CA_CERT);
+        super(Operation.GET_NEXT_CA_CERT);
         this.caIdentifier = caIdentifier;
     }
-    
+
     public GetNextCaCert() {
-    	this(null);
+        this(null);
     }
 
     /**
      * {@inheritDoc}
      */
     public String getMessage() {
-    	if (caIdentifier == null) {
-    		return "";
-    	}
+        if (caIdentifier == null) {
+            return "";
+        }
         return caIdentifier;
     }
-    
+
     @Override
-	public String toString() {
-    	if (caIdentifier != null) {
-    		return "GetNextCACert(" + caIdentifier + ")";
-    	} else {
-    		return "GetNextCACert";
-    	}
-	}
+    public String toString() {
+        if (caIdentifier != null) {
+            return "GetNextCACert(" + caIdentifier + ")";
+        } else {
+            return "GetNextCACert";
+        }
+    }
 }

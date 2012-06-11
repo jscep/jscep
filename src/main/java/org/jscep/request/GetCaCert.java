@@ -25,43 +25,43 @@ package org.jscep.request;
 
 /**
  * This class represents a <code>GetCACert</code> request.
- * 
+ *
  * @author David Grant
  */
 public final class GetCaCert extends Request {
-	private final String caIdentifier;
-	/**
-	 * Creates a new GetCACert request with the given CA identification string.
-	 * 
-	 * @param caIdentifier the CA identification string.
-     * @param handler handler for GetCACert responses
-	 */
-	public GetCaCert(String caIdentifier) {
-		super(Operation.GET_CA_CERT);
-		
-		this.caIdentifier = caIdentifier;
-	}
-	
-	public GetCaCert() {
-		this(null);
-	}
+    private final String caIdentifier;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getMessage() {
-		if (caIdentifier == null) {
-			return "";
-		}
-		return caIdentifier;
-	}
-	
-	@Override
-	public String toString() {
-		if (caIdentifier != null) {
-			return "GetCACert(" + caIdentifier + ")";
-		} else {
-			return "GetCACert";
-		}
-	}
+    /**
+     * Creates a new GetCACert request with the given CA identification string.
+     *
+     * @param caIdentifier the CA identification string.
+     */
+    public GetCaCert(String caIdentifier) {
+        super(Operation.GET_CA_CERT);
+
+        this.caIdentifier = caIdentifier;
+    }
+
+    public GetCaCert() {
+        this(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getMessage() {
+        if (caIdentifier == null) {
+            return "";
+        }
+        return caIdentifier;
+    }
+
+    @Override
+    public String toString() {
+        if (caIdentifier != null) {
+            return "GetCACert(" + caIdentifier + ")";
+        } else {
+            return "GetCACert";
+        }
+    }
 }
