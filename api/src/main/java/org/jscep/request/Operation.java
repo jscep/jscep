@@ -32,19 +32,19 @@ public enum Operation {
 	 * 
 	 * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#appendix-C.1">SCEP Internet-Draft Reference</a>
 	 */
-	GetCACaps,
+	GET_CA_CAPS("GetCACaps"),
 	/**
 	 * The operation for <tt>GetCACert</tt>
 	 * 
 	 * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.1">SCEP Internet-Draft Reference</a>
 	 */
-	GetCACert,
+	GET_CA_CERT("GetCACert"),
 	/**
 	 * The operation for <tt>GetNextCACert</tt>
 	 * 
 	 * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.6">SCEP Internet-Draft Reference</a>
 	 */
-	GetNextCACert,
+	GET_NEXT_CA_CERT("GetNextCACert"),
 	/**
 	 * The operation for <tt>PKCSReq</tt>, <tt>GetCertInitial</tt>, <tt>GetCert</tt>
 	 * and <tt>GetCRL</tt>
@@ -54,5 +54,27 @@ public enum Operation {
 	 * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.4">SCEP Internet-Draft Reference</a>
 	 * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.5">SCEP Internet-Draft Reference</a>
 	 */
-	PKIOperation
+	PKI_OPERATION("PKIOperation");
+	
+	private final String name;
+	
+	private Operation(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public static Operation forName(String name) {
+		if (name == null) {
+			throw new NullPointerException();
+		}
+		for (Operation op : Operation.values()) {
+			if (op.name.equals(name)) {
+				return op;
+			}
+		}
+		throw new IllegalArgumentException(name + " not found");
+	}
 }

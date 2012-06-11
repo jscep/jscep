@@ -25,7 +25,7 @@ public class GetCaCapsTest {
 
 	@Test
 	public void testGetOperation() {
-		Assert.assertSame(Operation.GetCACaps, fixture.getOperation());
+		Assert.assertSame(Operation.GET_CA_CAPS, fixture.getOperation());
 	}
 
 	@Test

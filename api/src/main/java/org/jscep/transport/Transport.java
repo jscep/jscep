@@ -22,16 +22,16 @@
  */
 package org.jscep.transport;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.URL;
+
 import org.jscep.content.ScepContentHandler;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
 import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.URL;
 
 
 /**
@@ -88,7 +88,7 @@ public abstract class Transport {
 	 * @throws IOException if any I/O error occurs.
 	 * @see Request#getContentHandler()
 	 */
-	abstract public <T> T sendRequest(Request<T> msg, ScepContentHandler<T> handler) throws IOException;
+	abstract public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws IOException;
 	
 	/**
 	 * Creates a new <code>Transport</code> of type <code>method</code> with the 
@@ -126,6 +126,6 @@ public abstract class Transport {
 	}
 	
 	URL getUrl(Operation op) throws MalformedURLException {
-		return new URL(url.toExternalForm() + "?operation=" + op);
+		return new URL(url.toExternalForm() + "?operation=" + op.getName());
 	}
 }

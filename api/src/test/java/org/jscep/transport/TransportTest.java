@@ -24,7 +24,7 @@ public class TransportTest {
 	@Test
 	public void testGetURL() throws Exception {
 		Transport t = Transport.createTransport(Method.GET, new URL("http://example.org/"));
-		URL url = t.getUrl(Operation.GetCACaps);
-		Assert.assertTrue(url.getQuery().contains("operation=" + Operation.GetCACaps.toString()));
+		URL url = t.getUrl(Operation.GET_CA_CAPS);
+		Assert.assertTrue(url.getQuery().contains("operation=" + Operation.GET_CA_CAPS.getName()));
 	}
 }

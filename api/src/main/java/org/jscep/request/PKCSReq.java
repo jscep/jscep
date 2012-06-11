@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,7 +33,7 @@ import org.bouncycastle.util.encoders.Base64;
  * 
  * @author David Grant
  */
-public class PKCSReq extends Request<CMSSignedData> {
+public class PKCSReq extends Request implements Postable {
 	private final CMSSignedData msgData;
 
 	/**
@@ -44,7 +44,7 @@ public class PKCSReq extends Request<CMSSignedData> {
 	 * @param handler the response handler for this request.
 	 */
 	public PKCSReq(CMSSignedData msgData) {
-		super(Operation.PKIOperation);
+		super(Operation.PKI_OPERATION);
 		
 		this.msgData = msgData;
 	}

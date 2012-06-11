@@ -24,7 +24,7 @@ public class GetCaCertTest {
 	
 	@Test
 	public void testGetOperation() {
-		Assert.assertSame(Operation.GetCACert, fixture.getOperation());
+		Assert.assertSame(Operation.GET_CA_CERT, fixture.getOperation());
 	}
 
 	@Test

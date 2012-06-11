@@ -108,7 +108,7 @@ public abstract class ScepServlet extends HttpServlet {
 		
 		final String reqMethod = req.getMethod();
 			
-		if (op == Operation.PKIOperation) {
+		if (op == Operation.PKI_OPERATION) {
 			if (!reqMethod.equals(POST) && !reqMethod.equals(GET)) {
 				// PKIOperation must be sent using GET or POST
 			
@@ -130,25 +130,25 @@ public abstract class ScepServlet extends HttpServlet {
 		
 		LOGGER.debug("Method " + reqMethod + " Allowed for Operation: " + op);
 		
-		if (op == Operation.GetCACaps) {
+		if (op == Operation.GET_CA_CAPS) {
 			try {
 				doGetCaCaps(req, res);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
-		} else if (op == Operation.GetCACert) {
+		} else if (op == Operation.GET_CA_CERT) {
 			try {
 				doGetCaCert(req, res);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
-		} else if (op == Operation.GetNextCACert) {
+		} else if (op == Operation.GET_NEXT_CA_CERT) {
 			try {
 				doGetNextCaCert(req, res);
 			} catch (Exception e) {
 				throw new ServletException(e);
 			}
-		} else if (op == Operation.PKIOperation) {
+		} else if (op == Operation.PKI_OPERATION) {
 			// PKIOperation
 			
 			res.setHeader("Content-Type", "application/x-pki-message");
@@ -341,7 +341,7 @@ public abstract class ScepServlet extends HttpServlet {
 		{
 			return null;
 		}
-		return Operation.valueOf(req.getParameter(OP_PARAM));
+		return Operation.forName(req.getParameter(OP_PARAM));
 	}
 	
 	private void doGetCaCaps(HttpServletRequest req, HttpServletResponse res) throws Exception {
@@ -452,7 +452,7 @@ public abstract class ScepServlet extends HttpServlet {
 		} else {
 			Operation op = getOperation(req);
 			
-			if (op == Operation.PKIOperation) {
+			if (op == Operation.PKI_OPERATION) {
 				String msg = req.getParameter(MSG_PARAM);
 				if (msg.isEmpty()) {
 					return new byte[0];

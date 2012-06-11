@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,14 +22,13 @@
  */
 package org.jscep.request;
 
-import java.security.cert.CertStore;
 
 /**
  * This class represents a <code>GetCACert</code> request.
  * 
  * @author David Grant
  */
-public final class GetCaCert extends Request<CertStore> {
+public final class GetCaCert extends Request {
 	private final String caIdentifier;
 	/**
 	 * Creates a new GetCACert request with the given CA identification string.
@@ -38,7 +37,7 @@ public final class GetCaCert extends Request<CertStore> {
      * @param handler handler for GetCACert responses
 	 */
 	public GetCaCert(String caIdentifier) {
-		super(Operation.GetCACert);
+		super(Operation.GET_CA_CERT);
 		
 		this.caIdentifier = caIdentifier;
 	}

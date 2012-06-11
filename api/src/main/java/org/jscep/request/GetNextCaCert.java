@@ -22,8 +22,6 @@
  */
 package org.jscep.request;
 
-import java.security.cert.X509Certificate;
-import java.util.List;
 
 
 /**
@@ -31,7 +29,7 @@ import java.util.List;
  * 
  * @author David Grant
  */
-public class GetNextCaCert extends Request<List<X509Certificate>> {
+public class GetNextCaCert extends Request {
     private final String caIdentifier;
 
     /**
@@ -41,7 +39,7 @@ public class GetNextCaCert extends Request<List<X509Certificate>> {
      * @param handler the response handler for this request.
      */
     public GetNextCaCert(String caIdentifier) {
-    	super(Operation.GetNextCACert);
+    	super(Operation.GET_NEXT_CA_CERT);
         this.caIdentifier = caIdentifier;
     }
     

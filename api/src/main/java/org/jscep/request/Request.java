@@ -34,10 +34,9 @@ import java.io.OutputStream;
  * {@link org.jscep.transport.Transport}.
  * 
  * @author David Grant
- * @param <T> the response type associated with this request
- * @see org.jscep.transport.Transport#sendRequest(Request)
+ * @see org.jscep.transport.Transport#sendRequest(Request, ScepContentHandler)
  */
-public abstract class Request<T> {
+public abstract class Request {
 	private final Operation operation;
 	
 	public Request(Operation operation) {

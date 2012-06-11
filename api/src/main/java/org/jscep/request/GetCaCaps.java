@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,14 +22,13 @@
  */
 package org.jscep.request;
 
-import org.jscep.response.Capabilities;
 
 /**
  * This class represents a <code>GetCACaps</code> request.
  * 
  * @author David Grant
  */
-public final class GetCaCaps extends Request<Capabilities> {
+public final class GetCaCaps extends Request {
 	private final String caIdentifier;
 
 	public GetCaCaps() {
@@ -37,7 +36,7 @@ public final class GetCaCaps extends Request<Capabilities> {
 	}
 	
 	public GetCaCaps(String caIdentifier) {
-		super(Operation.GetCACaps);
+		super(Operation.GET_CA_CAPS);
 		this.caIdentifier = caIdentifier;
 	}
 

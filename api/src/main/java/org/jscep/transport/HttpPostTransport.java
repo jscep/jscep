@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,7 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.jscep.content.ScepContentHandler;
-import org.jscep.request.PKCSReq;
+import org.jscep.request.Postable;
 import org.jscep.request.Request;
 
 /**
@@ -43,12 +43,8 @@ public class HttpPostTransport extends Transport {
 	}
 	
 	@Override
-	public <T> T sendRequest(Request<T> msg, ScepContentHandler<T> handler) throws IOException {
-		if (!(msg instanceof PKCSReq)) {
-			// Appendix F
-			//
-			// This is allowed for any SCEP message except GetCACert, 
-			// GetNextCACert, or GetCACaps.
+	public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws IOException {
+		if (!Postable.class.isAssignableFrom(msg.getClass())) {
 			throw new IllegalArgumentException("POST transport may not be used for " + msg.getOperation() + " messages.");
 		}
 		
