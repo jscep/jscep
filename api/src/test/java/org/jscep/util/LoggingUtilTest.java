@@ -1,5 +1,7 @@
 package org.jscep.util;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,10 +19,14 @@ public class LoggingUtilTest {
 	public void testGetLoggerClass() {
 		Assert.assertEquals(fixture, LoggingUtil.getLogger(LoggingUtil.class));
 	}
-
+	
 	@Test
-	public void testGetLoggerString() {
-		Assert.assertEquals(fixture, LoggingUtil.getLogger("org.jscep.util"));
+	public void testIssue62() throws Exception {
+		try {
+			LoggingUtil.getLogger(Class.forName("NoPackageTestFixture"));
+		} catch (NullPointerException e) {
+			fail("Should not have thrown a null pointer exception.");
+		}
 	}
 
 }

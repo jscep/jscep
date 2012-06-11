@@ -24,17 +24,12 @@ package org.jscep.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * This class provides logging facilities.
  * 
  * @author David Grant
  */
 public final class LoggingUtil {
-	private static Map<String, Logger> cache = new HashMap<String, Logger>();
-
 	/**
 	 * Private constructor to prevent instantiation.
 	 */
@@ -49,25 +44,6 @@ public final class LoggingUtil {
 	 * @return a logger for the given class.
 	 */
 	public static Logger getLogger(Class<?> type) {
-		return getLogger(type.getPackage().getName());
-	}
-
-	/**
-	 * Returns a logger for the given package name.
-	 * <p>
-	 * This method returns a logger configured with a resource
-	 * bundle for the given package.  Loggers are cached, so 
-	 * calling this method repeatedly with the same package name
-	 * will yield the same logger.
-	 * 
-	 * @param packageName the package name.
-	 * @return a logger for the given package name.
-	 */
-	public static Logger getLogger(String packageName) {
-		if (!cache.containsKey(packageName)) {
-			cache.put(packageName, LoggerFactory.getLogger(packageName));
-		}
-		
-		return cache.get(packageName);
+		return LoggerFactory.getLogger(type);
 	}
 }
