@@ -149,6 +149,48 @@
                 <version>1.0-beta-6</version>
             </extension>
         </extensions>
+        <plugins>
+            <plugin>
+                <groupId>com.googlecode.maven-gcu-plugin</groupId>
+                <artifactId>maven-gcu-plugin</artifactId>
+                <configuration>
+                    <failsOnError>true</failsOnError>
+                    <projectName>jscep</projectName>
+                    <uploads>
+                        <upload>
+                            <file>
+                                ${project.build.directory}/${project.artifactId}-${project.version}-sources.${project.packaging}
+                            </file>
+                            <summary>Source JAR for v${project.version}</summary>
+                            <labels>
+                                <label>Featured</label>
+                                <label>Type-Sources</label>
+                            </labels>
+                        </upload>
+                        <upload>
+                            <file>
+                                ${project.build.directory}/${project.artifactId}-${project.version}-javadoc.${project.packaging}
+                            </file>
+                            <summary>Javadoc JAR for ${project.version}</summary>
+                            <labels>
+                                <label>Featured</label>
+                                <label>Type-Docs</label>
+                            </labels>
+                        </upload>
+                        <upload>
+                            <file>
+                                ${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}
+                            </file>
+                            <summary>Binary JAR for v${project.version}</summary>
+                            <labels>
+                                <label>Featured</label>
+                                <label>Type-Library</label>
+                            </labels>
+                        </upload>
+                    </uploads>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
     <dependencies>
         <dependency>
