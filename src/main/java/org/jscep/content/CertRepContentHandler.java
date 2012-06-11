@@ -22,10 +22,8 @@
  */
 package org.jscep.content;
 
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
+import com.google.common.io.ByteStreams;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,28 +33,15 @@ import java.io.InputStream;
  *
  * @author David Grant
  */
-public class CertRepContentHandler implements ScepContentHandler<CMSSignedData> {
+public class CertRepContentHandler implements ScepContentHandler<byte[]> {
     /**
      * {@inheritDoc}
      *
      * @throws IOException
      */
-    public CMSSignedData getContent(InputStream in, String mimeType) throws IOException {
+    public byte[] getContent(InputStream in, String mimeType) throws IOException {
         if (mimeType.startsWith("application/x-pki-message")) {
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            int b;
-            while ((b = in.read()) != -1) {
-                baos.write(b);
-
-            }
-            baos.close();
-
-            try {
-                return new CMSSignedData(baos.toByteArray());
-            } catch (CMSException e) {
-                throw new IOException(e);
-            }
+            return ByteStreams.toByteArray(in);
         } else {
             throw new IOException("Invalid Content Type");
         }

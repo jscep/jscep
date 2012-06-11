@@ -22,6 +22,7 @@
  */
 package org.jscep.content;
 
+import com.google.common.io.ByteStreams;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.SignedData;
@@ -29,7 +30,6 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.pkcs7.SignedDataUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -66,7 +66,7 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 
             Collection<? extends Certificate> collection;
             try {
-                CMSSignedData cmsMessageData = new CMSSignedData(getBytes(in));
+                CMSSignedData cmsMessageData = new CMSSignedData(ByteStreams.toByteArray(in));
                 ContentInfo cmsContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(cmsMessageData.getEncoded()));
 
                 // TODO: This must be signed by the current CA.
@@ -94,16 +94,5 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
         } else {
             throw new IOException("Invalid Content Type");
         }
-    }
-
-    private byte[] getBytes(InputStream in) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        int i;
-        while ((i = in.read()) != -1) {
-            baos.write(i);
-        }
-
-        return baos.toByteArray();
     }
 }

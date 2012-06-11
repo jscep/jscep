@@ -24,7 +24,6 @@ package org.jscep.content;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
 
@@ -51,7 +50,7 @@ public class CaCertificateContentHandler implements ScepContentHandler<CertStore
     public CertStore getContent(InputStream in, String mimeType) throws IOException {
         final CertificateFactory cf;
         try {
-            cf = CertificateFactory.getInstance("X.509", new BouncyCastleProvider());
+            cf = CertificateFactory.getInstance("X.509");
         } catch (CertificateException e) {
             IOException ioe = new IOException(e);
 

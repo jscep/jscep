@@ -59,8 +59,13 @@ public class NonEnrollmentTransaction extends Transaction {
     public State send() throws IOException {
         final CMSSignedData signedData = encoder.encode(request);
         final CertRepContentHandler handler = new CertRepContentHandler();
-        final CMSSignedData inMsg = transport.sendRequest(new PKCSReq(signedData), handler);
-        final CertRep response = (CertRep) decoder.decode(inMsg);
+        final byte[] inMsg = transport.sendRequest(new PKCSReq(signedData.getEncoded()), handler);
+        final CertRep response;
+        try {
+            response = (CertRep) decoder.decode(new CMSSignedData(inMsg));
+        } catch (CMSException e) {
+            throw new IOException(e);
+        }
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
             failInfo = response.getFailInfo();

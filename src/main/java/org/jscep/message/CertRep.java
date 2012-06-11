@@ -22,7 +22,6 @@
  */
 package org.jscep.message;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
@@ -62,24 +61,6 @@ public class CertRep extends PkiResponse<DEROctetString> {
      */
     public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce) {
         super(transId, MessageType.CERT_REP, senderNonce, recipientNonce, PkiStatus.PENDING, null, null);
-    }
-
-    public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req, DEROctetString messageData) {
-        Nonce senderNonce = Nonce.nextNonce();
-
-        return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), messageData);
-    }
-
-    public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req, FailInfo failInfo) {
-        Nonce senderNonce = Nonce.nextNonce();
-
-        return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce(), failInfo);
-    }
-
-    public static <T extends ASN1Encodable> CertRep createResponse(PkiRequest<T> req) {
-        Nonce senderNonce = Nonce.nextNonce();
-
-        return new CertRep(req.getTransactionId(), senderNonce, req.getSenderNonce());
     }
 
     public CMSSignedData getCMSSignedData() throws CMSException {

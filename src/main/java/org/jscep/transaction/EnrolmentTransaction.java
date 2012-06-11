@@ -79,10 +79,15 @@ public class EnrolmentTransaction extends Transaction {
         CMSSignedData signedData = encoder.encode(request);
         LOGGER.debug("Sending {}", signedData);
         CertRepContentHandler handler = new CertRepContentHandler();
-        final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData), handler);
+        final byte[] res = transport.sendRequest(new PKCSReq(signedData.getEncoded()), handler);
         LOGGER.debug("Received response {}", res);
 
-        CertRep response = (CertRep) decoder.decode(res);
+        CertRep response;
+        try {
+            response = (CertRep) decoder.decode(new CMSSignedData(res));
+        } catch (CMSException e) {
+            throw new IOException(e);
+        }
         validateExchange(request, response);
 
         LOGGER.debug("Response: {}", response);
@@ -113,9 +118,14 @@ public class EnrolmentTransaction extends Transaction {
         final GetCertInitial pollReq = new GetCertInitial(transId, Nonce.nextNonce(), ias);
         CMSSignedData signedData = encoder.encode(pollReq);
         CertRepContentHandler handler = new CertRepContentHandler();
-        final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData), handler);
+        final byte[] res = transport.sendRequest(new PKCSReq(signedData.getEncoded()), handler);
 
-        CertRep response = (CertRep) decoder.decode(res);
+        CertRep response;
+        try {
+            response = (CertRep) decoder.decode(new CMSSignedData(res));
+        } catch (CMSException e) {
+            throw new IOException(e);
+        }
         validateExchange(pollReq, response);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {

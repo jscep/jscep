@@ -22,11 +22,11 @@
  */
 package org.jscep.request;
 
-import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.util.encoders.Base64;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * This class represents a <code>PKCSReq</code> request.
@@ -34,7 +34,7 @@ import java.io.OutputStream;
  * @author David Grant
  */
 public class PKCSReq extends Request implements Postable {
-    private final CMSSignedData msgData;
+    private final byte[] msgData;
 
     /**
      * Creates a new instance of this class using the provided pkiMessage
@@ -42,7 +42,7 @@ public class PKCSReq extends Request implements Postable {
      *
      * @param msgData the pkiMessage to use.
      */
-    public PKCSReq(CMSSignedData msgData) {
+    public PKCSReq(byte[] msgData) {
         super(Operation.PKI_OPERATION);
 
         this.msgData = msgData;
@@ -52,7 +52,7 @@ public class PKCSReq extends Request implements Postable {
      * {@inheritDoc}
      */
     public String getMessage() throws IOException {
-        byte[] bytes = Base64.encode(msgData.getEncoded());
+        byte[] bytes = Base64.encode(msgData);
 
         return new String(bytes);
     }
@@ -62,7 +62,7 @@ public class PKCSReq extends Request implements Postable {
      */
     @Override
     public void write(OutputStream out) throws IOException {
-        out.write(msgData.getEncoded());
+        out.write(msgData);
     }
 
     /**
@@ -70,6 +70,6 @@ public class PKCSReq extends Request implements Postable {
      */
     @Override
     public String toString() {
-        return msgData.toString();
+        return Arrays.toString(msgData);
     }
 }
