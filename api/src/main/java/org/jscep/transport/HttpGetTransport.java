@@ -22,6 +22,7 @@
  */
 package org.jscep.transport;
 
+import org.jscep.content.ScepContentHandler;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
 import org.jscep.util.LoggingUtil;
@@ -46,7 +47,7 @@ public class HttpGetTransport extends Transport {
 	}
 
 	@Override
-	public <T> T sendRequest(Request<T> msg) throws IOException {
+	public <T> T sendRequest(Request<T> msg, ScepContentHandler<T> handler) throws IOException {
 		final URL url = getUrl(msg.getOperation(), msg.getMessage());
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Sending {} to {}", msg, url);
@@ -58,7 +59,7 @@ public class HttpGetTransport extends Transport {
 			throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
 		}
 
-		return msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
+		return handler.getContent(conn.getInputStream(), conn.getContentType());
 	}
 
 	private URL getUrl(Operation op, String message) throws MalformedURLException, UnsupportedEncodingException {

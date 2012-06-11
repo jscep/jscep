@@ -67,10 +67,10 @@ abstract public class AbstractTransportTest {
 		BigInteger serialNumber = BigInteger.ONE;
 		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
 		GetCert getCert = new GetCert(transId, senderNonce, iasn);
-		PKCSReq req = new PKCSReq(enc.encode(getCert), new CertRepContentHandler());
+		PKCSReq req = new PKCSReq(enc.encode(getCert));
 		
 		try {
-			transport.sendRequest(req);
+			transport.sendRequest(req, new CertRepContentHandler());
 		} catch (IOException e) {
 			Assert.assertEquals(e.getMessage(), "404 Not Found");
 		}

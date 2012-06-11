@@ -1,11 +1,10 @@
 package org.jscep.request;
 
-import org.jscep.content.CaCapabilitiesContentHandler;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
 
 
 public class GetCaCapsTest {
@@ -15,12 +14,12 @@ public class GetCaCapsTest {
 	@Before
 	public void setUp() {
 		caIdentifier = "id";
-		fixture = new GetCaCaps(caIdentifier, new CaCapabilitiesContentHandler());
+		fixture = new GetCaCaps(caIdentifier);
 	}
 	
 	@Test
 	public void testNullConstructor() {
-		fixture = new GetCaCaps(new CaCapabilitiesContentHandler());
+		fixture = new GetCaCaps();
 		Assert.assertEquals("", fixture.getMessage());
 	}
 
@@ -32,11 +31,6 @@ public class GetCaCapsTest {
 	@Test
 	public void testGetMessage() throws IOException {
 		Assert.assertEquals(caIdentifier, fixture.getMessage());
-	}
-	
-	@Test
-	public void testContentHandler() {
-		Assert.assertNotNull(fixture.getContentHandler());
 	}
 	
 	@Test

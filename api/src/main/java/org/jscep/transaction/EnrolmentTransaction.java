@@ -79,7 +79,7 @@ public class EnrolmentTransaction extends Transaction {
 		CMSSignedData signedData = encoder.encode(request);
         LOGGER.debug("Sending {}", signedData);
 		CertRepContentHandler handler = new CertRepContentHandler();
-		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData, handler));
+		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData), handler);
         LOGGER.debug("Received response {}", res);
 
 		CertRep response = (CertRep) decoder.decode(res);
@@ -113,7 +113,7 @@ public class EnrolmentTransaction extends Transaction {
 		final GetCertInitial pollReq = new GetCertInitial(transId, Nonce.nextNonce(), ias);
 		CMSSignedData signedData = encoder.encode(pollReq);
 		CertRepContentHandler handler = new CertRepContentHandler();
-		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData, handler));
+		final CMSSignedData res = transport.sendRequest(new PKCSReq(signedData), handler);
 		
 		CertRep response = (CertRep) decoder.decode(res);
 		validateExchange(pollReq, response);

@@ -22,16 +22,15 @@
  */
 package org.jscep.transport;
 
-import org.jscep.request.PKCSReq;
-import org.jscep.request.Request;
-
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.jscep.content.ScepContentHandler;
+import org.jscep.request.PKCSReq;
+import org.jscep.request.Request;
 
 /**
  * Transport representing the <code>HTTP POST</code> method
@@ -44,7 +43,7 @@ public class HttpPostTransport extends Transport {
 	}
 	
 	@Override
-	public <T> T sendRequest(Request<T> msg) throws IOException {
+	public <T> T sendRequest(Request<T> msg, ScepContentHandler<T> handler) throws IOException {
 		if (!(msg instanceof PKCSReq)) {
 			// Appendix F
 			//
@@ -69,7 +68,7 @@ public class HttpPostTransport extends Transport {
         	throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
         }
         
-        return msg.getContentHandler().getContent(conn.getInputStream(), conn.getContentType());
+        return handler.getContent(conn.getInputStream(), conn.getContentType());
 	}
 	
 	/**

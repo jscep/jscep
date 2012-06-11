@@ -19,12 +19,12 @@ import java.security.cert.X509Certificate;
 public class HttpPostTransportTest extends AbstractTransportTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetCACert() throws IOException {
-		transport.sendRequest(new GetCaCert(null));
+		transport.sendRequest(new GetCaCert(), null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetCACaps() throws IOException {
-		transport.sendRequest(new GetCaCaps(null));
+		transport.sendRequest(new GetCaCaps(), null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -33,8 +33,8 @@ public class HttpPostTransportTest extends AbstractTransportTest {
 		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 		X509Certificate cert = X509Util.createEphemeralCertificate(subject, keyPair);
 		
-		GetNextCaCert nextCa = new GetNextCaCert(new NextCaCertificateContentHandler(cert));
-		transport.sendRequest(nextCa);
+		GetNextCaCert nextCa = new GetNextCaCert();
+		transport.sendRequest(nextCa, new NextCaCertificateContentHandler(cert));
 	}
 
 	@Override

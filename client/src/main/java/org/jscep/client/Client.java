@@ -159,10 +159,10 @@ public class Client {
         LOGGER.debug("Retriving current CA certificate");
     	// NON-TRANSACTIONAL
     	// CA and RA public key distribution
-    	final GetCaCert req = new GetCaCert(profile, new CaCertificateContentHandler());
+    	final GetCaCert req = new GetCaCert(profile);
         final Transport trans = Transport.createTransport(Transport.Method.GET, url);
         
-        final CertStore store = trans.sendRequest(req);
+        final CertStore store = trans.sendRequest(req, new CaCertificateContentHandler());
         verifyCA(selectIssuerCertificate(store));
         
         return store;
@@ -186,9 +186,9 @@ public class Client {
     	final X509Certificate issuer = getRecipientCertificate();
     	
     	final Transport trans = Transport.createTransport(Transport.Method.GET, url);
-    	final GetNextCaCert req = new GetNextCaCert(profile, new NextCaCertificateContentHandler(issuer));
+    	final GetNextCaCert req = new GetNextCaCert(profile);
     	
-    	return trans.sendRequest(req);
+    	return trans.sendRequest(req, new NextCaCertificateContentHandler(issuer));
     }
     
     // TRANSACTIONAL
@@ -390,10 +390,10 @@ public class Client {
             }
     	}
     	if (caps == null) {
-	    	final GetCaCaps req = new GetCaCaps(profile, new CaCapabilitiesContentHandler());
+	    	final GetCaCaps req = new GetCaCaps(profile);
 	        final Transport trans = Transport.createTransport(Transport.Method.GET, url);
             try {
-	            caps = trans.sendRequest(req);
+	            caps = trans.sendRequest(req, new CaCapabilitiesContentHandler());
             } catch (IOException e) {
                 LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
                 caps = new Capabilities();

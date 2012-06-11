@@ -22,7 +22,6 @@
  */
 package org.jscep.request;
 
-import org.jscep.content.ScepContentHandler;
 import org.jscep.response.Capabilities;
 
 /**
@@ -33,12 +32,12 @@ import org.jscep.response.Capabilities;
 public final class GetCaCaps extends Request<Capabilities> {
 	private final String caIdentifier;
 
-	public GetCaCaps(ScepContentHandler<Capabilities> handler) {
-		this(null, handler);
+	public GetCaCaps() {
+		this(null);
 	}
 	
-	public GetCaCaps(String caIdentifier, ScepContentHandler<Capabilities> handler) {
-		super(Operation.GetCACaps, handler);
+	public GetCaCaps(String caIdentifier) {
+		super(Operation.GetCACaps);
 		this.caIdentifier = caIdentifier;
 	}
 

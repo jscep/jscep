@@ -22,8 +22,6 @@
  */
 package org.jscep.request;
 
-import org.jscep.content.ScepContentHandler;
-
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -41,11 +39,9 @@ import java.io.OutputStream;
  */
 public abstract class Request<T> {
 	private final Operation operation;
-	private final ScepContentHandler<T> handler;
 	
-	public Request(Operation operation, ScepContentHandler<T> handler) {
+	public Request(Operation operation) {
 		this.operation = operation;
-		this.handler = handler;
 	}
 	
 	/**
@@ -63,14 +59,6 @@ public abstract class Request<T> {
      * @throws IOException if any I/O error occurs.
      */
     public abstract String getMessage() throws IOException;
-    /**
-     * Returns the ScepContentHandler for the given response type.
-     * 
-     * @return the content handler.
-     */
-    public ScepContentHandler<T> getContentHandler() {
-    	return handler;
-    }
     
     public void write(OutputStream out) throws IOException {
     	throw new UnsupportedOperationException();

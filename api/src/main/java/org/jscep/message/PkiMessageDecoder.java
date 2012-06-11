@@ -34,6 +34,7 @@ import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.asn1.ScepObjectIdentifiers;
 import org.jscep.transaction.*;
 import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.security.cert.CertStore;
@@ -43,7 +44,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 
 public class PkiMessageDecoder {
-    private static org.slf4j.Logger LOGGER = LoggingUtil.getLogger(PkiMessageDecoder.class);
+    private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageDecoder.class);
 	private final PkcsPkiEnvelopeDecoder decoder;
 	
 	public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder) {

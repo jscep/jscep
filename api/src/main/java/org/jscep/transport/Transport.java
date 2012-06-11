@@ -22,6 +22,7 @@
  */
 package org.jscep.transport;
 
+import org.jscep.content.ScepContentHandler;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
 import org.jscep.util.LoggingUtil;
@@ -87,7 +88,7 @@ public abstract class Transport {
 	 * @throws IOException if any I/O error occurs.
 	 * @see Request#getContentHandler()
 	 */
-	abstract public <T> T sendRequest(Request<T> msg) throws IOException;
+	abstract public <T> T sendRequest(Request<T> msg, ScepContentHandler<T> handler) throws IOException;
 	
 	/**
 	 * Creates a new <code>Transport</code> of type <code>method</code> with the 

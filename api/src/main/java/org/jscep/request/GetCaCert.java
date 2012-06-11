@@ -22,8 +22,6 @@
  */
 package org.jscep.request;
 
-import org.jscep.content.ScepContentHandler;
-
 import java.security.cert.CertStore;
 
 /**
@@ -39,14 +37,14 @@ public final class GetCaCert extends Request<CertStore> {
 	 * @param caIdentifier the CA identification string.
      * @param handler handler for GetCACert responses
 	 */
-	public GetCaCert(String caIdentifier, ScepContentHandler<CertStore> handler) {
-		super(Operation.GetCACert, handler);
+	public GetCaCert(String caIdentifier) {
+		super(Operation.GetCACert);
 		
 		this.caIdentifier = caIdentifier;
 	}
 	
-	public GetCaCert(ScepContentHandler<CertStore> handler) {
-		this(null, handler);
+	public GetCaCert() {
+		this(null);
 	}
 
 	/**

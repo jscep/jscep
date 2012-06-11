@@ -22,12 +22,11 @@
  */
 package org.jscep.request;
 
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.util.encoders.Base64;
-import org.jscep.content.ScepContentHandler;
-
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.util.encoders.Base64;
 
 /**
  * This class represents a <code>PKCSReq</code> request.
@@ -44,8 +43,8 @@ public class PKCSReq extends Request<CMSSignedData> {
 	 * @param msgData the pkiMessage to use.
 	 * @param handler the response handler for this request.
 	 */
-	public PKCSReq(CMSSignedData msgData, ScepContentHandler<CMSSignedData> handler) {
-		super(Operation.PKIOperation, handler);
+	public PKCSReq(CMSSignedData msgData) {
+		super(Operation.PKIOperation);
 		
 		this.msgData = msgData;
 	}

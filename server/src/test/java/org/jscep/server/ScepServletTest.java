@@ -109,10 +109,9 @@ public class ScepServletTest {
 	}
 	
 	private X509Certificate getRecipient() throws Exception {
-		CaCertificateContentHandler handler = new CaCertificateContentHandler();
-		GetCaCert req = new GetCaCert(handler);
+		GetCaCert req = new GetCaCert();
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		CertStore store = transport.sendRequest(req);
+		CertStore store = transport.sendRequest(req, new CaCertificateContentHandler());
 
         Collection<? extends Certificate> certs = store.getCertificates(new X509CertSelector());
 
@@ -125,30 +124,27 @@ public class ScepServletTest {
 	
 	@Test
 	public void testGetCaCaps() throws Exception {
-		CaCapabilitiesContentHandler handler = new CaCapabilitiesContentHandler();
-		GetCaCaps req = new GetCaCaps(handler);
+		GetCaCaps req = new GetCaCaps();
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		Capabilities caps = transport.sendRequest(req);
+		Capabilities caps = transport.sendRequest(req, new CaCapabilitiesContentHandler());
 		
 		System.out.println(caps);
 	}
 	
 	@Test
 	public void getNextCaCertificateGood() throws Exception {
-		NextCaCertificateContentHandler handler = new NextCaCertificateContentHandler(getRecipient());
-		GetNextCaCert req = new GetNextCaCert(goodIdentifier, handler);
+		GetNextCaCert req = new GetNextCaCert(goodIdentifier);
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		List<X509Certificate> certs = transport.sendRequest(req);
+		List<X509Certificate> certs = transport.sendRequest(req, new NextCaCertificateContentHandler(getRecipient()));
 		
 		System.out.println(certs.get(0));
 	}
 	
 	@Test(expected = IOException.class)
 	public void getNextCaCertificateBad() throws Exception {
-		NextCaCertificateContentHandler handler = new NextCaCertificateContentHandler(getRecipient());
-		GetNextCaCert req = new GetNextCaCert(badIdentifier, handler);
+		GetNextCaCert req = new GetNextCaCert(badIdentifier);
 		Transport transport = Transport.createTransport(Method.GET, getURL());
-		List<X509Certificate> certs = transport.sendRequest(req);
+		List<X509Certificate> certs = transport.sendRequest(req, new NextCaCertificateContentHandler(getRecipient()));
 		
 		System.out.println(certs.get(0));
 	}
@@ -196,7 +192,7 @@ public class ScepServletTest {
 		
 		Transport transport = Transport.createTransport(Method.GET, getURL());
 		NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GetCert);
-		State s = t.send();
+		t.send();
 	}
 	
 	@Test

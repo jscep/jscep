@@ -22,8 +22,6 @@
  */
 package org.jscep.request;
 
-import org.jscep.content.ScepContentHandler;
-
 import java.security.cert.X509Certificate;
 import java.util.List;
 
@@ -42,13 +40,13 @@ public class GetNextCaCert extends Request<List<X509Certificate>> {
      * @param caIdentifier the CA identification string.
      * @param handler the response handler for this request.
      */
-    public GetNextCaCert(String caIdentifier, ScepContentHandler<List<X509Certificate>> handler) {
-    	super(Operation.GetNextCACert, handler);
+    public GetNextCaCert(String caIdentifier) {
+    	super(Operation.GetNextCACert);
         this.caIdentifier = caIdentifier;
     }
     
-    public GetNextCaCert(ScepContentHandler<List<X509Certificate>> handler) {
-    	this(null, handler);
+    public GetNextCaCert() {
+    	this(null);
     }
 
     /**

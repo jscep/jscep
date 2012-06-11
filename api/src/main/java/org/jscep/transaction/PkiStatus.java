@@ -22,7 +22,6 @@
  */
 package org.jscep.transaction;
 
-
 /**
  * This class represents the SCEP <code>pkiStatus</code> attribute.
  * 
