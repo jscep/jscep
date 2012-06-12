@@ -22,15 +22,15 @@
  */
 package org.jscep.transport;
 
-import org.jscep.content.ScepContentHandler;
-import org.jscep.request.Postable;
-import org.jscep.request.Request;
-
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.jscep.content.ScepContentHandler;
+import org.jscep.request.PKCSReq;
+import org.jscep.request.Request;
 
 /**
  * Transport representing the <code>HTTP POST</code> method
@@ -44,7 +44,7 @@ public class HttpPostTransport extends Transport {
 
     @Override
     public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws IOException {
-        if (!Postable.class.isAssignableFrom(msg.getClass())) {
+        if (!PKCSReq.class.isAssignableFrom(msg.getClass())) {
             throw new IllegalArgumentException("POST transport may not be used for " + msg.getOperation() + " messages.");
         }
 

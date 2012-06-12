@@ -33,7 +33,7 @@ import java.util.Arrays;
  *
  * @author David Grant
  */
-public class PKCSReq extends Request implements Postable {
+public class PKCSReq extends Request {
     private final byte[] msgData;
 
     /**

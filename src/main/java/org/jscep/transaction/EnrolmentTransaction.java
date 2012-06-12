@@ -76,15 +76,10 @@ public class EnrolmentTransaction extends Transaction {
      * @throws IOException if any I/O error occurs.
      */
     public State send() throws IOException {
-        CMSSignedData signedData;
-		try {
-			signedData = new CMSSignedData(encoder.encode(request));
-		} catch (CMSException e) {
-			throw new IOException(e);
-		}
+        byte[] signedData = encoder.encode(request);
         LOGGER.debug("Sending {}", signedData);
         CertRepContentHandler handler = new CertRepContentHandler();
-        final byte[] res = transport.sendRequest(new PKCSReq(signedData.getEncoded()), handler);
+        final byte[] res = transport.sendRequest(new PKCSReq(signedData), handler);
         LOGGER.debug("Received response {}", res);
 
         CertRep response = (CertRep) decoder.decode(res);
