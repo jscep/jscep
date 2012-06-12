@@ -21,16 +21,18 @@
  */
 package org.jscep.message;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.cms.*;
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.security.Provider;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
+import org.bouncycastle.cms.CMSEnvelopedGenerator;
+import org.bouncycastle.cms.CMSProcessable;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 public class PkcsPkiEnvelopeEncoder {
     private static Logger LOGGER = LoggingUtil.getLogger(PkcsPkiEnvelopeEncoder.class);
@@ -40,18 +42,10 @@ public class PkcsPkiEnvelopeEncoder {
         this.recipient = recipient;
     }
 
-    public CMSEnvelopedData encode(ASN1Encodable messageData) throws IOException {
-        LOGGER.debug("Encrypting message: {}", messageData.getDEREncoded());
+    public byte[] encode(byte[] payload) throws IOException {
+        LOGGER.debug("Encrypting message: {}", payload);
+
         CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
-
-        byte[] payload;
-        if (messageData instanceof DEROctetString) {
-            DEROctetString oct = (DEROctetString) messageData;
-            payload = oct.getOctets();
-        } else {
-            payload = messageData.getEncoded();
-        }
-
         CMSProcessable envelopable = new CMSProcessableByteArray(payload);
         edGenerator.addKeyTransRecipient(recipient);
         LOGGER.debug("Encrypting session key using key belonging to '{}'", recipient.getSubjectDN());
@@ -62,7 +56,7 @@ public class PkcsPkiEnvelopeEncoder {
                 LOGGER.debug("Using '{}' for DESede key generation", providers[0]);
                 CMSEnvelopedData data = edGenerator.generate(envelopable, CMSEnvelopedGenerator.DES_EDE3_CBC, providers[0]);
                 LOGGER.debug("Encrypted to: {}", data.getEncoded());
-                return data;
+                return data.getEncoded();
             } else {
                 throw new IOException("No Provider for DESede");
             }

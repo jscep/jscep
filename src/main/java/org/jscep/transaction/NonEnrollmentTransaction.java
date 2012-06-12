@@ -37,7 +37,6 @@ import java.security.GeneralSecurityException;
 public class NonEnrollmentTransaction extends Transaction {
     private final TransactionId transId;
     private final PkiRequest<? extends ASN1Encodable> request;
-    // Optional
 
     public NonEnrollmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, IssuerAndSerialNumber iasn, MessageType msgType) {
         super(transport, encoder, decoder);
@@ -57,22 +56,17 @@ public class NonEnrollmentTransaction extends Transaction {
     }
 
     public State send() throws IOException {
-        final CMSSignedData signedData = encoder.encode(request);
-        final CertRepContentHandler handler = new CertRepContentHandler();
-        final byte[] inMsg = transport.sendRequest(new PKCSReq(signedData.getEncoded()), handler);
-        final CertRep response;
-        try {
-            response = (CertRep) decoder.decode(new CMSSignedData(inMsg));
-        } catch (CMSException e) {
-            throw new IOException(e);
-        }
+    	final CertRepContentHandler handler = new CertRepContentHandler();
+        final byte[] signedData = encoder.encode(request);
+        final byte[] inMsg = transport.sendRequest(new PKCSReq(signedData), handler);
+        final CertRep response = (CertRep) decoder.decode(inMsg);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
             failInfo = response.getFailInfo();
             state = State.CERT_NON_EXISTANT;
         } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
             try {
-                CMSSignedData responseSd = response.getCMSSignedData();
+                CMSSignedData responseSd = new CMSSignedData(response.getMessageData());
                 certStore = responseSd.getCertificatesAndCRLs("Collection", (String) null);
             } catch (GeneralSecurityException e) {
                 throw new IOException(e);

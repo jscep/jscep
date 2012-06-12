@@ -21,15 +21,6 @@
  */
 package org.jscep.message;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.cms.*;
-import org.jscep.transaction.PkiStatus;
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.CertStore;
@@ -38,6 +29,28 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Map;
+
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.cms.CMSProcessable;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.CMSSignedGenerator;
+import org.jscep.transaction.FailInfo;
+import org.jscep.transaction.MessageType;
+import org.jscep.transaction.Nonce;
+import org.jscep.transaction.PkiStatus;
+import org.jscep.transaction.TransactionId;
+import org.jscep.util.LoggingUtil;
+import org.slf4j.Logger;
 
 public class PkiMessageEncoder {
     private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageEncoder.class);
@@ -51,7 +64,7 @@ public class PkiMessageEncoder {
         this.encoder = enveloper;
     }
 
-    public CMSSignedData encode(PkiMessage<? extends ASN1Encodable> message) throws IOException {
+    public byte[] encode(PkiMessage<?> message) throws IOException {
         LOGGER.debug("Encoding message: {}", message);
         CMSProcessable signable;
 
@@ -63,15 +76,21 @@ public class PkiMessageEncoder {
             }
         }
         if (hasMessageData) {
-            CMSEnvelopedData ed = encoder.encode(message.getMessageData());
-            signable = new CMSProcessableByteArray(ed.getEncoded());
+        	byte[] ed;
+        	if (message.getMessageData() instanceof byte[]) {
+        		ed = encoder.encode((byte[]) message.getMessageData());
+        	} else {
+        		ed = encoder.encode(((ASN1Encodable) message.getMessageData()).getEncoded());
+        	}
+            signable = new CMSProcessableByteArray(ed);
         } else {
             signable = null;
         }
 
         Hashtable<DERObjectIdentifier, Attribute> table = new Hashtable<DERObjectIdentifier, Attribute>();
-        for (Attribute attr : message.getAttributes()) {
-            table.put(attr.getAttrType(), attr);
+        for (Map.Entry<String, Object> entry : message.getAttributes().entrySet()) {
+        	DERObjectIdentifier oid = toOid(entry.getKey());
+        	table.put(oid, new Attribute(oid, toSet(entry.getValue())));
         }
         AttributeTable signedAttrs = new AttributeTable(table);
         Collection<X509Certificate> certColl = Collections.singleton(senderCert);
@@ -95,9 +114,48 @@ public class PkiMessageEncoder {
             LOGGER.debug("Signing {} content", signable);
             CMSSignedData sd = sdGenerator.generate(signable, true, (String) null);
             LOGGER.debug("Encoded to: {}", sd.getEncoded());
-            return sd;
+            return sd.getEncoded();
         } catch (Exception e) {
             throw new IOException(e);
         }
+    }
+    
+    private DERObjectIdentifier toOid(String oid) {
+		return new DERObjectIdentifier(oid);
+	}
+
+	private ASN1Set toSet(Object object) {
+    	if (object instanceof FailInfo) {
+    		return toSet((FailInfo) object);
+    	} else if (object instanceof PkiStatus) {
+    		return toSet((PkiStatus) object);
+    	} else  if (object instanceof Nonce) {
+    		return toSet((Nonce) object);
+    	} else if (object instanceof TransactionId) {
+    		return toSet((TransactionId) object);
+    	} else if (object instanceof MessageType) {
+    		return toSet((MessageType) object);
+    	}
+        throw new IllegalArgumentException("Unexpected object");
+    }
+    
+    private ASN1Set toSet(FailInfo failInfo) {
+        return new DERSet(new DERPrintableString(Integer.toString(failInfo.getValue())));
+    }
+
+    private ASN1Set toSet(PkiStatus pkiStatus) {
+        return new DERSet(new DERPrintableString(Integer.toString(pkiStatus.getValue())));
+    }
+    
+    private ASN1Set toSet(Nonce nonce) {
+        return new DERSet(new DEROctetString(nonce.getBytes()));
+    }
+
+    private ASN1Set toSet(TransactionId transId) {
+        return new DERSet(new DERPrintableString(transId.getBytes()));
+    }
+
+    private ASN1Set toSet(MessageType messageType) {
+        return new DERSet(new DERPrintableString(Integer.toString(messageType.getValue())));
     }
 }

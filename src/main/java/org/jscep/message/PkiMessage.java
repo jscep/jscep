@@ -21,19 +21,15 @@
  */
 package org.jscep.message;
 
-import com.google.common.base.Objects;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.Attribute;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jscep.asn1.ScepObjectIdentifiers;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
-import java.util.Collection;
-import java.util.HashSet;
+import com.google.common.base.Objects;
 
 /**
  * This class represents an abstract SCEP PkiMessage, which may be either a
@@ -70,29 +66,13 @@ public abstract class PkiMessage<T> {
         return messageData;
     }
 
-    public Collection<Attribute> getAttributes() {
-        final Collection<Attribute> attrs = new HashSet<Attribute>();
+    public Map<String, Object> getAttributes() {
+    	Map<String, Object> attr = new HashMap<String, Object>();
+    	attr.put(ScepObjectIdentifiers.transId, transId);
+    	attr.put(ScepObjectIdentifiers.messageType, messageType);
+    	attr.put(ScepObjectIdentifiers.senderNonce, senderNonce);
 
-        final Attribute transIdAttr = new Attribute(ScepObjectIdentifiers.transId, toSet(transId));
-        final Attribute messageTypeAttr = new Attribute(ScepObjectIdentifiers.messageType, toSet(messageType));
-        final Attribute senderNonceAttr = new Attribute(ScepObjectIdentifiers.senderNonce, toSet(senderNonce));
-        attrs.add(transIdAttr);
-        attrs.add(messageTypeAttr);
-        attrs.add(senderNonceAttr);
-
-        return attrs;
-    }
-
-    ASN1Set toSet(Nonce nonce) {
-        return new DERSet(new DEROctetString(nonce.getBytes()));
-    }
-
-    private ASN1Set toSet(TransactionId transId) {
-        return new DERSet(new DERPrintableString(transId.getBytes()));
-    }
-
-    private ASN1Set toSet(MessageType messageType) {
-        return new DERSet(new DERPrintableString(Integer.toString(messageType.getValue())));
+        return attr;
     }
 
     public String toString() {

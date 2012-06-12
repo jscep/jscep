@@ -67,7 +67,7 @@ abstract public class AbstractTransportTest {
         BigInteger serialNumber = BigInteger.ONE;
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
         GetCert getCert = new GetCert(transId, senderNonce, iasn);
-        PKCSReq req = new PKCSReq(enc.encode(getCert).getEncoded());
+        PKCSReq req = new PKCSReq(enc.encode(getCert));
 
         try {
             transport.sendRequest(req, new CertRepContentHandler());

@@ -22,19 +22,19 @@
  */
 package org.jscep.message;
 
-import com.google.common.base.Objects;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.Attribute;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jscep.asn1.ScepObjectIdentifiers;
-import org.jscep.transaction.*;
+import org.jscep.transaction.FailInfo;
+import org.jscep.transaction.MessageType;
+import org.jscep.transaction.Nonce;
+import org.jscep.transaction.PkiStatus;
+import org.jscep.transaction.TransactionId;
 
-import java.util.Collection;
-import java.util.HashSet;
+import com.google.common.base.Objects;
 
-public class PkiResponse<T extends ASN1Encodable> extends PkiMessage<T> {
+public class PkiResponse<T> extends PkiMessage<T> {
     private final Nonce recipientNonce;
     private final PkiStatus pkiStatus;
     private final FailInfo failInfo;
@@ -80,30 +80,18 @@ public class PkiResponse<T extends ASN1Encodable> extends PkiMessage<T> {
     }
 
     @Override
-    public Collection<Attribute> getAttributes() {
-        final Collection<Attribute> attrs = new HashSet<Attribute>();
-
-        final Attribute pkiStatusAttr = new Attribute(ScepObjectIdentifiers.pkiStatus, toSet(pkiStatus));
-        final Attribute recipientNonceAttr = new Attribute(ScepObjectIdentifiers.recipientNonce, toSet(recipientNonce));
-        attrs.add(pkiStatusAttr);
-        attrs.add(recipientNonceAttr);
-
+    public Map<String, Object> getAttributes() {
+    	Map<String, Object> attr = new HashMap<String, Object>();
+    	attr.put(ScepObjectIdentifiers.pkiStatus, pkiStatus);
+    	attr.put(ScepObjectIdentifiers.recipientNonce, recipientNonce);
+    	
         if (pkiStatus == PkiStatus.FAILURE) {
-            final Attribute failInfoAttr = new Attribute(ScepObjectIdentifiers.failInfo, toSet(failInfo));
-            attrs.add(failInfoAttr);
+        	attr.put(ScepObjectIdentifiers.failInfo, failInfo);
         }
 
-        attrs.addAll(super.getAttributes());
+        attr.putAll(super.getAttributes());
 
-        return attrs;
-    }
-
-    private ASN1Set toSet(FailInfo failInfo) {
-        return new DERSet(new DERPrintableString(Integer.toString(failInfo.getValue())));
-    }
-
-    private ASN1Set toSet(PkiStatus pkiStatus) {
-        return new DERSet(new DERPrintableString(Integer.toString(pkiStatus.getValue())));
+        return attr;
     }
 
     public String toString() {

@@ -76,18 +76,18 @@ public class EnrolmentTransaction extends Transaction {
      * @throws IOException if any I/O error occurs.
      */
     public State send() throws IOException {
-        CMSSignedData signedData = encoder.encode(request);
+        CMSSignedData signedData;
+		try {
+			signedData = new CMSSignedData(encoder.encode(request));
+		} catch (CMSException e) {
+			throw new IOException(e);
+		}
         LOGGER.debug("Sending {}", signedData);
         CertRepContentHandler handler = new CertRepContentHandler();
         final byte[] res = transport.sendRequest(new PKCSReq(signedData.getEncoded()), handler);
         LOGGER.debug("Received response {}", res);
 
-        CertRep response;
-        try {
-            response = (CertRep) decoder.decode(new CMSSignedData(res));
-        } catch (CMSException e) {
-            throw new IOException(e);
-        }
+        CertRep response = (CertRep) decoder.decode(res);
         validateExchange(request, response);
 
         LOGGER.debug("Response: {}", response);
@@ -116,16 +116,11 @@ public class EnrolmentTransaction extends Transaction {
         X509Name subjectName = request.getMessageData().getCertificationRequestInfo().getSubject();
         IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
         final GetCertInitial pollReq = new GetCertInitial(transId, Nonce.nextNonce(), ias);
-        CMSSignedData signedData = encoder.encode(pollReq);
+        byte[] signedData = encoder.encode(pollReq);
         CertRepContentHandler handler = new CertRepContentHandler();
-        final byte[] res = transport.sendRequest(new PKCSReq(signedData.getEncoded()), handler);
+        final byte[] res = transport.sendRequest(new PKCSReq(signedData), handler);
 
-        CertRep response;
-        try {
-            response = (CertRep) decoder.decode(new CMSSignedData(res));
-        } catch (CMSException e) {
-            throw new IOException(e);
-        }
+        CertRep response = (CertRep) decoder.decode(res);
         validateExchange(pollReq, response);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
@@ -143,7 +138,7 @@ public class EnrolmentTransaction extends Transaction {
 
     private CertStore extractCertStore(CertRep response) throws IOException {
         try {
-            CMSSignedData signedData = response.getCMSSignedData();
+            CMSSignedData signedData = new CMSSignedData(response.getMessageData());
             return signedData.getCertificatesAndCRLs("Collection", (String) null);
         } catch (GeneralSecurityException e) {
             throw new IOException(e);

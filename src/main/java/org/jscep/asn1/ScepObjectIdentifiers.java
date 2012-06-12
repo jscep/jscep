@@ -21,7 +21,6 @@
  */
 package org.jscep.asn1;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
 
 /**
  * Object Identifiers used by SCEP
@@ -32,29 +31,29 @@ public interface ScepObjectIdentifiers {
     /**
      * <code>2.16.840.1.113733.1.9.2</code>
      */
-    DERObjectIdentifier messageType = new DERObjectIdentifier("2.16.840.1.113733.1.9.2");
+    String messageType = "2.16.840.1.113733.1.9.2";
     /**
      * <code>2.16.840.1.113733.1.9.3</code>
      */
-    DERObjectIdentifier pkiStatus = new DERObjectIdentifier("2.16.840.1.113733.1.9.3");
+    String pkiStatus = "2.16.840.1.113733.1.9.3";
     /**
      * <code>2.16.840.1.113733.1.9.4</code>
      */
-    DERObjectIdentifier failInfo = new DERObjectIdentifier("2.16.840.1.113733.1.9.4");
+    String failInfo = "2.16.840.1.113733.1.9.4";
     /**
      * <code>2.16.840.1.113733.1.9.5</code>
      */
-    DERObjectIdentifier senderNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.5");
+    String senderNonce = "2.16.840.1.113733.1.9.5";
     /**
      * <code>2.16.840.1.113733.1.9.6</code>
      */
-    DERObjectIdentifier recipientNonce = new DERObjectIdentifier("2.16.840.1.113733.1.9.6");
+    String recipientNonce = "2.16.840.1.113733.1.9.6";
     /**
      * <code>2.16.840.1.113733.1.9.7</code>
      */
-    DERObjectIdentifier transId = new DERObjectIdentifier("2.16.840.1.113733.1.9.7");
+    String transId = "2.16.840.1.113733.1.9.7";
     /**
      * <code>2.16.840.1.113733.1.9.8</code>
      */
-    DERObjectIdentifier extensionReq = new DERObjectIdentifier("2.16.840.1.113733.1.9.8");
+    String extensionReq = "2.16.840.1.113733.1.9.8";
 }

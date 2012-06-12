@@ -22,12 +22,13 @@
  */
 package org.jscep.message;
 
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.transaction.*;
+import org.jscep.transaction.FailInfo;
+import org.jscep.transaction.MessageType;
+import org.jscep.transaction.Nonce;
+import org.jscep.transaction.PkiStatus;
+import org.jscep.transaction.TransactionId;
 
-public class CertRep extends PkiResponse<DEROctetString> {
+public class CertRep extends PkiResponse<byte[]> {
     /**
      * Creates a new CertRep to indicate <em>success</em> state.
      *
@@ -36,7 +37,7 @@ public class CertRep extends PkiResponse<DEROctetString> {
      * @param recipientNonce the recipient nonce
      * @param messageData    the message data
      */
-    public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, DEROctetString messageData) {
+    public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, byte[] messageData) {
         super(transId, MessageType.CERT_REP, senderNonce, recipientNonce, PkiStatus.SUCCESS, messageData, null);
     }
 
@@ -61,9 +62,5 @@ public class CertRep extends PkiResponse<DEROctetString> {
      */
     public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce) {
         super(transId, MessageType.CERT_REP, senderNonce, recipientNonce, PkiStatus.PENDING, null, null);
-    }
-
-    public CMSSignedData getCMSSignedData() throws CMSException {
-        return new CMSSignedData(getMessageData().getOctets());
     }
 }

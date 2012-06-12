@@ -1,18 +1,17 @@
 package org.jscep.message;
 
-import org.bouncycastle.asn1.ASN1Encodable;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.cert.X509Certificate;
+
+import javax.security.auth.x500.X500Principal;
+
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 import org.jscep.x509.X509Util;
 import org.junit.Test;
-
-import javax.security.auth.x500.X500Principal;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.cert.X509Certificate;
 
 public class PkiMessageEncoderTest {
     @Test
@@ -31,16 +30,11 @@ public class PkiMessageEncoderTest {
         GetCertInitial outgoingMessage = new GetCertInitial(transId, senderNonce, messageData);
 
         // Everything below this line only available to client
-
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca);
         PkiMessageEncoder encoder = new PkiMessageEncoder(clientPair.getPrivate(), client, envEncoder);
-        CMSSignedData scepMessage = encoder.encode(outgoingMessage);
-
-        // Everything below this line only available to CA
-
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(caPair.getPrivate());
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
-        PkiMessage<? extends ASN1Encodable> incomingMessage = decoder.decode(scepMessage);
+        PkiMessage<?> incomingMessage = decoder.decode(encoder.encode(outgoingMessage));
 
         System.out.println(incomingMessage);
     }
