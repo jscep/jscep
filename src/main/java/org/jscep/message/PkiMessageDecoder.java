@@ -21,7 +21,20 @@
  */
 package org.jscep.message;
 
-import org.bouncycastle.asn1.*;
+import java.io.IOException;
+import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.Hashtable;
+
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
@@ -33,19 +46,16 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.asn1.ScepObjectIdentifiers;
-import org.jscep.transaction.*;
-import org.jscep.util.LoggingUtil;
+import org.jscep.transaction.FailInfo;
+import org.jscep.transaction.MessageType;
+import org.jscep.transaction.Nonce;
+import org.jscep.transaction.PkiStatus;
+import org.jscep.transaction.TransactionId;
 import org.slf4j.Logger;
-
-import java.io.IOException;
-import java.security.cert.CertStore;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.Hashtable;
+import org.slf4j.LoggerFactory;
 
 public class PkiMessageDecoder {
-    private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageDecoder.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(PkiMessageDecoder.class);
     private final PkcsPkiEnvelopeDecoder decoder;
 
     public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder) {

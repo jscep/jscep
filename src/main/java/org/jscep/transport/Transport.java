@@ -22,16 +22,18 @@
  */
 package org.jscep.transport;
 
-import org.jscep.content.ScepContentHandler;
-import org.jscep.request.Operation;
-import org.jscep.request.Request;
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
+
+import org.jscep.content.InvalidContentException;
+import org.jscep.content.InvalidContentTypeException;
+import org.jscep.content.ScepContentHandler;
+import org.jscep.request.Operation;
+import org.jscep.request.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -49,7 +51,7 @@ import java.net.URL;
  * @author David Grant
  */
 public abstract class Transport {
-    private static Logger LOGGER = LoggingUtil.getLogger(Transport.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(Transport.class);
 
     /**
      * Represents the <code>HTTP</code> method to be used for transport.
@@ -89,8 +91,11 @@ public abstract class Transport {
      * @param handler the response handler
      * @return the response of type T.
      * @throws IOException if any I/O error occurs.
+     * @throws TransportException 
+     * @throws InvalidContentTypeException 
+     * @throws InvalidContentException 
      */
-    abstract public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws IOException;
+    abstract public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws TransportException, InvalidContentTypeException, InvalidContentException;
 
     /**
      * Creates a new <code>Transport</code> of type <code>method</code> with the

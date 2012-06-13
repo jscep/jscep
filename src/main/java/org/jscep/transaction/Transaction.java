@@ -22,12 +22,13 @@
  */
 package org.jscep.transaction;
 
+import java.io.IOException;
+import java.security.cert.CertStore;
+
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.transport.Transport;
-
-import java.io.IOException;
-import java.security.cert.CertStore;
+import org.jscep.transport.TransportException;
 
 public abstract class Transaction {
     protected final PkiMessageEncoder encoder;
@@ -69,7 +70,7 @@ public abstract class Transaction {
         return state;
     }
 
-    public abstract State send() throws IOException;
+    public abstract State send() throws IOException, TransportException;
 
     public abstract TransactionId getId();
 

@@ -1,15 +1,19 @@
 package org.jscep.client;
 
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
-
-import java.security.cert.*;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
+import java.security.cert.Certificate;
+import java.security.cert.X509CertSelector;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class X509CertificateTupleFactory {
-    private static Logger LOGGER = LoggingUtil.getLogger(X509CertificateTupleFactory.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(X509CertificateTupleFactory.class);
     private static Map<CertStore, X509CertificateTuple> cache = new HashMap<CertStore, X509CertificateTuple>();
     public static final int DIGITAL_SIGNATURE = 0;
     public static final int KEY_ENCIPHERMENT = 2;

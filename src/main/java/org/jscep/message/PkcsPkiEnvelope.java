@@ -23,6 +23,7 @@ package org.jscep.message;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 
+@Deprecated
 public class PkcsPkiEnvelope<T extends ASN1Encodable> {
     private final T messageData;
 

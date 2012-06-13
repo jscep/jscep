@@ -21,7 +21,6 @@
  */
 package org.jscep.util;
 
-import java.util.Locale;
 
 /**
  * This class provides utilities for converting between byte
@@ -97,40 +96,5 @@ public final class HexUtil {
             bytes[i] = (byte) (b & 0xFF);
         }
         return bytes;
-    }
-
-    /**
-     * Converts the given byte array to a formatted hex
-     * string.
-     *
-     * @param bytes the byte array.
-     * @return the formatted string.
-     */
-    public static String format(byte[] bytes) {
-        return formatHex(toHex(bytes));
-    }
-
-    /**
-     * Converts the given byte array of hex characters
-     * to a formatted string.
-     *
-     * @param hex the byte array.
-     * @return the formatted string.
-     */
-    public static String formatHex(byte[] hex) {
-        StringBuilder sb = new StringBuilder();
-        String s = new String(hex).toUpperCase(Locale.ENGLISH);
-        char[] c = s.toCharArray();
-        for (int i = 0; i < c.length; i++) {
-            if (i % 32 == 0) {
-                sb.append("\n\t");
-            }
-            sb.append(c[i]);
-            if (i % 2 != 0) {
-                sb.append(" ");
-            }
-        }
-        sb.append("\n");
-        return sb.toString();
     }
 }

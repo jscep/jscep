@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,6 @@
  * THE SOFTWARE.
  */
 package org.jscep.request;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
 
 /**
  * This interface represents a SCEP request.
@@ -56,11 +52,6 @@ public abstract class Request {
      * Returns the message for this request.
      *
      * @return the message.
-     * @throws IOException if any I/O error occurs.
      */
-    public abstract String getMessage() throws IOException;
-
-    public void write(OutputStream out) throws IOException {
-        throw new UnsupportedOperationException();
-    }
+    public abstract String getMessage();
 }

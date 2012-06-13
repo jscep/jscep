@@ -27,9 +27,12 @@ import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.content.CertRepContentHandler;
+import org.jscep.content.InvalidContentException;
+import org.jscep.content.InvalidContentTypeException;
 import org.jscep.message.*;
 import org.jscep.request.PKCSReq;
 import org.jscep.transport.Transport;
+import org.jscep.transport.TransportException;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -55,10 +58,17 @@ public class NonEnrollmentTransaction extends Transaction {
         return transId;
     }
 
-    public State send() throws IOException {
+    public State send() throws IOException, TransportException {
     	final CertRepContentHandler handler = new CertRepContentHandler();
         final byte[] signedData = encoder.encode(request);
-        final byte[] inMsg = transport.sendRequest(new PKCSReq(signedData), handler);
+        byte[] inMsg;
+		try {
+			inMsg = transport.sendRequest(new PKCSReq(signedData), handler);
+		} catch (InvalidContentTypeException e) {
+			throw new IOException(e);
+		} catch (InvalidContentException e) {
+			throw new IOException(e);
+		}
         final CertRep response = (CertRep) decoder.decode(inMsg);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {

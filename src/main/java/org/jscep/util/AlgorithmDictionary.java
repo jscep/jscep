@@ -22,6 +22,9 @@
  */
 package org.jscep.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
@@ -29,10 +32,6 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.smime.SMIMECapabilities;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
-
-import javax.crypto.Cipher;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class provides a utility to lookup a friendly name for an algorithm given
@@ -45,18 +44,6 @@ import java.util.Map;
  * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html
  */
 public final class AlgorithmDictionary {
-    /**
-     * JCA standards RECOMMEND NoPadding and PKCS5Padding to Providers.
-     * <p/>
-     * PKCS5Padding is more secure than NoPadding, so we use that.
-     */
-    private static final String PADDING = "PKCS5Padding";
-    /**
-     * JCA standards RECOMMEND CBC and ECB to Providers.
-     * <p/>
-     * CBC is more secure than EBC, so we use that.
-     */
-    private static final String MODE = "CBC";
     private final static Map<DERObjectIdentifier, String> contents = new HashMap<DERObjectIdentifier, String>();
 
     static {
@@ -106,51 +93,6 @@ public final class AlgorithmDictionary {
     }
 
     /**
-     * Returns the OID for the provided algorithm name.
-     *
-     * @param algorithm the algorithm name, e.g. "RSA"
-     * @return the corresponding OID, or null.
-     */
-    public static DERObjectIdentifier getOid(String algorithm) {
-        return oids.get(algorithm);
-    }
-
-    /**
-     * Returns an AlgorithmIdentifier to represent the provider algorithm.
-     *
-     * @param algorithm the algorithm name, e.g. "RSA"
-     * @return the corresponding algorithm identifier, or null;
-     */
-    public static AlgorithmIdentifier getAlgId(String algorithm) {
-        DERObjectIdentifier oid = getOid(algorithm);
-        if (oid == null) {
-            return null;
-        } else {
-            return new AlgorithmIdentifier(oid);
-        }
-    }
-
-    /**
-     * Returns an appropriate transformation name for the given cipher.
-     * <p/>
-     * In the JCA, an instance of a {@link Cipher} may be obtained using just
-     * the cipher algorithm (e.g. DES), but this is subject to defaults
-     * specified by the provider, so we "fill out" the cipher name in this method, so
-     * that <code>DES</code> becomes <code>DES/CBC/PKC5Padding</code>
-     *
-     * @param cipher the cipher algorithm name.
-     * @return the transformation name
-     * @throws IllegalArgumentException if the cipher algorithm is not appropriate.
-     */
-    public static String getTransformation(String cipher) throws IllegalArgumentException {
-        if (cipher.equalsIgnoreCase("DES") || cipher.equalsIgnoreCase("DESede")) {
-            return cipher + "/" + MODE + "/" + PADDING;
-        } else {
-            throw new IllegalArgumentException(cipher + " is not an appropriate cipher name");
-        }
-    }
-
-    /**
      * Returns the cipher part of the provided transformation.
      *
      * @param transformation the transformation, e.g. "DES/CBC/PKCS5Padding"
@@ -168,24 +110,5 @@ public final class AlgorithmDictionary {
      */
     public static String lookup(AlgorithmIdentifier alg) {
         return contents.get(alg.getObjectId());
-    }
-
-    /**
-     * Returns the signature algorithm name for a given hash algorithm to be used
-     * with a RSA cipher.
-     * <p/>
-     * For example, "SHA-1" becomes "SHA1withRSA".
-     *
-     * @param hashAlgorithm the hash algorithm to use.
-     * @return the signature algorithm name.
-     */
-    public static String getRSASignatureAlgorithm(String hashAlgorithm) {
-        if (hashAlgorithm.equals("SHA")) {
-            return "SHA1withRSA";
-        } else if (hashAlgorithm.startsWith("SHA-")) {
-            return hashAlgorithm.replace("-", "") + "withRSA";
-        } else {
-            return hashAlgorithm + "withRSA";
-        }
     }
 }

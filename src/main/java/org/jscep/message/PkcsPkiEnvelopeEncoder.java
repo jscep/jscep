@@ -31,11 +31,11 @@ import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSEnvelopedGenerator;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PkcsPkiEnvelopeEncoder {
-    private static Logger LOGGER = LoggingUtil.getLogger(PkcsPkiEnvelopeEncoder.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(PkcsPkiEnvelopeEncoder.class);
     private final X509Certificate recipient;
 
     public PkcsPkiEnvelopeEncoder(X509Certificate recipient) {

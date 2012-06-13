@@ -22,10 +22,7 @@
  */
 package org.jscep.content;
 
-import com.google.common.io.ByteStreams;
-
 import java.io.IOException;
-import java.io.InputStream;
 
 
 /**
@@ -34,16 +31,19 @@ import java.io.InputStream;
  * @author David Grant
  */
 public class CertRepContentHandler implements ScepContentHandler<byte[]> {
-    /**
+    private static final String PKI_MESSAGE = "application/x-pki-message";
+
+	/**
      * {@inheritDoc}
+     * @throws InvalidContentTypeException 
      *
      * @throws IOException
      */
-    public byte[] getContent(InputStream in, String mimeType) throws IOException {
-        if (mimeType.startsWith("application/x-pki-message")) {
-            return ByteStreams.toByteArray(in);
+    public byte[] getContent(byte[] content, String mimeType) throws InvalidContentTypeException {
+        if (mimeType.startsWith(PKI_MESSAGE)) {
+            return content;
         } else {
-            throw new IOException("Invalid Content Type");
+        	throw new InvalidContentTypeException(mimeType, PKI_MESSAGE);
         }
     }
 }

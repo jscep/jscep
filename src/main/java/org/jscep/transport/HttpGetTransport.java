@@ -22,12 +22,6 @@
  */
 package org.jscep.transport;
 
-import org.jscep.content.ScepContentHandler;
-import org.jscep.request.Operation;
-import org.jscep.request.Request;
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -35,32 +29,68 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.jscep.content.InvalidContentException;
+import org.jscep.content.InvalidContentTypeException;
+import org.jscep.content.ScepContentHandler;
+import org.jscep.request.Operation;
+import org.jscep.request.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteStreams;
+
 /**
  * Transport representing the <code>HTTP GET</code> method
  *
  * @author David Grant
  */
 public class HttpGetTransport extends Transport {
-    private static Logger LOGGER = LoggingUtil.getLogger(HttpGetTransport.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(HttpGetTransport.class);
 
     HttpGetTransport(URL url) {
         super(url);
     }
 
     @Override
-    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws IOException {
-        final URL url = getUrl(msg.getOperation(), msg.getMessage());
+    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws TransportException, InvalidContentTypeException, InvalidContentException {
+        URL url;
+		try {
+			url = getUrl(msg.getOperation(), msg.getMessage());
+		} catch (MalformedURLException e) {
+			throw new TransportException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new TransportException(e);
+		}
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Sending {} to {}", msg, url);
         }
-        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn;
+		try {
+			conn = (HttpURLConnection) url.openConnection();
+		} catch (IOException e) {
+			throw new TransportException(e);
+		}
 
-        LOGGER.debug("Received '{} {}' when sending {} to {}", new Object[]{conn.getResponseCode(), conn.getResponseMessage(), msg, url});
-        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
-        }
+		try {
+	        int responseCode = conn.getResponseCode();
+			String responseMessage = conn.getResponseMessage();
+			
+			LOGGER.debug("Received '{} {}' when sending {} to {}", new Object[]{responseCode, responseMessage, msg, url});
+	        if (responseCode != HttpURLConnection.HTTP_OK) {
+	            throw new TransportException(responseCode + " " + responseMessage);
+	        }
+		} catch (IOException e) {
+			throw new TransportException(e);
+		}
+        
+        byte[] response;
+        try {
+			 response = ByteStreams.toByteArray(conn.getInputStream());
+		} catch (IOException e) {
+			throw new TransportException("Error reading response stream", e);
+		}
 
-        return handler.getContent(conn.getInputStream(), conn.getContentType());
+        return handler.getContent(response, conn.getContentType());
     }
 
     private URL getUrl(Operation op, String message) throws MalformedURLException, UnsupportedEncodingException {

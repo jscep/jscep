@@ -21,13 +21,13 @@
  */
 package org.jscep.transaction;
 
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
-
 import java.util.AbstractQueue;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides support for detecting replay attacks.
@@ -38,7 +38,7 @@ import java.util.Queue;
  * @author David Grant
  */
 public class NonceQueue extends AbstractQueue<Nonce> {
-    private static Logger LOGGER = LoggingUtil.getLogger(NonceQueue.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(NonceQueue.class);
     private final int size;
     private final Queue<Nonce> backingQueue;
 

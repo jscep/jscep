@@ -23,12 +23,37 @@
 
 package org.jscep.client;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.URL;
+import java.security.PrivateKey;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.x500.X500Principal;
+
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.jscep.CertificateVerificationCallback;
 import org.jscep.content.CaCapabilitiesContentHandler;
 import org.jscep.content.CaCertificateContentHandler;
+import org.jscep.content.InvalidContentException;
+import org.jscep.content.InvalidContentTypeException;
 import org.jscep.content.NextCaCertificateContentHandler;
 import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
@@ -38,31 +63,22 @@ import org.jscep.request.GetCaCaps;
 import org.jscep.request.GetCaCert;
 import org.jscep.request.GetNextCaCert;
 import org.jscep.response.Capabilities;
-import org.jscep.transaction.*;
+import org.jscep.transaction.EnrolmentTransaction;
+import org.jscep.transaction.MessageType;
+import org.jscep.transaction.NonEnrollmentTransaction;
+import org.jscep.transaction.OperationFailureException;
+import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
-import org.jscep.util.LoggingUtil;
+import org.jscep.transport.TransportException;
 import org.slf4j.Logger;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.x500.X500Principal;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.URL;
-import java.security.PrivateKey;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
-import java.util.*;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a SCEP client, or Requester.
  */
 public class Client {
-    private static Logger LOGGER = LoggingUtil.getLogger(Client.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(Client.class);
     private Map<String, Capabilities> capabilitiesCache = new HashMap<String, Capabilities>();
     private Set<X509Certificate> verified = new HashSet<X509Certificate>(1);
 
@@ -162,7 +178,22 @@ public class Client {
         final GetCaCert req = new GetCaCert(profile);
         final Transport trans = Transport.createTransport(Transport.Method.GET, url);
 
-        final CertStore store = trans.sendRequest(req, new CaCertificateContentHandler());
+        CertificateFactory factory;
+		try {
+			factory = CertificateFactory.getInstance("X509");
+		} catch (CertificateException e) {
+			throw new IOException(e);
+		}
+        CertStore store;
+		try {
+			store = trans.sendRequest(req, new CaCertificateContentHandler(factory));
+		} catch (TransportException e) {
+			throw new IOException(e);
+		} catch (InvalidContentTypeException e) {
+			throw new IOException(e);
+		} catch (InvalidContentException e) {
+			throw new IOException(e);
+		}
         verifyCA(selectIssuerCertificate(store));
 
         return store;
@@ -188,7 +219,15 @@ public class Client {
         final Transport trans = Transport.createTransport(Transport.Method.GET, url);
         final GetNextCaCert req = new GetNextCaCert(profile);
 
-        return trans.sendRequest(req, new NextCaCertificateContentHandler(issuer));
+        try {
+			return trans.sendRequest(req, new NextCaCertificateContentHandler(issuer));
+		} catch (TransportException e) {
+			throw new IOException(e);
+		} catch (InvalidContentTypeException e) {
+			throw new IOException(e);
+		} catch (InvalidContentException e) {
+			throw new IOException(e);
+		}
     }
 
     // TRANSACTIONAL
@@ -216,7 +255,11 @@ public class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport();
         final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GET_CRL);
-        t.send();
+        try {
+			t.send();
+		} catch (TransportException e) {
+			throw new IOException(e);
+		}
 
         if (t.getState() == State.CERT_ISSUED) {
             try {
@@ -256,7 +299,11 @@ public class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
         Transport transport = createTransport();
         final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GET_CERT);
-        t.send();
+        try {
+			t.send();
+		} catch (TransportException e) {
+			throw new IOException(e);
+		}
 
         if (t.getState() == State.CERT_ISSUED) {
             try {
@@ -394,10 +441,16 @@ public class Client {
             final Transport trans = Transport.createTransport(Transport.Method.GET, url);
             try {
                 caps = trans.sendRequest(req, new CaCapabilitiesContentHandler());
-            } catch (IOException e) {
-                LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
+            } catch (TransportException e) {
+            	LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
                 caps = new Capabilities();
-            }
+            } catch (InvalidContentTypeException e) {
+            	LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
+                caps = new Capabilities();
+			} catch (InvalidContentException e) {
+				LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
+                caps = new Capabilities();
+			}
             LOGGER.debug("Caching capabilities");
             capabilitiesCache.put(profile, caps);
         }

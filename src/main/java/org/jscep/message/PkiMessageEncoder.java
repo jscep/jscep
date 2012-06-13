@@ -49,11 +49,11 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
-import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PkiMessageEncoder {
-    private static Logger LOGGER = LoggingUtil.getLogger(PkiMessageEncoder.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(PkiMessageEncoder.class);
     private final PrivateKey senderKey;
     private final X509Certificate senderCert;
     private final PkcsPkiEnvelopeEncoder encoder;

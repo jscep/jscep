@@ -26,11 +26,21 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
+import org.bouncycastle.util.encoders.Base64;
+import org.jscep.content.InvalidContentException;
+import org.jscep.content.InvalidContentTypeException;
 import org.jscep.content.ScepContentHandler;
 import org.jscep.request.PKCSReq;
 import org.jscep.request.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteStreams;
 
 /**
  * Transport representing the <code>HTTP POST</code> method
@@ -38,33 +48,69 @@ import org.jscep.request.Request;
  * @author David Grant
  */
 public class HttpPostTransport extends Transport {
+	private static Logger LOGGER = LoggerFactory.getLogger(HttpPostTransport.class);
+	
     HttpPostTransport(URL url) {
         super(url);
     }
 
     @Override
-    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws IOException {
+    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws InvalidContentTypeException, TransportException, InvalidContentException {
         if (!PKCSReq.class.isAssignableFrom(msg.getClass())) {
             throw new IllegalArgumentException("POST transport may not be used for " + msg.getOperation() + " messages.");
         }
 
-        final URL url = getUrl(msg.getOperation());
-        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
-
-        final OutputStream stream = new BufferedOutputStream(conn.getOutputStream());
+        URL url;
+		try {
+			url = getUrl(msg.getOperation());
+		} catch (MalformedURLException e) {
+			// This is probably a configuration error
+			throw new TransportException(e);
+		}
+        HttpURLConnection conn;
+		try {
+			conn = (HttpURLConnection) url.openConnection();
+		} catch (IOException e) {
+			throw new TransportException(e);
+		}
         try {
-            msg.write(stream);
-        } finally {
-            stream.close();
-        }
+			conn.setRequestMethod("POST");
+		} catch (ProtocolException e) {
+			throw new TransportException(e);
+		}
+        conn.setDoOutput(true);
+        
+        byte[] message = Base64.decode(msg.getMessage().getBytes(Charset.defaultCharset()));
 
-        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new IOException(conn.getResponseCode() + " " + conn.getResponseMessage());
-        }
+        OutputStream stream;
+		try {
+			stream = new BufferedOutputStream(conn.getOutputStream());
+			stream.write(message);
+	        stream.close();
+		} catch (IOException e) {
+			throw new TransportException(e);
+		}
 
-        return handler.getContent(conn.getInputStream(), conn.getContentType());
+		try {
+			int responseCode = conn.getResponseCode();
+        	String responseMessage = conn.getResponseMessage();
+        
+	        LOGGER.debug("Received '{} {}' when sending {} to {}", new Object[]{responseCode, responseMessage, msg, url});
+			if (responseCode != HttpURLConnection.HTTP_OK) {
+				throw new TransportException(responseCode + " " + responseMessage);
+	        }
+		} catch (IOException e) {
+			throw new TransportException(e);
+		}
+        
+        byte[] response;
+        try {
+			 response = ByteStreams.toByteArray(conn.getInputStream());
+		} catch (IOException e) {
+			throw new TransportException("Error reading response stream", e);
+		}
+
+        return handler.getContent(response, conn.getContentType());
     }
 
     /**

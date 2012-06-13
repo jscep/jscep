@@ -1,6 +1,31 @@
 package org.jscep.server;
 
-import org.bouncycastle.asn1.*;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509CertSelector;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
@@ -29,22 +54,10 @@ import org.jscep.transaction.NonEnrollmentTransaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.transport.Transport.Method;
+import org.jscep.transport.TransportException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.*;
-import java.security.cert.CertStore;
-import java.security.cert.Certificate;
-import java.security.cert.X509CertSelector;
-import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 
 public class ScepServletTest {
     private static String PATH = "/scep/pkiclient.exe";
@@ -111,8 +124,13 @@ public class ScepServletTest {
     private X509Certificate getRecipient() throws Exception {
         GetCaCert req = new GetCaCert();
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        CertStore store = transport.sendRequest(req, new CaCertificateContentHandler());
-
+        CertificateFactory factory;
+		try {
+			factory = CertificateFactory.getInstance("X509");
+		} catch (CertificateException e) {
+			throw new IOException(e);
+		}
+        CertStore store = transport.sendRequest(req, new CaCertificateContentHandler(factory));
         Collection<? extends Certificate> certs = store.getCertificates(new X509CertSelector());
 
         if (certs.size() > 0) {
@@ -140,7 +158,7 @@ public class ScepServletTest {
         System.out.println(certs.get(0));
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = TransportException.class)
     public void getNextCaCertificateBad() throws Exception {
         GetNextCaCert req = new GetNextCaCert(badIdentifier);
         Transport transport = Transport.createTransport(Method.GET, getURL());

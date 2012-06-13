@@ -1,16 +1,14 @@
 package org.jscep.content;
 
-import org.jscep.x509.X509Util;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.security.auth.x500.X500Principal;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.X509Certificate;
+
+import javax.security.auth.x500.X500Principal;
+
+import org.jscep.x509.X509Util;
+import org.junit.Before;
+import org.junit.Test;
 
 public class NextCaCertificateContentHandlerTest {
     private NextCaCertificateContentHandler fixture;
@@ -65,11 +63,9 @@ public class NextCaCertificateContentHandlerTest {
 //		fixture.getContent(in, "foo/bar");
 //	}
 
-    @Test(expected = IOException.class)
+    @Test(expected = InvalidContentTypeException.class)
     public void testInvalidContent() throws Throwable {
-        InputStream in = new ByteArrayInputStream(new byte[]{1});
-
-        fixture.getContent(in, "application/x-x509-next-ca-cert");
+        fixture.getContent(new byte[]{1}, "application/x-x509-next-ca-cert");
     }
 
     private X509Certificate getCertificate(KeyPair keyPair) throws Exception {

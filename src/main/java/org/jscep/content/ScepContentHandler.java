@@ -21,8 +21,6 @@
  */
 package org.jscep.content;
 
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * This interface represents a mechanism for handling specific SCEP content.
@@ -37,7 +35,8 @@ public interface ScepContentHandler<T> {
      * @param in       the input stream containing the content.
      * @param mimeType the type of the input stream.
      * @return the content in a usage form.
-     * @throws IOException if any I/O error occurs.
+     * @throws InvalidContentTypeException 
+     * @throws InvalidContentException 
      */
-    T getContent(InputStream in, String mimeType) throws IOException;
+    T getContent(byte[] response, String mimeType) throws InvalidContentTypeException, InvalidContentException;
 }

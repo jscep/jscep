@@ -21,17 +21,17 @@
  */
 package org.jscep.content;
 
-import org.jscep.response.Capabilities;
-import org.jscep.response.Capability;
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
-
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.jscep.response.Capabilities;
+import org.jscep.response.Capability;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -40,13 +40,15 @@ import java.util.Set;
  * @author David Grant
  */
 public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
-    private static Logger LOGGER = LoggingUtil.getLogger(CaCapabilitiesContentHandler.class);
+    private static final String TEXT_PLAIN = "text/plain";
+	private static Logger LOGGER = LoggerFactory.getLogger(CaCapabilitiesContentHandler.class);
 
     /**
      * {@inheritDoc}
+     * @throws InvalidContentTypeException 
      */
-    public Capabilities getContent(InputStream in, String mimeType) throws IOException {
-        if (mimeType == null || !mimeType.startsWith("text/plain")) {
+    public Capabilities getContent(byte[] content, String mimeType) throws InvalidContentTypeException {
+        if (mimeType == null || !mimeType.startsWith(TEXT_PLAIN)) {
             LOGGER.warn("Content-Type mismatch: was '{}', expected 'text/plain'", mimeType);
         }
 
@@ -55,13 +57,22 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("CA capabilities:");
         }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content)));
         Set<String> caCaps = new HashSet<String>();
         String capability;
-        while ((capability = reader.readLine()) != null) {
-            caCaps.add(capability);
-        }
-        reader.close();
+        try {
+			while ((capability = reader.readLine()) != null) {
+			    caCaps.add(capability);
+			}
+		} catch (IOException e) {
+			throw new InvalidContentTypeException(e);
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				// Do nothing
+			}
+		}
 
         for (Capability enumValue : Capability.values()) {
             if (caCaps.contains(enumValue.toString())) {

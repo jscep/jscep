@@ -22,23 +22,31 @@
  */
 package org.jscep.transaction;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.cert.CertStore;
+import java.security.cert.X509Certificate;
+
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.content.CertRepContentHandler;
-import org.jscep.message.*;
+import org.jscep.content.InvalidContentException;
+import org.jscep.content.InvalidContentTypeException;
+import org.jscep.message.CertRep;
+import org.jscep.message.GetCertInitial;
+import org.jscep.message.PkiMessage;
+import org.jscep.message.PkiMessageDecoder;
+import org.jscep.message.PkiMessageEncoder;
 import org.jscep.request.PKCSReq;
+import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
-import org.jscep.util.LoggingUtil;
+import org.jscep.transport.TransportException;
 import org.jscep.x509.X509Util;
 import org.slf4j.Logger;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.cert.CertStore;
-import java.security.cert.X509Certificate;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -52,7 +60,7 @@ import java.security.cert.X509Certificate;
  * @author David Grant
  */
 public class EnrolmentTransaction extends Transaction {
-    private static Logger LOGGER = LoggingUtil.getLogger(EnrolmentTransaction.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(EnrolmentTransaction.class);
     private final TransactionId transId;
     private final org.jscep.message.PKCSReq request;
     private static NonceQueue QUEUE = new NonceQueue(20);
@@ -74,12 +82,22 @@ public class EnrolmentTransaction extends Transaction {
      *
      * @return the resulting transaction state.
      * @throws IOException if any I/O error occurs.
+     * @throws TransportException 
+     * @throws InvalidContentTypeException 
+     * @throws InvalidContentException 
      */
-    public State send() throws IOException {
+    public State send() throws IOException, TransportException {
         byte[] signedData = encoder.encode(request);
         LOGGER.debug("Sending {}", signedData);
         CertRepContentHandler handler = new CertRepContentHandler();
-        final byte[] res = transport.sendRequest(new PKCSReq(signedData), handler);
+        byte[] res;
+		try {
+			res = transport.sendRequest(new PKCSReq(signedData), handler);
+		} catch (InvalidContentTypeException e) {
+			throw new IOException(e);
+		} catch (InvalidContentException e) {
+			throw new IOException(e);
+		}
         LOGGER.debug("Received response {}", res);
 
         CertRep response = (CertRep) decoder.decode(res);
@@ -105,15 +123,24 @@ public class EnrolmentTransaction extends Transaction {
      *
      * @return the resulting transaction state.
      * @throws IOException if any I/O error occurs.
+     * @throws InvalidContentTypeException 
+     * @throws InvalidContentException 
      */
-    public State poll() throws IOException {
+    public State poll() throws IOException, TransportException {
         X509Name issuerName = X509Util.toX509Name(issuer.getSubjectX500Principal());
         X509Name subjectName = request.getMessageData().getCertificationRequestInfo().getSubject();
         IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
         final GetCertInitial pollReq = new GetCertInitial(transId, Nonce.nextNonce(), ias);
         byte[] signedData = encoder.encode(pollReq);
         CertRepContentHandler handler = new CertRepContentHandler();
-        final byte[] res = transport.sendRequest(new PKCSReq(signedData), handler);
+        byte[] res;
+		try {
+			res = transport.sendRequest(new PKCSReq(signedData), handler);
+		} catch (InvalidContentTypeException e) {
+			throw new IOException(e);
+		} catch (InvalidContentException e) {
+			throw new IOException(e);
+		}
 
         CertRep response = (CertRep) decoder.decode(res);
         validateExchange(pollReq, response);
@@ -170,7 +197,7 @@ public class EnrolmentTransaction extends Transaction {
             throw new InvalidNonceException("This nonce has been encountered before.  Possible replay attack?");
         } else {
             QUEUE.offer(res.getSenderNonce());
-            LOGGER.debug("Nonce has not been encountered before");
+            LOGGER.debug("{} has not been encountered before", res.getSenderNonce());
         }
 
         LOGGER.debug("SCEP message exchange validated successfully");

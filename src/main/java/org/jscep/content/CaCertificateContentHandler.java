@@ -22,18 +22,18 @@
  */
 package org.jscep.content;
 
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.util.LoggingUtil;
-import org.slf4j.Logger;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
-import java.security.cert.*;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreParameters;
+import java.security.cert.CertificateFactory;
+import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
+
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 
 
 /**
@@ -42,71 +42,52 @@ import java.util.Collections;
  * @author David Grant
  */
 public class CaCertificateContentHandler implements ScepContentHandler<CertStore> {
-    private static Logger LOGGER = LoggingUtil.getLogger(CaCertificateContentHandler.class);
+    private static final String RA_CERT = "application/x-x509-ca-ra-cert";
+	private static final String CA_CERT = "application/x-x509-ca-cert";
+	private CertificateFactory factory;
+	
+	public CaCertificateContentHandler(CertificateFactory factory) {
+		this.factory = factory;
+	}
 
     /**
      * {@inheritDoc}
+     * @throws InvalidContentTypeException 
+     * @throws InvalidContentException 
      */
-    public CertStore getContent(InputStream in, String mimeType) throws IOException {
-        final CertificateFactory cf;
-        try {
-            cf = CertificateFactory.getInstance("X.509");
-        } catch (CertificateException e) {
-            IOException ioe = new IOException(e);
-
-            LOGGER.error("getContent", ioe);
-            throw ioe;
-        }
-
-        if (mimeType.startsWith("application/x-x509-ca-cert")) {
+    public CertStore getContent(byte[] content, String mimeType) throws InvalidContentTypeException, InvalidContentException {
+        if (mimeType.startsWith(CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.1
             try {
-
-                X509Certificate ca = (X509Certificate) cf.generateCertificate(in);
+                X509Certificate ca = (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(content));
                 Collection<X509Certificate> caSet = Collections.singleton(ca);
                 CertStoreParameters storeParams = new CollectionCertStoreParameters(caSet);
 
                 return CertStore.getInstance("Collection", storeParams);
             } catch (GeneralSecurityException e) {
-                IOException ioe = new IOException(e);
-
-                LOGGER.error("getContent", ioe);
-                throw ioe;
+                throw new InvalidContentTypeException(e);
             }
-        } else if (mimeType.startsWith("application/x-x509-ca-ra-cert")) {
+        } else if (mimeType.startsWith(RA_CERT)) {
             // If an RA is in use, a certificates-only PKCS#7 SignedData
             // with a certificate chain consisting of both RA and CA certificates is
             // returned.
             // It should be in the order:
             // [0] RA
             // [1] CA
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            int b;
-            while ((b = in.read()) != -1) {
-                baos.write(b);
-            }
-
-            // This area needs testing!
-
             try {
-                byte[] bytes = baos.toByteArray();
-                if (bytes.length == 0) {
-                    throw new IOException("Expected a SignedData object, but response was empty");
+                if (content.length == 0) {
+                    throw new InvalidContentException("Expected a SignedData object, but response was empty");
                 }
-                CMSSignedData sd = new CMSSignedData(bytes);
+                CMSSignedData sd = new CMSSignedData(content);
 
                 return sd.getCertificatesAndCRLs("Collection", (String) null);
             } catch (GeneralSecurityException e) {
-                throw new IOException(e);
+                throw new InvalidContentException(e);
             } catch (CMSException e) {
-                throw new IOException(e);
+                throw new InvalidContentException(e);
             }
         } else {
-            IOException ioe = new IOException("Invalid Content Type");
-
-            LOGGER.error("getContent", ioe);
-            throw ioe;
+        	throw new InvalidContentTypeException(mimeType, CA_CERT, RA_CERT);
         }
     }
 }

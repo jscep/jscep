@@ -21,6 +21,14 @@
  */
 package org.jscep.message;
 
+import java.io.IOException;
+import java.security.AlgorithmParameters;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Set;
@@ -31,18 +39,11 @@ import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.jscep.util.AlgorithmDictionary;
-import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
-
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import java.io.IOException;
-import java.security.AlgorithmParameters;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
+import org.slf4j.LoggerFactory;
 
 public class PkcsPkiEnvelopeDecoder {
-    private static Logger LOGGER = LoggingUtil.getLogger(PkcsPkiEnvelopeDecoder.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(PkcsPkiEnvelopeDecoder.class);
     private final PrivateKey priKey;
 
     public PkcsPkiEnvelopeDecoder(PrivateKey priKey) {

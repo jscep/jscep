@@ -59,7 +59,7 @@ public class Nonce {
 
     @Override
     public String toString() {
-        return HexUtil.toHexString(nonce);
+        return "Nonce [" + HexUtil.toHexString(nonce) + "]";
     }
 
     /**

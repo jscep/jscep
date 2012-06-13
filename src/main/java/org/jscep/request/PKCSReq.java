@@ -22,11 +22,10 @@
  */
 package org.jscep.request;
 
-import org.bouncycastle.util.encoders.Base64;
-
-import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
+
+import org.bouncycastle.util.encoders.Base64;
 
 /**
  * This class represents a <code>PKCSReq</code> request.
@@ -51,18 +50,10 @@ public class PKCSReq extends Request {
     /**
      * {@inheritDoc}
      */
-    public String getMessage() throws IOException {
+    public String getMessage() {
         byte[] bytes = Base64.encode(msgData);
 
-        return new String(bytes);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(OutputStream out) throws IOException {
-        out.write(msgData);
+        return new String(bytes, Charset.defaultCharset());
     }
 
     /**

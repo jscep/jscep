@@ -68,8 +68,8 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.OperationFailureException;
 import org.jscep.transaction.TransactionId;
-import org.jscep.util.LoggingUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteStreams;
 
@@ -82,7 +82,7 @@ public abstract class ScepServlet extends HttpServlet {
     private final static String POST = "POST";
     private final static String MSG_PARAM = "message";
     private final static String OP_PARAM = "operation";
-    private static Logger LOGGER = LoggingUtil.getLogger(ScepServlet.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ScepServlet.class);
     /**
      * Serialization ID
      */

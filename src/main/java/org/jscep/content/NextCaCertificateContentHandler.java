@@ -22,16 +22,7 @@
  */
 package org.jscep.content;
 
-import com.google.common.io.ByteStreams;
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.SignedData;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.pkcs7.SignedDataUtil;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
@@ -41,13 +32,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
+import org.jscep.pkcs7.SignedDataUtil;
+
 /**
  * This class handles responses to <code>GetNextCACert</code> requests.
  *
  * @author David Grant
  */
 public class NextCaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
-    private final X509Certificate issuer;
+    private static final String NEXT_CA_CERT = "application/x-x509-next-ca-cert";
+	private final X509Certificate issuer;
 
     public NextCaCertificateContentHandler(X509Certificate issuer) {
         this.issuer = issuer;
@@ -55,9 +54,10 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 
     /**
      * {@inheritDoc}
+     * @throws InvalidContentTypeException 
      */
-    public List<X509Certificate> getContent(InputStream in, String mimeType) throws IOException {
-        if (mimeType.startsWith("application/x-x509-next-ca-cert")) {
+    public List<X509Certificate> getContent(byte[] content, String mimeType) throws InvalidContentTypeException {
+        if (mimeType.startsWith(NEXT_CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 
             // The response consists of a SignedData PKCS#7 [RFC2315],
@@ -66,13 +66,13 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 
             Collection<? extends Certificate> collection;
             try {
-                CMSSignedData cmsMessageData = new CMSSignedData(ByteStreams.toByteArray(in));
+                CMSSignedData cmsMessageData = new CMSSignedData(content);
                 ContentInfo cmsContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(cmsMessageData.getEncoded()));
 
                 // TODO: This must be signed by the current CA.
                 final SignedData sd = SignedData.getInstance(cmsContentInfo.getContent());
                 if (!SignedDataUtil.isSignedBy(sd, issuer)) {
-                    throw new IOException("Invalid Signer");
+                    throw new InvalidContentTypeException("Invalid Signer");
                 }
                 // The content of the SignedData PKCS#7 [RFC2315] is a degenerate
                 // certificates-only Signed-data (Section 3.3) message containing the
@@ -81,10 +81,12 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
                 // expires.
                 CertStore store = SignedDataUtil.extractCertStore(sd);
                 collection = store.getCertificates(new X509CertSelector());
+            } catch (IOException e) {
+            	throw new InvalidContentTypeException(e);
             } catch (GeneralSecurityException e) {
-                throw new IOException(e);
+                throw new InvalidContentTypeException(e);
             } catch (CMSException e) {
-                throw new IOException(e);
+                throw new InvalidContentTypeException(e);
             }
 
             for (Certificate cert : collection) {
@@ -92,7 +94,7 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
             }
             return certs;
         } else {
-            throw new IOException("Invalid Content Type");
+            throw new InvalidContentTypeException(mimeType, NEXT_CA_CERT);
         }
     }
 }

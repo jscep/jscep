@@ -1,6 +1,17 @@
 package org.jscep.transport;
 
+import java.math.BigInteger;
+import java.net.Proxy;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.cert.X509Certificate;
+
+import javax.security.auth.x500.X500Principal;
+
 import junit.framework.Assert;
+
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.eclipse.jetty.server.Server;
@@ -16,16 +27,6 @@ import org.jscep.x509.X509Util;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.security.auth.x500.X500Principal;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.Proxy;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.cert.X509Certificate;
 
 abstract public class AbstractTransportTest {
     protected URL url;
@@ -71,7 +72,7 @@ abstract public class AbstractTransportTest {
 
         try {
             transport.sendRequest(req, new CertRepContentHandler());
-        } catch (IOException e) {
+        } catch (TransportException e) {
             Assert.assertEquals(e.getMessage(), "404 Not Found");
         }
     }
