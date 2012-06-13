@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PkcsPkiEnvelopeDecoder {
-    private static Logger LOGGER = LoggerFactory.getLogger(PkcsPkiEnvelopeDecoder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PkcsPkiEnvelopeDecoder.class);
     private final PrivateKey priKey;
 
     public PkcsPkiEnvelopeDecoder(PrivateKey priKey) {

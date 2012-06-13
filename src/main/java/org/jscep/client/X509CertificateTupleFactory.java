@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class X509CertificateTupleFactory {
-    private static Logger LOGGER = LoggerFactory.getLogger(X509CertificateTupleFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(X509CertificateTupleFactory.class);
     private static Map<CertStore, X509CertificateTuple> cache = new HashMap<CertStore, X509CertificateTuple>();
     public static final int DIGITAL_SIGNATURE = 0;
     public static final int KEY_ENCIPHERMENT = 2;

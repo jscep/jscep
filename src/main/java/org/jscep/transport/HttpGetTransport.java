@@ -45,7 +45,7 @@ import com.google.common.io.ByteStreams;
  * @author David Grant
  */
 public class HttpGetTransport extends Transport {
-    private static Logger LOGGER = LoggerFactory.getLogger(HttpGetTransport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpGetTransport.class);
 
     HttpGetTransport(URL url) {
         super(url);

@@ -82,7 +82,7 @@ public abstract class ScepServlet extends HttpServlet {
     private final static String POST = "POST";
     private final static String MSG_PARAM = "message";
     private final static String OP_PARAM = "operation";
-    private static Logger LOGGER = LoggerFactory.getLogger(ScepServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScepServlet.class);
     /**
      * Serialization ID
      */

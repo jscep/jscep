@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
     private static final String TEXT_PLAIN = "text/plain";
-	private static Logger LOGGER = LoggerFactory.getLogger(CaCapabilitiesContentHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CaCapabilitiesContentHandler.class);
 
     /**
      * {@inheritDoc}

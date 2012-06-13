@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 public abstract class Transport {
-    private static Logger LOGGER = LoggerFactory.getLogger(Transport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Transport.class);
 
     /**
      * Represents the <code>HTTP</code> method to be used for transport.

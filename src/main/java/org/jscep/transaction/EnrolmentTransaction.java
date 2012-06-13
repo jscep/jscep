@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 public class EnrolmentTransaction extends Transaction {
-    private static Logger LOGGER = LoggerFactory.getLogger(EnrolmentTransaction.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnrolmentTransaction.class);
     private final TransactionId transId;
     private final org.jscep.message.PKCSReq request;
     private static NonceQueue QUEUE = new NonceQueue(20);

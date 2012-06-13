@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 public class NonceQueue extends AbstractQueue<Nonce> {
-    private static Logger LOGGER = LoggerFactory.getLogger(NonceQueue.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NonceQueue.class);
     private final int size;
     private final Queue<Nonce> backingQueue;
 

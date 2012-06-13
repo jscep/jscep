@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
  * This class represents a SCEP client, or Requester.
  */
 public class Client {
-    private static Logger LOGGER = LoggerFactory.getLogger(Client.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
     private Map<String, Capabilities> capabilitiesCache = new HashMap<String, Capabilities>();
     private Set<X509Certificate> verified = new HashSet<X509Certificate>(1);
 
