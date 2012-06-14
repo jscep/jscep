@@ -37,9 +37,13 @@ import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.x509.X509Util;
 import org.junit.Assume;
-import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ * These tests are coupled to the ScepServletImpl class
+ * 
+ * @author David Grant
+ */
 public class ClientTest extends AbstractClientTest {
     /**
      * The requester MUST use RSA keys for all symmetric key operations.
@@ -64,33 +68,6 @@ public class ClientTest extends AbstractClientTest {
         Transaction t = client.enrol(csr);
         if (t.send() == State.CERT_ISSUED) {
             t.getCertStore();
-        }
-    }
-
-    /**
-     * CAs that do advertise support for renewal should not perform it!
-     *
-     * @throws Exception if a problem occurs
-     */
-    @Ignore @Test(expected = IOException.class)
-    public void testRenewalSameCAEnrollDisallowed() throws Exception {
-        // Ignore if renewal is supported.
-        Assume.assumeThat(client.getCaCapabilities().isRenewalSupported(), is(false));
-
-        Transaction trans;
-        State state;
-        CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
-
-        trans = client.enrol(csr);
-        state = trans.send();
-        if (state == State.CERT_ISSUED) {
-            identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
-        }
-
-        trans = client.enrol(csr);
-        state = trans.send();
-        if (state == State.CERT_ISSUED) {
-            identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
         }
     }
 

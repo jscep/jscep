@@ -187,22 +187,6 @@ public class ScepServletTest {
     }
 
     @Test
-    public void testGetCertGood() throws Exception {
-        IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, goodSerial);
-        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());
-        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender, envEncoder);
-
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
-
-        Transport transport = Transport.createTransport(Method.GET, getURL());
-        NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CERT);
-        State s = t.send();
-
-        assertThat(s, is(State.CERT_ISSUED));
-    }
-
-    @Test
     public void testGetCertBad() throws Exception {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, badSerial);
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());

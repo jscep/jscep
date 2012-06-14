@@ -16,6 +16,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -53,7 +54,6 @@ public class ScepServletImpl extends ScepServlet {
 	private X509Name name;
 	private X509Name pollName;
 	private BigInteger caSerial;
-	private BigInteger goodSerial;
 
 	public void init(ServletContext context) {
 		LOGGER.debug("INIT");
@@ -64,7 +64,6 @@ public class ScepServletImpl extends ScepServlet {
 		name = new X509Name("CN=Certification Authority");
 		pollName = new X509Name("CN=Poll");
 		caSerial = BigInteger.TEN;
-		goodSerial = BigInteger.ONE;
 		try {
 			KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
 			priKey = keyPair.getPrivate();
@@ -117,8 +116,7 @@ public class ScepServletImpl extends ScepServlet {
 				throw new OperationFailureException(FailInfo.badRequest);
 			}
 			PublicKey pubKey = X509Util.getPublicKey(csr);
-			X509Certificate issued = generateCertificate(pubKey, subject, name,
-					goodSerial);
+			X509Certificate issued = generateCertificate(pubKey, subject, name, getSerial());
 
 			LOGGER.debug("Issuing {}", issued);
 			CACHE.put(
@@ -130,6 +128,11 @@ public class ScepServletImpl extends ScepServlet {
 			LOGGER.debug("Error in enrollment", e);
 			throw new OperationFailureException(FailInfo.badRequest);
 		}
+	}
+
+	private BigInteger getSerial() {
+		Random rnd = new Random();
+		return BigInteger.valueOf(Math.abs(rnd.nextLong()) + 1);
 	}
 
 	private String getPassword(PKCS10CertificationRequest csr) {
@@ -172,13 +175,6 @@ public class ScepServletImpl extends ScepServlet {
 				iasn.getSerialNumber());
 		if (CACHE.containsKey(iasn)) {
 			return Collections.singletonList(CACHE.get(iasn));
-		} else if (serial.equals(goodSerial)) {
-			try {
-				return Collections.singletonList(generateCertificate(pubKey,
-						issuer, issuer, goodSerial));
-			} catch (Exception e) {
-				throw new OperationFailureException(FailInfo.badCertId);
-			}
 		}
 		throw new OperationFailureException(FailInfo.badCertId);
 	}
@@ -191,7 +187,7 @@ public class ScepServletImpl extends ScepServlet {
 		}
 		try {
 			return Collections.singletonList(generateCertificate(pubKey,
-					subject, issuer, goodSerial));
+					subject, issuer, getSerial()));
 		} catch (Exception e) {
 			throw new OperationFailureException(FailInfo.badCertId);
 		}
