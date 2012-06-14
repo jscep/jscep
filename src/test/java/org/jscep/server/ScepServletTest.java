@@ -1,5 +1,8 @@
 package org.jscep.server;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -155,7 +158,7 @@ public class ScepServletTest {
         Transport transport = Transport.createTransport(Method.GET, getURL());
         List<X509Certificate> certs = transport.sendRequest(req, new NextCaCertificateContentHandler(getRecipient()));
 
-        System.out.println(certs.get(0));
+        assertThat(certs.size(), is(1));
     }
 
     @Test(expected = TransportException.class)
@@ -163,8 +166,8 @@ public class ScepServletTest {
         GetNextCaCert req = new GetNextCaCert(badIdentifier);
         Transport transport = Transport.createTransport(Method.GET, getURL());
         List<X509Certificate> certs = transport.sendRequest(req, new NextCaCertificateContentHandler(getRecipient()));
-
-        System.out.println(certs.get(0));
+        
+        assertThat(certs.size(), is(1));
     }
 
     @Test
@@ -180,7 +183,7 @@ public class ScepServletTest {
         NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CRL);
         State s = t.send();
 
-        System.out.println(s);
+        assertThat(s, is(State.CERT_ISSUED));
     }
 
     @Test
@@ -196,7 +199,7 @@ public class ScepServletTest {
         NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CERT);
         State s = t.send();
 
-        System.out.println(s);
+        assertThat(s, is(State.CERT_ISSUED));
     }
 
     @Test
@@ -210,7 +213,9 @@ public class ScepServletTest {
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
         NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CERT);
-        t.send();
+        State s = t.send();
+        
+        assertThat(s, is(State.CERT_NON_EXISTANT));
     }
 
     @Test
@@ -227,8 +232,7 @@ public class ScepServletTest {
         EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
 
         State s = t.send();
-
-        System.out.println(s);
+        assertThat(s, is(State.CERT_ISSUED));
     }
 
     @Test
@@ -243,9 +247,9 @@ public class ScepServletTest {
 
         Transport transport = Transport.createTransport(Method.POST, getURL());
         EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
+        
         State s = t.send();
-
-        System.out.println(s);
+        assertThat(s, is(State.CERT_ISSUED));
     }
 
     @Test
@@ -259,12 +263,13 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.POST, getURL());
-        EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
-        State s = t.send();
-        t.setIssuer(sender);
-        System.out.println(s);
-        s = t.poll();
-        System.out.println(s);
+        EnrolmentTransaction trans = new EnrolmentTransaction(transport, encoder, decoder, csr);
+        State state = trans.send();
+        assertThat(state, is(State.CERT_REQ_PENDING));
+        
+        trans.setIssuer(sender);
+        state = trans.poll();
+        assertThat(state, is(State.CERT_REQ_PENDING));
     }
 
     private CertificationRequest getCsr(X509Name subject, PublicKey pubKey, PrivateKey priKey, char[] password) throws GeneralSecurityException, IOException {

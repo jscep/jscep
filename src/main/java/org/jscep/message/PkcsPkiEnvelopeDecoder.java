@@ -29,8 +29,6 @@ import java.security.PrivateKey;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
@@ -50,7 +48,7 @@ public class PkcsPkiEnvelopeDecoder {
         this.priKey = priKey;
     }
 
-    public ASN1Encodable decode(EnvelopedData envelopedData) throws IOException {
+    public byte[] decode(EnvelopedData envelopedData) throws IOException {
         LOGGER.debug("Decrypting message: {}", envelopedData.getDEREncoded());
         // Figure out the type of secret key
         final EncryptedContentInfo contentInfo = envelopedData.getEncryptedContentInfo();
@@ -90,7 +88,7 @@ public class PkcsPkiEnvelopeDecoder {
             byte[] contentBytes = decryptingCipher.doFinal(encryptedContentBytes);
 
             LOGGER.debug("Decrypted to: {}", contentBytes);
-            return ASN1Object.fromByteArray(contentBytes);
+            return contentBytes;
         } catch (GeneralSecurityException e) {
             throw new IOException(e);
         }

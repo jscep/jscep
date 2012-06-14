@@ -100,7 +100,7 @@ public class HttpPostTransport extends Transport {
 				throw new TransportException(responseCode + " " + responseMessage);
 	        }
 		} catch (IOException e) {
-			throw new TransportException(e);
+			throw new TransportException("Error connecting to server.", e);
 		}
         
         byte[] response;

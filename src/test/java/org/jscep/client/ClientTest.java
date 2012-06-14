@@ -1,6 +1,31 @@
 package org.jscep.client;
 
-import org.bouncycastle.asn1.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+
+import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -14,19 +39,6 @@ import org.jscep.x509.X509Util;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import javax.security.auth.x500.X500Principal;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.*;
-import java.security.cert.CertStore;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class ClientTest extends AbstractClientTest {
     /**
@@ -43,7 +55,6 @@ public class ClientTest extends AbstractClientTest {
         new Client(url, identity, keyPair.getPrivate(), new NoSecurityCallbackHandler());
     }
 
-    @Ignore
     @Test
     public void testRenewalEnrollAllowed() throws Exception {
         // Ignore this test if the CA doesn't support renewal.
@@ -61,8 +72,7 @@ public class ClientTest extends AbstractClientTest {
      *
      * @throws Exception if a problem occurs
      */
-    @Ignore
-    @Test(expected = IOException.class)
+    @Ignore @Test(expected = IOException.class)
     public void testRenewalSameCAEnrollDisallowed() throws Exception {
         // Ignore if renewal is supported.
         Assume.assumeThat(client.getCaCapabilities().isRenewalSupported(), is(false));
@@ -72,50 +82,46 @@ public class ClientTest extends AbstractClientTest {
         CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
 
         trans = client.enrol(csr);
-        state = trans.getState();
+        state = trans.send();
         if (state == State.CERT_ISSUED) {
             identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
         }
 
         trans = client.enrol(csr);
-        state = trans.getState();
+        state = trans.send();
         if (state == State.CERT_ISSUED) {
             identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
         }
     }
 
-    @Ignore
     @Test
     public void testEnroll() throws Exception {
         CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
         Transaction trans = client.enrol(csr);
-        State state = trans.getState();
+        State state = trans.send();
         if (state == State.CERT_ISSUED) {
             CertStore store = trans.getCertStore();
             System.out.println(store.getCertificates(null));
         }
     }
 
-    @Ignore
     @Test
     public void testEnrollThenGet() throws Exception {
         Transaction trans = client.enrol(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password));
-        State state = trans.getState();
+        State state = trans.send();
         Assume.assumeTrue(state == State.CERT_ISSUED);
-        identity = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
-        Certificate retrieved = client.getCertificate(identity.getSerialNumber()).iterator().next();
+        X509Certificate issued = (X509Certificate) trans.getCertStore().getCertificates(null).iterator().next();
+        Certificate retrieved = client.getCertificate(issued.getSerialNumber()).iterator().next();
 
-        assertEquals(identity, retrieved);
+        assertEquals(issued, retrieved);
     }
 
-    @Ignore
-    @Test(expected = IOException.class)
+    @Test
     public void testEnrollInvalidPassword() throws Exception {
         Transaction trans = client.enrol(getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), new char[0]));
-        State state = trans.getState();
-        if (state == State.CERT_ISSUED) {
-            trans.getCertStore();
-        }
+        State state = trans.send();
+        
+        assertThat(state, is(State.CERT_NON_EXISTANT));
     }
 
     @Test

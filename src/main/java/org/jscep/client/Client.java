@@ -255,13 +255,14 @@ public class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport();
         final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GET_CRL);
+        State state;
         try {
-			t.send();
+			state = t.send();
 		} catch (TransportException e) {
 			throw new IOException(e);
 		}
 
-        if (t.getState() == State.CERT_ISSUED) {
+        if (state == State.CERT_ISSUED) {
             try {
                 Collection<X509CRL> crls = (Collection<X509CRL>) t.getCertStore().getCRLs(null);
                 if (crls.size() == 0) {
@@ -271,7 +272,7 @@ public class Client {
             } catch (CertStoreException e) {
                 throw new RuntimeException(e);
             }
-        } else if (t.getState() == State.CERT_REQ_PENDING) {
+        } else if (state == State.CERT_REQ_PENDING) {
             throw new IllegalStateException();
         } else {
             throw new OperationFailureException(t.getFailInfo());
@@ -299,20 +300,22 @@ public class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
         Transport transport = createTransport();
         final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GET_CERT);
+        
+        State state;
         try {
-			t.send();
+			state = t.send();
 		} catch (TransportException e) {
 			throw new IOException(e);
 		}
 
-        if (t.getState() == State.CERT_ISSUED) {
+        if (state == State.CERT_ISSUED) {
             try {
                 Collection<X509Certificate> certs = (Collection<X509Certificate>) t.getCertStore().getCertificates(null);
                 return new ArrayList<X509Certificate>(certs);
             } catch (CertStoreException e) {
                 throw new RuntimeException(e);
             }
-        } else if (t.getState() == State.CERT_REQ_PENDING) {
+        } else if (state == State.CERT_REQ_PENDING) {
             throw new IllegalStateException();
         } else {
             throw new OperationFailureException(t.getFailInfo());

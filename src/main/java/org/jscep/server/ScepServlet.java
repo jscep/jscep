@@ -47,12 +47,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.jce.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.message.CertRep;
@@ -264,7 +264,7 @@ public abstract class ScepServlet extends HttpServlet {
                     throw new ServletException(e);
                 }
             } else if (msgType == MessageType.PKCS_REQ) {
-                final CertificationRequest certReq = (CertificationRequest) msgData;
+                final PKCS10CertificationRequest certReq = (PKCS10CertificationRequest) msgData;
 
                 try {
                     List<X509Certificate> issued = doEnroll(certReq);
@@ -438,7 +438,7 @@ public abstract class ScepServlet extends HttpServlet {
      * @return the certificate chain, if any
      * @throws OperationFailureException if the operation cannot be completed
      */
-    abstract protected List<X509Certificate> doEnroll(CertificationRequest certificationRequest) throws OperationFailureException, Exception;
+    abstract protected List<X509Certificate> doEnroll(PKCS10CertificationRequest certificationRequest) throws OperationFailureException, Exception;
 
     /**
      * Returns the private key of the entity represented by this SCEP server.

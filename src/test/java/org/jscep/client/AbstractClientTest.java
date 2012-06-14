@@ -1,5 +1,8 @@
 package org.jscep.client;
 
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletHandler;
+import org.jscep.server.ScepServletImpl;
 import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -16,18 +19,29 @@ import java.security.cert.X509Certificate;
 
 @Ignore
 public abstract class AbstractClientTest {
+	private static String PATH = "/scep/pkiclient.exe";
     protected Client client;
     protected KeyPair keyPair;
     protected X509Certificate identity;
-    protected char[] password = "INBOUND_TLSuscl99".toCharArray();
+    protected char[] password = "password".toCharArray();
     protected URL url;
+    private Server server;
+    private int port;
 
     @Before
     public void setUp() throws Exception {
+        final ServletHandler handler = new ServletHandler();
+        handler.addServletWithMapping(ScepServletImpl.class, PATH);
+
+        server = new Server(0);
+        server.setHandler(handler);
+        server.start();
+
+        port = server.getConnectors()[0].getLocalPort();
         keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
         identity = X509Util.createEphemeralCertificate(new X500Principal("CN=jscep.org"), keyPair);
 
-        url = new URL("https://192.168.11.73/ejbca/publicweb/apply/scep/noca/pkiclient.exe");
+        url = new URL("http", "localhost", port, PATH);
         final CallbackHandler cbh = new NoSecurityCallbackHandler();
 
         client = new Client(url, identity, keyPair.getPrivate(), cbh);
