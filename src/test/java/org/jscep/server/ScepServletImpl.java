@@ -8,10 +8,11 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,10 +84,16 @@ public class ScepServletImpl extends ScepServlet {
 			throws Exception {
 		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
 		generator.setIssuerDN(issuer);
-		generator.setNotAfter(new Date());
-		generator.setNotBefore(new Date());
+
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.add(Calendar.YEAR, -1);
+		generator.setNotBefore(cal.getTime());
+
+		cal.add(Calendar.YEAR, 2);
+		generator.setNotAfter(cal.getTime());
+
 		generator.setPublicKey(pubKey);
-		generator.setSerialNumber(caSerial);
+		generator.setSerialNumber(serial);
 		generator.setSignatureAlgorithm("SHA1withRSA");
 		generator.setSubjectDN(subject);
 		generator.addExtension(X509Extensions.BasicConstraints, true,
@@ -167,7 +174,8 @@ public class ScepServletImpl extends ScepServlet {
 			return Collections.singletonList(CACHE.get(iasn));
 		} else if (serial.equals(goodSerial)) {
 			try {
-				return Collections.singletonList(generateCertificate(pubKey, issuer, issuer, goodSerial));
+				return Collections.singletonList(generateCertificate(pubKey,
+						issuer, issuer, goodSerial));
 			} catch (Exception e) {
 				throw new OperationFailureException(FailInfo.badCertId);
 			}

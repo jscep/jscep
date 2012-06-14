@@ -296,8 +296,7 @@ public class Client {
         final X509Certificate ca = retrieveCA();
 
         X509Name name = new X509Name(ca.getIssuerX500Principal().toString());
-        BigInteger serialNumber = ca.getSerialNumber();
-        IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
+        IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport();
         final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GET_CERT);
         
