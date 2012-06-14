@@ -21,9 +21,9 @@
  */
 package org.jscep.response;
 
-import javax.crypto.Cipher;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
+import java.security.Provider;
+import java.security.Provider.Service;
+import java.security.Security;
 import java.util.Collections;
 import java.util.EnumSet;
 
@@ -118,14 +118,23 @@ public class Capabilities {
         return cipher;
     }
 
-    private boolean cipherExists(String cipher) {
-        try {
-            Cipher.getInstance(cipher);
-            return true;
-        } catch (GeneralSecurityException e) {
-            return false;
-        }
+    private boolean cipherExists(String algorithm) {
+    	return algorithmExists("Cipher", algorithm);
     }
+
+	private boolean algorithmExists(String serviceType, String algorithm) {
+		for (Provider provider : Security.getProviders()) {
+    		for (Service service : provider.getServices()) {
+    			if (service.getType().equals(serviceType)) {
+    				if (service.getAlgorithm().equals(algorithm)) {
+    					return true;
+    				}
+    			}
+    		}
+    	}
+    	
+        return false;
+	}
 
     /**
      * Returns the strongest message digest algorithm supported by the server and client.
@@ -156,12 +165,7 @@ public class Capabilities {
     }
 
     private boolean digestExists(String digest) {
-        try {
-            MessageDigest.getInstance(digest);
-            return true;
-        } catch (GeneralSecurityException e) {
-            return false;
-        }
+        return algorithmExists("MessageDigest", digest);
     }
 
     /**
