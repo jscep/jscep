@@ -21,8 +21,6 @@
  */
 package org.jscep.transaction;
 
-import java.util.AbstractQueue;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -37,10 +35,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author David Grant
  */
-public class NonceQueue extends AbstractQueue<Nonce> {
+public final class NonceQueue {
     private static final Logger LOGGER = LoggerFactory.getLogger(NonceQueue.class);
     private final int size;
     private final Queue<Nonce> backingQueue;
+    
 
     /**
      * Creates a new <tt>NonceQueue</tt> of the specified size.
@@ -52,24 +51,14 @@ public class NonceQueue extends AbstractQueue<Nonce> {
         this.backingQueue = new LinkedList<Nonce>();
     }
 
-    @Override
-    public Iterator<Nonce> iterator() {
-        return backingQueue.iterator();
-    }
-
-    @Override
-    public int size() {
-        return backingQueue.size();
-    }
-
     /**
      * Inserts the specified nonce into this queue if possible.
      * <p/>
      * This queue will maintain a fixed size, pushing out the oldest
      * nonce first, so this method will always return true.
      */
-    public boolean offer(Nonce nonce) {
-        if (size() == size) {
+    public synchronized boolean add(Nonce nonce) {
+        if (backingQueue.size() == size) {
             Nonce removedNonce = backingQueue.poll();
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Removed " + removedNonce + " from head of queue.");
@@ -78,17 +67,7 @@ public class NonceQueue extends AbstractQueue<Nonce> {
         return backingQueue.offer(nonce);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Nonce peek() {
-        return backingQueue.peek();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Nonce poll() {
-        return backingQueue.poll();
-    }
+	public synchronized boolean contains(Nonce nonce) {
+		return backingQueue.contains(nonce);
+	}
 }

@@ -202,7 +202,7 @@ public class EnrolmentTransaction extends Transaction {
         if (QUEUE.contains(res.getSenderNonce())) {
             throw new InvalidNonceException("This nonce has been encountered before.  Possible replay attack?");
         } else {
-            QUEUE.offer(res.getSenderNonce());
+            QUEUE.add(res.getSenderNonce());
             LOGGER.debug("{} has not been encountered before", res.getSenderNonce());
         }
 
