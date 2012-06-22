@@ -22,9 +22,12 @@
  */
 package org.jscep.transport;
 
+import static com.google.common.base.Charsets.US_ASCII;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -79,7 +82,12 @@ public class HttpPostTransport extends Transport {
 		}
         conn.setDoOutput(true);
         
-        byte[] message = Base64.decode(msg.getMessage().getBytes());
+        byte[] message;
+		try {
+			message = Base64.decode(msg.getMessage().getBytes(US_ASCII.name()));
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 
         OutputStream stream = null;
 		try {

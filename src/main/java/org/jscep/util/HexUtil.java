@@ -21,6 +21,10 @@
  */
 package org.jscep.util;
 
+import static com.google.common.base.Charsets.US_ASCII;
+
+import java.io.UnsupportedEncodingException;
+
 
 /**
  * This class provides utilities for converting between byte
@@ -66,7 +70,11 @@ public final class HexUtil {
      * @return a string of hex characters.
      */
     public static String toHexString(byte[] bytes) {
-        return new String(toHex(bytes));
+        try {
+			return new String(toHex(bytes), US_ASCII.name());
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     /**
@@ -76,7 +84,11 @@ public final class HexUtil {
      * @return a byte array
      */
     public static byte[] fromHex(String hex) {
-        return fromHex(hex.getBytes());
+        try {
+			return fromHex(hex.getBytes(US_ASCII.name()));
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     /**

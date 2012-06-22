@@ -21,10 +21,13 @@
  */
 package org.jscep.content;
 
+import static com.google.common.base.Charsets.US_ASCII;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,36 +36,42 @@ import org.jscep.response.Capability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * This class handles responses to <code>GetCACaps</code> requests.
- *
+ * 
  * @author David Grant
  */
-public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabilities> {
-    private static final String TEXT_PLAIN = "text/plain";
-	private static final Logger LOGGER = LoggerFactory.getLogger(CaCapabilitiesContentHandler.class);
+public class CaCapabilitiesContentHandler implements
+		ScepContentHandler<Capabilities> {
+	private static final String TEXT_PLAIN = "text/plain";
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(CaCapabilitiesContentHandler.class);
 
-    /**
-     * {@inheritDoc}
-     * @throws InvalidContentTypeException 
-     */
-    public Capabilities getContent(byte[] content, String mimeType) throws InvalidContentTypeException {
-        if (mimeType == null || !mimeType.startsWith(TEXT_PLAIN)) {
-            LOGGER.warn("Content-Type mismatch: was '{}', expected 'text/plain'", mimeType);
-        }
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws InvalidContentTypeException
+	 */
+	public Capabilities getContent(byte[] content, String mimeType)
+			throws InvalidContentTypeException {
+		if (mimeType == null || !mimeType.startsWith(TEXT_PLAIN)) {
+			LOGGER.warn(
+					"Content-Type mismatch: was '{}', expected 'text/plain'",
+					mimeType);
+		}
 
-        final Capabilities caps = new Capabilities();
+		final Capabilities caps = new Capabilities();
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("CA capabilities:");
-        }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content)));
-        Set<String> caCaps = new HashSet<String>();
-        String capability;
-        try {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("CA capabilities:");
+		}
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new ByteArrayInputStream(content), Charset.forName(US_ASCII.name())));
+		Set<String> caCaps = new HashSet<String>();
+		String capability;
+		try {
 			while ((capability = reader.readLine()) != null) {
-			    caCaps.add(capability);
+				caCaps.add(capability);
 			}
 		} catch (IOException e) {
 			throw new InvalidContentTypeException(e);
@@ -74,15 +83,15 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
 			}
 		}
 
-        for (Capability enumValue : Capability.values()) {
-            if (caCaps.contains(enumValue.toString())) {
-                LOGGER.debug("[\u2713] {}", enumValue.getDescription());
-                caps.add(enumValue);
-            } else {
-                LOGGER.debug("[\u2717] {}", enumValue.getDescription());
-            }
-        }
+		for (Capability enumValue : Capability.values()) {
+			if (caCaps.contains(enumValue.toString())) {
+				LOGGER.debug("[\u2713] {}", enumValue.getDescription());
+				caps.add(enumValue);
+			} else {
+				LOGGER.debug("[\u2717] {}", enumValue.getDescription());
+			}
+		}
 
-        return caps;
-    }
+		return caps;
+	}
 }

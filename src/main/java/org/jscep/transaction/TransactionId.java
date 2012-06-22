@@ -21,13 +21,18 @@
  */
 package org.jscep.transaction;
 
-import org.jscep.util.HexUtil;
+import static com.google.common.base.Charsets.US_ASCII;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.jscep.util.HexUtil;
+
+import com.google.common.primitives.Bytes;
 
 
 /**
@@ -40,7 +45,7 @@ public final class TransactionId {
     private final byte[] id;
 
     public TransactionId(byte[] id) {
-        this.id = copy(id);
+        this.id = Bytes.concat(id);
     }
 
     private TransactionId(PublicKey pubKey, String digestAlgorithm) {
@@ -54,11 +59,15 @@ public final class TransactionId {
     }
 
     private TransactionId() {
-        id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes();
+        try {
+			id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes(US_ASCII.name());
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     public byte[] getBytes() {
-        return copy(id);
+        return Bytes.concat(id);
     }
 
 
@@ -88,7 +97,11 @@ public final class TransactionId {
 
     @Override
     public String toString() {
-        return new String(id);
+        try {
+			return new String(id, US_ASCII.name());
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
@@ -105,12 +118,5 @@ public final class TransactionId {
     @Override
     public int hashCode() {
         return id != null ? Arrays.hashCode(id) : 0;
-    }
-
-    private static byte[] copy(byte[] source) {
-        byte[] dest = new byte[source.length];
-        System.arraycopy(source, 0, dest, 0, source.length);
-
-        return dest;
     }
 }

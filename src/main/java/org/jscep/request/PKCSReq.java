@@ -22,6 +22,9 @@
  */
 package org.jscep.request;
 
+import static com.google.common.base.Charsets.US_ASCII;
+
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.bouncycastle.util.encoders.Base64;
@@ -54,7 +57,11 @@ public class PKCSReq extends Request {
     public String getMessage() {
         byte[] bytes = Base64.encode(msgData);
 
-        return new String(bytes);
+        try {
+			return new String(bytes, US_ASCII.name());
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     /**
