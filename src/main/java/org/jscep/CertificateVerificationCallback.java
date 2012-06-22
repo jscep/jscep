@@ -30,7 +30,7 @@ import java.security.cert.X509Certificate;
  *
  * @author David Grant
  */
-public class CertificateVerificationCallback implements Callback {
+public final class CertificateVerificationCallback implements Callback {
     private final X509Certificate caCertificate;
     private boolean verified;
 
@@ -40,7 +40,7 @@ public class CertificateVerificationCallback implements Callback {
      *
      * @param caCertificate the CA certificate
      */
-    public CertificateVerificationCallback(X509Certificate caCertificate) {
+    public CertificateVerificationCallback(final X509Certificate caCertificate) {
         this.caCertificate = caCertificate;
     }
 
@@ -74,7 +74,7 @@ public class CertificateVerificationCallback implements Callback {
      *
      * @param verified the outcome.
      */
-    public void setVerified(boolean verified) {
+    public void setVerified(final boolean verified) {
         this.verified = verified;
     }
 }
