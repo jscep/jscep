@@ -10,8 +10,8 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.EnumSet;
-import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -22,17 +22,20 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.X509Extensions;
-import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
-import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.response.Capability;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.OperationFailureException;
@@ -51,8 +54,8 @@ public class ScepServletImpl extends ScepServlet {
 	private PrivateKey priKey;
 	private PublicKey pubKey;
 	private X509Certificate ca;
-	private X509Name name;
-	private X509Name pollName;
+	private X500Name name;
+	private X500Name pollName;
 	private BigInteger caSerial;
 
 	public void init(ServletContext context) {
@@ -61,8 +64,8 @@ public class ScepServletImpl extends ScepServlet {
 
 	@Override
 	public void init() throws ServletException {
-		name = new X509Name("CN=Certification Authority");
-		pollName = new X509Name("CN=Poll");
+		name = new X500Name("CN=Certification Authority");
+		pollName = new X500Name("CN=Poll");
 		caSerial = BigInteger.TEN;
 		try {
 			KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
@@ -79,33 +82,35 @@ public class ScepServletImpl extends ScepServlet {
 	}
 
 	private X509Certificate generateCertificate(PublicKey pubKey,
-			X509Name subject, X509Name issuer, BigInteger serial)
+			X500Name subject, X500Name issuer, BigInteger serial)
 			throws Exception {
-		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
-		generator.setIssuerDN(issuer);
-
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.add(Calendar.YEAR, -1);
-		generator.setNotBefore(cal.getTime());
+		Date notBefore = cal.getTime();
 
 		cal.add(Calendar.YEAR, 2);
-		generator.setNotAfter(cal.getTime());
+		Date notAfter = cal.getTime();
 
-		generator.setPublicKey(pubKey);
-		generator.setSerialNumber(serial);
-		generator.setSignatureAlgorithm("SHA1withRSA");
-		generator.setSubjectDN(subject);
-		generator.addExtension(X509Extensions.BasicConstraints, true,
+		JcaX509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
+				issuer, serial, notBefore, notAfter, subject, pubKey);
+		builder.addExtension(X509Extension.basicConstraints, true,
 				new BasicConstraints(0));
 
-		return generator.generate(priKey);
+		ContentSigner signer;
+		try {
+			signer = new JcaContentSignerBuilder("SHA1withRSA").build(priKey);
+		} catch (OperatorCreationException e) {
+			throw new Exception(e);
+		}
+		X509CertificateHolder holder = builder.build(signer);
+		return new JcaX509CertificateConverter().getCertificate(holder);
 	}
 
 	@Override
-	protected List<X509Certificate> doEnroll(PKCS10CertificationRequest csr)
+	protected List<X509Certificate> doEnrol(PKCS10CertificationRequest csr)
 			throws OperationFailureException {
 		try {
-			X509Name subject = csr.getCertificationRequestInfo().getSubject();
+			X500Name subject = X500Name.getInstance(csr.getSubject());
 			LOGGER.debug(subject.toString());
 			if (subject.equals(pollName)) {
 				return Collections.emptyList();
@@ -116,7 +121,8 @@ public class ScepServletImpl extends ScepServlet {
 				throw new OperationFailureException(FailInfo.badRequest);
 			}
 			PublicKey pubKey = X509Util.getPublicKey(csr);
-			X509Certificate issued = generateCertificate(pubKey, subject, name, getSerial());
+			X509Certificate issued = generateCertificate(pubKey, subject, name,
+					getSerial());
 
 			LOGGER.debug("Issuing {}", issued);
 			CACHE.put(
@@ -136,10 +142,8 @@ public class ScepServletImpl extends ScepServlet {
 	}
 
 	private String getPassword(PKCS10CertificationRequest csr) {
-		ASN1Set attrs = csr.getCertificationRequestInfo().getAttributes();
-		Enumeration<?> objs = attrs.getObjects();
-		while (objs.hasMoreElements()) {
-			Attribute attr = new Attribute((DERSequence) objs.nextElement());
+		Attribute[] attrs = csr.getAttributes();
+		for (Attribute attr : attrs) {
 			if (attr.getAttrType().equals(
 					PKCSObjectIdentifiers.pkcs_9_at_challengePassword)) {
 				DERPrintableString password = (DERPrintableString) attr
@@ -156,7 +160,7 @@ public class ScepServletImpl extends ScepServlet {
 	}
 
 	@Override
-	protected X509CRL doGetCrl(X509Name issuer, BigInteger serial)
+	protected X509CRL doGetCrl(X500Name issuer, BigInteger serial)
 			throws OperationFailureException {
 		return null;
 	}
@@ -167,7 +171,7 @@ public class ScepServletImpl extends ScepServlet {
 	}
 
 	@Override
-	protected List<X509Certificate> doGetCert(X509Name issuer, BigInteger serial)
+	protected List<X509Certificate> doGetCert(X500Name issuer, BigInteger serial)
 			throws OperationFailureException {
 		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(issuer, serial);
 
@@ -180,8 +184,8 @@ public class ScepServletImpl extends ScepServlet {
 	}
 
 	@Override
-	protected List<X509Certificate> doGetCertInitial(X509Name issuer,
-			X509Name subject) throws OperationFailureException {
+	protected List<X509Certificate> doGetCertInitial(X500Name issuer,
+			X500Name subject) throws OperationFailureException {
 		if (subject.equals(pollName)) {
 			return Collections.emptyList();
 		}
@@ -195,7 +199,7 @@ public class ScepServletImpl extends ScepServlet {
 
 	@Override
 	protected List<X509Certificate> getNextCaCertificate(String identifier) {
-		if (identifier == null || identifier.isEmpty()) {
+		if (identifier == null || identifier.length() == 0) {
 			return Collections.singletonList(ca);
 		}
 		return Collections.emptyList();

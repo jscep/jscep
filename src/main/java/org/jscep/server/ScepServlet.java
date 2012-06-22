@@ -23,16 +23,15 @@
 
 package org.jscep.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.CertStoreParameters;
-import java.security.cert.Certificate;
-import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -47,12 +46,22 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaCRLStore;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSAbsentContent;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.jce.PKCS10CertificationRequest;
+import org.bouncycastle.cms.SignerInfoGenerator;
+import org.bouncycastle.cms.SignerInfoGeneratorBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.message.CertRep;
@@ -78,400 +87,514 @@ import com.google.common.io.ByteStreams;
  * methods to implement a SCEP CA (or RA).
  */
 public abstract class ScepServlet extends HttpServlet {
-    private final static String GET = "GET";
-    private final static String POST = "POST";
-    private final static String MSG_PARAM = "message";
-    private final static String OP_PARAM = "operation";
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScepServlet.class);
-    /**
-     * Serialization ID
-     */
-    private static final long serialVersionUID = 1L;
+	private final static String GET = "GET";
+	private final static String POST = "POST";
+	private final static String MSG_PARAM = "message";
+	private final static String OP_PARAM = "operation";
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(ScepServlet.class);
+	/**
+	 * Serialization ID
+	 */
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        byte[] body = getMessageBytes(req);
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void service(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
+		byte[] body = getMessageBytes(req);
 
-        final Operation op;
-        try {
-            op = getOperation(req);
-            if (op == null) {
-                // The operation parameter must be set.
+		final Operation op;
+		try {
+			op = getOperation(req);
+			if (op == null) {
+				// The operation parameter must be set.
 
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                Writer writer = res.getWriter();
-                writer.write("Missing \"operation\" parameter.");
-                writer.flush();
+				res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				Writer writer = res.getWriter();
+				writer.write("Missing \"operation\" parameter.");
+				writer.flush();
 
-                return;
-            }
-        } catch (IllegalArgumentException e) {
-            // The operation was not recognised.
+				return;
+			}
+		} catch (IllegalArgumentException e) {
+			// The operation was not recognised.
 
-            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            Writer writer = res.getWriter();
-            writer.write("Invalid \"operation\" parameter.");
-            writer.flush();
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			Writer writer = res.getWriter();
+			writer.write("Invalid \"operation\" parameter.");
+			writer.flush();
 
-            return;
-        }
+			return;
+		}
 
-        LOGGER.debug("Incoming Operation: " + op);
+		LOGGER.debug("Incoming Operation: " + op);
 
-        final String reqMethod = req.getMethod();
+		final String reqMethod = req.getMethod();
 
-        if (op == Operation.PKI_OPERATION) {
-            if (!reqMethod.equals(POST) && !reqMethod.equals(GET)) {
-                // PKIOperation must be sent using GET or POST
+		if (op == Operation.PKI_OPERATION) {
+			if (!reqMethod.equals(POST) && !reqMethod.equals(GET)) {
+				// PKIOperation must be sent using GET or POST
 
-                res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                res.addHeader("Allow", GET + ", " + POST);
+				res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+				res.addHeader("Allow", GET + ", " + POST);
 
-                return;
-            }
-        } else {
-            if (!reqMethod.equals(GET)) {
-                // Operations other than PKIOperation must be sent using GET
+				return;
+			}
+		} else {
+			if (!reqMethod.equals(GET)) {
+				// Operations other than PKIOperation must be sent using GET
 
-                res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                res.addHeader("Allow", GET);
+				res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+				res.addHeader("Allow", GET);
 
-                return;
-            }
-        }
+				return;
+			}
+		}
 
-        LOGGER.debug("Method " + reqMethod + " Allowed for Operation: " + op);
+		LOGGER.debug("Method " + reqMethod + " Allowed for Operation: " + op);
 
-        if (op == Operation.GET_CA_CAPS) {
-            try {
-                doGetCaCaps(req, res);
-            } catch (Exception e) {
-                throw new ServletException(e);
-            }
-        } else if (op == Operation.GET_CA_CERT) {
-            try {
-                doGetCaCert(req, res);
-            } catch (Exception e) {
-                throw new ServletException(e);
-            }
-        } else if (op == Operation.GET_NEXT_CA_CERT) {
-            try {
-                doGetNextCaCert(req, res);
-            } catch (Exception e) {
-                throw new ServletException(e);
-            }
-        } else if (op == Operation.PKI_OPERATION) {
-            // PKIOperation
+		if (op == Operation.GET_CA_CAPS) {
+			try {
+				LOGGER.debug("Invoking doGetCaCaps");
+				doGetCaCaps(req, res);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+		} else if (op == Operation.GET_CA_CERT) {
+			try {
+				LOGGER.debug("Invoking doGetCaCert");
+				doGetCaCert(req, res);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+		} else if (op == Operation.GET_NEXT_CA_CERT) {
+			try {
+				LOGGER.debug("Invoking doGetNextCaCert");
+				doGetNextCaCert(req, res);
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
+		} else if (op == Operation.PKI_OPERATION) {
+			// PKIOperation
 
-            res.setHeader("Content-Type", "application/x-pki-message");
+			res.setHeader("Content-Type", "application/x-pki-message");
 
-            CMSSignedData sd;
-            try {
-                sd = new CMSSignedData(body);
-            } catch (CMSException e) {
-                throw new ServletException(e);
-            }
+			CMSSignedData sd;
+			try {
+				sd = new CMSSignedData(body);
+			} catch (CMSException e) {
+				throw new ServletException(e);
+			}
 
-            CertStore reqStore;
-            try {
-                reqStore = sd.getCertificatesAndCRLs("Collection", (String) null);
-            } catch (GeneralSecurityException e) {
-                throw new ServletException(e);
-            } catch (CMSException e) {
-                throw new ServletException(e);
-            }
-            Collection<? extends Certificate> reqCerts;
-            try {
-                reqCerts = reqStore.getCertificates(null);
-            } catch (CertStoreException e) {
-                throw new ServletException(e);
-            }
-            X509Certificate reqCert = (X509Certificate) reqCerts.iterator().next();
+			Store reqStore = sd.getCertificates();
+			Collection<X509CertificateHolder> reqCerts = reqStore.getMatches(null);
+			
+			CertificateFactory factory;
+			try {
+				factory = CertificateFactory.getInstance("X.509");
+			} catch (CertificateException e) {
+				throw new ServletException(e);
+			}
+			X509CertificateHolder holder = reqCerts.iterator().next();
+			ByteArrayInputStream bais = new ByteArrayInputStream(holder.getEncoded());
+			X509Certificate reqCert;
+			try {
+				reqCert = (X509Certificate) factory.generateCertificate(bais);
+			} catch (CertificateException e) {
+				throw new ServletException(e);
+			}
 
-            PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(getPrivate());
-            PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
-            PkiMessage<?> msg = decoder.decode(body);
+			PkiMessage<?> msg;
+			try {
+				PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
+						getPrivate());
+				PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+				msg = decoder.decode(body);
+			} catch (IOException e) {
+				LOGGER.error("Error decoding message", e);
+				throw new ServletException(e);
+			}
 
-            MessageType msgType = msg.getMessageType();
-            Object msgData = msg.getMessageData();
+			LOGGER.debug("Processing message {}", msg);
 
-            Nonce senderNonce = Nonce.nextNonce();
-            TransactionId transId = msg.getTransactionId();
-            Nonce recipientNonce = msg.getSenderNonce();
-            CertRep certRep;
+			MessageType msgType = msg.getMessageType();
+			Object msgData = msg.getMessageData();
 
-            if (msgType == MessageType.GET_CERT) {
-                final IssuerAndSerialNumber iasn = (IssuerAndSerialNumber) msgData;
-                final X509Name principal = iasn.getName();
-                final BigInteger serial = iasn.getSerialNumber().getValue();
+			Nonce senderNonce = Nonce.nextNonce();
+			TransactionId transId = msg.getTransactionId();
+			Nonce recipientNonce = msg.getSenderNonce();
+			CertRep certRep;
 
-                try {
-                    List<X509Certificate> issued = doGetCert(principal, serial);
-                    if (issued.size() == 0) {
-                        certRep = new CertRep(transId, senderNonce, recipientNonce, FailInfo.badCertId);
-                    } else {
-                        CertStoreParameters params = new CollectionCertStoreParameters(issued);
-                        CertStore store = CertStore.getInstance("Collection", params);
-                        DEROctetString messageData = getMessageData(store);
+			if (msgType == MessageType.GET_CERT) {
+				final IssuerAndSerialNumber iasn = (IssuerAndSerialNumber) msgData;
+				final X500Name principal = iasn.getName();
+				final BigInteger serial = iasn.getSerialNumber().getValue();
 
-                        certRep = new CertRep(transId, senderNonce, recipientNonce, messageData.getOctets());
-                    }
-                } catch (OperationFailureException e) {
-                    certRep = new CertRep(transId, senderNonce, recipientNonce, e.getFailInfo());
-                } catch (Exception e) {
-                    throw new ServletException(e);
-                }
-            } else if (msgType == MessageType.GET_CERT_INITIAL) {
-                final IssuerAndSubject ias = (IssuerAndSubject) msgData;
-                final X509Name issuer = ias.getIssuer();
-                final X509Name subject = ias.getSubject();
+				try {
+					List<X509Certificate> issued = doGetCert(principal, serial);
+					if (issued.size() == 0) {
+						certRep = new CertRep(transId, senderNonce,
+								recipientNonce, FailInfo.badCertId);
+					} else {
+						DEROctetString messageData = getMessageData(issued);
 
-                try {
-                    List<X509Certificate> issued = doGetCertInitial(issuer, subject);
+						certRep = new CertRep(transId, senderNonce,
+								recipientNonce, messageData.getOctets());
+					}
+				} catch (OperationFailureException e) {
+					certRep = new CertRep(transId, senderNonce, recipientNonce,
+							e.getFailInfo());
+				} catch (Exception e) {
+					throw new ServletException(e);
+				}
+			} else if (msgType == MessageType.GET_CERT_INITIAL) {
+				final IssuerAndSubject ias = (IssuerAndSubject) msgData;
+				final X500Name issuer = X500Name.getInstance(ias.getIssuer());
+				final X500Name subject = X500Name.getInstance(ias.getSubject());
 
-                    if (issued.size() == 0) {
-                        certRep = new CertRep(transId, senderNonce, recipientNonce);
-                    } else {
-                        CertStoreParameters params = new CollectionCertStoreParameters(issued);
-                        CertStore store = CertStore.getInstance("Collection", params);
-                        DEROctetString messageData = getMessageData(store);
+				try {
+					List<X509Certificate> issued = doGetCertInitial(issuer,
+							subject);
 
-                        certRep = new CertRep(transId, senderNonce, recipientNonce, messageData.getOctets());
-                    }
-                } catch (OperationFailureException e) {
-                    certRep = new CertRep(transId, senderNonce, recipientNonce, e.getFailInfo());
-                } catch (Exception e) {
-                    throw new ServletException(e);
-                }
-            } else if (msgType == MessageType.GET_CRL) {
-                final IssuerAndSerialNumber iasn = (IssuerAndSerialNumber) msgData;
-                final X509Name issuer = iasn.getName();
-                final BigInteger serialNumber = iasn.getSerialNumber().getValue();
+					if (issued.size() == 0) {
+						certRep = new CertRep(transId, senderNonce,
+								recipientNonce);
+					} else {
+						DEROctetString messageData = getMessageData(issued);
 
-                try {
-                    X509CRL crl = doGetCrl(issuer, serialNumber);
-                    CertStoreParameters params = new CollectionCertStoreParameters(Collections.singleton(crl));
-                    CertStore store = CertStore.getInstance("Collection", params);
-                    DEROctetString messageData = getMessageData(store);
+						certRep = new CertRep(transId, senderNonce,
+								recipientNonce, messageData.getOctets());
+					}
+				} catch (OperationFailureException e) {
+					certRep = new CertRep(transId, senderNonce, recipientNonce,
+							e.getFailInfo());
+				} catch (Exception e) {
+					throw new ServletException(e);
+				}
+			} else if (msgType == MessageType.GET_CRL) {
+				final IssuerAndSerialNumber iasn = (IssuerAndSerialNumber) msgData;
+				final X500Name issuer = iasn.getName();
+				final BigInteger serialNumber = iasn.getSerialNumber()
+						.getValue();
 
-                    certRep = new CertRep(transId, senderNonce, recipientNonce, messageData.getOctets());
-                } catch (OperationFailureException e) {
-                    certRep = new CertRep(transId, senderNonce, recipientNonce, e.getFailInfo());
-                } catch (Exception e) {
-                    throw new ServletException(e);
-                }
-            } else if (msgType == MessageType.PKCS_REQ) {
-                final PKCS10CertificationRequest certReq = (PKCS10CertificationRequest) msgData;
+				try {
+					LOGGER.debug("Invoking doGetCrl");
+					DEROctetString messageData = getMessageData(doGetCrl(
+							issuer, serialNumber));
 
-                try {
-                    List<X509Certificate> issued = doEnroll(certReq);
+					certRep = new CertRep(transId, senderNonce, recipientNonce,
+							messageData.getOctets());
+				} catch (OperationFailureException e) {
+					LOGGER.error("Error executing GetCRL request", e);
+					certRep = new CertRep(transId, senderNonce, recipientNonce,
+							e.getFailInfo());
+				} catch (Exception e) {
+					LOGGER.error("Error executing GetCRL request", e);
+					throw new ServletException(e);
+				}
+			} else if (msgType == MessageType.PKCS_REQ) {
+				final PKCS10CertificationRequest certReq = (PKCS10CertificationRequest) msgData;
 
-                    if (issued.size() == 0) {
-                        certRep = new CertRep(transId, senderNonce, recipientNonce);
-                    } else {
-                        CertStoreParameters params = new CollectionCertStoreParameters(issued);
-                        CertStore store = CertStore.getInstance("Collection", params);
-                        DEROctetString messageData = getMessageData(store);
+				try {
+					LOGGER.debug("Invoking doEnrol");
+					List<X509Certificate> issued = doEnrol(certReq);
 
-                        certRep = new CertRep(transId, senderNonce, recipientNonce, messageData.getOctets());
-                    }
-                } catch (OperationFailureException e) {
-                    certRep = new CertRep(transId, senderNonce, recipientNonce, e.getFailInfo());
-                } catch (Exception e) {
-                    throw new ServletException(e);
-                }
-            } else {
-                throw new ServletException("Unknown Message for Operation");
-            }
+					if (issued.size() == 0) {
+						certRep = new CertRep(transId, senderNonce,
+								recipientNonce);
+					} else {
+						DEROctetString messageData = getMessageData(issued);
 
-            PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(reqCert);
-            PkiMessageEncoder encoder = new PkiMessageEncoder(getPrivate(), getSender(), envEncoder);
-            byte[] signedData = encoder.encode(certRep);
+						certRep = new CertRep(transId, senderNonce,
+								recipientNonce, messageData.getOctets());
+					}
+				} catch (OperationFailureException e) {
+					certRep = new CertRep(transId, senderNonce, recipientNonce,
+							e.getFailInfo());
+				} catch (Exception e) {
+					throw new ServletException(e);
+				}
+			} else {
+				throw new ServletException("Unknown Message for Operation");
+			}
 
-            res.getOutputStream().write(signedData);
-            res.getOutputStream().close();
-        } else {
-            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown Operation");
-        }
-    }
+			PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+					reqCert);
+			PkiMessageEncoder encoder = new PkiMessageEncoder(getPrivate(),
+					getSender(), envEncoder);
+			byte[] signedData = encoder.encode(certRep);
 
-    private DEROctetString getMessageData(CertStore store) throws GeneralSecurityException, CMSException, IOException {
-        CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-        generator.addCertificatesAndCRLs(store);
-        CMSSignedData signed = generator.generate(null, (String) null);
+			res.getOutputStream().write(signedData);
+			res.getOutputStream().close();
+		} else {
+			res.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Unknown Operation");
+		}
+	}
 
-        return new DEROctetString(signed.getEncoded());
-    }
+	private DEROctetString getMessageData(List<X509Certificate> certs)
+			throws IOException, CMSException, GeneralSecurityException {
+		CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
+		JcaCertStore store;
+		try {
+			store = new JcaCertStore(certs);
+		} catch (CertificateEncodingException e) {
+			IOException ioe = new IOException();
+			ioe.initCause(e);
 
-    private void doGetNextCaCert(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        res.setHeader("Content-Type", "application/x-x509-next-ca-cert");
+			throw ioe;
+		}
+		generator.addCertificates(store);
+		CMSSignedData signed = generator.generate(new CMSAbsentContent());
 
-        List<X509Certificate> certs = getNextCaCertificate(req.getParameter(MSG_PARAM));
+		return new DEROctetString(signed.getEncoded());
+	}
 
-        if (certs.size() == 0) {
-            res.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "GetNextCACert Not Supported");
-        } else {
-            CertStore store = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certs));
-            CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-            generator.addCertificatesAndCRLs(store);
-            generator.addSigner(getPrivate(), getSender(), PKCSObjectIdentifiers.sha1WithRSAEncryption.getId());
-            CMSSignedData degenerateSd = generator.generate(null, (String) null);
-            byte[] bytes = degenerateSd.getEncoded();
+	private DEROctetString getMessageData(X509CRL crl) throws IOException,
+			CMSException, GeneralSecurityException {
+		CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
+		JcaCRLStore store;
+		if (crl == null) {
+			store = new JcaCRLStore(Collections.emptyList());
+		} else {
+			store = new JcaCRLStore(Collections.singleton(crl));
+		}
+		generator.addCertificates(store);
+		CMSSignedData signed = generator.generate(new CMSAbsentContent());
 
-            res.getOutputStream().write(bytes);
-            res.getOutputStream().close();
-        }
-    }
+		return new DEROctetString(signed.getEncoded());
+	}
 
-    private void doGetCaCert(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        final List<X509Certificate> certs = doGetCaCertificate(req.getParameter(MSG_PARAM));
-        final byte[] bytes;
-        if (certs.size() == 0) {
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "GetCaCert failed to obtain CA from store");
-            bytes = new byte[0];
-        } else if (certs.size() == 1) {
-            res.setHeader("Content-Type", "application/x-x509-ca-cert");
-            bytes = certs.get(0).getEncoded();
-        } else {
-            res.setHeader("Content-Type", "application/x-x509-ca-ra-cert");
-            CertStore store = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certs));
-            CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-            generator.addCertificatesAndCRLs(store);
-            CMSSignedData degenerateSd = generator.generate(null, (String) null);
-            bytes = degenerateSd.getEncoded();
-        }
+	private void doGetNextCaCert(HttpServletRequest req, HttpServletResponse res)
+			throws Exception {
+		res.setHeader("Content-Type", "application/x-x509-next-ca-cert");
 
-        res.getOutputStream().write(bytes);
-        res.getOutputStream().close();
-    }
+		List<X509Certificate> certs = getNextCaCertificate(req
+				.getParameter(MSG_PARAM));
 
-    private Operation getOperation(HttpServletRequest req) {
-        String op = req.getParameter(OP_PARAM);
-        if (op == null) {
-            return null;
-        }
-        return Operation.forName(req.getParameter(OP_PARAM));
-    }
+		if (certs.size() == 0) {
+			res.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED,
+					"GetNextCACert Not Supported");
+		} else {
+			CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
+			JcaCertStore store;
+			try {
+				store = new JcaCertStore(certs);
+			} catch (CertificateEncodingException e) {
+				IOException ioe = new IOException();
+				ioe.initCause(e);
 
-    private void doGetCaCaps(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        res.setHeader("Content-Type", "text/plain");
-        final Set<Capability> caps = doCapabilities(req.getParameter("message"));
-        for (Capability cap : caps) {
-            res.getWriter().write(cap.toString());
-            res.getWriter().write('\n');
-        }
-        res.getWriter().close();
-    }
+				throw ioe;
+			}
+			generator.addCertificates(store);
+			DigestCalculatorProvider digestProvider = new JcaDigestCalculatorProviderBuilder()
+					.build();
+			SignerInfoGeneratorBuilder infoGenBuilder = new SignerInfoGeneratorBuilder(
+					digestProvider);
+			X509CertificateHolder certHolder = new X509CertificateHolder(
+					getSender().getEncoded());
+			ContentSigner contentSigner = new JcaContentSignerBuilder(
+					"SHA1withRSA").build(getPrivate());
+			SignerInfoGenerator infoGen = infoGenBuilder.build(contentSigner,
+					certHolder);
+			generator.addSignerInfoGenerator(infoGen);
 
-    /**
-     * Returns the capabilities of the specified CA.
-     *
-     * @param identifier the CA identifier, which may be an empty string.
-     * @return the capabilities.
-     * @throws Exception if any problem occurs
-     */
-    abstract protected Set<Capability> doCapabilities(String identifier) throws Exception;
+			CMSSignedData degenerateSd = generator
+					.generate(new CMSAbsentContent());
+			byte[] bytes = degenerateSd.getEncoded();
 
-    /**
-     * Returns the certificate chain of the specified CA.
-     *
-     * @param identifier the CA identifier, which may be an empty string.
-     * @return the CA's certificate.
-     * @throws Exception if any problem occurs
-     */
-    abstract protected List<X509Certificate> doGetCaCertificate(String identifier) throws Exception;
+			res.getOutputStream().write(bytes);
+			res.getOutputStream().close();
+		}
+	}
 
-    /**
-     * Return the chain of the next X.509 certificate which will be used by
-     * the specified CA.
-     *
-     * @param identifier the CA identifier, which may be an empty string.
-     * @return the list of certificates.
-     * @throws Exception if any problem occurs
-     */
-    abstract protected List<X509Certificate> getNextCaCertificate(String identifier) throws Exception;
+	private void doGetCaCert(HttpServletRequest req, HttpServletResponse res)
+			throws Exception {
+		final List<X509Certificate> certs = doGetCaCertificate(req
+				.getParameter(MSG_PARAM));
+		final byte[] bytes;
+		if (certs.size() == 0) {
+			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					"GetCaCert failed to obtain CA from store");
+			bytes = new byte[0];
+		} else if (certs.size() == 1) {
+			res.setHeader("Content-Type", "application/x-x509-ca-cert");
+			bytes = certs.get(0).getEncoded();
+		} else {
+			res.setHeader("Content-Type", "application/x-x509-ca-ra-cert");
+			CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
+			JcaCertStore store;
+			try {
+				store = new JcaCertStore(certs);
+			} catch (CertificateEncodingException e) {
+				IOException ioe = new IOException();
+				ioe.initCause(e);
 
-    /**
-     * Retrieve the certificate chain identified by the given parameters.
-     *
-     * @param issuer the issuer name.
-     * @param serial the serial number.
-     * @return the identified certificate, if any.
-     * @throws OperationFailureException if the operation cannot be completed
-     */
-    abstract protected List<X509Certificate> doGetCert(X509Name issuer, BigInteger serial) throws OperationFailureException, Exception;
+				throw ioe;
+			}
+			generator.addCertificates(store);
+			CMSSignedData degenerateSd = generator
+					.generate(new CMSAbsentContent());
+			bytes = degenerateSd.getEncoded();
+		}
 
-    /**
-     * Checks to see if a previously-requested certificate has been issued.  If
-     * the certificate has been issued, this method will return the appropriate
-     * certificate chain.  Otherwise, this method should return null or an empty
-     * list to indicate that the request is still pending.
-     *
-     * @param issuer  the issuer name.
-     * @param subject the subject name.
-     * @return the identified certificate, if any.
-     * @throws OperationFailureException if the operation cannot be completed
-     */
-    abstract protected List<X509Certificate> doGetCertInitial(X509Name issuer, X509Name subject) throws OperationFailureException, Exception;
+		res.getOutputStream().write(bytes);
+		res.getOutputStream().close();
+	}
 
-    /**
-     * Retrieve the CRL covering the given certificate identifiers.
-     *
-     * @param issuer the certificate issuer.
-     * @param serial the certificate serial number.
-     * @return the CRL.
-     * @throws OperationFailureException if the operation cannot be completed
-     */
-    abstract protected X509CRL doGetCrl(X509Name issuer, BigInteger serial) throws OperationFailureException, Exception;
+	private Operation getOperation(HttpServletRequest req) {
+		String op = req.getParameter(OP_PARAM);
+		if (op == null) {
+			return null;
+		}
+		return Operation.forName(req.getParameter(OP_PARAM));
+	}
 
-    /**
-     * Enrols a certificate into the PKI represented by this SCEP interface.  If
-     * the request can be completed immediately, this method returns an appropriate
-     * certificate chain.  If the request is pending, this method should return null
-     * or any empty list.
-     *
-     * @param certificationRequest the PKCS #10 CertificationRequest
-     * @return the certificate chain, if any
-     * @throws OperationFailureException if the operation cannot be completed
-     */
-    abstract protected List<X509Certificate> doEnroll(PKCS10CertificationRequest certificationRequest) throws OperationFailureException, Exception;
+	private void doGetCaCaps(HttpServletRequest req, HttpServletResponse res)
+			throws Exception {
+		res.setHeader("Content-Type", "text/plain");
+		final Set<Capability> caps = doCapabilities(req.getParameter("message"));
+		for (Capability cap : caps) {
+			res.getWriter().write(cap.toString());
+			res.getWriter().write('\n');
+		}
+		res.getWriter().close();
+	}
 
-    /**
-     * Returns the private key of the entity represented by this SCEP server.
-     *
-     * @return the private key.
-     */
-    abstract protected PrivateKey getPrivate();
+	/**
+	 * Returns the capabilities of the specified CA.
+	 * 
+	 * @param identifier
+	 *            the CA identifier, which may be an empty string.
+	 * @return the capabilities.
+	 * @throws Exception
+	 *             if any problem occurs
+	 */
+	abstract protected Set<Capability> doCapabilities(String identifier)
+			throws Exception;
 
-    /**
-     * Returns the certificate of the entity represented by this SCEP server.
-     *
-     * @return the certificate.
-     */
-    abstract protected X509Certificate getSender();
+	/**
+	 * Returns the certificate chain of the specified CA.
+	 * 
+	 * @param identifier
+	 *            the CA identifier, which may be an empty string.
+	 * @return the CA's certificate.
+	 * @throws Exception
+	 *             if any problem occurs
+	 */
+	abstract protected List<X509Certificate> doGetCaCertificate(
+			String identifier) throws Exception;
 
-    private byte[] getMessageBytes(HttpServletRequest req) throws IOException {
-        if (req.getMethod().equals(POST)) {
-            return ByteStreams.toByteArray(req.getInputStream());
-        } else {
-            Operation op = getOperation(req);
+	/**
+	 * Return the chain of the next X.509 certificate which will be used by the
+	 * specified CA.
+	 * 
+	 * @param identifier
+	 *            the CA identifier, which may be an empty string.
+	 * @return the list of certificates.
+	 * @throws Exception
+	 *             if any problem occurs
+	 */
+	abstract protected List<X509Certificate> getNextCaCertificate(
+			String identifier) throws Exception;
 
-            if (op == Operation.PKI_OPERATION) {
-                String msg = req.getParameter(MSG_PARAM);
-                if (msg.isEmpty()) {
-                    return new byte[0];
-                }
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Decoding {}", msg);
-                }
-                return Base64.decode(msg);
-            } else {
-                return new byte[0];
-            }
-        }
-    }
+	/**
+	 * Retrieve the certificate chain identified by the given parameters.
+	 * 
+	 * @param issuer
+	 *            the issuer name.
+	 * @param serial
+	 *            the serial number.
+	 * @return the identified certificate, if any.
+	 * @throws OperationFailureException
+	 *             if the operation cannot be completed
+	 */
+	abstract protected List<X509Certificate> doGetCert(X500Name issuer,
+			BigInteger serial) throws OperationFailureException, Exception;
+
+	/**
+	 * Checks to see if a previously-requested certificate has been issued. If
+	 * the certificate has been issued, this method will return the appropriate
+	 * certificate chain. Otherwise, this method should return null or an empty
+	 * list to indicate that the request is still pending.
+	 * 
+	 * @param issuer
+	 *            the issuer name.
+	 * @param subject
+	 *            the subject name.
+	 * @return the identified certificate, if any.
+	 * @throws OperationFailureException
+	 *             if the operation cannot be completed
+	 */
+	abstract protected List<X509Certificate> doGetCertInitial(X500Name issuer,
+			X500Name subject) throws OperationFailureException, Exception;
+
+	/**
+	 * Retrieve the CRL covering the given certificate identifiers.
+	 * 
+	 * @param issuer
+	 *            the certificate issuer.
+	 * @param serial
+	 *            the certificate serial number.
+	 * @return the CRL.
+	 * @throws OperationFailureException
+	 *             if the operation cannot be completed
+	 */
+	abstract protected X509CRL doGetCrl(X500Name issuer, BigInteger serial)
+			throws OperationFailureException, Exception;
+
+	/**
+	 * Enrols a certificate into the PKI represented by this SCEP interface. If
+	 * the request can be completed immediately, this method returns an
+	 * appropriate certificate chain. If the request is pending, this method
+	 * should return null or any empty list.
+	 * 
+	 * @param certificationRequest
+	 *            the PKCS #10 CertificationRequest
+	 * @return the certificate chain, if any
+	 * @throws OperationFailureException
+	 *             if the operation cannot be completed
+	 */
+	abstract protected List<X509Certificate> doEnrol(
+			PKCS10CertificationRequest certificationRequest)
+			throws OperationFailureException, Exception;
+
+	/**
+	 * Returns the private key of the entity represented by this SCEP server.
+	 * 
+	 * @return the private key.
+	 */
+	abstract protected PrivateKey getPrivate();
+
+	/**
+	 * Returns the certificate of the entity represented by this SCEP server.
+	 * 
+	 * @return the certificate.
+	 */
+	abstract protected X509Certificate getSender();
+
+	private byte[] getMessageBytes(HttpServletRequest req) throws IOException {
+		if (req.getMethod().equals(POST)) {
+			return ByteStreams.toByteArray(req.getInputStream());
+		} else {
+			Operation op = getOperation(req);
+
+			if (op == Operation.PKI_OPERATION) {
+				String msg = req.getParameter(MSG_PARAM);
+				if (msg.length() == 0) {
+					return new byte[0];
+				}
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Decoding {}", msg);
+				}
+				return Base64.decode(msg);
+			} else {
+				return new byte[0];
+			}
+		}
+	}
 }

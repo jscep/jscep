@@ -23,14 +23,13 @@
 package org.jscep.transaction;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.content.CertRepContentHandler;
 import org.jscep.content.InvalidContentException;
@@ -44,6 +43,7 @@ import org.jscep.request.PKCSReq;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
+import org.jscep.util.CertStoreUtils;
 import org.jscep.x509.X509Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +66,7 @@ public class EnrolmentTransaction extends Transaction {
     private static NonceQueue QUEUE = new NonceQueue(20);
     private X509Certificate issuer;
 
-    public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, CertificationRequest csr) throws IOException {
+    public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, PKCS10CertificationRequest csr) throws IOException {
         super(transport, encoder, decoder);
         this.transId = TransactionId.createTransactionId(X509Util.getPublicKey(csr), "SHA-1");
         this.request = new org.jscep.message.PKCSReq(transId, Nonce.nextNonce(), csr);
@@ -94,9 +94,9 @@ public class EnrolmentTransaction extends Transaction {
 		try {
 			res = transport.sendRequest(new PKCSReq(signedData), handler);
 		} catch (InvalidContentTypeException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		} catch (InvalidContentException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		}
         LOGGER.debug("Received response {}", res);
 
@@ -127,8 +127,8 @@ public class EnrolmentTransaction extends Transaction {
      * @throws InvalidContentException 
      */
     public State poll() throws IOException, TransportException {
-        X509Name issuerName = X509Util.toX509Name(issuer.getSubjectX500Principal());
-        X509Name subjectName = request.getMessageData().getCertificationRequestInfo().getSubject();
+        X500Name issuerName = X509Util.toX509Name(issuer.getSubjectX500Principal());
+        X500Name subjectName = X500Name.getInstance(request.getMessageData().getSubject());
         IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
         final GetCertInitial pollReq = new GetCertInitial(transId, Nonce.nextNonce(), ias);
         byte[] signedData = encoder.encode(pollReq);
@@ -137,9 +137,9 @@ public class EnrolmentTransaction extends Transaction {
 		try {
 			res = transport.sendRequest(new PKCSReq(signedData), handler);
 		} catch (InvalidContentTypeException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		} catch (InvalidContentException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		}
 
         CertRep response = (CertRep) decoder.decode(res);
@@ -161,13 +161,19 @@ public class EnrolmentTransaction extends Transaction {
     private CertStore extractCertStore(CertRep response) throws IOException {
         try {
             CMSSignedData signedData = new CMSSignedData(response.getMessageData());
-            return signedData.getCertificatesAndCRLs("Collection", (String) null);
-        } catch (GeneralSecurityException e) {
-            throw new IOException(e);
+
+            return CertStoreUtils.fromSignedData(signedData);
         } catch (CMSException e) {
-            throw new IOException(e);
+            throw ioe(e);
         }
     }
+
+	private IOException ioe(Throwable t) {
+		IOException ioe = new IOException();
+		ioe.initCause(t);
+		
+		return ioe;
+	}
 
     private void validateExchange(PkiMessage<?> req, CertRep res) throws IOException {
         LOGGER.debug("Validating SCEP message exchange");

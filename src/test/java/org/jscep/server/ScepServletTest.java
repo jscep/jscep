@@ -12,32 +12,31 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Signature;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.Attribute;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.x509.X509V1CertificateGenerator;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v1CertificateBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.jscep.content.CaCapabilitiesContentHandler;
@@ -66,8 +65,8 @@ public class ScepServletTest {
     private static String PATH = "/scep/pkiclient.exe";
     private BigInteger goodSerial;
     private BigInteger badSerial;
-    private X509Name name;
-    private X509Name pollName;
+    private X500Name name;
+    private X500Name pollName;
     private PrivateKey priKey;
     private PublicKey pubKey;
     private X509Certificate sender;
@@ -78,8 +77,8 @@ public class ScepServletTest {
 
     @Before
     public void configureFixtures() throws Exception {
-        name = new X509Name("CN=Example");
-        pollName = new X509Name("CN=Poll");
+        name = new X500Name("CN=Example");
+        pollName = new X500Name("CN=Poll");
         goodSerial = BigInteger.ONE;
         badSerial = BigInteger.ZERO;
         goodIdentifier = null;
@@ -91,16 +90,20 @@ public class ScepServletTest {
     }
 
     private X509Certificate generateCertificate() throws Exception {
-        X509V1CertificateGenerator generator = new X509V1CertificateGenerator();
-        generator.setIssuerDN(name);
-        generator.setNotAfter(new Date());
-        generator.setNotBefore(new Date());
-        generator.setPublicKey(pubKey);
-        generator.setSerialNumber(goodSerial);
-        generator.setSignatureAlgorithm("SHA1withRSA");
-        generator.setSubjectDN(name);
-
-        return generator.generate(priKey);
+    	ContentSigner signer;
+		try {
+			signer = new JcaContentSignerBuilder("SHA1withRSA").build(priKey);
+		} catch (OperatorCreationException e) {
+			throw new Exception(e);
+		}
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.add(Calendar.YEAR, -1);
+		Date notBefore = cal.getTime();
+		cal.add(Calendar.YEAR, 2);
+		Date notAfter = cal.getTime();
+		JcaX509v1CertificateBuilder builder = new JcaX509v1CertificateBuilder(name, BigInteger.ONE, notBefore, notAfter, name, pubKey);
+		X509CertificateHolder holder = builder.build(signer);
+		return new JcaX509CertificateConverter().getCertificate(holder);
     }
 
     @Before
@@ -131,7 +134,10 @@ public class ScepServletTest {
 		try {
 			factory = CertificateFactory.getInstance("X509");
 		} catch (CertificateException e) {
-			throw new IOException(e);
+			IOException ioe = new IOException();
+        	ioe.initCause(e);
+        	
+            throw ioe;
 		}
         CertStore store = transport.sendRequest(req, new CaCertificateContentHandler(factory));
         Collection<? extends Certificate> certs = store.getCertificates(new X509CertSelector());
@@ -204,7 +210,7 @@ public class ScepServletTest {
 
     @Test
     public void testEnrollmentGet() throws Exception {
-        CertificationRequest csr = getCsr(name, pubKey, priKey, "password".toCharArray());
+        PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey, "password".toCharArray());
 
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender, envEncoder);
@@ -221,7 +227,7 @@ public class ScepServletTest {
 
     @Test
     public void testEnrollmentPost() throws Exception {
-        CertificationRequest csr = getCsr(name, pubKey, priKey, "password".toCharArray());
+        PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey, "password".toCharArray());
 
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender, envEncoder);
@@ -238,7 +244,7 @@ public class ScepServletTest {
 
     @Test
     public void testEnrollmentWithPoll() throws Exception {
-        CertificationRequest csr = getCsr(pollName, pubKey, priKey, "password".toCharArray());
+        PKCS10CertificationRequest csr = getCsr(pollName, pubKey, priKey, "password".toCharArray());
 
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender, envEncoder);
@@ -256,22 +262,23 @@ public class ScepServletTest {
         assertThat(state, is(State.CERT_REQ_PENDING));
     }
 
-    private CertificationRequest getCsr(X509Name subject, PublicKey pubKey, PrivateKey priKey, char[] password) throws GeneralSecurityException, IOException {
-        AlgorithmIdentifier sha1withRsa = new AlgorithmIdentifier(PKCSObjectIdentifiers.sha1WithRSAEncryption);
-
-        ASN1Set cpSet = new DERSet(new DERPrintableString(new String(password)));
-        Attribute challengePassword = new Attribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, cpSet);
-        ASN1Set attrs = new DERSet(challengePassword);
-
-        SubjectPublicKeyInfo pkInfo = new SubjectPublicKeyInfo((ASN1Sequence) ASN1Object.fromByteArray(pubKey.getEncoded()));
-        CertificationRequestInfo requestInfo = new CertificationRequestInfo(subject, pkInfo, attrs);
-
-        Signature signer = Signature.getInstance("SHA1withRSA");
-        signer.initSign(priKey);
-        signer.update(requestInfo.getEncoded());
-        byte[] signatureBytes = signer.sign();
-        DERBitString signature = new DERBitString(signatureBytes);
-
-        return new CertificationRequest(requestInfo, sha1withRsa, signature);
+    private PKCS10CertificationRequest getCsr(X500Name subject, PublicKey pubKey, PrivateKey priKey, char[] password) throws GeneralSecurityException, IOException {
+        SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey.getEncoded());
+        
+        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA1withRSA");
+        ContentSigner signer;
+		try {
+			signer = signerBuilder.build(priKey);
+		} catch (OperatorCreationException e) {
+			IOException ioe = new IOException();
+			ioe.initCause(e);
+			
+			throw ioe;
+		}
+        
+        PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(subject, pkInfo);
+        builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, new DERPrintableString(new String(password)));
+        
+        return builder.build(signer);
     }
 }

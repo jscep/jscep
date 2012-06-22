@@ -22,15 +22,20 @@
 package org.jscep.message;
 
 import java.io.IOException;
-import java.security.Provider;
-import java.security.Security;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.cert.crmf.CRMFException;
+import org.bouncycastle.cert.crmf.jcajce.JceCRMFEncryptorBuilder;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
-import org.bouncycastle.cms.CMSEnvelopedGenerator;
-import org.bouncycastle.cms.CMSProcessable;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSTypedData;
+import org.bouncycastle.cms.RecipientInfoGenerator;
+import org.bouncycastle.cms.jcajce.JceKeyTransRecipientInfoGenerator;
+import org.bouncycastle.operator.OutputEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,22 +51,38 @@ public class PkcsPkiEnvelopeEncoder {
         LOGGER.debug("Encrypting message: {}", payload);
 
         CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
-        CMSProcessable envelopable = new CMSProcessableByteArray(payload);
-        edGenerator.addKeyTransRecipient(recipient);
+        CMSTypedData envelopable = new CMSProcessableByteArray(payload);
+        RecipientInfoGenerator recipientGenerator;
+        try {
+			recipientGenerator = new JceKeyTransRecipientInfoGenerator(recipient);
+		} catch (CertificateEncodingException e) {
+			IOException ioe = new IOException();
+        	ioe.initCause(e);
+        	
+            throw ioe;
+		}
+        edGenerator.addRecipientInfoGenerator(recipientGenerator);
         LOGGER.debug("Encrypting session key using key belonging to '{}'", recipient.getSubjectDN());
 
-        try {
-            Provider[] providers = Security.getProviders("KeyGenerator.DESEDE");
-            if (providers.length > 0) {
-                LOGGER.debug("Using '{}' for DESede key generation", providers[0]);
-                CMSEnvelopedData data = edGenerator.generate(envelopable, CMSEnvelopedGenerator.DES_EDE3_CBC, providers[0]);
-                LOGGER.debug("Encrypted to: {}", data.getEncoded());
-                return data.getEncoded();
-            } else {
-                throw new IOException("No Provider for DESede");
-            }
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+        OutputEncryptor encryptor;
+		try {
+			encryptor = new JceCRMFEncryptorBuilder(PKCSObjectIdentifiers.des_EDE3_CBC).build();
+		} catch (CRMFException e) {
+			IOException ioe = new IOException();
+        	ioe.initCause(e);
+        	
+            throw ioe;
+		}
+        CMSEnvelopedData data;
+		try {
+			data = edGenerator.generate(envelopable, encryptor);
+		} catch (CMSException e) {
+			IOException ioe = new IOException();
+        	ioe.initCause(e);
+        	
+            throw ioe;
+		}
+        LOGGER.debug("Encrypted to: {}", data.getEncoded());
+        return data.getEncoded();
     }
 }

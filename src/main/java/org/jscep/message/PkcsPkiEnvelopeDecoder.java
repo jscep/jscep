@@ -49,7 +49,7 @@ public class PkcsPkiEnvelopeDecoder {
     }
 
     public byte[] decode(EnvelopedData envelopedData) throws IOException {
-        LOGGER.debug("Decrypting message: {}", envelopedData.getDEREncoded());
+        LOGGER.debug("Decrypting message: {}", envelopedData.getEncoded());
         // Figure out the type of secret key
         final EncryptedContentInfo contentInfo = envelopedData.getEncryptedContentInfo();
         final AlgorithmIdentifier contentAlg = contentInfo.getContentEncryptionAlgorithm();
@@ -65,7 +65,10 @@ public class PkcsPkiEnvelopeDecoder {
             DEROctetString paramsString = (DEROctetString) contentAlg.getParameters();
             params.init(paramsString.getEncoded());
         } catch (GeneralSecurityException e) {
-            throw new IOException(e);
+        	IOException ioe = new IOException();
+        	ioe.initCause(e);
+        	
+            throw ioe;
         }
 
         // Make sure we have a recipientInfo to decrypt the key
@@ -90,7 +93,10 @@ public class PkcsPkiEnvelopeDecoder {
             LOGGER.debug("Decrypted to: {}", contentBytes);
             return contentBytes;
         } catch (GeneralSecurityException e) {
-            throw new IOException(e);
+        	IOException ioe = new IOException();
+        	ioe.initCause(e);
+        	
+            throw ioe;
         }
     }
 

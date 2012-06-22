@@ -34,6 +34,7 @@ import java.util.Collections;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
+import org.jscep.util.CertStoreUtils;
 
 
 /**
@@ -74,18 +75,16 @@ public class CaCertificateContentHandler implements ScepContentHandler<CertStore
             // It should be in the order:
             // [0] RA
             // [1] CA
-            try {
-                if (content.length == 0) {
-                    throw new InvalidContentException("Expected a SignedData object, but response was empty");
-                }
-                CMSSignedData sd = new CMSSignedData(content);
-
-                return sd.getCertificatesAndCRLs("Collection", (String) null);
-            } catch (GeneralSecurityException e) {
-                throw new InvalidContentException(e);
-            } catch (CMSException e) {
-                throw new InvalidContentException(e);
+            if (content.length == 0) {
+                throw new InvalidContentException("Expected a SignedData object, but response was empty");
             }
+            CMSSignedData sd;
+			try {
+				sd = new CMSSignedData(content);
+			} catch (CMSException e) {
+				throw new InvalidContentException(e);
+			}
+            return CertStoreUtils.fromSignedData(sd);
         } else {
         	throw new InvalidContentTypeException(mimeType, CA_CERT, RA_CERT);
         }

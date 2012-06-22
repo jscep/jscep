@@ -22,28 +22,35 @@
  */
 package org.jscep.pkcs7;
 
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.cms.SignedData;
-import org.bouncycastle.asn1.cms.SignerIdentifier;
-import org.bouncycastle.asn1.cms.SignerInfo;
-import org.bouncycastle.asn1.x509.X509Name;
-import org.jscep.util.AlgorithmDictionary;
-import org.jscep.x509.X509Util;
-
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.*;
-import java.security.cert.*;
+import java.security.GeneralSecurityException;
+import java.security.cert.CRL;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreParameters;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashSet;
+
+import org.bouncycastle.cert.X509CRLHolder;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignatureAlgorithmNameGenerator;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.operator.ContentVerifierProvider;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.SignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.Store;
 
 
 /**
@@ -62,30 +69,29 @@ public final class SignedDataUtil {
     /**
      * Extracts a CertStore from the provided PKCS #7 SignedData object.
      *
-     * @param signedData the PKCS #7 SignedData object.
+     * @param sd the PKCS #7 SignedData object.
      * @return the CertStore.
      * @throws GeneralSecurityException if any security error is encountered.
      */
-    public static CertStore extractCertStore(SignedData signedData) throws GeneralSecurityException {
+    @SuppressWarnings("unchecked")
+	public static CertStore extractCertStore(CMSSignedData sd) throws GeneralSecurityException, IOException {
         final CertificateFactory factory = CertificateFactory.getInstance("X.509");
         final Collection<Object> collection = new HashSet<Object>();
-        final ASN1Set certs = signedData.getCertificates();
-        final ASN1Set crls = signedData.getCRLs();
+        final Store certs = sd.getCertificates();
+        final Store crls = sd.getCRLs();
 
         if (certs != null) {
-            final Enumeration<?> certEnum = certs.getObjects();
-            while (certEnum.hasMoreElements()) {
-                ASN1Sequence o = (ASN1Sequence) certEnum.nextElement();
-                ByteArrayInputStream bais = new ByteArrayInputStream(o.getDEREncoded());
+        	Collection<X509CertificateHolder> certColl = certs.getMatches(null);
+        	for (X509CertificateHolder holder : certColl) {
+                ByteArrayInputStream bais = new ByteArrayInputStream(holder.getEncoded());
                 Certificate cert = factory.generateCertificate(bais);
                 collection.add(cert);
             }
         }
         if (crls != null) {
-            final Enumeration<?> crlEnum = crls.getObjects();
-            while (crlEnum.hasMoreElements()) {
-                ASN1Sequence o = (ASN1Sequence) crlEnum.nextElement();
-                ByteArrayInputStream bais = new ByteArrayInputStream(o.getDEREncoded());
+        	Collection<X509CRLHolder> crlColl = crls.getMatches(null);
+        	for (X509CRLHolder holder : crlColl) {
+                ByteArrayInputStream bais = new ByteArrayInputStream(holder.getEncoded());
                 CRL crl = factory.generateCRL(bais);
                 collection.add(crl);
             }
@@ -99,65 +105,36 @@ public final class SignedDataUtil {
      * Checks if the provided signedData was signed by the entity represented
      * by the provided certificate.
      *
-     * @param signedData the signedData to verify.
+     * @param sd the signedData to verify.
      * @param signer     the signing entity.
      * @return <code>true</code> if the signedData was signed by the entity, <code>false</code> otherwise.
      */
-    public static boolean isSignedBy(SignedData signedData, X509Certificate signer) {
-        X509Name signerName = X509Util.toX509Name(signer.getIssuerX500Principal());
-        BigInteger signerSerialNo = signer.getSerialNumber();
-        IssuerAndSerialNumber issuerIasn = new IssuerAndSerialNumber(signerName, signerSerialNo);
-
-        final ASN1Set signerInfos = signedData.getSignerInfos();
-        @SuppressWarnings("unchecked")
-        Enumeration<ASN1Sequence> seqs = signerInfos.getObjects();
-        while (seqs.hasMoreElements()) {
-            final ASN1Sequence seq = seqs.nextElement();
-            SignerInfo signerInfo = new SignerInfo(seq);
-            signerInfo.getAuthenticatedAttributes();
-            SignerIdentifier signerId = signerInfo.getSID();
-            IssuerAndSerialNumber iasn = IssuerAndSerialNumber.getInstance(signerId.getId());
-
-            if (!areEqual(issuerIasn, iasn)) {
-                continue;
-            }
-            // We've found the right issuer.
-            ASN1OctetString signedDigest = signerInfo.getEncryptedDigest();
-            String sigAlg = AlgorithmDictionary.lookup(signerInfo.getDigestAlgorithm());
-            Signature sig;
-            try {
-                sig = Signature.getInstance(sigAlg);
-            } catch (NoSuchAlgorithmException e) {
-                return false;
-            }
-            try {
-                sig.initVerify(signer);
-            } catch (InvalidKeyException e) {
-                return false;
-            }
-            try {
-                sig.update(getHash(signerInfo));
-                return sig.verify(signedDigest.getOctets());
-            } catch (SignatureException e) {
-                return false;
-            } catch (IOException e) {
-                return false;
-            }
+    @SuppressWarnings("unchecked")
+	public static boolean isSignedBy(CMSSignedData sd, X509Certificate signer) {
+        Collection<SignerInformation> signerInfos = sd.getSignerInfos().getSigners();
+        for (SignerInformation signerInfo : signerInfos) {
+        	CMSSignatureAlgorithmNameGenerator sigNameGenerator = new DefaultCMSSignatureAlgorithmNameGenerator();
+        	SignatureAlgorithmIdentifierFinder sigAlgorithmFinder = new DefaultSignatureAlgorithmIdentifierFinder();
+        	ContentVerifierProvider verifierProvider;
+			try {
+				verifierProvider = new JcaContentVerifierProviderBuilder().build(signer);
+			} catch (OperatorCreationException e) {
+				throw new RuntimeException(e);
+			}
+        	DigestCalculatorProvider digestProvider;
+			try {
+				digestProvider = new JcaDigestCalculatorProviderBuilder().build();
+			} catch (OperatorCreationException e1) {
+				throw new RuntimeException(e1);
+			}
+        	SignerInformationVerifier verifier = new SignerInformationVerifier(sigNameGenerator, sigAlgorithmFinder, verifierProvider, digestProvider);
+        	try {
+				return signerInfo.verify(verifier);
+			} catch (CMSException e) {
+				return false;
+			}
         }
 
         return false;
-    }
-
-    private static byte[] getHash(SignerInfo signerInfo) throws IOException {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final DEROutputStream dos = new DEROutputStream(baos);
-        dos.writeObject(signerInfo.getAuthenticatedAttributes());
-        dos.close();
-
-        return baos.toByteArray();
-    }
-
-    private static boolean areEqual(IssuerAndSerialNumber one, IssuerAndSerialNumber two) {
-        return one.getSerialNumber().equals(two.getSerialNumber()) && one.getName().equals(two.getName());
     }
 }

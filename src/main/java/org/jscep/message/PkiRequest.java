@@ -21,12 +21,11 @@
  */
 package org.jscep.message;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
-public abstract class PkiRequest<T extends ASN1Encodable> extends PkiMessage<T> {
+public abstract class PkiRequest<T> extends PkiMessage<T> {
     public PkiRequest(TransactionId transId, MessageType messageType, Nonce senderNonce, T messageData) {
         super(transId, messageType, senderNonce, messageData);
     }

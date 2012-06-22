@@ -47,8 +47,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.CertificateVerificationCallback;
 import org.jscep.content.CaCapabilitiesContentHandler;
 import org.jscep.content.CaCertificateContentHandler;
@@ -182,24 +182,31 @@ public class Client {
 		try {
 			factory = CertificateFactory.getInstance("X509");
 		} catch (CertificateException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		}
         CertStore store;
 		try {
 			store = trans.sendRequest(req, new CaCertificateContentHandler(factory));
 		} catch (TransportException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		} catch (InvalidContentTypeException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		} catch (InvalidContentException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		}
         verifyCA(selectIssuerCertificate(store));
 
         return store;
     }
 
-    /**
+    private IOException ioe(Throwable t) {
+		IOException e = new IOException();
+		e.initCause(t);
+		
+		return e;
+	}
+
+	/**
      * Retrieves the "rollover" certificate to be used by the CA.
      * <p/>
      * If the CA is using an RA, the RA certificate will be present
@@ -222,11 +229,11 @@ public class Client {
         try {
 			return trans.sendRequest(req, new NextCaCertificateContentHandler(issuer));
 		} catch (TransportException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		} catch (InvalidContentTypeException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		} catch (InvalidContentException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		}
     }
 
@@ -251,7 +258,7 @@ public class Client {
             throw new RuntimeException("Unimplemented");
         }
 
-        X509Name name = new X509Name(issuer.getName());
+        X500Name name = new X500Name(issuer.getName());
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport();
         final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GET_CRL);
@@ -259,7 +266,7 @@ public class Client {
         try {
 			state = t.send();
 		} catch (TransportException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		}
 
         if (state == State.CERT_ISSUED) {
@@ -295,7 +302,7 @@ public class Client {
         // Certificate query
         final X509Certificate ca = retrieveCA();
 
-        X509Name name = new X509Name(ca.getIssuerX500Principal().toString());
+        X500Name name = new X500Name(ca.getIssuerX500Principal().toString());
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport();
         final Transaction t = new NonEnrollmentTransaction(transport, getEncoder(), getDecoder(), iasn, MessageType.GET_CERT);
@@ -304,7 +311,7 @@ public class Client {
         try {
 			state = t.send();
 		} catch (TransportException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		}
 
         if (state == State.CERT_ISSUED) {
@@ -329,7 +336,7 @@ public class Client {
      * @return the enrollment transaction.
      * @throws IOException if any I/O error occurs.
      */
-    public EnrolmentTransaction enrol(CertificationRequest csr) throws IOException {
+    public EnrolmentTransaction enrol(PKCS10CertificationRequest csr) throws IOException {
         LOGGER.debug("Enrolling certificate with CA");
         // TRANSACTIONAL
         // Certificate enrollment

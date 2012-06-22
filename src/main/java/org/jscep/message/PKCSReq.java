@@ -21,7 +21,7 @@
  */
 package org.jscep.message;
 
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
@@ -30,8 +30,8 @@ import org.jscep.transaction.TransactionId;
  * This class represents PKCSReq PKIMessage, which wraps a PKCS #10
  * CertificationRequest object.
  */
-public class PKCSReq extends PkiRequest<CertificationRequest> {
-    public PKCSReq(TransactionId transId, Nonce senderNonce, CertificationRequest messageData) {
+public class PKCSReq extends PkiRequest<PKCS10CertificationRequest> {
+    public PKCSReq(TransactionId transId, Nonce senderNonce, PKCS10CertificationRequest messageData) {
         super(transId, MessageType.PKCS_REQ, senderNonce, messageData);
     }
 }

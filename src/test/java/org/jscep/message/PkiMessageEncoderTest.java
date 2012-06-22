@@ -6,7 +6,7 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
@@ -24,7 +24,7 @@ public class PkiMessageEncoderTest {
 
         TransactionId transId = TransactionId.createTransactionId(clientPair.getPublic(), "SHA-1");
         Nonce senderNonce = Nonce.nextNonce();
-        IssuerAndSubject messageData = new IssuerAndSubject(new X509Name("CN=CA"), new X509Name("CN=Client"));
+        IssuerAndSubject messageData = new IssuerAndSubject(new X500Name("CN=CA"), new X500Name("CN=Client"));
 
 //		GetCRL crl = new GetCRL(transId, senderNonce, messageData);
         GetCertInitial outgoingMessage = new GetCertInitial(transId, senderNonce, messageData);

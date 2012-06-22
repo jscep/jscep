@@ -109,6 +109,6 @@ public final class AlgorithmDictionary {
      * @return the algorithm name.
      */
     public static String lookup(AlgorithmIdentifier alg) {
-        return contents.get(alg.getObjectId());
+        return contents.get(alg.getAlgorithm());
     }
 }

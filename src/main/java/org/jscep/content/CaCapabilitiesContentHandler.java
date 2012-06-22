@@ -70,7 +70,7 @@ public class CaCapabilitiesContentHandler implements ScepContentHandler<Capabili
 			try {
 				reader.close();
 			} catch (IOException e) {
-				// Do nothing
+				LOGGER.error("Error closing reader", e);
 			}
 		}
 

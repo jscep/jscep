@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,9 +21,6 @@
  * THE SOFTWARE.
  */
 package org.jscep.content;
-
-import java.io.IOException;
-
 
 /**
  * This class handles responses to <code>PKCSReq</code> requests.

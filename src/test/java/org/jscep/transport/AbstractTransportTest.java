@@ -13,7 +13,7 @@ import javax.security.auth.x500.X500Principal;
 import junit.framework.Assert;
 
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.eclipse.jetty.server.Server;
 import org.jscep.content.CertRepContentHandler;
 import org.jscep.message.GetCert;
@@ -64,7 +64,7 @@ abstract public class AbstractTransportTest {
 
         TransactionId transId = TransactionId.createTransactionId();
         Nonce senderNonce = Nonce.nextNonce();
-        X509Name name = new X509Name("CN=jscep.org");
+        X500Name name = new X500Name("CN=jscep.org");
         BigInteger serialNumber = BigInteger.ONE;
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
         GetCert getCert = new GetCert(transId, senderNonce, iasn);

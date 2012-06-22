@@ -22,8 +22,18 @@
  */
 package org.jscep.asn1;
 
-import org.bouncycastle.asn1.*;
-import org.bouncycastle.asn1.x509.X509Name;
+import java.io.IOException;
+
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the SCEP <code>IssuerAndSubject</code> ASN.1 object.
@@ -39,16 +49,17 @@ import org.bouncycastle.asn1.x509.X509Name;
  * 
  * @author David Grant
  */
-public class IssuerAndSubject extends ASN1Encodable {
-	private final X509Name issuer;
-	private final X509Name subject;
+public class IssuerAndSubject extends ASN1Object {
+	private static final Logger LOGGER = LoggerFactory.getLogger(IssuerAndSubject.class);
+	private final X500Name issuer;
+	private final X500Name subject;
 
 	public IssuerAndSubject(ASN1Sequence seq) {
-		issuer = X509Name.getInstance(seq.getObjectAt(0));
-		subject = X509Name.getInstance(seq.getObjectAt(1));
+		issuer = X500Name.getInstance(seq.getObjectAt(0));
+		subject = X500Name.getInstance(seq.getObjectAt(1));
 	}
 
-	public IssuerAndSubject(X509Name issuer, X509Name subject) {
+	public IssuerAndSubject(X500Name issuer, X500Name subject) {
 		this.issuer = issuer;
 		this.subject = subject;
 	}
@@ -57,16 +68,16 @@ public class IssuerAndSubject extends ASN1Encodable {
 		this(toDERSequence(bytes));
 	}
 
-	public X509Name getIssuer() {
+	public X500Name getIssuer() {
 		return issuer;
 	}
 
-	public X509Name getSubject() {
+	public X500Name getSubject() {
 		return subject;
 	}
 
 	@Override
-	public DERObject toASN1Object() {
+	public ASN1Primitive toASN1Primitive() {
 		ASN1EncodableVector v = new ASN1EncodableVector();
 
 		v.add(issuer);
@@ -82,12 +93,21 @@ public class IssuerAndSubject extends ASN1Encodable {
 	}
 
 	private static ASN1Sequence toDERSequence(byte[] bytes) {
+		ASN1InputStream dIn = null;
 		try {
-			ASN1InputStream dIn = new ASN1InputStream(bytes);
+			dIn = new ASN1InputStream(bytes);
 
 			return (ASN1Sequence) dIn.readObject();
 		} catch (Exception e) {
 			throw new IllegalArgumentException("badly encoded request");
+		} finally {
+			if (dIn != null) {
+				try {
+					dIn.close();
+				} catch (IOException e) {
+					LOGGER.error("Failed to close ASN.1 stream", e);
+				}
+			}
 		}
 	}
 }

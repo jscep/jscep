@@ -22,10 +22,11 @@
  */
 package org.jscep.request;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import org.bouncycastle.util.encoders.Base64;
+
+import com.google.common.primitives.Bytes;
 
 /**
  * This class represents a <code>PKCSReq</code> request.
@@ -44,7 +45,7 @@ public class PKCSReq extends Request {
     public PKCSReq(byte[] msgData) {
         super(Operation.PKI_OPERATION);
 
-        this.msgData = msgData;
+        this.msgData = Bytes.concat(msgData);
     }
 
     /**
@@ -53,7 +54,7 @@ public class PKCSReq extends Request {
     public String getMessage() {
         byte[] bytes = Base64.encode(msgData);
 
-        return new String(bytes, Charset.defaultCharset());
+        return new String(bytes);
     }
 
     /**

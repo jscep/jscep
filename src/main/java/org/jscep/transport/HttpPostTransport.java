@@ -29,7 +29,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 import org.bouncycastle.util.encoders.Base64;
 import org.jscep.content.InvalidContentException;
@@ -80,15 +79,22 @@ public class HttpPostTransport extends Transport {
 		}
         conn.setDoOutput(true);
         
-        byte[] message = Base64.decode(msg.getMessage().getBytes(Charset.defaultCharset()));
+        byte[] message = Base64.decode(msg.getMessage().getBytes());
 
-        OutputStream stream;
+        OutputStream stream = null;
 		try {
 			stream = new BufferedOutputStream(conn.getOutputStream());
 			stream.write(message);
-	        stream.close();
 		} catch (IOException e) {
 			throw new TransportException(e);
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					LOGGER.error("Failed to close output stream", e);
+				}
+			}
 		}
 
 		try {

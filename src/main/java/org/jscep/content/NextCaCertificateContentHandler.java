@@ -32,9 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.pkcs7.SignedDataUtil;
@@ -67,10 +65,10 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
             Collection<? extends Certificate> collection;
             try {
                 CMSSignedData cmsMessageData = new CMSSignedData(content);
-                ContentInfo cmsContentInfo = ContentInfo.getInstance(ASN1Object.fromByteArray(cmsMessageData.getEncoded()));
+                ContentInfo cmsContentInfo = ContentInfo.getInstance(cmsMessageData.getEncoded());
 
                 // TODO: This must be signed by the current CA.
-                final SignedData sd = SignedData.getInstance(cmsContentInfo.getContent());
+                final CMSSignedData sd = new CMSSignedData(cmsContentInfo);
                 if (!SignedDataUtil.isSignedBy(sd, issuer)) {
                     throw new InvalidContentTypeException("Invalid Signer");
                 }

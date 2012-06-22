@@ -22,6 +22,8 @@
  */
 package org.jscep.transaction;
 
+import java.io.IOException;
+
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.cms.CMSException;
@@ -29,13 +31,16 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.content.CertRepContentHandler;
 import org.jscep.content.InvalidContentException;
 import org.jscep.content.InvalidContentTypeException;
-import org.jscep.message.*;
+import org.jscep.message.CertRep;
+import org.jscep.message.GetCRL;
+import org.jscep.message.GetCert;
+import org.jscep.message.PkiMessageDecoder;
+import org.jscep.message.PkiMessageEncoder;
+import org.jscep.message.PkiRequest;
 import org.jscep.request.PKCSReq;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import org.jscep.util.CertStoreUtils;
 
 public class NonEnrollmentTransaction extends Transaction {
     private final TransactionId transId;
@@ -65,9 +70,9 @@ public class NonEnrollmentTransaction extends Transaction {
 		try {
 			inMsg = transport.sendRequest(new PKCSReq(signedData), handler);
 		} catch (InvalidContentTypeException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		} catch (InvalidContentException e) {
-			throw new IOException(e);
+			throw ioe(e);
 		}
         final CertRep response = (CertRep) decoder.decode(inMsg);
 
@@ -77,11 +82,10 @@ public class NonEnrollmentTransaction extends Transaction {
         } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
             try {
                 CMSSignedData responseSd = new CMSSignedData(response.getMessageData());
-                certStore = responseSd.getCertificatesAndCRLs("Collection", (String) null);
-            } catch (GeneralSecurityException e) {
-                throw new IOException(e);
+                
+                certStore = CertStoreUtils.fromSignedData(responseSd);
             } catch (CMSException e) {
-                throw new IOException(e);
+                throw ioe(e);
             }
             state = State.CERT_ISSUED;
         } else {
@@ -90,4 +94,11 @@ public class NonEnrollmentTransaction extends Transaction {
 
         return state;
     }
+
+	private IOException ioe(Throwable t) {
+		IOException ioe = new IOException();
+		ioe.initCause(t);
+		
+		return ioe;
+	}
 }

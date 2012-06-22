@@ -13,26 +13,23 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Signature;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.pkcs.CertificationRequest;
-import org.bouncycastle.asn1.pkcs.CertificationRequestInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.Attribute;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.x509.X509Util;
@@ -64,7 +61,7 @@ public class ClientTest extends AbstractClientTest {
         // Ignore this test if the CA doesn't support renewal.
         Assume.assumeTrue(client.getCaCapabilities().isRenewalSupported());
 
-        CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
+        PKCS10CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
         Transaction t = client.enrol(csr);
         if (t.send() == State.CERT_ISSUED) {
             t.getCertStore();
@@ -73,7 +70,7 @@ public class ClientTest extends AbstractClientTest {
 
     @Test
     public void testEnroll() throws Exception {
-        CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
+    	PKCS10CertificationRequest csr = getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(), keyPair.getPrivate(), password);
         Transaction trans = client.enrol(csr);
         State state = trans.send();
         if (state == State.CERT_ISSUED) {
@@ -111,24 +108,24 @@ public class ClientTest extends AbstractClientTest {
         assertNotNull(c);
     }
 
-    private CertificationRequest getCsr(X500Principal subject, PublicKey pubKey, PrivateKey priKey, char[] password) throws GeneralSecurityException, IOException {
-        AlgorithmIdentifier sha1withRsa = new AlgorithmIdentifier(PKCSObjectIdentifiers.sha1WithRSAEncryption);
-
+    private PKCS10CertificationRequest getCsr(X500Principal subject, PublicKey pubKey, PrivateKey priKey, char[] password) throws GeneralSecurityException, IOException {
         ASN1Set cpSet = new DERSet(new DERPrintableString(new String(password)));
-        Attribute challengePassword = new Attribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, cpSet);
-        ASN1Set attrs = new DERSet(challengePassword);
-
-        SubjectPublicKeyInfo pkInfo = new SubjectPublicKeyInfo((ASN1Sequence) ASN1Object.fromByteArray(pubKey.getEncoded()));
-
-        X509Name name = new X509Name(subject.toString());
-        CertificationRequestInfo requestInfo = new CertificationRequestInfo(name, pkInfo, attrs);
-
-        Signature signer = Signature.getInstance("SHA1withRSA");
-        signer.initSign(priKey);
-        signer.update(requestInfo.getEncoded());
-        byte[] signatureBytes = signer.sign();
-        DERBitString signature = new DERBitString(signatureBytes);
-
-        return new CertificationRequest(requestInfo, sha1withRsa, signature);
+        SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey.getEncoded());
+        
+        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA1withRSA");
+        ContentSigner signer;
+		try {
+			signer = signerBuilder.build(priKey);
+		} catch (OperatorCreationException e) {
+			IOException ioe = new IOException();
+			ioe.initCause(e);
+			
+			throw ioe;
+		}
+        
+        PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(X500Name.getInstance(subject.getEncoded()), pkInfo);
+        builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, cpSet);
+        
+        return builder.build(signer);
     }
 }
