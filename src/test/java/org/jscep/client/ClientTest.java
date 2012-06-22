@@ -109,7 +109,7 @@ public class ClientTest extends AbstractClientTest {
     }
 
     private PKCS10CertificationRequest getCsr(X500Principal subject, PublicKey pubKey, PrivateKey priKey, char[] password) throws GeneralSecurityException, IOException {
-        ASN1Set cpSet = new DERSet(new DERPrintableString(new String(password)));
+    	DERPrintableString cpSet = new DERPrintableString(new String(password));
         SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey.getEncoded());
         
         JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA1withRSA");
