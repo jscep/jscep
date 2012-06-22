@@ -1,14 +1,18 @@
 package org.jscep.response;
 
+import java.security.Provider;
+import java.security.Provider.Service;
+import java.security.Security;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @RunWith(Parameterized.class)
 public class CapabilitiesMessageDigestTest {
@@ -40,6 +44,20 @@ public class CapabilitiesMessageDigestTest {
 
     @Test
     public void testStrongestMessageDigest() {
+    	Assume.assumeTrue(algorithmExists(algorithm));
         Assert.assertEquals(algorithm, capabilities.getStrongestMessageDigest());
     }
+    
+    private boolean algorithmExists(String algorithm) {
+		for (Provider provider : Security.getProviders()) {
+			for (Service service : provider.getServices()) {
+				if (service.getType().equals("MessageDigest")
+						&& service.getAlgorithm().equals(algorithm)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 }
