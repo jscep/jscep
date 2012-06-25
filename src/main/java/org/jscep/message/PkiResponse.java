@@ -82,11 +82,11 @@ public class PkiResponse<T> extends PkiMessage<T> {
     @Override
     public Map<String, Object> getAttributes() {
     	Map<String, Object> attr = new HashMap<String, Object>();
-    	attr.put(ScepObjectIdentifiers.pkiStatus, pkiStatus);
-    	attr.put(ScepObjectIdentifiers.recipientNonce, recipientNonce);
+    	attr.put(ScepObjectIdentifiers.PKI_STATUS, pkiStatus);
+    	attr.put(ScepObjectIdentifiers.RECIPIENT_NONCE, recipientNonce);
     	
         if (pkiStatus == PkiStatus.FAILURE) {
-        	attr.put(ScepObjectIdentifiers.failInfo, failInfo);
+        	attr.put(ScepObjectIdentifiers.FAIL_INFO, failInfo);
         }
 
         attr.putAll(super.getAttributes());

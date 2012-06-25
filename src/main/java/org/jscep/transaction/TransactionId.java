@@ -117,6 +117,7 @@ public final class TransactionId {
 
     @Override
     public int hashCode() {
-        return id != null ? Arrays.hashCode(id) : 0;
+   		return Arrays.hashCode(id);
+
     }
 }

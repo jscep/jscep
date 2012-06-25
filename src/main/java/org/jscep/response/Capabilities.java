@@ -32,7 +32,7 @@ import java.util.EnumSet;
  * 
  * @author David Grant
  */
-public class Capabilities {
+public final class Capabilities {
 	private EnumSet<Capability> capabilities;
 
 	/**

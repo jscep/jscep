@@ -68,9 +68,9 @@ public abstract class PkiMessage<T> {
 
     public Map<String, Object> getAttributes() {
     	Map<String, Object> attr = new HashMap<String, Object>();
-    	attr.put(ScepObjectIdentifiers.transId, transId);
-    	attr.put(ScepObjectIdentifiers.messageType, messageType);
-    	attr.put(ScepObjectIdentifiers.senderNonce, senderNonce);
+    	attr.put(ScepObjectIdentifiers.TRANS_ID, transId);
+    	attr.put(ScepObjectIdentifiers.MESSAGE_TYPE, messageType);
+    	attr.put(ScepObjectIdentifiers.SENDER_NONCE, senderNonce);
 
         return attr;
     }

@@ -42,7 +42,7 @@ import org.jscep.util.CertStoreUtils;
  *
  * @author David Grant
  */
-public class CaCertificateContentHandler implements ScepContentHandler<CertStore> {
+public final class CaCertificateContentHandler implements ScepContentHandler<CertStore> {
     private static final String RA_CERT = "application/x-x509-ca-ra-cert";
 	private static final String CA_CERT = "application/x-x509-ca-cert";
 	private CertificateFactory factory;

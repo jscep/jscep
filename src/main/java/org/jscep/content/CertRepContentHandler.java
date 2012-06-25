@@ -27,7 +27,7 @@ package org.jscep.content;
  *
  * @author David Grant
  */
-public class CertRepContentHandler implements ScepContentHandler<byte[]> {
+public final class CertRepContentHandler implements ScepContentHandler<byte[]> {
     private static final String PKI_MESSAGE = "application/x-pki-message";
 
 	/**

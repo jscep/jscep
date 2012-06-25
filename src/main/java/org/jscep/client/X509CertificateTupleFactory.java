@@ -12,12 +12,17 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Factory for creating X509CertificateTuple objects. 
+ */
 public class X509CertificateTupleFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(X509CertificateTupleFactory.class);
     private static Map<CertStore, X509CertificateTuple> cache = new HashMap<CertStore, X509CertificateTuple>();
     public static final int DIGITAL_SIGNATURE = 0;
     public static final int KEY_ENCIPHERMENT = 2;
     public static final int DATA_ENCIPHERMENT = 3;
+    
+    private X509CertificateTupleFactory() {}
 
     public static X509CertificateTuple createTuple(CertStore store) {
         if (cache.containsKey(store)) {

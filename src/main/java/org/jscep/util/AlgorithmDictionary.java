@@ -44,48 +44,48 @@ import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
  * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html
  */
 public final class AlgorithmDictionary {
-    private final static Map<DERObjectIdentifier, String> contents = new HashMap<DERObjectIdentifier, String>();
+    private final static Map<DERObjectIdentifier, String> CONTENTS = new HashMap<DERObjectIdentifier, String>();
 
     static {
         // Asymmetric Ciphers
-        contents.put(PKCSObjectIdentifiers.rsaEncryption, "RSA");
+        CONTENTS.put(PKCSObjectIdentifiers.rsaEncryption, "RSA");
         // Digital Signatures
-        contents.put(PKCSObjectIdentifiers.sha1WithRSAEncryption, "SHA1withRSA");
-        contents.put(new DERObjectIdentifier("1.2.840.113549.1.1.4"), "md5withRSA");
-        contents.put(new DERObjectIdentifier("1.2.840.113549.1.1.11"), "sha256withRSA");
-        contents.put(new DERObjectIdentifier("1.2.840.113549.1.1.13"), "sha512withRSA");
+        CONTENTS.put(PKCSObjectIdentifiers.sha1WithRSAEncryption, "SHA1withRSA");
+        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.1.1.4"), "md5withRSA");
+        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.1.1.11"), "sha256withRSA");
+        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.1.1.13"), "sha512withRSA");
         // Symmetric Ciphers
-        contents.put(SMIMECapabilities.dES_CBC, "DES/CBC/PKCS5Padding"); // DES
-        contents.put(SMIMECapabilities.dES_EDE3_CBC, "DESede/CBC/PKCS5Padding"); // DESEDE
+        CONTENTS.put(SMIMECapabilities.dES_CBC, "DES/CBC/PKCS5Padding"); // DES
+        CONTENTS.put(SMIMECapabilities.dES_EDE3_CBC, "DESede/CBC/PKCS5Padding"); // DESEDE
         // Message Digests
-        contents.put(X509ObjectIdentifiers.id_SHA1, "SHA");
-        contents.put(new DERObjectIdentifier("1.2.840.113549.2.5"), "MD5");
-        contents.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.1"), "SHA-256");
-        contents.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.3"), "SHA-512");
+        CONTENTS.put(X509ObjectIdentifiers.id_SHA1, "SHA");
+        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.2.5"), "MD5");
+        CONTENTS.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.1"), "SHA-256");
+        CONTENTS.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.3"), "SHA-512");
     }
 
 
-    private final static Map<String, DERObjectIdentifier> oids = new HashMap<String, DERObjectIdentifier>();
+    private final static Map<String, DERObjectIdentifier> OIDS = new HashMap<String, DERObjectIdentifier>();
 
     static {
         // Cipher
-        oids.put("DES/CBC/PKCS5Padding", OIWObjectIdentifiers.desCBC);
-        oids.put("DESede/CBC/PKCS5Padding", PKCSObjectIdentifiers.des_EDE3_CBC);
+        OIDS.put("DES/CBC/PKCS5Padding", OIWObjectIdentifiers.desCBC);
+        OIDS.put("DESede/CBC/PKCS5Padding", PKCSObjectIdentifiers.des_EDE3_CBC);
         // KeyFactory or KeyPairGenerator
-        oids.put("RSA", PKCSObjectIdentifiers.rsaEncryption);
+        OIDS.put("RSA", PKCSObjectIdentifiers.rsaEncryption);
         // KeyGenerator, AlgorithmParameters or SecretKeyFactory
-        oids.put("DES", null);
-        oids.put("DESede", null);
+        OIDS.put("DES", null);
+        OIDS.put("DESede", null);
         // MessageDigest
-        oids.put("MD5", PKCSObjectIdentifiers.md5);
-        oids.put("SHA-1", X509ObjectIdentifiers.id_SHA1);
-        oids.put("SHA-256", NISTObjectIdentifiers.id_sha256);
-        oids.put("SHA-512", NISTObjectIdentifiers.id_sha512);
+        OIDS.put("MD5", PKCSObjectIdentifiers.md5);
+        OIDS.put("SHA-1", X509ObjectIdentifiers.id_SHA1);
+        OIDS.put("SHA-256", NISTObjectIdentifiers.id_sha256);
+        OIDS.put("SHA-512", NISTObjectIdentifiers.id_sha512);
         // Signature
-        oids.put("MD5withRSA", PKCSObjectIdentifiers.md5WithRSAEncryption);
-        oids.put("SHA1withRSA", PKCSObjectIdentifiers.sha1WithRSAEncryption);
-        oids.put("SHA256withRSA", PKCSObjectIdentifiers.sha256WithRSAEncryption);
-        oids.put("SHA512withRSA", PKCSObjectIdentifiers.sha512WithRSAEncryption);
+        OIDS.put("MD5withRSA", PKCSObjectIdentifiers.md5WithRSAEncryption);
+        OIDS.put("SHA1withRSA", PKCSObjectIdentifiers.sha1WithRSAEncryption);
+        OIDS.put("SHA256withRSA", PKCSObjectIdentifiers.sha256WithRSAEncryption);
+        OIDS.put("SHA512withRSA", PKCSObjectIdentifiers.sha512WithRSAEncryption);
     }
 
     private AlgorithmDictionary() {
@@ -109,6 +109,6 @@ public final class AlgorithmDictionary {
      * @return the algorithm name.
      */
     public static String lookup(AlgorithmIdentifier alg) {
-        return contents.get(alg.getAlgorithm());
+        return CONTENTS.get(alg.getAlgorithm());
     }
 }

@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author David Grant
  */
-public class IssuerAndSubject extends ASN1Object {
+public final class IssuerAndSubject extends ASN1Object {
 	private static final Logger LOGGER = LoggerFactory.getLogger(IssuerAndSubject.class);
 	private final X500Name issuer;
 	private final X500Name subject;

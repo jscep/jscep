@@ -134,22 +134,22 @@ public class PkiMessageDecoder {
 				.getSignedAttributes().toHashtable();
 
 		MessageType messageType = toMessageType(attrTable
-				.get(toOid(ScepObjectIdentifiers.messageType)));
+				.get(toOid(ScepObjectIdentifiers.MESSAGE_TYPE)));
 		Nonce senderNonce = toNonce(attrTable
-				.get(toOid(ScepObjectIdentifiers.senderNonce)));
+				.get(toOid(ScepObjectIdentifiers.SENDER_NONCE)));
 		TransactionId transId = toTransactionId(attrTable
-				.get(toOid(ScepObjectIdentifiers.transId)));
+				.get(toOid(ScepObjectIdentifiers.TRANS_ID)));
 
 		PkiMessage<?> decoded;
 		if (messageType == MessageType.CERT_REP) {
 			PkiStatus pkiStatus = toPkiStatus(attrTable
-					.get(toOid(ScepObjectIdentifiers.pkiStatus)));
+					.get(toOid(ScepObjectIdentifiers.PKI_STATUS)));
 			Nonce recipientNonce = toNonce(attrTable
-					.get(toOid(ScepObjectIdentifiers.recipientNonce)));
+					.get(toOid(ScepObjectIdentifiers.RECIPIENT_NONCE)));
 
 			if (pkiStatus == PkiStatus.FAILURE) {
 				FailInfo failInfo = toFailInfo(attrTable
-						.get(toOid(ScepObjectIdentifiers.failInfo)));
+						.get(toOid(ScepObjectIdentifiers.FAIL_INFO)));
 
 				decoded = new CertRep(transId, senderNonce, recipientNonce,
 						failInfo);

@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 public class CertStoreUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CertStoreUtils.class);
 	
+	private CertStoreUtils() {}
+	
 	@SuppressWarnings("unchecked")
 	public static CertStore fromSignedData(CMSSignedData signedData) {
 		CertificateFactory factory;

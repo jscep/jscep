@@ -31,29 +31,29 @@ public interface ScepObjectIdentifiers {
     /**
      * <code>2.16.840.1.113733.1.9.2</code>
      */
-    String messageType = "2.16.840.1.113733.1.9.2";
+    String MESSAGE_TYPE = "2.16.840.1.113733.1.9.2";
     /**
      * <code>2.16.840.1.113733.1.9.3</code>
      */
-    String pkiStatus = "2.16.840.1.113733.1.9.3";
+    String PKI_STATUS = "2.16.840.1.113733.1.9.3";
     /**
      * <code>2.16.840.1.113733.1.9.4</code>
      */
-    String failInfo = "2.16.840.1.113733.1.9.4";
+    String FAIL_INFO = "2.16.840.1.113733.1.9.4";
     /**
      * <code>2.16.840.1.113733.1.9.5</code>
      */
-    String senderNonce = "2.16.840.1.113733.1.9.5";
+    String SENDER_NONCE = "2.16.840.1.113733.1.9.5";
     /**
      * <code>2.16.840.1.113733.1.9.6</code>
      */
-    String recipientNonce = "2.16.840.1.113733.1.9.6";
+    String RECIPIENT_NONCE = "2.16.840.1.113733.1.9.6";
     /**
      * <code>2.16.840.1.113733.1.9.7</code>
      */
-    String transId = "2.16.840.1.113733.1.9.7";
+    String TRANS_ID = "2.16.840.1.113733.1.9.7";
     /**
      * <code>2.16.840.1.113733.1.9.8</code>
      */
-    String extensionReq = "2.16.840.1.113733.1.9.8";
+    String EXTENSION_REQ = "2.16.840.1.113733.1.9.8";
 }
