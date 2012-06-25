@@ -18,6 +18,9 @@ import org.bouncycastle.util.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class is used for performing utility operations for cert stores.
+ */
 public class CertStoreUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CertStoreUtils.class);
 	
