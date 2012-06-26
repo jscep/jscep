@@ -24,7 +24,7 @@ package org.jscep.message;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.Security;
+import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -167,8 +167,8 @@ public class PkiMessageEncoder {
         LOGGER.debug("Signing {} content", signable);
         CMSSignedData sd;
         try {
-            sd = sdGenerator.generate((String) "1.2.840.113549.1.7.1",
-                    signable, true, Security.getProvider("BC"), true);
+            sd = sdGenerator.generate("1.2.840.113549.1.7.1",
+                    signable, true, (Provider) null, true);
         } catch (NoSuchAlgorithmException e) {
             IOException ioe = new IOException();
             ioe.initCause(e);
