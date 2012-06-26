@@ -23,7 +23,7 @@ package org.jscep.response;
 
 /**
  * This class represents a single SCEP server capability.
- *
+ * 
  * @author David Grant
  */
 public enum Capability {
@@ -36,7 +36,8 @@ public enum Capability {
      */
     POST_PKI_OPERATION("POSTPKIOperation", "HTTP POST"),
     /**
-     * Clients may use current certificate and key to authenticate an enrollment request for a new certificate.
+     * Clients may use current certificate and key to authenticate an enrollment
+     * request for a new certificate.
      */
     RENEWAL("Renewal", "Certificate Renewal"),
     /**
@@ -57,16 +58,16 @@ public enum Capability {
     TRIPLE_DES("DES3", "Triple DES Encryption");
 
     /**
-     * Member variable to hold the name of the capability as
-     * defined in the SCEP Internet-Draft.
+     * Member variable to hold the name of the capability as defined in the SCEP
+     * Internet-Draft.
      */
     private final String capability;
     private final String description;
 
     /**
      * Constructs a new instance of this enum.
-     *
-     * @param capability  the name of the capability.
+     * 
+     * @param capability the name of the capability.
      * @param description description of the capability
      */
     private Capability(String capability, String description) {
@@ -75,9 +76,8 @@ public enum Capability {
     }
 
     /**
-     * Returns the name of the capability as defined in the
-     * SCEP Internet-Draft.
-     *
+     * Returns the name of the capability as defined in the SCEP Internet-Draft.
+     * 
      * @return the name of the capability.
      */
     @Override

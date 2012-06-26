@@ -40,7 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PkcsPkiEnvelopeEncoder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PkcsPkiEnvelopeEncoder.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(PkcsPkiEnvelopeEncoder.class);
     private final X509Certificate recipient;
 
     public PkcsPkiEnvelopeEncoder(X509Certificate recipient) {
@@ -54,34 +55,37 @@ public class PkcsPkiEnvelopeEncoder {
         CMSTypedData envelopable = new CMSProcessableByteArray(payload);
         RecipientInfoGenerator recipientGenerator;
         try {
-			recipientGenerator = new JceKeyTransRecipientInfoGenerator(recipient);
-		} catch (CertificateEncodingException e) {
-			IOException ioe = new IOException();
-        	ioe.initCause(e);
-        	
+            recipientGenerator = new JceKeyTransRecipientInfoGenerator(
+                    recipient);
+        } catch (CertificateEncodingException e) {
+            IOException ioe = new IOException();
+            ioe.initCause(e);
+
             throw ioe;
-		}
+        }
         edGenerator.addRecipientInfoGenerator(recipientGenerator);
-        LOGGER.debug("Encrypting session key using key belonging to '{}'", recipient.getSubjectDN());
+        LOGGER.debug("Encrypting session key using key belonging to '{}'",
+                recipient.getSubjectDN());
 
         OutputEncryptor encryptor;
-		try {
-			encryptor = new JceCRMFEncryptorBuilder(PKCSObjectIdentifiers.des_EDE3_CBC).build();
-		} catch (CRMFException e) {
-			IOException ioe = new IOException();
-        	ioe.initCause(e);
-        	
+        try {
+            encryptor = new JceCRMFEncryptorBuilder(
+                    PKCSObjectIdentifiers.des_EDE3_CBC).build();
+        } catch (CRMFException e) {
+            IOException ioe = new IOException();
+            ioe.initCause(e);
+
             throw ioe;
-		}
+        }
         CMSEnvelopedData data;
-		try {
-			data = edGenerator.generate(envelopable, encryptor);
-		} catch (CMSException e) {
-			IOException ioe = new IOException();
-        	ioe.initCause(e);
-        	
+        try {
+            data = edGenerator.generate(envelopable, encryptor);
+        } catch (CMSException e) {
+            IOException ioe = new IOException();
+            ioe.initCause(e);
+
             throw ioe;
-		}
+        }
         LOGGER.debug("Encrypted to: {}", data.getEncoded());
         return data.getEncoded();
     }

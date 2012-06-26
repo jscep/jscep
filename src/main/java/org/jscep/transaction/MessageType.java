@@ -22,10 +22,9 @@
  */
 package org.jscep.transaction;
 
-
 /**
  * This class represents the SCEP <code>messageType</code> attribute.
- *
+ * 
  * @author David Grant
  */
 public enum MessageType {

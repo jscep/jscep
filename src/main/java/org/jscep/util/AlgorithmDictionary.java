@@ -34,38 +34,44 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 
 /**
- * This class provides a utility to lookup a friendly name for an algorithm given
- * a particular OID or AlgorithmIdentifier.
+ * This class provides a utility to lookup a friendly name for an algorithm
+ * given a particular OID or AlgorithmIdentifier.
  * <p/>
  * The internal dictionary is by no means comprehensive, and new algorithms are
  * generally as and when they are required by changes to the SCEP specification.
- *
+ * 
  * @author David Grant
- * @link http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames.html
+ * @link 
+ *       http://java.sun.com/javase/6/docs/technotes/guides/security/StandardNames
+ *       .html
  */
 public final class AlgorithmDictionary {
-    private final static Map<DERObjectIdentifier, String> CONTENTS = new HashMap<DERObjectIdentifier, String>();
+    private static final Map<DERObjectIdentifier, String> CONTENTS = new HashMap<DERObjectIdentifier, String>();
 
     static {
         // Asymmetric Ciphers
         CONTENTS.put(PKCSObjectIdentifiers.rsaEncryption, "RSA");
         // Digital Signatures
         CONTENTS.put(PKCSObjectIdentifiers.sha1WithRSAEncryption, "SHA1withRSA");
-        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.1.1.4"), "md5withRSA");
-        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.1.1.11"), "sha256withRSA");
-        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.1.1.13"), "sha512withRSA");
+        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.1.1.4"),
+                "md5withRSA");
+        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.1.1.11"),
+                "sha256withRSA");
+        CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.1.1.13"),
+                "sha512withRSA");
         // Symmetric Ciphers
         CONTENTS.put(SMIMECapabilities.dES_CBC, "DES/CBC/PKCS5Padding"); // DES
         CONTENTS.put(SMIMECapabilities.dES_EDE3_CBC, "DESede/CBC/PKCS5Padding"); // DESEDE
         // Message Digests
         CONTENTS.put(X509ObjectIdentifiers.id_SHA1, "SHA");
         CONTENTS.put(new DERObjectIdentifier("1.2.840.113549.2.5"), "MD5");
-        CONTENTS.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.1"), "SHA-256");
-        CONTENTS.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.3"), "SHA-512");
+        CONTENTS.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.1"),
+                "SHA-256");
+        CONTENTS.put(new DERObjectIdentifier("2.16.840.1.101.3.4.2.3"),
+                "SHA-512");
     }
 
-
-    private final static Map<String, DERObjectIdentifier> OIDS = new HashMap<String, DERObjectIdentifier>();
+    private static final Map<String, DERObjectIdentifier> OIDS = new HashMap<String, DERObjectIdentifier>();
 
     static {
         // Cipher
@@ -94,7 +100,7 @@ public final class AlgorithmDictionary {
 
     /**
      * Returns the cipher part of the provided transformation.
-     *
+     * 
      * @param transformation the transformation, e.g. "DES/CBC/PKCS5Padding"
      * @return the cipher, e.g. "DES"
      */
@@ -104,7 +110,7 @@ public final class AlgorithmDictionary {
 
     /**
      * Returns the name of the given algorithm.
-     *
+     * 
      * @param alg the algorithm to look up.
      * @return the algorithm name.
      */

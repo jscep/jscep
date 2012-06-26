@@ -22,10 +22,9 @@
  */
 package org.jscep.transaction;
 
-
 /**
  * This class represents the SCEP <code>failInfo</code> attribute.
- *
+ * 
  * @author David Grant
  */
 public enum FailInfo {
@@ -42,13 +41,17 @@ public enum FailInfo {
      */
     badRequest(2, "Transaction not permitted or supported"),
     /**
-     * The signingTime attribute from the PKCS#7 SignedAttributes was not sufficiently close to the system time
+     * The signingTime attribute from the PKCS#7 SignedAttributes was not
+     * sufficiently close to the system time
      */
-    badTime(3, "The signingTime attribute from the PKCS#7 SignedAttributes was not sufficiently close to the system time"),
+    badTime(
+            3,
+            "The signingTime attribute from the PKCS#7 SignedAttributes was not sufficiently close to the system time"),
     /**
      * No certificate could be identified matching the provided criteria
      */
-    badCertId(4, "No certificate could be identified matching the provided criteria");
+    badCertId(4,
+            "No certificate could be identified matching the provided criteria");
 
     private final int value;
     private final String desc;
@@ -70,7 +73,6 @@ public enum FailInfo {
     public String toString() {
         return name();
     }
-
 
     public static FailInfo valueOf(int value) {
         for (FailInfo failInfo : FailInfo.values()) {

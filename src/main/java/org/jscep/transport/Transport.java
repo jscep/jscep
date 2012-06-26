@@ -34,11 +34,11 @@ import org.jscep.request.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * This class represents a transport for sending a message to the SCEP server.
  * <p/>
  * Example usage:
+ * 
  * <pre>
  * Request&lt;?&gt; req = ...;
  * URL url = new URL("http://www.example.org/scep/pki-client.exe");
@@ -46,11 +46,12 @@ import org.slf4j.LoggerFactory;
  * Transport trans = Transport.createTransport(Transport.Method.POST, url, proxy);
  * Object res = trans.setMessage(req);
  * </pre>
- *
+ * 
  * @author David Grant
  */
 public abstract class Transport {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Transport.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(Transport.class);
 
     /**
      * Represents the <code>HTTP</code> method to be used for transport.
@@ -74,38 +75,37 @@ public abstract class Transport {
 
     /**
      * Returns the URL configured for use by this transport.
-     *
      * @return the URL.
      */
-    public URL getURL() {
+    public final URL getURL() {
         return url;
     }
 
     /**
-     * Sends the given request to the URL provided in the constructor and
-     * uses the {@link Request}'s content handler to parse the response.
-     *
-     * @param <T>     the response type.
-     * @param msg     the message to send.
+     * Sends the given request to the URL provided in the constructor and uses
+     * the {@link Request}'s content handler to parse the response.
+     * @param <T> the response type.
+     * @param msg the message to send.
      * @param handler the response handler
      * @return the response of type T.
-     * @throws IOException if any I/O error occurs.
-     * @throws TransportException 
-     * @throws InvalidContentTypeException 
-     * @throws InvalidContentException 
+     * @throws TransportException
+     * @throws InvalidContentTypeException
+     * @throws InvalidContentException
      */
-    abstract public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws TransportException, InvalidContentTypeException, InvalidContentException;
+    public abstract <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
+            throws TransportException, InvalidContentTypeException,
+            InvalidContentException;
 
     /**
      * Creates a new <code>Transport</code> of type <code>method</code> with the
      * provided URL over the provided proxy.
-     *
      * @param method the transport type.
-     * @param url    the URL.
-     * @param proxy  the proxy.
+     * @param url the URL.
+     * @param proxy the proxy.
      * @return a new Transport instance.
      */
-    public static Transport createTransport(Method method, URL url, Proxy proxy) {
+    public static Transport createTransport(final Method method, final URL url,
+            final Proxy proxy) {
         LOGGER.trace("Creating {} transport for {}", method, url);
         final Transport t;
 
@@ -121,17 +121,31 @@ public abstract class Transport {
     /**
      * Creates a new <code>Transport</code> of type <code>method</code> with the
      * provided URL.
-     *
      * @param method the transport type.
-     * @param url    the url.
+     * @param url the url.
      * @return a new Transport instance.
      */
-    public static Transport createTransport(Method method, URL url) {
+    public static Transport createTransport(final Method method, final URL url) {
         return createTransport(method, url, Proxy.NO_PROXY);
 
     }
 
-    URL getUrl(Operation op) throws MalformedURLException {
+    /**
+     * Returns the URL for the given operation.
+     * @param op the operation.
+     * @return the URL for the given operation.
+     * @throws MalformedURLException if the generated URL is malformed.
+     */
+    final URL getUrl(final Operation op) throws MalformedURLException {
         return new URL(url.toExternalForm() + "?operation=" + op.getName());
+    }
+
+    /**
+     * Converts the given object varargs to an object array.
+     * @param objects the objects to convert.
+     * @return the object array.
+     */
+    protected final Object[] varargs(final Object... objects) {
+        return objects;
     }
 }

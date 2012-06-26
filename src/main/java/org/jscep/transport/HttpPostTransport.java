@@ -46,83 +46,90 @@ import com.google.common.io.ByteStreams;
 
 /**
  * Transport representing the <code>HTTP POST</code> method
- *
+ * 
  * @author David Grant
  */
 public class HttpPostTransport extends Transport {
-	private static Logger LOGGER = LoggerFactory.getLogger(HttpPostTransport.class);
-	
+    private static Logger LOGGER = LoggerFactory
+            .getLogger(HttpPostTransport.class);
+
     HttpPostTransport(URL url) {
         super(url);
     }
 
     @Override
-    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws InvalidContentTypeException, TransportException, InvalidContentException {
+    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
+            throws InvalidContentTypeException, TransportException,
+            InvalidContentException {
         if (!PKCSReq.class.isAssignableFrom(msg.getClass())) {
-            throw new IllegalArgumentException("POST transport may not be used for " + msg.getOperation() + " messages.");
+            throw new IllegalArgumentException(
+                    "POST transport may not be used for " + msg.getOperation()
+                            + " messages.");
         }
 
         URL url;
-		try {
-			url = getUrl(msg.getOperation());
-		} catch (MalformedURLException e) {
-			// This is probably a configuration error
-			throw new TransportException(e);
-		}
-        HttpURLConnection conn;
-		try {
-			conn = (HttpURLConnection) url.openConnection();
-		} catch (IOException e) {
-			throw new TransportException(e);
-		}
         try {
-			conn.setRequestMethod("POST");
-		} catch (ProtocolException e) {
-			throw new TransportException(e);
-		}
+            url = getUrl(msg.getOperation());
+        } catch (MalformedURLException e) {
+            // This is probably a configuration error
+            throw new TransportException(e);
+        }
+        HttpURLConnection conn;
+        try {
+            conn = (HttpURLConnection) url.openConnection();
+        } catch (IOException e) {
+            throw new TransportException(e);
+        }
+        try {
+            conn.setRequestMethod("POST");
+        } catch (ProtocolException e) {
+            throw new TransportException(e);
+        }
         conn.setDoOutput(true);
-        
+
         byte[] message;
-		try {
-			message = Base64.decode(msg.getMessage().getBytes(US_ASCII.name()));
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            message = Base64.decode(msg.getMessage().getBytes(US_ASCII.name()));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
         OutputStream stream = null;
-		try {
-			stream = new BufferedOutputStream(conn.getOutputStream());
-			stream.write(message);
-		} catch (IOException e) {
-			throw new TransportException(e);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					LOGGER.error("Failed to close output stream", e);
-				}
-			}
-		}
+        try {
+            stream = new BufferedOutputStream(conn.getOutputStream());
+            stream.write(message);
+        } catch (IOException e) {
+            throw new TransportException(e);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    LOGGER.error("Failed to close output stream", e);
+                }
+            }
+        }
 
-		try {
-			int responseCode = conn.getResponseCode();
-        	String responseMessage = conn.getResponseMessage();
-        
-	        LOGGER.debug("Received '{} {}' when sending {} to {}", new Object[]{responseCode, responseMessage, msg, url});
-			if (responseCode != HttpURLConnection.HTTP_OK) {
-				throw new TransportException(responseCode + " " + responseMessage);
-	        }
-		} catch (IOException e) {
-			throw new TransportException("Error connecting to server.", e);
-		}
-        
+        try {
+            int responseCode = conn.getResponseCode();
+            String responseMessage = conn.getResponseMessage();
+
+            LOGGER.debug("Received '{} {}' when sending {} to {}",
+                    varargs(responseCode, responseMessage, msg, url));
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new TransportException(responseCode + " "
+                        + responseMessage);
+            }
+        } catch (IOException e) {
+            throw new TransportException("Error connecting to server.", e);
+        }
+
         byte[] response;
         try {
-			 response = ByteStreams.toByteArray(conn.getInputStream());
-		} catch (IOException e) {
-			throw new TransportException("Error reading response stream", e);
-		}
+            response = ByteStreams.toByteArray(conn.getInputStream());
+        } catch (IOException e) {
+            throw new TransportException("Error reading response stream", e);
+        }
 
         return handler.getContent(response, conn.getContentType());
     }

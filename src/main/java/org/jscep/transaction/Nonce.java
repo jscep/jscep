@@ -23,6 +23,8 @@ package org.jscep.transaction;
 
 import org.jscep.util.HexUtil;
 
+import com.google.common.primitives.Bytes;
+
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
@@ -30,78 +32,69 @@ import java.util.Random;
 /**
  * This class represents the <code>senderNonce</code> and
  * <code>recipientNonce</code> types.
- * 
  * @author David Grant
  */
-public class Nonce {
-	private static final Random RND = new SecureRandom();
-	private byte[] nonce;
+public final class Nonce {
+    private static final int NONCE_LENGTH = 16;
+    private static final Random RND = new SecureRandom();
+    private byte[] nonce;
 
-	/**
-	 * Creates a new nonce with the given byte array.
-	 * 
-	 * @param nonce
-	 *            the byte array.
-	 */
-	public Nonce(byte[] nonce) {
-		this.nonce = copy(nonce);
-	}
+    /**
+     * Creates a new nonce with the given byte array.
+     * @param nonce the byte array.
+     */
+    public Nonce(final byte[] nonce) {
+        this.nonce = Bytes.concat(nonce);
+    }
 
-	/**
-	 * Returns the nonce byte array.
-	 * 
-	 * @return the byte array.
-	 */
-	public byte[] getBytes() {
-		return copy(nonce);
-	}
+    /**
+     * Returns the nonce byte array.
+     * @return the byte array.
+     */
+    public byte[] getBytes() {
+        return Bytes.concat(nonce);
+    }
 
-	@Override
-	public String toString() {
-		return "Nonce [" + HexUtil.toHexString(nonce) + "]";
-	}
+    @Override
+    public String toString() {
+        return "Nonce [" + HexUtil.toHexString(nonce) + "]";
+    }
 
-	/**
-	 * Generates a new random Nonce.
-	 * <p/>
-	 * This method does not guarantee that multiple invocations will produce a
-	 * different nonce, as the byte generation is provided by a SecureRandom
-	 * instance.
-	 * 
-	 * @return the generated nonce.
-	 * @see java.security.SecureRandom
-	 */
-	public static Nonce nextNonce() {
-		byte[] bytes = new byte[16];
-		RND.nextBytes(bytes);
+    /**
+     * Generates a new random Nonce.
+     * <p/>
+     * This method does not guarantee that multiple invocations will produce a
+     * different nonce, as the byte generation is provided by a SecureRandom
+     * instance.
+     * @return the generated nonce.
+     * @see java.security.SecureRandom
+     */
+    public static Nonce nextNonce() {
+        byte[] bytes = new byte[NONCE_LENGTH];
+        RND.nextBytes(bytes);
 
-		return new Nonce(bytes);
-	}
+        return new Nonce(bytes);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-		Nonce nonce1 = (Nonce) o;
+        Nonce nonce1 = (Nonce) o;
 
-		return Arrays.equals(nonce, nonce1.nonce);
-	}
+        return Arrays.equals(nonce, nonce1.nonce);
+    }
 
-	@Override
-	public int hashCode() {
-		return Arrays.hashCode(nonce);
-	}
-
-	private static byte[] copy(byte[] source) {
-		byte[] dest = new byte[source.length];
-		System.arraycopy(source, 0, dest, 0, source.length);
-
-		return dest;
-	}
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(nonce);
+    }
 }

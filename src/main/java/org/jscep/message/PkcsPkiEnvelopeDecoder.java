@@ -41,7 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PkcsPkiEnvelopeDecoder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PkcsPkiEnvelopeDecoder.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(PkcsPkiEnvelopeDecoder.class);
     private final PrivateKey priKey;
 
     public PkcsPkiEnvelopeDecoder(PrivateKey priKey) {
@@ -51,10 +52,13 @@ public class PkcsPkiEnvelopeDecoder {
     public byte[] decode(EnvelopedData envelopedData) throws IOException {
         LOGGER.debug("Decrypting message: {}", envelopedData.getEncoded());
         // Figure out the type of secret key
-        final EncryptedContentInfo contentInfo = envelopedData.getEncryptedContentInfo();
-        final AlgorithmIdentifier contentAlg = contentInfo.getContentEncryptionAlgorithm();
+        final EncryptedContentInfo contentInfo = envelopedData
+                .getEncryptedContentInfo();
+        final AlgorithmIdentifier contentAlg = contentInfo
+                .getContentEncryptionAlgorithm();
         final String transformationName = getCipherName(contentAlg);
-        final String cipherName = AlgorithmDictionary.fromTransformation(transformationName);
+        final String cipherName = AlgorithmDictionary
+                .fromTransformation(transformationName);
         LOGGER.debug("Decrypting using {}", cipherName);
 
         Cipher decryptingCipher;
@@ -62,12 +66,13 @@ public class PkcsPkiEnvelopeDecoder {
         try {
             decryptingCipher = Cipher.getInstance(transformationName);
             params = AlgorithmParameters.getInstance(cipherName);
-            DEROctetString paramsString = (DEROctetString) contentAlg.getParameters();
+            DEROctetString paramsString = (DEROctetString) contentAlg
+                    .getParameters();
             params.init(paramsString.getEncoded());
         } catch (GeneralSecurityException e) {
-        	IOException ioe = new IOException();
-        	ioe.initCause(e);
-        	
+            IOException ioe = new IOException();
+            ioe.initCause(e);
+
             throw ioe;
         }
 
@@ -77,25 +82,30 @@ public class PkcsPkiEnvelopeDecoder {
             throw new IOException("Invalid RecipientInfos");
         }
 
-        byte[] encryptedContentBytes = contentInfo.getEncryptedContent().getOctets();
-        RecipientInfo encodable = RecipientInfo.getInstance(recipientInfos.getObjectAt(0));
-        KeyTransRecipientInfo keyTrans = KeyTransRecipientInfo.getInstance(encodable.getInfo());
+        byte[] encryptedContentBytes = contentInfo.getEncryptedContent()
+                .getOctets();
+        RecipientInfo encodable = RecipientInfo.getInstance(recipientInfos
+                .getObjectAt(0));
+        KeyTransRecipientInfo keyTrans = KeyTransRecipientInfo
+                .getInstance(encodable.getInfo());
         byte[] wrappedKey = keyTrans.getEncryptedKey().getOctets();
         try {
             // Decrypt the secret key
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.UNWRAP_MODE, priKey);
-            SecretKey secretKey = (SecretKey) cipher.unwrap(wrappedKey, cipherName, Cipher.SECRET_KEY);
+            SecretKey secretKey = (SecretKey) cipher.unwrap(wrappedKey,
+                    cipherName, Cipher.SECRET_KEY);
             // Use the secret key to decrypt the content
             decryptingCipher.init(Cipher.DECRYPT_MODE, secretKey, params);
-            byte[] contentBytes = decryptingCipher.doFinal(encryptedContentBytes);
+            byte[] contentBytes = decryptingCipher
+                    .doFinal(encryptedContentBytes);
 
             LOGGER.debug("Decrypted to: {}", contentBytes);
             return contentBytes;
         } catch (GeneralSecurityException e) {
-        	IOException ioe = new IOException();
-        	ioe.initCause(e);
-        	
+            IOException ioe = new IOException();
+            ioe.initCause(e);
+
             throw ioe;
         }
     }

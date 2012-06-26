@@ -28,9 +28,10 @@ package org.jscep.request;
  * Once an instance of a <code>Request</code> implementation has been obtained,
  * it can be sent to a SCEP server by using an instance of
  * {@link org.jscep.transport.Transport}.
- *
+ * 
  * @author David Grant
- * @see org.jscep.transport.Transport#sendRequest(Request, org.jscep.content.ScepContentHandler)
+ * @see org.jscep.transport.Transport#sendRequest(Request,
+ *      org.jscep.content.ScepContentHandler)
  */
 public abstract class Request {
     private final Operation operation;
@@ -41,7 +42,7 @@ public abstract class Request {
 
     /**
      * Returns the name of this operation.
-     *
+     * 
      * @return the name of this operation.
      */
     public Operation getOperation() {
@@ -50,7 +51,7 @@ public abstract class Request {
 
     /**
      * Returns the message for this request.
-     *
+     * 
      * @return the message.
      */
     public abstract String getMessage();

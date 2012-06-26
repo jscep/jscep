@@ -22,10 +22,9 @@
  */
 package org.jscep.request;
 
-
 /**
  * This class represents a <code>GetCACaps</code> request.
- *
+ * 
  * @author David Grant
  */
 public final class GetCaCaps extends Request {

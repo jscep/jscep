@@ -33,16 +33,16 @@ import com.google.common.primitives.Bytes;
 
 /**
  * This class represents a <code>PKCSReq</code> request.
- *
+ * 
  * @author David Grant
  */
 public class PKCSReq extends Request {
     private final byte[] msgData;
 
     /**
-     * Creates a new instance of this class using the provided pkiMessage
-     * and response handler.
-     *
+     * Creates a new instance of this class using the provided pkiMessage and
+     * response handler.
+     * 
      * @param msgData the pkiMessage to use.
      */
     public PKCSReq(byte[] msgData) {
@@ -58,10 +58,10 @@ public class PKCSReq extends Request {
         byte[] bytes = Base64.encode(msgData);
 
         try {
-			return new String(bytes, US_ASCII.name());
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+            return new String(bytes, US_ASCII.name());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

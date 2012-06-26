@@ -24,23 +24,25 @@ package org.jscep.content;
 
 /**
  * This class handles responses to <code>PKCSReq</code> requests.
- *
+ * 
  * @author David Grant
  */
 public final class CertRepContentHandler implements ScepContentHandler<byte[]> {
     private static final String PKI_MESSAGE = "application/x-pki-message";
 
-	/**
+    /**
      * {@inheritDoc}
-     * @throws InvalidContentTypeException 
-     *
+     * 
+     * @throws InvalidContentTypeException
+     * 
      * @throws IOException
      */
-    public byte[] getContent(byte[] content, String mimeType) throws InvalidContentTypeException {
+    public byte[] getContent(byte[] content, String mimeType)
+            throws InvalidContentTypeException {
         if (mimeType.startsWith(PKI_MESSAGE)) {
             return content;
         } else {
-        	throw new InvalidContentTypeException(mimeType, PKI_MESSAGE);
+            throw new InvalidContentTypeException(mimeType, PKI_MESSAGE);
         }
     }
 }

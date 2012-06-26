@@ -34,10 +34,9 @@ import org.jscep.util.HexUtil;
 
 import com.google.common.primitives.Bytes;
 
-
 /**
  * This class represents the SCEP <code>transactionID</code> attribute.
- *
+ * 
  * @author David Grant
  */
 public final class TransactionId {
@@ -60,27 +59,29 @@ public final class TransactionId {
 
     private TransactionId() {
         try {
-			id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes(US_ASCII.name());
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+            id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes(
+                    US_ASCII.name());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public byte[] getBytes() {
         return Bytes.concat(id);
     }
 
-
     /**
      * Creates a new Transaction Id
      * <p/>
-     * Each call to this method will return the same transaction ID for the same parameters.
-     *
-     * @param pubKey          public key
+     * Each call to this method will return the same transaction ID for the same
+     * parameters.
+     * 
+     * @param pubKey public key
      * @param digestAlgorithm digest algorithm
      * @return the new Transaction Id
      */
-    public static TransactionId createTransactionId(PublicKey pubKey, String digestAlgorithm) {
+    public static TransactionId createTransactionId(PublicKey pubKey,
+            String digestAlgorithm) {
         return new TransactionId(pubKey, digestAlgorithm);
     }
 
@@ -88,7 +89,7 @@ public final class TransactionId {
      * Creates a new Transaction Id
      * <p/>
      * Each call to this method will return a different transaction ID.
-     *
+     * 
      * @return the new Transaction Id
      */
     public static TransactionId createTransactionId() {
@@ -98,16 +99,18 @@ public final class TransactionId {
     @Override
     public String toString() {
         try {
-			return new String(id, US_ASCII.name());
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+            return new String(id, US_ASCII.name());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         TransactionId that = (TransactionId) o;
 
@@ -117,7 +120,7 @@ public final class TransactionId {
 
     @Override
     public int hashCode() {
-   		return Arrays.hashCode(id);
+        return Arrays.hashCode(id);
 
     }
 }

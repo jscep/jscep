@@ -50,64 +50,65 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 public final class IssuerAndSubject extends ASN1Object {
-	private static final Logger LOGGER = LoggerFactory.getLogger(IssuerAndSubject.class);
-	private final X500Name issuer;
-	private final X500Name subject;
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(IssuerAndSubject.class);
+    private final X500Name issuer;
+    private final X500Name subject;
 
-	public IssuerAndSubject(ASN1Sequence seq) {
-		issuer = X500Name.getInstance(seq.getObjectAt(0));
-		subject = X500Name.getInstance(seq.getObjectAt(1));
-	}
+    public IssuerAndSubject(ASN1Sequence seq) {
+        issuer = X500Name.getInstance(seq.getObjectAt(0));
+        subject = X500Name.getInstance(seq.getObjectAt(1));
+    }
 
-	public IssuerAndSubject(X500Name issuer, X500Name subject) {
-		this.issuer = issuer;
-		this.subject = subject;
-	}
+    public IssuerAndSubject(X500Name issuer, X500Name subject) {
+        this.issuer = issuer;
+        this.subject = subject;
+    }
 
-	public IssuerAndSubject(byte[] bytes) {
-		this(toDERSequence(bytes));
-	}
+    public IssuerAndSubject(byte[] bytes) {
+        this(toDERSequence(bytes));
+    }
 
-	public X500Name getIssuer() {
-		return issuer;
-	}
+    public X500Name getIssuer() {
+        return issuer;
+    }
 
-	public X500Name getSubject() {
-		return subject;
-	}
+    public X500Name getSubject() {
+        return subject;
+    }
 
-	@Override
-	public ASN1Primitive toASN1Primitive() {
-		ASN1EncodableVector v = new ASN1EncodableVector();
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+        ASN1EncodableVector v = new ASN1EncodableVector();
 
-		v.add(issuer);
-		v.add(subject);
+        v.add(issuer);
+        v.add(subject);
 
-		return new DERSequence(v);
-	}
+        return new DERSequence(v);
+    }
 
-	public static IssuerAndSubject getInstance(ASN1Encodable encodable) {
-		final ASN1Sequence seq = DERSequence.getInstance(encodable);
+    public static IssuerAndSubject getInstance(ASN1Encodable encodable) {
+        final ASN1Sequence seq = DERSequence.getInstance(encodable);
 
-		return new IssuerAndSubject(seq);
-	}
+        return new IssuerAndSubject(seq);
+    }
 
-	private static ASN1Sequence toDERSequence(byte[] bytes) {
-		ASN1InputStream dIn = null;
-		try {
-			dIn = new ASN1InputStream(bytes);
+    private static ASN1Sequence toDERSequence(byte[] bytes) {
+        ASN1InputStream dIn = null;
+        try {
+            dIn = new ASN1InputStream(bytes);
 
-			return (ASN1Sequence) dIn.readObject();
-		} catch (Exception e) {
-			throw new IllegalArgumentException("badly encoded request");
-		} finally {
-			if (dIn != null) {
-				try {
-					dIn.close();
-				} catch (IOException e) {
-					LOGGER.error("Failed to close ASN.1 stream", e);
-				}
-			}
-		}
-	}
+            return (ASN1Sequence) dIn.readObject();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("badly encoded request");
+        } finally {
+            if (dIn != null) {
+                try {
+                    dIn.close();
+                } catch (IOException e) {
+                    LOGGER.error("Failed to close ASN.1 stream", e);
+                }
+            }
+        }
+    }
 }

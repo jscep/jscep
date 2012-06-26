@@ -38,7 +38,8 @@ public abstract class Transaction {
     protected CertStore certStore;
     protected Transport transport;
 
-    public Transaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder) {
+    public Transaction(Transport transport, PkiMessageEncoder encoder,
+            PkiMessageDecoder decoder) {
         this.transport = transport;
         this.encoder = encoder;
         this.decoder = decoder;
@@ -46,19 +47,21 @@ public abstract class Transaction {
 
     /**
      * Retrieve the reason for failure.
-     *
+     * 
      * @return the reason for failure.
      */
     public FailInfo getFailInfo() {
         if (state != State.CERT_NON_EXISTANT) {
-            throw new IllegalStateException("No failure has been received.  Check state!");
+            throw new IllegalStateException(
+                    "No failure has been received.  Check state!");
         }
         return failInfo;
     }
 
     public CertStore getCertStore() {
         if (state != State.CERT_ISSUED) {
-            throw new IllegalStateException("No certstore has been received.  Check state!");
+            throw new IllegalStateException(
+                    "No certstore has been received.  Check state!");
         }
         return certStore;
     }
@@ -76,7 +79,7 @@ public abstract class Transaction {
 
     /**
      * This class represents the state of a transaction.
-     *
+     * 
      * @author David Grant
      */
     public static enum State {
@@ -87,15 +90,15 @@ public abstract class Transaction {
         /**
          * The transaction is in a failed state.
          * <p/>
-         * Clients should use {@link Transaction#getFailInfo()} to retrieve
-         * the failure reason.
+         * Clients should use {@link Transaction#getFailInfo()} to retrieve the
+         * failure reason.
          */
         CERT_NON_EXISTANT,
         /**
          * The transaction has succeeded.
          * <p/>
-         * Clients should use {@link Transaction#getCertStore()} to
-         * retrieve the enrolled certificates.
+         * Clients should use {@link Transaction#getCertStore()} to retrieve the
+         * enrolled certificates.
          */
         CERT_ISSUED,
     }

@@ -40,15 +40,17 @@ public class PkiResponse<T> extends PkiMessage<T> {
     private final FailInfo failInfo;
 
     /**
-     * @param transId        the transaction ID
-     * @param messageType    the message type
-     * @param senderNonce    the sender nonce
+     * @param transId the transaction ID
+     * @param messageType the message type
+     * @param senderNonce the sender nonce
      * @param recipientNonce the recipient nonce
-     * @param pkiStatus      the PKI status
-     * @param messageData    the message data
-     * @param failInfo       the fail info enum
+     * @param pkiStatus the PKI status
+     * @param messageData the message data
+     * @param failInfo the fail info enum
      */
-    public PkiResponse(TransactionId transId, MessageType messageType, Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus, T messageData, FailInfo failInfo) {
+    public PkiResponse(TransactionId transId, MessageType messageType,
+            Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus,
+            T messageData, FailInfo failInfo) {
         super(transId, messageType, senderNonce, messageData);
 
         this.recipientNonce = recipientNonce;
@@ -81,12 +83,12 @@ public class PkiResponse<T> extends PkiMessage<T> {
 
     @Override
     public Map<String, Object> getAttributes() {
-    	Map<String, Object> attr = new HashMap<String, Object>();
-    	attr.put(ScepObjectIdentifiers.PKI_STATUS, pkiStatus);
-    	attr.put(ScepObjectIdentifiers.RECIPIENT_NONCE, recipientNonce);
-    	
+        Map<String, Object> attr = new HashMap<String, Object>();
+        attr.put(ScepObjectIdentifiers.PKI_STATUS, pkiStatus);
+        attr.put(ScepObjectIdentifiers.RECIPIENT_NONCE, recipientNonce);
+
         if (pkiStatus == PkiStatus.FAILURE) {
-        	attr.put(ScepObjectIdentifiers.FAIL_INFO, failInfo);
+            attr.put(ScepObjectIdentifiers.FAIL_INFO, failInfo);
         }
 
         attr.putAll(super.getAttributes());
@@ -95,10 +97,8 @@ public class PkiResponse<T> extends PkiMessage<T> {
     }
 
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("pkiStatus", pkiStatus)
-                .add("rcptNonce", recipientNonce)
-                .add("failInfo", failInfo)
+        return Objects.toStringHelper(this).add("pkiStatus", pkiStatus)
+                .add("rcptNonce", recipientNonce).add("failInfo", failInfo)
                 .toString();
     }
 }

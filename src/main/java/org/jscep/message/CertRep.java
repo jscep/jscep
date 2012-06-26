@@ -31,36 +31,42 @@ import org.jscep.transaction.TransactionId;
 public class CertRep extends PkiResponse<byte[]> {
     /**
      * Creates a new CertRep to indicate <em>success</em> state.
-     *
-     * @param transId        the transaction ID
-     * @param senderNonce    the sender nonce
+     * 
+     * @param transId the transaction ID
+     * @param senderNonce the sender nonce
      * @param recipientNonce the recipient nonce
-     * @param messageData    the message data
+     * @param messageData the message data
      */
-    public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, byte[] messageData) {
-        super(transId, MessageType.CERT_REP, senderNonce, recipientNonce, PkiStatus.SUCCESS, messageData, null);
+    public CertRep(TransactionId transId, Nonce senderNonce,
+            Nonce recipientNonce, byte[] messageData) {
+        super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
+                PkiStatus.SUCCESS, messageData, null);
     }
 
     /**
      * Creates a new CertRep to indicate <em>failure</em> state.
-     *
-     * @param transId        the transaction ID
-     * @param senderNonce    the sender nonce
+     * 
+     * @param transId the transaction ID
+     * @param senderNonce the sender nonce
      * @param recipientNonce the recipient nonce
-     * @param failInfo       the fail info enum
+     * @param failInfo the fail info enum
      */
-    public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce, FailInfo failInfo) {
-        super(transId, MessageType.CERT_REP, senderNonce, recipientNonce, PkiStatus.FAILURE, null, failInfo);
+    public CertRep(TransactionId transId, Nonce senderNonce,
+            Nonce recipientNonce, FailInfo failInfo) {
+        super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
+                PkiStatus.FAILURE, null, failInfo);
     }
 
     /**
      * Creates a new CertRep to indicate <em>pending</em> state.
-     *
-     * @param transId        the transaction ID
-     * @param senderNonce    the sender nonce
+     * 
+     * @param transId the transaction ID
+     * @param senderNonce the sender nonce
      * @param recipientNonce the recipient nonce
      */
-    public CertRep(TransactionId transId, Nonce senderNonce, Nonce recipientNonce) {
-        super(transId, MessageType.CERT_REP, senderNonce, recipientNonce, PkiStatus.PENDING, null, null);
+    public CertRep(TransactionId transId, Nonce senderNonce,
+            Nonce recipientNonce) {
+        super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
+                PkiStatus.PENDING, null, null);
     }
 }

@@ -52,11 +52,9 @@ import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
 
-
 /**
- * This class contains utility methods for manipulating SignedData
- * objects.
- *
+ * This class contains utility methods for manipulating SignedData objects.
+ * 
  * @author David Grant
  */
 public final class SignedDataUtil {
@@ -68,71 +66,82 @@ public final class SignedDataUtil {
 
     /**
      * Extracts a CertStore from the provided PKCS #7 SignedData object.
-     *
+     * 
      * @param sd the PKCS #7 SignedData object.
      * @return the CertStore.
      * @throws GeneralSecurityException if any security error is encountered.
      */
     @SuppressWarnings("unchecked")
-	public static CertStore extractCertStore(CMSSignedData sd) throws GeneralSecurityException, IOException {
-        final CertificateFactory factory = CertificateFactory.getInstance("X.509");
+    public static CertStore extractCertStore(CMSSignedData sd)
+            throws GeneralSecurityException, IOException {
+        final CertificateFactory factory = CertificateFactory
+                .getInstance("X.509");
         final Collection<Object> collection = new HashSet<Object>();
         final Store certs = sd.getCertificates();
         final Store crls = sd.getCRLs();
 
         if (certs != null) {
-        	Collection<X509CertificateHolder> certColl = certs.getMatches(null);
-        	for (X509CertificateHolder holder : certColl) {
-                ByteArrayInputStream bais = new ByteArrayInputStream(holder.getEncoded());
+            Collection<X509CertificateHolder> certColl = certs.getMatches(null);
+            for (X509CertificateHolder holder : certColl) {
+                ByteArrayInputStream bais = new ByteArrayInputStream(
+                        holder.getEncoded());
                 Certificate cert = factory.generateCertificate(bais);
                 collection.add(cert);
             }
         }
         if (crls != null) {
-        	Collection<X509CRLHolder> crlColl = crls.getMatches(null);
-        	for (X509CRLHolder holder : crlColl) {
-                ByteArrayInputStream bais = new ByteArrayInputStream(holder.getEncoded());
+            Collection<X509CRLHolder> crlColl = crls.getMatches(null);
+            for (X509CRLHolder holder : crlColl) {
+                ByteArrayInputStream bais = new ByteArrayInputStream(
+                        holder.getEncoded());
                 CRL crl = factory.generateCRL(bais);
                 collection.add(crl);
             }
         }
 
-        final CertStoreParameters parameters = new CollectionCertStoreParameters(collection);
+        final CertStoreParameters parameters = new CollectionCertStoreParameters(
+                collection);
         return CertStore.getInstance("Collection", parameters);
     }
 
     /**
-     * Checks if the provided signedData was signed by the entity represented
-     * by the provided certificate.
-     *
+     * Checks if the provided signedData was signed by the entity represented by
+     * the provided certificate.
+     * 
      * @param sd the signedData to verify.
-     * @param signer     the signing entity.
-     * @return <code>true</code> if the signedData was signed by the entity, <code>false</code> otherwise.
+     * @param signer the signing entity.
+     * @return <code>true</code> if the signedData was signed by the entity,
+     *         <code>false</code> otherwise.
      */
     @SuppressWarnings("unchecked")
-	public static boolean isSignedBy(CMSSignedData sd, X509Certificate signer) {
-        Collection<SignerInformation> signerInfos = sd.getSignerInfos().getSigners();
+    public static boolean isSignedBy(CMSSignedData sd, X509Certificate signer) {
+        Collection<SignerInformation> signerInfos = sd.getSignerInfos()
+                .getSigners();
         for (SignerInformation signerInfo : signerInfos) {
-        	CMSSignatureAlgorithmNameGenerator sigNameGenerator = new DefaultCMSSignatureAlgorithmNameGenerator();
-        	SignatureAlgorithmIdentifierFinder sigAlgorithmFinder = new DefaultSignatureAlgorithmIdentifierFinder();
-        	ContentVerifierProvider verifierProvider;
-			try {
-				verifierProvider = new JcaContentVerifierProviderBuilder().build(signer);
-			} catch (OperatorCreationException e) {
-				throw new RuntimeException(e);
-			}
-        	DigestCalculatorProvider digestProvider;
-			try {
-				digestProvider = new JcaDigestCalculatorProviderBuilder().build();
-			} catch (OperatorCreationException e1) {
-				throw new RuntimeException(e1);
-			}
-        	SignerInformationVerifier verifier = new SignerInformationVerifier(sigNameGenerator, sigAlgorithmFinder, verifierProvider, digestProvider);
-        	try {
-				return signerInfo.verify(verifier);
-			} catch (CMSException e) {
-				return false;
-			}
+            CMSSignatureAlgorithmNameGenerator sigNameGenerator = new DefaultCMSSignatureAlgorithmNameGenerator();
+            SignatureAlgorithmIdentifierFinder sigAlgorithmFinder = new DefaultSignatureAlgorithmIdentifierFinder();
+            ContentVerifierProvider verifierProvider;
+            try {
+                verifierProvider = new JcaContentVerifierProviderBuilder()
+                        .build(signer);
+            } catch (OperatorCreationException e) {
+                throw new RuntimeException(e);
+            }
+            DigestCalculatorProvider digestProvider;
+            try {
+                digestProvider = new JcaDigestCalculatorProviderBuilder()
+                        .build();
+            } catch (OperatorCreationException e1) {
+                throw new RuntimeException(e1);
+            }
+            SignerInformationVerifier verifier = new SignerInformationVerifier(
+                    sigNameGenerator, sigAlgorithmFinder, verifierProvider,
+                    digestProvider);
+            try {
+                return signerInfo.verify(verifier);
+            } catch (CMSException e) {
+                return false;
+            }
         }
 
         return false;

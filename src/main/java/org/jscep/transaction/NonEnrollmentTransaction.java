@@ -46,7 +46,9 @@ public class NonEnrollmentTransaction extends Transaction {
     private final TransactionId transId;
     private final PkiRequest<? extends ASN1Encodable> request;
 
-    public NonEnrollmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, IssuerAndSerialNumber iasn, MessageType msgType) {
+    public NonEnrollmentTransaction(Transport transport,
+            PkiMessageEncoder encoder, PkiMessageDecoder decoder,
+            IssuerAndSerialNumber iasn, MessageType msgType) {
         super(transport, encoder, decoder);
         this.transId = TransactionId.createTransactionId();
 
@@ -64,16 +66,16 @@ public class NonEnrollmentTransaction extends Transaction {
     }
 
     public State send() throws IOException, TransportException {
-    	final CertRepContentHandler handler = new CertRepContentHandler();
+        final CertRepContentHandler handler = new CertRepContentHandler();
         final byte[] signedData = encoder.encode(request);
         byte[] inMsg;
-		try {
-			inMsg = transport.sendRequest(new PKCSReq(signedData), handler);
-		} catch (InvalidContentTypeException e) {
-			throw ioe(e);
-		} catch (InvalidContentException e) {
-			throw ioe(e);
-		}
+        try {
+            inMsg = transport.sendRequest(new PKCSReq(signedData), handler);
+        } catch (InvalidContentTypeException e) {
+            throw ioe(e);
+        } catch (InvalidContentException e) {
+            throw ioe(e);
+        }
         final CertRep response = (CertRep) decoder.decode(inMsg);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
@@ -81,8 +83,9 @@ public class NonEnrollmentTransaction extends Transaction {
             state = State.CERT_NON_EXISTANT;
         } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
             try {
-                CMSSignedData responseSd = new CMSSignedData(response.getMessageData());
-                
+                CMSSignedData responseSd = new CMSSignedData(
+                        response.getMessageData());
+
                 certStore = CertStoreUtils.fromSignedData(responseSd);
             } catch (CMSException e) {
                 throw ioe(e);
@@ -95,10 +98,10 @@ public class NonEnrollmentTransaction extends Transaction {
         return state;
     }
 
-	private IOException ioe(Throwable t) {
-		IOException ioe = new IOException();
-		ioe.initCause(t);
-		
-		return ioe;
-	}
+    private IOException ioe(Throwable t) {
+        IOException ioe = new IOException();
+        ioe.initCause(t);
+
+        return ioe;
+    }
 }

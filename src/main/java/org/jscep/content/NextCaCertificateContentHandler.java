@@ -39,12 +39,13 @@ import org.jscep.pkcs7.SignedDataUtil;
 
 /**
  * This class handles responses to <code>GetNextCACert</code> requests.
- *
+ * 
  * @author David Grant
  */
-public class NextCaCertificateContentHandler implements ScepContentHandler<List<X509Certificate>> {
+public class NextCaCertificateContentHandler implements
+        ScepContentHandler<List<X509Certificate>> {
     private static final String NEXT_CA_CERT = "application/x-x509-next-ca-cert";
-	private final X509Certificate issuer;
+    private final X509Certificate issuer;
 
     public NextCaCertificateContentHandler(X509Certificate issuer) {
         this.issuer = issuer;
@@ -52,9 +53,11 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
 
     /**
      * {@inheritDoc}
-     * @throws InvalidContentTypeException 
+     * 
+     * @throws InvalidContentTypeException
      */
-    public List<X509Certificate> getContent(byte[] content, String mimeType) throws InvalidContentTypeException {
+    public List<X509Certificate> getContent(byte[] content, String mimeType)
+            throws InvalidContentTypeException {
         if (mimeType.startsWith(NEXT_CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 
@@ -65,22 +68,24 @@ public class NextCaCertificateContentHandler implements ScepContentHandler<List<
             Collection<? extends Certificate> collection;
             try {
                 CMSSignedData cmsMessageData = new CMSSignedData(content);
-                ContentInfo cmsContentInfo = ContentInfo.getInstance(cmsMessageData.getEncoded());
+                ContentInfo cmsContentInfo = ContentInfo
+                        .getInstance(cmsMessageData.getEncoded());
 
-                // TODO: This must be signed by the current CA.
                 final CMSSignedData sd = new CMSSignedData(cmsContentInfo);
                 if (!SignedDataUtil.isSignedBy(sd, issuer)) {
                     throw new InvalidContentTypeException("Invalid Signer");
                 }
-                // The content of the SignedData PKCS#7 [RFC2315] is a degenerate
-                // certificates-only Signed-data (Section 3.3) message containing the
+                // The content of the SignedData PKCS#7 [RFC2315] is a
+                // degenerate
+                // certificates-only Signed-data (Section 3.3) message
+                // containing the
                 // new CA certificate and any new RA certificates, as defined in
                 // Section 5.2.1.1.2, to be used when the current CA certificate
                 // expires.
                 CertStore store = SignedDataUtil.extractCertStore(sd);
                 collection = store.getCertificates(new X509CertSelector());
             } catch (IOException e) {
-            	throw new InvalidContentTypeException(e);
+                throw new InvalidContentTypeException(e);
             } catch (GeneralSecurityException e) {
                 throw new InvalidContentTypeException(e);
             } catch (CMSException e) {

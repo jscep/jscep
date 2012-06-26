@@ -23,36 +23,50 @@ package org.jscep.request;
 
 /**
  * This enum represents the different types of transaction operations in SCEP.
- *
+ * 
  * @author David Grant
  */
 public enum Operation {
     /**
      * The operation for <tt>GetCACaps</tt>
-     *
-     * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#appendix-C.1">SCEP Internet-Draft Reference</a>
+     * 
+     * @see <a
+     *      href="http://tools.ietf.org/html/draft-nourse-scep-20#appendix-C.1">SCEP
+     *      Internet-Draft Reference</a>
      */
     GET_CA_CAPS("GetCACaps"),
     /**
      * The operation for <tt>GetCACert</tt>
-     *
-     * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.1">SCEP Internet-Draft Reference</a>
+     * 
+     * @see <a
+     *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.1">SCEP
+     *      Internet-Draft Reference</a>
      */
     GET_CA_CERT("GetCACert"),
     /**
      * The operation for <tt>GetNextCACert</tt>
-     *
-     * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.6">SCEP Internet-Draft Reference</a>
+     * 
+     * @see <a
+     *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.6">SCEP
+     *      Internet-Draft Reference</a>
      */
     GET_NEXT_CA_CERT("GetNextCACert"),
     /**
-     * The operation for <tt>PKCSReq</tt>, <tt>GetCertInitial</tt>, <tt>GetCert</tt>
-     * and <tt>GetCRL</tt>
-     *
-     * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.2">SCEP Internet-Draft Reference</a>
-     * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.3">SCEP Internet-Draft Reference</a>
-     * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.4">SCEP Internet-Draft Reference</a>
-     * @see <a href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.5">SCEP Internet-Draft Reference</a>
+     * The operation for <tt>PKCSReq</tt>, <tt>GetCertInitial</tt>,
+     * <tt>GetCert</tt> and <tt>GetCRL</tt>
+     * 
+     * @see <a
+     *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.2">SCEP
+     *      Internet-Draft Reference</a>
+     * @see <a
+     *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.3">SCEP
+     *      Internet-Draft Reference</a>
+     * @see <a
+     *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.4">SCEP
+     *      Internet-Draft Reference</a>
+     * @see <a
+     *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.5">SCEP
+     *      Internet-Draft Reference</a>
      */
     PKI_OPERATION("PKIOperation");
 

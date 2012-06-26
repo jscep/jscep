@@ -22,10 +22,9 @@
  */
 package org.jscep.request;
 
-
 /**
  * This class represents a <code>GetCACert</code> request.
- *
+ * 
  * @author David Grant
  */
 public final class GetCaCert extends Request {
@@ -33,7 +32,7 @@ public final class GetCaCert extends Request {
 
     /**
      * Creates a new GetCACert request with the given CA identification string.
-     *
+     * 
      * @param caIdentifier the CA identification string.
      */
     public GetCaCert(String caIdentifier) {

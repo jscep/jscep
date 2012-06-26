@@ -21,22 +21,22 @@
  */
 package org.jscep.content;
 
-
 /**
  * This interface represents a mechanism for handling specific SCEP content.
- *
+ * 
  * @param <T> the content handled by the handler implementation
  * @author David Grant
  */
 public interface ScepContentHandler<T> {
     /**
      * Read and interpret the content from the input stream.
-     *
-     * @param in       the input stream containing the content.
+     * 
+     * @param in the input stream containing the content.
      * @param mimeType the type of the input stream.
      * @return the content in a usage form.
-     * @throws InvalidContentTypeException 
-     * @throws InvalidContentException 
+     * @throws InvalidContentTypeException
+     * @throws InvalidContentException
      */
-    T getContent(byte[] response, String mimeType) throws InvalidContentTypeException, InvalidContentException;
+    T getContent(byte[] response, String mimeType)
+            throws InvalidContentTypeException, InvalidContentException;
 }

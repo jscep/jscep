@@ -30,20 +30,19 @@ import org.slf4j.LoggerFactory;
 /**
  * This class provides support for detecting replay attacks.
  * <p/>
- * The size of this queue can be altered depending on performance
- * requirements.
- *
+ * The size of this queue can be altered depending on performance requirements.
+ * 
  * @author David Grant
  */
 public final class NonceQueue {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NonceQueue.class);
+    private static final int DEFAULT_QUEUE_SIZE = 20;
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(NonceQueue.class);
     private final int size;
     private final Queue<Nonce> backingQueue;
-    
 
     /**
      * Creates a new <tt>NonceQueue</tt> of the specified size.
-     *
      * @param size the size of the queue.
      */
     public NonceQueue(int size) {
@@ -52,22 +51,36 @@ public final class NonceQueue {
     }
 
     /**
+     * Creates a NonceQueue of a default size.
+     */
+    public NonceQueue() {
+        this(DEFAULT_QUEUE_SIZE);
+    }
+
+    /**
      * Inserts the specified nonce into this queue if possible.
      * <p/>
-     * This queue will maintain a fixed size, pushing out the oldest
-     * nonce first, so this method will always return true.
+     * This queue will maintain a fixed size, pushing out the oldest nonce
+     * first, so this method will always return true.
+     * @param nonce the nonce to add.
+     * @return <tt>true</tt> if the nonce is added, <tt>false</tt> otherwise.
      */
-    public synchronized boolean add(Nonce nonce) {
+    public synchronized boolean add(final Nonce nonce) {
         if (backingQueue.size() == size) {
             Nonce removedNonce = backingQueue.poll();
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Removed " + removedNonce + " from head of queue.");
+                LOGGER.trace("Removed {} from head of queue.", removedNonce);
             }
         }
         return backingQueue.offer(nonce);
     }
 
-	public synchronized boolean contains(Nonce nonce) {
-		return backingQueue.contains(nonce);
-	}
+    /**
+     * Checks if the queue contains the given nonce.
+     * @param nonce the nonce to check for.
+     * @return <tt>true</tt> if the nonce is present, <tt>false</tt> otherwise.
+     */
+    public synchronized boolean contains(final Nonce nonce) {
+        return backingQueue.contains(nonce);
+    }
 }

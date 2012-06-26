@@ -56,104 +56,102 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
  * @author David Grant
  */
 public final class X509Util {
-	private X509Util() {
-		// This constructor will never be invoked.
-	}
+    private X509Util() {
+        // This constructor will never be invoked.
+    }
 
-	/**
-	 * Creates a self-signed ephemeral certificate.
-	 * <p/>
-	 * The resulting certificate will have a not-before date of yesterday, and
-	 * not-after date of tomorrow.
-	 * 
-	 * @param subject
-	 *            the subject to certify.
-	 * @param keyPair
-	 *            the key pair to sign the certificate with.
-	 * @return a new certificate.
-	 * @throws GeneralSecurityException
-	 *             if any security problem occurs.
-	 */
-	public static X509Certificate createEphemeralCertificate(
-			X500Principal subject, KeyPair keyPair)
-			throws GeneralSecurityException {
-		final Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, -1);
-		final Date notBefore = cal.getTime();
-		cal.add(Calendar.DATE, 2);
-		final Date notAfter = cal.getTime();
+    /**
+     * Creates a self-signed ephemeral certificate.
+     * <p/>
+     * The resulting certificate will have a not-before date of yesterday, and
+     * not-after date of tomorrow.
+     * 
+     * @param subject the subject to certify.
+     * @param keyPair the key pair to sign the certificate with.
+     * @return a new certificate.
+     * @throws GeneralSecurityException if any security problem occurs.
+     */
+    public static X509Certificate createEphemeralCertificate(
+            X500Principal subject, KeyPair keyPair)
+            throws GeneralSecurityException {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        final Date notBefore = cal.getTime();
+        cal.add(Calendar.DATE, 2);
+        final Date notAfter = cal.getTime();
 
-		ContentSigner signer;
-		try {
-			signer = new JcaContentSignerBuilder("SHA1with" + keyPair.getPublic().getAlgorithm()).build(keyPair.getPrivate());
-		} catch (OperatorCreationException e) {
-			throw new GeneralSecurityException(e);
-		}
-		JcaX509v1CertificateBuilder builder = new JcaX509v1CertificateBuilder(subject, BigInteger.ONE, notBefore, notAfter, subject, keyPair.getPublic());
-		X509CertificateHolder holder = builder.build(signer);
-		return new JcaX509CertificateConverter().getCertificate(holder);
-	}
+        ContentSigner signer;
+        try {
+            signer = new JcaContentSignerBuilder("SHA1with"
+                    + keyPair.getPublic().getAlgorithm()).build(keyPair
+                    .getPrivate());
+        } catch (OperatorCreationException e) {
+            throw new GeneralSecurityException(e);
+        }
+        JcaX509v1CertificateBuilder builder = new JcaX509v1CertificateBuilder(
+                subject, BigInteger.ONE, notBefore, notAfter, subject,
+                keyPair.getPublic());
+        X509CertificateHolder holder = builder.build(signer);
+        return new JcaX509CertificateConverter().getCertificate(holder);
+    }
 
-	/**
-	 * Converts a Java SE X500Principal to a Bouncy Castle X509Name.
-	 * 
-	 * @param principal
-	 *            the principal to convert.
-	 * @return the converted name.
-	 */
-	public static X500Name toX509Name(X500Principal principal) {
-		byte[] bytes = principal.getEncoded();
-		return X500Name.getInstance(bytes);
-	}
+    /**
+     * Converts a Java SE X500Principal to a Bouncy Castle X509Name.
+     * 
+     * @param principal the principal to convert.
+     * @return the converted name.
+     */
+    public static X500Name toX509Name(X500Principal principal) {
+        byte[] bytes = principal.getEncoded();
+        return X500Name.getInstance(bytes);
+    }
 
-	/**
-	 * Checks the provided certificate to see if it is self-signed.
-	 * 
-	 * @param cert
-	 *            the certificate to check.
-	 * @return <code>true</code> if the certificate is self-signed,
-	 *         <code>false</code> otherwise.
-	 */
-	public static boolean isSelfSigned(X509Certificate cert) {
-		try {
-			cert.verify(cert.getPublicKey());
+    /**
+     * Checks the provided certificate to see if it is self-signed.
+     * 
+     * @param cert the certificate to check.
+     * @return <code>true</code> if the certificate is self-signed,
+     *         <code>false</code> otherwise.
+     */
+    public static boolean isSelfSigned(X509Certificate cert) {
+        try {
+            cert.verify(cert.getPublicKey());
 
-			return true;
-		} catch (GeneralSecurityException e) {
-			return false;
-		}
-	}
+            return true;
+        } catch (GeneralSecurityException e) {
+            return false;
+        }
+    }
 
-	/**
-	 * Creates a new IssuerAndSerialNumber from the provided certificate.
-	 * 
-	 * @param certificate
-	 *            the certificate to use.
-	 * @return the IssuerAndSerialNumber to represent the certificate.
-	 */
-	public static IssuerAndSerialNumber toIssuerAndSerialNumber(
-			X509Certificate certificate) {
-		final X500Name issuer = X509Util.toX509Name(certificate
-				.getIssuerX500Principal());
-		return new IssuerAndSerialNumber(issuer, certificate.getSerialNumber());
-	}
+    /**
+     * Creates a new IssuerAndSerialNumber from the provided certificate.
+     * 
+     * @param certificate the certificate to use.
+     * @return the IssuerAndSerialNumber to represent the certificate.
+     */
+    public static IssuerAndSerialNumber toIssuerAndSerialNumber(
+            X509Certificate certificate) {
+        final X500Name issuer = X509Util.toX509Name(certificate
+                .getIssuerX500Principal());
+        return new IssuerAndSerialNumber(issuer, certificate.getSerialNumber());
+    }
 
-	public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
-			throws IOException {
-		SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();
-		RSAKeyParameters keyParams = (RSAKeyParameters) PublicKeyFactory
-				.createKey(pubKeyInfo);
-		KeySpec keySpec = new RSAPublicKeySpec(keyParams.getModulus(),
-				keyParams.getExponent());
+    public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
+            throws IOException {
+        SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();
+        RSAKeyParameters keyParams = (RSAKeyParameters) PublicKeyFactory
+                .createKey(pubKeyInfo);
+        KeySpec keySpec = new RSAPublicKeySpec(keyParams.getModulus(),
+                keyParams.getExponent());
 
-		try {
-			KeyFactory kf = KeyFactory.getInstance("RSA");
-			return kf.generatePublic(keySpec);
-		} catch (Exception e) {
-			IOException ioe = new IOException();
-			ioe.initCause(e);
+        try {
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePublic(keySpec);
+        } catch (Exception e) {
+            IOException ioe = new IOException();
+            ioe.initCause(e);
 
-			throw ioe;
-		}
-	}
+            throw ioe;
+        }
+    }
 }

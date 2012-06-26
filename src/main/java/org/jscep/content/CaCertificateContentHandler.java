@@ -36,33 +36,37 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.util.CertStoreUtils;
 
-
 /**
  * This class handles responses to <code>GetCACert</code> requests.
- *
+ * 
  * @author David Grant
  */
-public final class CaCertificateContentHandler implements ScepContentHandler<CertStore> {
+public final class CaCertificateContentHandler implements
+        ScepContentHandler<CertStore> {
     private static final String RA_CERT = "application/x-x509-ca-ra-cert";
-	private static final String CA_CERT = "application/x-x509-ca-cert";
-	private CertificateFactory factory;
-	
-	public CaCertificateContentHandler(CertificateFactory factory) {
-		this.factory = factory;
-	}
+    private static final String CA_CERT = "application/x-x509-ca-cert";
+    private CertificateFactory factory;
+
+    public CaCertificateContentHandler(CertificateFactory factory) {
+        this.factory = factory;
+    }
 
     /**
      * {@inheritDoc}
-     * @throws InvalidContentTypeException 
-     * @throws InvalidContentException 
+     * 
+     * @throws InvalidContentTypeException
+     * @throws InvalidContentException
      */
-    public CertStore getContent(byte[] content, String mimeType) throws InvalidContentTypeException, InvalidContentException {
+    public CertStore getContent(byte[] content, String mimeType)
+            throws InvalidContentTypeException, InvalidContentException {
         if (mimeType.startsWith(CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.1
             try {
-                X509Certificate ca = (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(content));
+                X509Certificate ca = (X509Certificate) factory
+                        .generateCertificate(new ByteArrayInputStream(content));
                 Collection<X509Certificate> caSet = Collections.singleton(ca);
-                CertStoreParameters storeParams = new CollectionCertStoreParameters(caSet);
+                CertStoreParameters storeParams = new CollectionCertStoreParameters(
+                        caSet);
 
                 return CertStore.getInstance("Collection", storeParams);
             } catch (GeneralSecurityException e) {
@@ -70,23 +74,25 @@ public final class CaCertificateContentHandler implements ScepContentHandler<Cer
             }
         } else if (mimeType.startsWith(RA_CERT)) {
             // If an RA is in use, a certificates-only PKCS#7 SignedData
-            // with a certificate chain consisting of both RA and CA certificates is
+            // with a certificate chain consisting of both RA and CA
+            // certificates is
             // returned.
             // It should be in the order:
             // [0] RA
             // [1] CA
             if (content.length == 0) {
-                throw new InvalidContentException("Expected a SignedData object, but response was empty");
+                throw new InvalidContentException(
+                        "Expected a SignedData object, but response was empty");
             }
             CMSSignedData sd;
-			try {
-				sd = new CMSSignedData(content);
-			} catch (CMSException e) {
-				throw new InvalidContentException(e);
-			}
+            try {
+                sd = new CMSSignedData(content);
+            } catch (CMSException e) {
+                throw new InvalidContentException(e);
+            }
             return CertStoreUtils.fromSignedData(sd);
         } else {
-        	throw new InvalidContentTypeException(mimeType, CA_CERT, RA_CERT);
+            throw new InvalidContentTypeException(mimeType, CA_CERT, RA_CERT);
         }
     }
 }

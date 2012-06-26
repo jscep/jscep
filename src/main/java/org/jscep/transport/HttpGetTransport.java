@@ -41,60 +41,67 @@ import com.google.common.io.ByteStreams;
 
 /**
  * Transport representing the <code>HTTP GET</code> method
- *
+ * 
  * @author David Grant
  */
 public class HttpGetTransport extends Transport {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpGetTransport.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(HttpGetTransport.class);
 
     HttpGetTransport(URL url) {
         super(url);
     }
 
     @Override
-    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler) throws TransportException, InvalidContentTypeException, InvalidContentException {
+    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
+            throws TransportException, InvalidContentTypeException,
+            InvalidContentException {
         URL url;
-		try {
-			url = getUrl(msg.getOperation(), msg.getMessage());
-		} catch (MalformedURLException e) {
-			throw new TransportException(e);
-		} catch (UnsupportedEncodingException e) {
-			throw new TransportException(e);
-		}
+        try {
+            url = getUrl(msg.getOperation(), msg.getMessage());
+        } catch (MalformedURLException e) {
+            throw new TransportException(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new TransportException(e);
+        }
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Sending {} to {}", msg, url);
         }
         HttpURLConnection conn;
-		try {
-			conn = (HttpURLConnection) url.openConnection();
-		} catch (IOException e) {
-			throw new TransportException(e);
-		}
+        try {
+            conn = (HttpURLConnection) url.openConnection();
+        } catch (IOException e) {
+            throw new TransportException(e);
+        }
 
-		try {
-	        int responseCode = conn.getResponseCode();
-			String responseMessage = conn.getResponseMessage();
-			
-			LOGGER.debug("Received '{} {}' when sending {} to {}", new Object[]{responseCode, responseMessage, msg, url});
-	        if (responseCode != HttpURLConnection.HTTP_OK) {
-	            throw new TransportException(responseCode + " " + responseMessage);
-	        }
-		} catch (IOException e) {
-			throw new TransportException("Error connecting to server", e);
-		}
-        
+        try {
+            int responseCode = conn.getResponseCode();
+            String responseMessage = conn.getResponseMessage();
+
+            LOGGER.debug("Received '{} {}' when sending {} to {}",
+                    varargs(responseCode, responseMessage, msg, url));
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new TransportException(responseCode + " "
+                        + responseMessage);
+            }
+        } catch (IOException e) {
+            throw new TransportException("Error connecting to server", e);
+        }
+
         byte[] response;
         try {
-			 response = ByteStreams.toByteArray(conn.getInputStream());
-		} catch (IOException e) {
-			throw new TransportException("Error reading response stream", e);
-		}
+            response = ByteStreams.toByteArray(conn.getInputStream());
+        } catch (IOException e) {
+            throw new TransportException("Error reading response stream", e);
+        }
 
         return handler.getContent(response, conn.getContentType());
     }
 
-    private URL getUrl(Operation op, String message) throws MalformedURLException, UnsupportedEncodingException {
-        return new URL(getUrl(op).toExternalForm() + "&message=" + URLEncoder.encode(message, "UTF-8"));
+    private URL getUrl(Operation op, String message)
+            throws MalformedURLException, UnsupportedEncodingException {
+        return new URL(getUrl(op).toExternalForm() + "&message="
+                + URLEncoder.encode(message, "UTF-8"));
     }
 
     /**

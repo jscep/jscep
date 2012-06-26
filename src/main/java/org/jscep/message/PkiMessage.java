@@ -34,7 +34,7 @@ import com.google.common.base.Objects;
 /**
  * This class represents an abstract SCEP PkiMessage, which may be either a
  * request or response.
- *
+ * 
  * @param <T> the MessageData for this message.
  */
 public abstract class PkiMessage<T> {
@@ -43,7 +43,8 @@ public abstract class PkiMessage<T> {
     private final Nonce senderNonce;
     private final T messageData;
 
-    public PkiMessage(TransactionId transId, MessageType messageType, Nonce senderNonce, T messageData) {
+    public PkiMessage(TransactionId transId, MessageType messageType,
+            Nonce senderNonce, T messageData) {
         this.transId = transId;
         this.messageType = messageType;
         this.senderNonce = senderNonce;
@@ -67,20 +68,17 @@ public abstract class PkiMessage<T> {
     }
 
     public Map<String, Object> getAttributes() {
-    	Map<String, Object> attr = new HashMap<String, Object>();
-    	attr.put(ScepObjectIdentifiers.TRANS_ID, transId);
-    	attr.put(ScepObjectIdentifiers.MESSAGE_TYPE, messageType);
-    	attr.put(ScepObjectIdentifiers.SENDER_NONCE, senderNonce);
+        Map<String, Object> attr = new HashMap<String, Object>();
+        attr.put(ScepObjectIdentifiers.TRANS_ID, transId);
+        attr.put(ScepObjectIdentifiers.MESSAGE_TYPE, messageType);
+        attr.put(ScepObjectIdentifiers.SENDER_NONCE, senderNonce);
 
         return attr;
     }
 
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("type", messageType)
-                .add("transId", transId)
-                .add("msgData", messageData)
-                .add("nonce", senderNonce)
-                .toString();
+        return Objects.toStringHelper(this).add("type", messageType)
+                .add("transId", transId).add("msgData", messageData)
+                .add("nonce", senderNonce).toString();
     }
 }

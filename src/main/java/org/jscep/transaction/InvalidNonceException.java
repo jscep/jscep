@@ -22,9 +22,9 @@
 package org.jscep.transaction;
 
 /**
- * This class represents the error condition when an invalid
- * Nonce is received by a SCEP peer.
- *
+ * This class represents the error condition when an invalid Nonce is received
+ * by a SCEP peer.
+ * 
  * @author David Grant
  */
 public class InvalidNonceException extends RuntimeException {
@@ -36,7 +36,7 @@ public class InvalidNonceException extends RuntimeException {
 
     /**
      * Constructs a new InvalidNonceException with the specified detail message.
-     *
+     * 
      * @param msg the detail message.
      */
     public InvalidNonceException(String msg) {

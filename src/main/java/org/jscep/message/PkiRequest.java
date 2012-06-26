@@ -26,7 +26,8 @@ import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
 public abstract class PkiRequest<T> extends PkiMessage<T> {
-    public PkiRequest(TransactionId transId, MessageType messageType, Nonce senderNonce, T messageData) {
+    public PkiRequest(TransactionId transId, MessageType messageType,
+            Nonce senderNonce, T messageData) {
         super(transId, messageType, senderNonce, messageData);
     }
 }
