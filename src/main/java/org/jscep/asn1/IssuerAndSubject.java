@@ -24,7 +24,6 @@ package org.jscep.asn1;
 
 import java.io.IOException;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Object;
@@ -39,40 +38,65 @@ import org.slf4j.LoggerFactory;
  * This class represents the SCEP <code>IssuerAndSubject</code> ASN.1 object.
  * <p/>
  * This object is defined by the following ASN.1 notation:
- * 
  * <pre>
  * IssuerAndSubject ::= SEQUENCE {
  *     issuer Name,
  *     subject Name,
  * }
  * </pre>
- * 
  * @author David Grant
  */
 public final class IssuerAndSubject extends ASN1Object {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(IssuerAndSubject.class);
+    /**
+     * The issuer name.
+     */
     private final X500Name issuer;
+    /**
+     * The subject name.
+     */
     private final X500Name subject;
 
-    public IssuerAndSubject(ASN1Sequence seq) {
+    /**
+     * Creates a new instance of this class from the given sequence.
+     * @param seq the sequence.
+     */
+    public IssuerAndSubject(final ASN1Sequence seq) {
         issuer = X500Name.getInstance(seq.getObjectAt(0));
         subject = X500Name.getInstance(seq.getObjectAt(1));
     }
 
-    public IssuerAndSubject(X500Name issuer, X500Name subject) {
+    /**
+     * Creates a new instance of this class using the given issuer and subject.
+     * @param issuer the issuer.
+     * @param subject the subject.
+     */
+    public IssuerAndSubject(final X500Name issuer, final X500Name subject) {
         this.issuer = issuer;
         this.subject = subject;
     }
 
-    public IssuerAndSubject(byte[] bytes) {
+    /**
+     * Creates a new instance of this class using the given byte array.
+     * @param bytes the byte array.
+     */
+    public IssuerAndSubject(final byte[] bytes) {
         this(toDERSequence(bytes));
     }
 
+    /**
+     * Returns the issuer.
+     * @return the issuer.
+     */
     public X500Name getIssuer() {
         return issuer;
     }
 
+    /**
+     * Returns the subject.
+     * @return the subject.
+     */
     public X500Name getSubject() {
         return subject;
     }
@@ -87,13 +111,12 @@ public final class IssuerAndSubject extends ASN1Object {
         return new DERSequence(v);
     }
 
-    public static IssuerAndSubject getInstance(ASN1Encodable encodable) {
-        final ASN1Sequence seq = DERSequence.getInstance(encodable);
-
-        return new IssuerAndSubject(seq);
-    }
-
-    private static ASN1Sequence toDERSequence(byte[] bytes) {
+    /**
+     * Converts the given byte array to an ASN.1 sequence.
+     * @param bytes the bytes to convert.
+     * @return a sequence describing the given byte aray.
+     */
+    private static ASN1Sequence toDERSequence(final byte[] bytes) {
         ASN1InputStream dIn = null;
         try {
             dIn = new ASN1InputStream(bytes);

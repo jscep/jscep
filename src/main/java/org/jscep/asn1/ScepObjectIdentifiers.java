@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2009-2010 David Grant
+/**
+ * Copyright (c) 2009-2012 David Grant
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,7 @@
 package org.jscep.asn1;
 
 /**
- * Object Identifiers used by SCEP
- * 
+ * Object Identifiers used by SCEP.
  * @author David Grant
  */
 public interface ScepObjectIdentifiers {
