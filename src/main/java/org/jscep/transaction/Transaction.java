@@ -25,24 +25,28 @@ package org.jscep.transaction;
 import java.io.IOException;
 import java.security.cert.CertStore;
 
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.content.CertRepContentHandler;
 import org.jscep.content.InvalidContentException;
 import org.jscep.content.InvalidContentTypeException;
+import org.jscep.message.CertRep;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.request.Request;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
+import org.jscep.util.CertStoreUtils;
 
 public abstract class Transaction {
     private final PkiMessageEncoder encoder;
     private final PkiMessageDecoder decoder;
     private final Transport transport;
 
-    protected State state;
-    protected FailInfo failInfo;
-    protected CertStore certStore;
+    private State state;
+    private FailInfo failInfo;
+    private CertStore certStore;
 
     public Transaction(Transport transport, PkiMessageEncoder encoder,
             PkiMessageDecoder decoder) {
@@ -77,9 +81,16 @@ public abstract class Transaction {
     public abstract TransactionId getId();
 
     protected byte[] send(final CertRepContentHandler handler, final Request req)
-            throws TransportException, InvalidContentTypeException,
-            InvalidContentException {
-        return transport.sendRequest(req, handler);
+            throws IOException {
+        try {
+            return transport.sendRequest(req, handler);
+        } catch (InvalidContentException e) {
+            throw ioe(e);
+        } catch (TransportException e) {
+            throw ioe(e);
+        } catch (InvalidContentTypeException e) {
+            throw ioe(e);
+        }
     }
 
     protected PkiMessage<?> decode(byte[] res) throws IOException {
@@ -88,6 +99,43 @@ public abstract class Transaction {
 
     protected byte[] encode(final PkiMessage<?> message) throws IOException {
         return encoder.encode(message);
+    }
+
+    protected State pending() {
+        this.state = State.CERT_REQ_PENDING;
+        return state;
+    }
+
+    protected State failure(FailInfo failInfo) {
+        this.failInfo = failInfo;
+        this.state = State.CERT_NON_EXISTANT;
+
+        return state;
+    }
+
+    protected State success(CertStore certStore) {
+        this.certStore = certStore;
+        this.state = State.CERT_ISSUED;
+
+        return state;
+    }
+
+    protected CertStore extractCertStore(CertRep response) throws IOException {
+        try {
+            CMSSignedData signedData = new CMSSignedData(
+                    response.getMessageData());
+
+            return CertStoreUtils.fromSignedData(signedData);
+        } catch (CMSException e) {
+            throw ioe(e);
+        }
+    }
+
+    protected IOException ioe(Throwable t) {
+        IOException ioe = new IOException();
+        ioe.initCause(t);
+
+        return ioe;
     }
 
     /**

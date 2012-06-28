@@ -26,11 +26,7 @@ import java.io.IOException;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.content.CertRepContentHandler;
-import org.jscep.content.InvalidContentException;
-import org.jscep.content.InvalidContentTypeException;
 import org.jscep.message.CertRep;
 import org.jscep.message.GetCRL;
 import org.jscep.message.GetCert;
@@ -40,7 +36,6 @@ import org.jscep.message.PkiRequest;
 import org.jscep.request.PKCSReq;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
-import org.jscep.util.CertStoreUtils;
 
 public class NonEnrollmentTransaction extends Transaction {
     private final TransactionId transId;
@@ -67,43 +62,19 @@ public class NonEnrollmentTransaction extends Transaction {
     }
 
     @Override
-    public State send() throws IOException, TransportException {
+    public final State send() throws IOException, TransportException {
         final CertRepContentHandler handler = new CertRepContentHandler();
         final byte[] signedData = encode(request);
-        byte[] inMsg;
-        try {
-            inMsg = send(handler, new PKCSReq(signedData));
-        } catch (InvalidContentTypeException e) {
-            throw ioe(e);
-        } catch (InvalidContentException e) {
-            throw ioe(e);
-        }
-        final CertRep response = (CertRep) decode(inMsg);
+
+        byte[] res = send(handler, new PKCSReq(signedData));
+        final CertRep response = (CertRep) decode(res);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
-            failInfo = response.getFailInfo();
-            state = State.CERT_NON_EXISTANT;
+            return failure(response.getFailInfo());
         } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
-            try {
-                CMSSignedData responseSd = new CMSSignedData(
-                        response.getMessageData());
-
-                certStore = CertStoreUtils.fromSignedData(responseSd);
-            } catch (CMSException e) {
-                throw ioe(e);
-            }
-            state = State.CERT_ISSUED;
+            return success(extractCertStore(response));
         } else {
             throw new IOException("Invalid Response");
         }
-
-        return state;
-    }
-
-    private IOException ioe(Throwable t) {
-        IOException ioe = new IOException();
-        ioe.initCause(t);
-
-        return ioe;
     }
 }

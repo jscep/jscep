@@ -23,12 +23,9 @@
 package org.jscep.transaction;
 
 import java.io.IOException;
-import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.content.CertRepContentHandler;
@@ -43,7 +40,6 @@ import org.jscep.request.PKCSReq;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
-import org.jscep.util.CertStoreUtils;
 import org.jscep.x509.X509Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,14 +92,7 @@ public class EnrolmentTransaction extends Transaction {
         byte[] signedData = encode(request);
         LOGGER.debug("Sending {}", signedData);
         CertRepContentHandler handler = new CertRepContentHandler();
-        byte[] res;
-        try {
-            res = send(handler, new PKCSReq(signedData));
-        } catch (InvalidContentTypeException e) {
-            throw ioe(e);
-        } catch (InvalidContentException e) {
-            throw ioe(e);
-        }
+        byte[] res = send(handler, new PKCSReq(signedData));
         LOGGER.debug("Received response {}", res);
 
         CertRep response = (CertRep) decode(res);
@@ -112,16 +101,12 @@ public class EnrolmentTransaction extends Transaction {
         LOGGER.debug("Response: {}", response);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
-            failInfo = response.getFailInfo();
-            state = State.CERT_NON_EXISTANT;
+            return failure(response.getFailInfo());
         } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
-            certStore = extractCertStore(response);
-            state = State.CERT_ISSUED;
+            return success(extractCertStore(response));
         } else {
-            state = State.CERT_REQ_PENDING;
+            return pending();
         }
-
-        return state;
     }
 
     /**
@@ -135,54 +120,25 @@ public class EnrolmentTransaction extends Transaction {
     public State poll() throws IOException, TransportException {
         X500Name issuerName = X509Util.toX509Name(issuer
                 .getSubjectX500Principal());
-        X500Name subjectName = X500Name.getInstance(request.getMessageData()
-                .getSubject());
+        X500Name subjectName = request.getMessageData().getSubject();
         IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
         final GetCertInitial pollReq = new GetCertInitial(transId,
                 Nonce.nextNonce(), ias);
+
         byte[] signedData = encode(pollReq);
         CertRepContentHandler handler = new CertRepContentHandler();
-        byte[] res;
-        try {
-            res = send(handler, new PKCSReq(signedData));
-        } catch (InvalidContentTypeException e) {
-            throw ioe(e);
-        } catch (InvalidContentException e) {
-            throw ioe(e);
-        }
+        byte[] res = send(handler, new PKCSReq(signedData));
 
         CertRep response = (CertRep) decode(res);
         validateExchange(pollReq, response);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
-            failInfo = response.getFailInfo();
-            state = State.CERT_NON_EXISTANT;
+            return failure(response.getFailInfo());
         } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
-            certStore = extractCertStore(response);
-            state = State.CERT_ISSUED;
+            return success(extractCertStore(response));
         } else {
-            state = State.CERT_REQ_PENDING;
+            return pending();
         }
-
-        return state;
-    }
-
-    private CertStore extractCertStore(CertRep response) throws IOException {
-        try {
-            CMSSignedData signedData = new CMSSignedData(
-                    response.getMessageData());
-
-            return CertStoreUtils.fromSignedData(signedData);
-        } catch (CMSException e) {
-            throw ioe(e);
-        }
-    }
-
-    private IOException ioe(Throwable t) {
-        IOException ioe = new IOException();
-        ioe.initCause(t);
-
-        return ioe;
     }
 
     private void validateExchange(PkiMessage<?> req, CertRep res)
