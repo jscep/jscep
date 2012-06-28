@@ -91,13 +91,14 @@ public class EnrolmentTransaction extends Transaction {
      * @throws InvalidContentTypeException
      * @throws InvalidContentException
      */
+    @Override
     public State send() throws IOException, TransportException {
-        byte[] signedData = encoder.encode(request);
+        byte[] signedData = encode(request);
         LOGGER.debug("Sending {}", signedData);
         CertRepContentHandler handler = new CertRepContentHandler();
         byte[] res;
         try {
-            res = transport.sendRequest(new PKCSReq(signedData), handler);
+            res = send(handler, new PKCSReq(signedData));
         } catch (InvalidContentTypeException e) {
             throw ioe(e);
         } catch (InvalidContentException e) {
@@ -105,7 +106,7 @@ public class EnrolmentTransaction extends Transaction {
         }
         LOGGER.debug("Received response {}", res);
 
-        CertRep response = (CertRep) decoder.decode(res);
+        CertRep response = (CertRep) decode(res);
         validateExchange(request, response);
 
         LOGGER.debug("Response: {}", response);
@@ -139,18 +140,18 @@ public class EnrolmentTransaction extends Transaction {
         IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
         final GetCertInitial pollReq = new GetCertInitial(transId,
                 Nonce.nextNonce(), ias);
-        byte[] signedData = encoder.encode(pollReq);
+        byte[] signedData = encode(pollReq);
         CertRepContentHandler handler = new CertRepContentHandler();
         byte[] res;
         try {
-            res = transport.sendRequest(new PKCSReq(signedData), handler);
+            res = send(handler, new PKCSReq(signedData));
         } catch (InvalidContentTypeException e) {
             throw ioe(e);
         } catch (InvalidContentException e) {
             throw ioe(e);
         }
 
-        CertRep response = (CertRep) decoder.decode(res);
+        CertRep response = (CertRep) decode(res);
         validateExchange(pollReq, response);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {

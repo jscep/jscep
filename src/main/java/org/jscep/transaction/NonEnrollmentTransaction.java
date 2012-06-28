@@ -61,22 +61,24 @@ public class NonEnrollmentTransaction extends Transaction {
         }
     }
 
+    @Override
     public TransactionId getId() {
         return transId;
     }
 
+    @Override
     public State send() throws IOException, TransportException {
         final CertRepContentHandler handler = new CertRepContentHandler();
-        final byte[] signedData = encoder.encode(request);
+        final byte[] signedData = encode(request);
         byte[] inMsg;
         try {
-            inMsg = transport.sendRequest(new PKCSReq(signedData), handler);
+            inMsg = send(handler, new PKCSReq(signedData));
         } catch (InvalidContentTypeException e) {
             throw ioe(e);
         } catch (InvalidContentException e) {
             throw ioe(e);
         }
-        final CertRep response = (CertRep) decoder.decode(inMsg);
+        final CertRep response = (CertRep) decode(inMsg);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
             failInfo = response.getFailInfo();

@@ -53,6 +53,7 @@ import org.jscep.response.Capabilities;
 import org.jscep.transaction.EnrolmentTransaction;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.NonEnrollmentTransaction;
+import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.transport.Transport.Method;
@@ -186,7 +187,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CRL);
+        Transaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CRL);
         State s = t.send();
 
         assertThat(s, is(State.CERT_ISSUED));
@@ -202,7 +203,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        NonEnrollmentTransaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CERT);
+        Transaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CERT);
         State s = t.send();
         
         assertThat(s, is(State.CERT_NON_EXISTANT));
@@ -219,7 +220,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
+        Transaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
 
         State s = t.send();
         assertThat(s, is(State.CERT_ISSUED));
@@ -236,7 +237,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.POST, getURL());
-        EnrolmentTransaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
+        Transaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
         
         State s = t.send();
         assertThat(s, is(State.CERT_ISSUED));

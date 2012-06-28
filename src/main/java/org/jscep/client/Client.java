@@ -348,7 +348,7 @@ public final class Client {
      * @return the enrollment transaction.
      * @throws IOException if any I/O error occurs.
      */
-    public EnrolmentTransaction enrol(PKCS10CertificationRequest csr)
+    public Transaction enrol(PKCS10CertificationRequest csr)
             throws IOException {
         LOGGER.debug("Enrolling certificate with CA");
         // TRANSACTIONAL

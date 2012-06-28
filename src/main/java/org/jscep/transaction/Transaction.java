@@ -25,18 +25,24 @@ package org.jscep.transaction;
 import java.io.IOException;
 import java.security.cert.CertStore;
 
+import org.jscep.content.CertRepContentHandler;
+import org.jscep.content.InvalidContentException;
+import org.jscep.content.InvalidContentTypeException;
+import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
+import org.jscep.request.Request;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
 
 public abstract class Transaction {
-    protected final PkiMessageEncoder encoder;
-    protected final PkiMessageDecoder decoder;
+    private final PkiMessageEncoder encoder;
+    private final PkiMessageDecoder decoder;
+    private final Transport transport;
+
     protected State state;
     protected FailInfo failInfo;
     protected CertStore certStore;
-    protected Transport transport;
 
     public Transaction(Transport transport, PkiMessageEncoder encoder,
             PkiMessageDecoder decoder) {
@@ -66,16 +72,23 @@ public abstract class Transaction {
         return certStore;
     }
 
-    public State getState() {
-        if (state == null) {
-            throw new IllegalStateException("No request has been sent.");
-        }
-        return state;
-    }
-
     public abstract State send() throws IOException, TransportException;
 
     public abstract TransactionId getId();
+
+    protected byte[] send(final CertRepContentHandler handler, final Request req)
+            throws TransportException, InvalidContentTypeException,
+            InvalidContentException {
+        return transport.sendRequest(req, handler);
+    }
+
+    protected PkiMessage<?> decode(byte[] res) throws IOException {
+        return decoder.decode(res);
+    }
+
+    protected byte[] encode(final PkiMessage<?> message) throws IOException {
+        return encoder.encode(message);
+    }
 
     /**
      * This class represents the state of a transaction.
