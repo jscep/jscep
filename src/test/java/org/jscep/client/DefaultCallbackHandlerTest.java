@@ -44,7 +44,7 @@ public class DefaultCallbackHandlerTest {
         handler.handle(new Callback[] { callback });
 
         assertTrue(callback.isVerified());
-        verify(verifier);
+        verify(verifier).verify(cert);
 
     }
 
@@ -56,7 +56,7 @@ public class DefaultCallbackHandlerTest {
         handler.handle(new Callback[] { callback });
 
         assertFalse(callback.isVerified());
-        verify(verifier);
+        verify(verifier).verify(cert);
 
     }
 
