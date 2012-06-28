@@ -10,6 +10,7 @@ import java.security.KeyPairGenerator;
 import java.security.cert.X509Certificate;
 
 import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.x500.X500Principal;
 
 import org.jscep.CertificateVerificationCallback;
@@ -19,22 +20,21 @@ import org.junit.Test;
 
 import com.google.common.base.Charsets;
 
-public class ConsoleCallbackHandlerTest {
+public class ConsoleCallbackVerifierTest {
     private X509Certificate cert;
-    private ConsoleCallbackHandler handler;
+    private CallbackHandler handler;
 
     @Before
     public void setUp() throws GeneralSecurityException {
         X500Principal subject = new X500Principal("CN=example");
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
         cert = X509Util.createEphemeralCertificate(subject, keyPair);
-        handler = new ConsoleCallbackHandler();
+        handler = new DefaultCallbackHandler(new ConsoleCertificateVerifier());
     }
 
     @Test
     public void testYesResponse() throws Exception {
-        CertificateVerificationCallback callback = new CertificateVerificationCallback(
-                cert);
+        CertificateVerificationCallback callback = getCallback();
 
         byte[] bytes = String.format("Y%n").getBytes(Charsets.US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
@@ -43,10 +43,13 @@ public class ConsoleCallbackHandlerTest {
         assertTrue(callback.isVerified());
     }
 
+    private CertificateVerificationCallback getCallback() {
+        return new CertificateVerificationCallback(cert);
+    }
+
     @Test
     public void testEmptyResponse() throws Exception {
-        CertificateVerificationCallback callback = new CertificateVerificationCallback(
-                cert);
+        CertificateVerificationCallback callback = getCallback();
 
         byte[] bytes = String.format("%n").getBytes(Charsets.US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
@@ -57,8 +60,7 @@ public class ConsoleCallbackHandlerTest {
 
     @Test
     public void testNoResponse() throws Exception {
-        CertificateVerificationCallback callback = new CertificateVerificationCallback(
-                cert);
+        CertificateVerificationCallback callback = getCallback();
 
         byte[] bytes = String.format("N%n").getBytes(Charsets.US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
@@ -69,8 +71,7 @@ public class ConsoleCallbackHandlerTest {
 
     @Test
     public void testInvalidResponse() throws Exception {
-        CertificateVerificationCallback callback = new CertificateVerificationCallback(
-                cert);
+        CertificateVerificationCallback callback = getCallback();
 
         byte[] bytes = String.format("X%nY%n").getBytes(
                 Charsets.US_ASCII.name());

@@ -3,10 +3,10 @@ package org.jscep.client;
 import static java.security.Security.getAlgorithms;
 import static org.jscep.util.HexUtil.toHexString;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,38 +14,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.UnsupportedCallbackException;
-
-import org.jscep.CertificateVerificationCallback;
-
 /**
- * This class is a console-focused implementation of CallbackHandler.
+ * This class is a console-focused implementation of CertificateVerifier.
  * <p>
  * Implementors should use this if they require interactive certificate
  * verification in a command line application.
  */
-public class ConsoleCallbackHandler implements CallbackHandler {
-    /**
-     * {@inheritDoc}
-     */
-    public final void handle(final Callback[] callbacks) throws IOException,
-            UnsupportedCallbackException {
-        for (final Callback callback : callbacks) {
-            if (callback instanceof CertificateVerificationCallback) {
-                try {
-                    final CertificateVerificationCallback cert = (CertificateVerificationCallback) callback;
-                    cert.setVerified(verify(cert.getCertificate()));
-                } catch (final GeneralSecurityException e) {
-                    final IOException ioe = new IOException();
-                    ioe.initCause(e);
-
-                    throw ioe;
-                }
-            }
-        }
-    }
+public final class ConsoleCertificateVerifier implements CertificateVerifier {
 
     /**
      * Use the system console to prompt the user with each available hash.
@@ -53,10 +28,8 @@ public class ConsoleCallbackHandler implements CallbackHandler {
      * @param cert the certificate to verify
      * @return <tt>true</tt> if the certificate is verified, <tt>false</tt>
      *         otherwise.
-     * @throws GeneralSecurityException if any security error occurs
      */
-    private boolean verify(final X509Certificate cert)
-            throws GeneralSecurityException {
+    public boolean verify(final X509Certificate cert) {
         final List<String> algs = new ArrayList<String>(
                 getAlgorithms(MessageDigest.class.getSimpleName()));
         Collections.sort(algs);
@@ -67,8 +40,18 @@ public class ConsoleCallbackHandler implements CallbackHandler {
             }
         }
         for (final String alg : algs) {
-            final MessageDigest digest = MessageDigest.getInstance(alg);
-            final byte[] hash = digest.digest(cert.getEncoded());
+            MessageDigest digest;
+            try {
+                digest = MessageDigest.getInstance(alg);
+            } catch (NoSuchAlgorithmException e) {
+                return false;
+            }
+            byte[] hash;
+            try {
+                hash = digest.digest(cert.getEncoded());
+            } catch (CertificateEncodingException e) {
+                return false;
+            }
             System.out.format("%" + max + "s: %s%n", alg, toHexString(hash));
         }
         final Scanner scanner = new Scanner(System.in, Charset.defaultCharset()
@@ -88,4 +71,5 @@ public class ConsoleCallbackHandler implements CallbackHandler {
             }
         }
     }
+
 }
