@@ -4,6 +4,7 @@ import static java.security.Security.getAlgorithms;
 import static org.jscep.util.HexUtil.toHexString;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
@@ -70,8 +71,8 @@ public class ConsoleCallbackHandler implements CallbackHandler {
             final byte[] hash = digest.digest(cert.getEncoded());
             System.out.format("%" + max + "s: %s%n", alg, toHexString(hash));
         }
-        final Scanner scanner = new Scanner(System.in).useDelimiter(String
-                .format("%n"));
+        final Scanner scanner = new Scanner(System.in, Charset.defaultCharset()
+                .name()).useDelimiter(String.format("%n"));
         while (true) {
             System.out.format("%nAccept? (Y/N): [N]%n");
             try {
