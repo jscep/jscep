@@ -389,6 +389,8 @@ public final class Client {
             }
         }
 
+        listener.pollingTerminated(t.getId());
+
         if (s == State.CERT_NON_EXISTANT) {
             throw new OperationFailureException(t.getFailInfo());
         } else {
