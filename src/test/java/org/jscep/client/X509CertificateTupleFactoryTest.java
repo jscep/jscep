@@ -64,10 +64,10 @@ public class X509CertificateTupleFactoryTest {
 
     @Test
     public void example() {
-        X509CertificateTuple certPair = X509CertificateTupleFactory.createTuple(store);
+        Authorities certPair = X509CertificateTupleFactory.createTuple(store);
 
-        Assert.assertEquals(encryption, certPair.getEncryption().getSubjectDN().getName());
-        Assert.assertEquals(signing, certPair.getVerification().getSubjectDN().getName());
+        Assert.assertEquals(encryption, certPair.getEncrypter().getSubjectDN().getName());
+        Assert.assertEquals(signing, certPair.getVerifier().getSubjectDN().getName());
         Assert.assertEquals(issuer, certPair.getIssuer().getSubjectDN().getName());
     }
 }

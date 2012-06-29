@@ -19,7 +19,7 @@ public final class X509CertificateTupleFactory {
      * @return a tuple of certificates
      */
     @Deprecated
-    public static X509CertificateTuple createTuple(CertStore store) {
-        return X509CertificateTuple.fromCertStore(store);
+    public static Authorities createTuple(CertStore store) {
+        return Authorities.fromCertStore(store);
     }
 }

@@ -1,6 +1,7 @@
-package org.jscep.client;
+package org.jscep.client.verification;
 
 import java.security.cert.X509Certificate;
+
 
 /**
  * CertificateVerifier that uses a pre-provisioned certificate.

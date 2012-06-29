@@ -1,9 +1,10 @@
-package org.jscep.client;
+package org.jscep.client.verification;
 
 import java.security.MessageDigest;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+
 
 /**
  * CertificateVerifier that uses a known message digest to verify the

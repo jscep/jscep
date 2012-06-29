@@ -53,6 +53,8 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.CertificateVerificationCallback;
+import org.jscep.client.polling.PollingListener;
+import org.jscep.client.polling.PollingTerminatedException;
 import org.jscep.content.CaCapabilitiesContentHandler;
 import org.jscep.content.CaCertificateContentHandler;
 import org.jscep.content.InvalidContentException;
@@ -345,13 +347,21 @@ public final class Client {
     }
 
     /**
-     * Enrolls the provided CSR into a PKI.
+     * Enrols the provided CSR into a PKI.
      * 
      * @param csr the certificate signing request
+     * @param listener the polling listener
      * @return the enrollment transaction.
      * @throws IOException if any I/O error occurs.
+     * @throws TransportException
+     * @throws PollingTerminatedException if polling is terminated by the
+     *         listener
+     * @throws OperationFailureException if the enrollment fails
      */
-    public Transaction enrol(PKCS10CertificationRequest csr) throws IOException {
+    public CertStore enrol(final PKCS10CertificationRequest csr,
+            final PollingListener listener) throws IOException,
+            TransportException, PollingTerminatedException,
+            OperationFailureException {
         LOGGER.debug("Enrolling certificate with CA");
         // TRANSACTIONAL
         // Certificate enrollment
@@ -368,7 +378,22 @@ public final class Client {
                 encoder, getDecoder(), csr);
         t.setIssuer(verifyCert);
 
-        return t;
+        State s = t.send();
+        while (s == State.CERT_REQ_PENDING) {
+            if (listener.poll(t.getId())) {
+                s = t.poll();
+            } else {
+                listener.pollingTerminated(t.getId());
+
+                throw new PollingTerminatedException();
+            }
+        }
+
+        if (s == State.CERT_NON_EXISTANT) {
+            throw new OperationFailureException(t.getFailInfo());
+        } else {
+            return t.getCertStore();
+        }
     }
 
     /**
@@ -548,22 +573,19 @@ public final class Client {
     }
 
     private X509Certificate selectEncryptionCertificate(CertStore store) {
-        X509CertificateTuple certPair = X509CertificateTupleFactory
-                .createTuple(store);
+        Authorities certPair = X509CertificateTupleFactory.createTuple(store);
 
-        return certPair.getEncryption();
+        return certPair.getEncrypter();
     }
 
     private X509Certificate selectVerificationCertificate(CertStore store) {
-        X509CertificateTuple certPair = X509CertificateTupleFactory
-                .createTuple(store);
+        Authorities certPair = X509CertificateTupleFactory.createTuple(store);
 
-        return certPair.getVerification();
+        return certPair.getVerifier();
     }
 
     private X509Certificate selectIssuerCertificate(CertStore store) {
-        X509CertificateTuple certPair = X509CertificateTupleFactory
-                .createTuple(store);
+        Authorities certPair = X509CertificateTupleFactory.createTuple(store);
 
         return certPair.getIssuer();
     }

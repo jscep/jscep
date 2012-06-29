@@ -14,6 +14,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.x500.X500Principal;
 
 import org.jscep.CertificateVerificationCallback;
+import org.jscep.client.verification.ConsoleCertificateVerifier;
 import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.Test;

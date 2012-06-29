@@ -10,38 +10,38 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class X509CertificateTuple {
+public class Authorities {
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(X509CertificateTuple.class);
+            .getLogger(Authorities.class);
     private static final int KEY_USAGE_LENGTH = 9;
     private static final int DIGITAL_SIGNATURE = 0;
     private static final int KEY_ENCIPHERMENT = 2;
     private static final int DATA_ENCIPHERMENT = 3;
 
-    private final X509Certificate verification;
-    private final X509Certificate encryption;
+    private final X509Certificate verifier;
+    private final X509Certificate encrypter;
     private final X509Certificate issuer;
 
-    public X509CertificateTuple(X509Certificate verification,
-            X509Certificate encryption, X509Certificate issuer) {
-        this.verification = verification;
-        this.encryption = encryption;
+    public Authorities(X509Certificate verifier,
+            X509Certificate encrypter, X509Certificate issuer) {
+        this.verifier = verifier;
+        this.encrypter = encrypter;
         this.issuer = issuer;
     }
 
-    public X509Certificate getVerification() {
-        return verification;
+    public X509Certificate getVerifier() {
+        return verifier;
     }
 
-    public X509Certificate getEncryption() {
-        return encryption;
+    public X509Certificate getEncrypter() {
+        return encrypter;
     }
 
     public X509Certificate getIssuer() {
         return issuer;
     }
 
-    public static X509CertificateTuple fromCertStore(CertStore store) {
+    public static Authorities fromCertStore(CertStore store) {
         try {
             Collection<? extends Certificate> certs = store
                     .getCertificates(null);
@@ -66,7 +66,7 @@ public class X509CertificateTuple {
         X509Certificate issuer = selectIssuerCertificate(store);
         LOGGER.debug("Using {} for issuer", signing.getSubjectDN());
 
-        return new X509CertificateTuple(signing, encryption, issuer);
+        return new Authorities(signing, encryption, issuer);
     }
 
     private static X509Certificate selectIssuerCertificate(CertStore store) {
