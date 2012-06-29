@@ -27,12 +27,14 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -80,8 +82,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class Client {
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
-    private Map<String, Capabilities> capabilitiesCache = new HashMap<String, Capabilities>();
-    private Set<X509Certificate> verified = new HashSet<X509Certificate>(1);
+    private final Map<String, Capabilities> capabilitiesCache = new HashMap<String, Capabilities>();
+    private final Set<X509Certificate> verified = new HashSet<X509Certificate>(
+            1);
 
     // A requester MUST have the following information locally configured:
     //
@@ -348,8 +351,7 @@ public final class Client {
      * @return the enrollment transaction.
      * @throws IOException if any I/O error occurs.
      */
-    public Transaction enrol(PKCS10CertificationRequest csr)
-            throws IOException {
+    public Transaction enrol(PKCS10CertificationRequest csr) throws IOException {
         LOGGER.debug("Enrolling certificate with CA");
         // TRANSACTIONAL
         // Certificate enrollment
@@ -400,6 +402,10 @@ public final class Client {
             throw new IllegalArgumentException(
                     "Private key algorithm should be RSA");
         }
+        if (!arePair(priKey, identity.getPublicKey())) {
+            throw new IllegalArgumentException(
+                    "Private key and certificate public key should be pair");
+        }
         if (!url.getProtocol().matches("^https?$")) {
             throw new IllegalArgumentException(
                     "URL protocol should be HTTP or HTTPS");
@@ -412,6 +418,13 @@ public final class Client {
             throw new IllegalArgumentException(
                     "URL should contain no query string");
         }
+    }
+
+    private boolean arePair(PrivateKey pri, PublicKey pub) {
+        RSAKey rsaPub = RSAKey.class.cast(pub);
+        RSAKey rsaPri = RSAKey.class.cast(pri);
+
+        return rsaPub.getModulus().equals(rsaPri.getModulus());
     }
 
     private PkiMessageEncoder getEncoder() throws IOException {
