@@ -3,7 +3,7 @@ package org.jscep.client;
 import java.security.cert.X509Certificate;
 
 /**
- * This certificate verifier always verifies certificates as valid.
+ * This certificate verifier always returns <tt>true</tt>.
  */
 public final class OptimisticCertificateVerifier implements CertificateVerifier {
     /**
