@@ -31,11 +31,11 @@ public interface ScepContentHandler<T> {
     /**
      * Read and interpret the content from the input stream.
      * 
-     * @param in the input stream containing the content.
+     * @param response the content.
      * @param mimeType the type of the input stream.
      * @return the content in a usage form.
-     * @throws InvalidContentTypeException
-     * @throws InvalidContentException
+     * @throws InvalidContentTypeException if there is a problem decoding
+     * @throws InvalidContentException if there is a problem with the message
      */
     T getContent(byte[] response, String mimeType)
             throws InvalidContentTypeException, InvalidContentException;

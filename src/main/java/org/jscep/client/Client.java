@@ -37,10 +37,8 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAKey;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.callback.Callback;
@@ -84,7 +82,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class Client {
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
-    private final Map<String, Capabilities> capabilitiesCache = new HashMap<String, Capabilities>();
     private final Set<X509Certificate> verified = new HashSet<X509Certificate>(
             1);
 
@@ -111,11 +108,12 @@ public final class Client {
     //
     // We use a callback handler for this.
     private final CallbackHandler cbh;
+
     // The requester MUST have MESSAGE information configured if the
     // Certification Authority requires it (see Section 5.1).
     //
     // How does one determine that the CA _requires_ this?
-    private final String profile;
+    // private final String profile;
 
     /**
      * Creates a new Client instance without a profile identifier.
@@ -152,7 +150,7 @@ public final class Client {
         this.identity = client;
         this.priKey = priKey;
         this.cbh = cbh;
-        this.profile = profile;
+        // this.profile = profile;
 
         validateInput();
     }
@@ -163,11 +161,10 @@ public final class Client {
      * Retrieves the set of SCEP capabilities from the CA.
      * 
      * @return the capabilities of the server.
-     * @throws IOException if any I/O error occurs.
      */
-    public Capabilities getCaCapabilities() throws IOException {
+    public Capabilities getCaCapabilities() {
         // NON-TRANSACTIONAL
-        return getCaCapabilities(false);
+        return getCaCapabilities(null);
     }
 
     /**
@@ -179,7 +176,12 @@ public final class Client {
      * @return the list of certificates.
      * @throws IOException if any I/O error occurs.
      */
+    @Deprecated
     public CertStore getCaCertificate() throws IOException {
+        return getCaCertificate(null);
+    }
+
+    public CertStore getCaCertificate(String profile) throws IOException {
         LOGGER.debug("Retriving current CA certificate");
         // NON-TRANSACTIONAL
         // CA and RA public key distribution
@@ -216,22 +218,29 @@ public final class Client {
         return e;
     }
 
+    @Deprecated
+    public List<X509Certificate> getRolloverCertificate() throws IOException {
+        return getRolloverCertificate(null);
+    }
+
     /**
      * Retrieves the "rollover" certificate to be used by the CA.
      * <p/>
      * If the CA is using an RA, the RA certificate will be present in the
      * returned list.
      * 
+     * @param profile profile to use to determine if rollover is supported.
      * @return the list of certificates.
      * @throws IOException if any I/O error occurs.
      */
-    public List<X509Certificate> getRolloverCertificate() throws IOException {
+    public List<X509Certificate> getRolloverCertificate(final String profile)
+            throws IOException {
         LOGGER.debug("Retriving next CA certificate from CA");
         // NON-TRANSACTIONAL
-        if (!getCaCapabilities().isRolloverSupported()) {
+        if (!getCaCapabilities(profile).isRolloverSupported()) {
             throw new UnsupportedOperationException();
         }
-        final X509Certificate issuer = getRecipientCertificate();
+        final X509Certificate issuer = getRecipientCertificate(profile);
 
         final Transport trans = Transport.createTransport(Transport.Method.GET,
                 url);
@@ -252,30 +261,32 @@ public final class Client {
     // TRANSACTIONAL
 
     /**
-     * Returns the current CA's certificate revocation list
+     * Returns the current CA's certificate revocation list.
      * 
      * @param issuer the issuer X500 name
      * @param serial the serial number of the certificate
+     * @param profile profile to use for determining if HTTP POST is supported
      * @return a collection of CRLs
      * @throws IOException if any I/O error occurs.
      * @throws OperationFailureException if the operation fails.
      */
     @SuppressWarnings("unchecked")
-    public X509CRL getRevocationList(X500Principal issuer, BigInteger serial)
-            throws IOException, OperationFailureException {
+    public X509CRL getRevocationList(final X500Principal issuer,
+            final BigInteger serial, final String profile) throws IOException,
+            OperationFailureException {
         LOGGER.debug("Retriving CRL from CA");
         // TRANSACTIONAL
         // CRL query
-        final X509Certificate ca = retrieveCA();
+        final X509Certificate ca = retrieveCA(profile);
         if (supportsDistributionPoints(ca)) {
             throw new RuntimeException("Unimplemented");
         }
 
         X500Name name = new X500Name(issuer.getName());
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
-        Transport transport = createTransport();
+        Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(), getDecoder(), iasn, MessageType.GET_CRL);
+                getEncoder(profile), getDecoder(), iasn, MessageType.GET_CRL);
         State state;
         try {
             state = t.send();
@@ -306,23 +317,24 @@ public final class Client {
      * issued by the current CA.
      * 
      * @param serial the serial number.
+     * @param profile the profile to use to determine whether to use HTTP POST
      * @return the certificate.
      * @throws IOException if any I/O error occurs.
      * @throws OperationFailureException if the operation fails.
      */
     @SuppressWarnings("unchecked")
-    public List<X509Certificate> getCertificate(BigInteger serial)
-            throws IOException, OperationFailureException {
+    public List<X509Certificate> getCertificate(BigInteger serial,
+            String profile) throws IOException, OperationFailureException {
         LOGGER.debug("Retriving certificate from CA");
         // TRANSACTIONAL
         // Certificate query
-        final X509Certificate ca = retrieveCA();
+        final X509Certificate ca = retrieveCA(profile);
 
         X500Name name = new X500Name(ca.getIssuerX500Principal().toString());
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
-        Transport transport = createTransport();
+        Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(), getDecoder(), iasn, MessageType.GET_CERT);
+                getEncoder(profile), getDecoder(), iasn, MessageType.GET_CERT);
 
         State state;
         try {
@@ -346,11 +358,17 @@ public final class Client {
         }
     }
 
+    public List<X509Certificate> getCertificate(BigInteger serial)
+            throws IOException, OperationFailureException {
+        return getCertificate(serial, null);
+    }
+
     /**
      * Enrols the provided CSR into a PKI.
      * 
      * @param csr the certificate signing request
      * @param listener the polling listener
+     * @param profile profile to use for retrieving a CA certificate.
      * @return the enrollment transaction.
      * @throws IOException if any I/O error occurs.
      * @throws TransportException
@@ -359,14 +377,14 @@ public final class Client {
      * @throws OperationFailureException if the enrollment fails
      */
     public CertStore enrol(final PKCS10CertificationRequest csr,
-            final PollingListener listener) throws IOException,
+            final PollingListener listener, String profile) throws IOException,
             TransportException, PollingTerminatedException,
             OperationFailureException {
         LOGGER.debug("Enrolling certificate with CA");
         // TRANSACTIONAL
         // Certificate enrollment
-        final Transport transport = createTransport();
-        CertStore store = getCaCertificate();
+        final Transport transport = createTransport(profile);
+        CertStore store = getCaCertificate(profile);
         X509Certificate encryptCert = selectEncryptionCertificate(store);
         X509Certificate verifyCert = selectVerificationCertificate(store);
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
@@ -396,6 +414,13 @@ public final class Client {
         } else {
             return t.getCertStore();
         }
+    }
+
+    public CertStore enrol(final PKCS10CertificationRequest csr,
+            final PollingListener listener) throws IOException,
+            TransportException, PollingTerminatedException,
+            OperationFailureException {
+        return enrol(csr, listener, null);
     }
 
     /**
@@ -454,9 +479,9 @@ public final class Client {
         return rsaPub.getModulus().equals(rsaPri.getModulus());
     }
 
-    private PkiMessageEncoder getEncoder() throws IOException {
+    private PkiMessageEncoder getEncoder(String profile) throws IOException {
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                getRecipientCertificate());
+                getRecipientCertificate(profile));
 
         return new PkiMessageEncoder(priKey, identity, envEncoder);
     }
@@ -481,12 +506,13 @@ public final class Client {
     /**
      * Creates a new transport based on the capabilities of the server.
      * 
+     * @param profile profile to use for determining if HTTP POST is supported
      * @return the new transport.
      * @throws IOException if any I/O error occurs.
      */
-    private Transport createTransport() throws IOException {
+    private Transport createTransport(final String profile) throws IOException {
         final Transport t;
-        if (getCaCapabilities(true).isPostSupported()) {
+        if (getCaCapabilities(profile).isPostSupported()) {
             t = Transport.createTransport(Transport.Method.POST, url);
         } else {
             t = Transport.createTransport(Transport.Method.GET, url);
@@ -495,43 +521,24 @@ public final class Client {
         return t;
     }
 
-    private Capabilities getCaCapabilities(boolean useCache) {
+    public Capabilities getCaCapabilities(String profile) {
         LOGGER.debug("Determining capabilities of SCEP server");
         // NON-TRANSACTIONAL
-        Capabilities caps = null;
-        if (useCache) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Retrieving capabilities from cache");
-            }
-            caps = capabilitiesCache.get(profile);
-            if (caps == null) {
-                LOGGER.debug("Cache MISS");
-            } else {
-                LOGGER.debug("Cache HIT");
-            }
+        final GetCaCaps req = new GetCaCaps(profile);
+        final Transport trans = Transport.createTransport(Transport.Method.GET,
+                url);
+        try {
+            return trans.sendRequest(req, new CaCapabilitiesContentHandler());
+        } catch (TransportException e) {
+            LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
+            return new Capabilities();
+        } catch (InvalidContentTypeException e) {
+            LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
+            return new Capabilities();
+        } catch (InvalidContentException e) {
+            LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
+            return new Capabilities();
         }
-        if (caps == null) {
-            final GetCaCaps req = new GetCaCaps(profile);
-            final Transport trans = Transport.createTransport(
-                    Transport.Method.GET, url);
-            try {
-                caps = trans.sendRequest(req,
-                        new CaCapabilitiesContentHandler());
-            } catch (TransportException e) {
-                LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
-                caps = new Capabilities();
-            } catch (InvalidContentTypeException e) {
-                LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
-                caps = new Capabilities();
-            } catch (InvalidContentException e) {
-                LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
-                caps = new Capabilities();
-            }
-            LOGGER.debug("Caching capabilities");
-            capabilitiesCache.put(profile, caps);
-        }
-
-        return caps;
     }
 
     private void verifyCA(X509Certificate cert) throws IOException {
@@ -564,30 +571,31 @@ public final class Client {
         }
     }
 
-    private X509Certificate retrieveCA() throws IOException {
-        return selectVerificationCertificate(getCaCertificate());
+    private X509Certificate retrieveCA(String profile) throws IOException {
+        return selectVerificationCertificate(getCaCertificate(profile));
     }
 
-    private X509Certificate getRecipientCertificate() throws IOException {
-        final CertStore store = getCaCertificate();
+    private X509Certificate getRecipientCertificate(String profile)
+            throws IOException {
+        final CertStore store = getCaCertificate(profile);
         // The CA or RA
         return selectEncryptionCertificate(store);
     }
 
     private X509Certificate selectEncryptionCertificate(CertStore store) {
-        Authorities certPair = X509CertificateTupleFactory.createTuple(store);
+        Authorities certPair = Authorities.fromCertStore(store);
 
         return certPair.getEncrypter();
     }
 
     private X509Certificate selectVerificationCertificate(CertStore store) {
-        Authorities certPair = X509CertificateTupleFactory.createTuple(store);
+        Authorities certPair = Authorities.fromCertStore(store);
 
         return certPair.getVerifier();
     }
 
     private X509Certificate selectIssuerCertificate(CertStore store) {
-        Authorities certPair = X509CertificateTupleFactory.createTuple(store);
+        Authorities certPair = Authorities.fromCertStore(store);
 
         return certPair.getIssuer();
     }

@@ -22,21 +22,9 @@
  */
 package org.jscep.pkcs7;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.cert.CRL;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreParameters;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-import java.util.HashSet;
 
-import org.bouncycastle.cert.X509CRLHolder;
-import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignatureAlgorithmNameGenerator;
 import org.bouncycastle.cms.CMSSignedData;
@@ -50,7 +38,6 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.SignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.Store;
 
 /**
  * This class contains utility methods for manipulating SignedData objects.
@@ -62,46 +49,6 @@ public final class SignedDataUtil {
      * Private constructor to prevent instantiation.
      */
     private SignedDataUtil() {
-    }
-
-    /**
-     * Extracts a CertStore from the provided PKCS #7 SignedData object.
-     * 
-     * @param sd the PKCS #7 SignedData object.
-     * @return the CertStore.
-     * @throws GeneralSecurityException if any security error is encountered.
-     */
-    @SuppressWarnings("unchecked")
-    public static CertStore extractCertStore(CMSSignedData sd)
-            throws GeneralSecurityException, IOException {
-        final CertificateFactory factory = CertificateFactory
-                .getInstance("X.509");
-        final Collection<Object> collection = new HashSet<Object>();
-        final Store certs = sd.getCertificates();
-        final Store crls = sd.getCRLs();
-
-        if (certs != null) {
-            Collection<X509CertificateHolder> certColl = certs.getMatches(null);
-            for (X509CertificateHolder holder : certColl) {
-                ByteArrayInputStream bais = new ByteArrayInputStream(
-                        holder.getEncoded());
-                Certificate cert = factory.generateCertificate(bais);
-                collection.add(cert);
-            }
-        }
-        if (crls != null) {
-            Collection<X509CRLHolder> crlColl = crls.getMatches(null);
-            for (X509CRLHolder holder : crlColl) {
-                ByteArrayInputStream bais = new ByteArrayInputStream(
-                        holder.getEncoded());
-                CRL crl = factory.generateCRL(bais);
-                collection.add(crl);
-            }
-        }
-
-        final CertStoreParameters parameters = new CollectionCertStoreParameters(
-                collection);
-        return CertStore.getInstance("Collection", parameters);
     }
 
     /**

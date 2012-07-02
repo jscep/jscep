@@ -28,7 +28,7 @@ public final class DelegatingPollingListener implements PollingListener {
      * 
      * @param listeners the listeners to delegate to.
      */
-    public DelegatingPollingListener(PollingListener... listeners) {
+    public DelegatingPollingListener(final PollingListener... listeners) {
         if (listeners == null) {
             this.listeners = new PollingListener[] { new NoPollPollingListener() };
         } else {
@@ -41,9 +41,9 @@ public final class DelegatingPollingListener implements PollingListener {
      * 
      * {@inheritDoc}
      */
-    public boolean poll(TransactionId id) {
+    public boolean poll(final TransactionId id) {
         for (PollingListener listener : listeners) {
-            if (listener.poll(id) == false) {
+            if (!listener.poll(id)) {
                 return false;
             }
         }
@@ -56,7 +56,7 @@ public final class DelegatingPollingListener implements PollingListener {
      * 
      * {@inheritDoc}
      */
-    public void pollingTerminated(TransactionId id) {
+    public void pollingTerminated(final TransactionId id) {
         for (PollingListener listener : listeners) {
             listener.pollingTerminated(id);
         }

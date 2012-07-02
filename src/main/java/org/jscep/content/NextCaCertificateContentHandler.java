@@ -36,6 +36,7 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.pkcs7.SignedDataUtil;
+import org.jscep.util.CertStoreUtils;
 
 /**
  * This class handles responses to <code>GetNextCACert</code> requests.
@@ -82,7 +83,7 @@ public class NextCaCertificateContentHandler implements
                 // new CA certificate and any new RA certificates, as defined in
                 // Section 5.2.1.1.2, to be used when the current CA certificate
                 // expires.
-                CertStore store = SignedDataUtil.extractCertStore(sd);
+                CertStore store = CertStoreUtils.fromSignedData(sd);
                 collection = store.getCertificates(new X509CertSelector());
             } catch (IOException e) {
                 throw new InvalidContentTypeException(e);

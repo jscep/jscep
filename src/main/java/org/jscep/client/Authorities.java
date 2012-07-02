@@ -10,7 +10,10 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Authorities {
+/**
+ * This class is used for storing CA and RA certificates.
+ */
+public final class Authorities {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(Authorities.class);
     private static final int KEY_USAGE_LENGTH = 9;
@@ -22,26 +25,54 @@ public class Authorities {
     private final X509Certificate encrypter;
     private final X509Certificate issuer;
 
-    public Authorities(X509Certificate verifier,
-            X509Certificate encrypter, X509Certificate issuer) {
+    public Authorities(X509Certificate verifier, X509Certificate encrypter,
+            X509Certificate issuer) {
         this.verifier = verifier;
         this.encrypter = encrypter;
         this.issuer = issuer;
     }
 
+    /**
+     * Returns the verifier certificate.
+     * 
+     * @return the verifier certificate.
+     */
     public X509Certificate getVerifier() {
         return verifier;
     }
 
+    /**
+     * Returns the encrypter certificate.
+     * 
+     * @return the encrypter certificate.
+     */
     public X509Certificate getEncrypter() {
         return encrypter;
     }
 
+    /**
+     * Returns the issuer certificate.
+     * 
+     * @return the issuer certificate.
+     */
     public X509Certificate getIssuer() {
         return issuer;
     }
 
-    public static Authorities fromCertStore(CertStore store) {
+    /**
+     * Inspects the given CertStore to extract an Authorities instance.
+     * <p>
+     * This method will inspect the given CertStore with pre-configured
+     * selectors to match RA certificates for encryption and verification, plus
+     * the issuing CA certificate.
+     * <p>
+     * If the CertStore only contains a single CA certificate, that certificate
+     * will be used for all three roles.
+     * 
+     * @param store the store to inspect.
+     * @return the Authorities instance.
+     */
+    public static Authorities fromCertStore(final CertStore store) {
         try {
             Collection<? extends Certificate> certs = store
                     .getCertificates(null);

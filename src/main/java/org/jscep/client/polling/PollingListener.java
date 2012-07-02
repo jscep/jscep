@@ -22,9 +22,10 @@ public interface PollingListener {
     /**
      * This method is invoked when the client gives up polling.
      * <p>
-     * This method can be called in two situations:
+     * This method can be called in three situations:
      * <ul>
      * <li>onPoll returns false</li>
+     * <li>the client receives a success notification</li>
      * <li>the client receives a failure notification</li>
      * </ul>
      * In the former case, implementations can clean up state before returning
