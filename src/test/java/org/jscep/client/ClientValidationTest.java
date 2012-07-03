@@ -12,10 +12,35 @@ import java.security.cert.X509Certificate;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.x500.X500Principal;
 
+import org.jscep.client.verification.OptimisticCertificateVerifier;
 import org.jscep.x509.X509Util;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ClientValidationTest {
+    private X500Principal subject;
+
+    private KeyPair dsaKeyPair;
+    private PrivateKey dsaPrivateKey;
+    private X509Certificate dsaCertificate;
+
+    private KeyPair rsaKeyPair;
+    private PrivateKey rsaPrivateKey;
+    private X509Certificate rsaCertificate;
+
+    @Before
+    public void setUp() {
+        subject = new X500Principal("CN=jscep");
+
+        dsaKeyPair = getKeyPair("DSA");
+        dsaPrivateKey = dsaKeyPair.getPrivate();
+        dsaCertificate = getCertificate(dsaKeyPair);
+
+        rsaKeyPair = getKeyPair("RSA");
+        rsaPrivateKey = rsaKeyPair.getPrivate();
+        rsaCertificate = getCertificate(rsaKeyPair);
+    }
+
     @Test(expected = NullPointerException.class)
     public void testNullUrl() {
         new Client(null, null, null, null);
@@ -28,47 +53,47 @@ public class ClientValidationTest {
 
     @Test(expected = NullPointerException.class)
     public void testNullPrivateKey() {
-        new Client(getUrl(), getCertificate(), null, null);
+        new Client(getUrl(), rsaCertificate, null, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullCallbackHandler() {
-        new Client(getUrl(), getCertificate(), getPrivateKey(), null);
+        new Client(getUrl(), rsaCertificate, rsaPrivateKey, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidKeyAlgorithmPublic() {
-        new Client(getUrl(), getCertificate("DSA"), getPrivateKey(),
+        new Client(getUrl(), dsaCertificate, rsaPrivateKey,
                 getCallbackHandler());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidKeyAlgorithmPrivate() {
-        new Client(getUrl(), getCertificate(), getPrivateKey("DSA"),
+        new Client(getUrl(), rsaCertificate, dsaPrivateKey,
                 getCallbackHandler());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidUrlProtocol() {
-        new Client(getUrl("ftp"), getCertificate(), getPrivateKey(),
+        new Client(getUrl("ftp"), rsaCertificate, rsaPrivateKey,
                 getCallbackHandler());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUrlWithReference() {
-        new Client(getUrlWithReference(), getCertificate(), getPrivateKey(),
+        new Client(getUrlWithReference(), rsaCertificate, rsaPrivateKey,
                 getCallbackHandler());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUrlWithQueryString() {
-        new Client(getUrlWithQueryString(), getCertificate(), getPrivateKey(),
+        new Client(getUrlWithQueryString(), rsaCertificate, rsaPrivateKey,
                 getCallbackHandler());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testKeyMismatch() {
-        new Client(getUrl(), getCertificate(), getPrivateKey(),
+        new Client(getUrl(), rsaCertificate, getPrivateKey("RSA"),
                 getCallbackHandler());
     }
 
@@ -100,10 +125,9 @@ public class ClientValidationTest {
         return getKeyPair(algorithm).getPrivate();
     }
 
-    private X509Certificate getCertificate(String algorithm) {
+    private X509Certificate getCertificate(KeyPair keyPair) {
         try {
-            return X509Util.createEphemeralCertificate(getSubject(),
-                    getKeyPair(algorithm));
+            return X509Util.createEphemeralCertificate(subject, keyPair);
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
@@ -118,7 +142,7 @@ public class ClientValidationTest {
     }
 
     private CallbackHandler getCallbackHandler() {
-        return new NoSecurityCallbackHandler();
+        return new DefaultCallbackHandler(new OptimisticCertificateVerifier());
     }
 
     private PrivateKey getPrivateKey() {
@@ -126,11 +150,7 @@ public class ClientValidationTest {
     }
 
     private X509Certificate getCertificate() {
-        return getCertificate("RSA");
-    }
-
-    private X500Principal getSubject() {
-        return new X500Principal("CN=jscep");
+        return getCertificate(rsaKeyPair);
     }
 
     private URL getUrl() {

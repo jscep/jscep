@@ -27,6 +27,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.jscep.client.polling.NoPollPollingListener;
+import org.jscep.client.verification.OptimisticCertificateVerifier;
 import org.jscep.transaction.OperationFailureException;
 import org.jscep.x509.X509Util;
 import org.junit.Assume;
@@ -52,7 +53,7 @@ public class ClientTest extends AbstractClientTest {
         final URL url = new URL("http://jscep.org/pkiclient.exe");
 
         new Client(url, identity, keyPair.getPrivate(),
-                new NoSecurityCallbackHandler());
+                new DefaultCallbackHandler(new OptimisticCertificateVerifier()));
     }
 
     @Test
@@ -106,7 +107,7 @@ public class ClientTest extends AbstractClientTest {
         final URL url = new URL("http://someurl/certsrv/mscep/mscep.dll");
 
         Client c = new Client(url, identity, keyPair.getPrivate(),
-                new NoSecurityCallbackHandler());
+                new DefaultCallbackHandler(new OptimisticCertificateVerifier()));
         assertNotNull(c);
     }
 

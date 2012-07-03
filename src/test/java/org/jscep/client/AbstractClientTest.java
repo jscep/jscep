@@ -1,21 +1,28 @@
 package org.jscep.client;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.jscep.server.ScepServletImpl;
-import org.jscep.x509.X509Util;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-
-import javax.net.ssl.*;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.x500.X500Principal;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.x500.X500Principal;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletHandler;
+import org.jscep.client.verification.OptimisticCertificateVerifier;
+import org.jscep.server.ScepServletImpl;
+import org.jscep.x509.X509Util;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 
 @Ignore
 public abstract class AbstractClientTest {
@@ -43,7 +50,8 @@ public abstract class AbstractClientTest {
                 "CN=jscep.org"), keyPair);
 
         url = new URL("http", "localhost", port, PATH);
-        final CallbackHandler cbh = new NoSecurityCallbackHandler();
+        final CallbackHandler cbh = new DefaultCallbackHandler(
+                new OptimisticCertificateVerifier());
 
         client = new Client(url, identity, keyPair.getPrivate(), cbh);
     }
@@ -51,8 +59,7 @@ public abstract class AbstractClientTest {
     /**
      * Removes any trust checking for SSL connections.
      * 
-     * @throws Exception
-     *             if any error occurs.
+     * @throws Exception if any error occurs.
      */
     @BeforeClass
     public static void setUpTrustManager() throws Exception {

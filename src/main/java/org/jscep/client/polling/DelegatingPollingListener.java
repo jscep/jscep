@@ -22,26 +22,25 @@ public final class DelegatingPollingListener implements PollingListener {
 
     /**
      * Creates a new instance with the given delegate PollingListeners.
-     * <p>
-     * If no listeners are added, this method will delegate to
-     * NoPollPollingListener.
      * 
      * @param listeners the listeners to delegate to.
      */
     public DelegatingPollingListener(final PollingListener... listeners) {
-        if (listeners == null) {
-            this.listeners = new PollingListener[] { new NoPollPollingListener() };
-        } else {
-            this.listeners = listeners;
-        }
+        this.listeners = listeners;
     }
 
     /**
      * Delegates to polling listeners passed in constructor.
-     * 
+     * <p>
+     * This method will return immediately after the first delegate returns
+     * false, so there is no guarantee to call all delegates.
+     * <p>
      * {@inheritDoc}
      */
     public boolean poll(final TransactionId id) {
+        if (listeners.length == 0) {
+            return false;
+        }
         for (PollingListener listener : listeners) {
             if (!listener.poll(id)) {
                 return false;
@@ -53,7 +52,7 @@ public final class DelegatingPollingListener implements PollingListener {
 
     /**
      * Delegates to polling listeners passed in constructor.
-     * 
+     * <p>
      * {@inheritDoc}
      */
     public void pollingTerminated(final TransactionId id) {
