@@ -1,7 +1,6 @@
 package org.jscep.client.polling;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import org.jscep.transaction.TransactionId;
 
@@ -12,7 +11,13 @@ public class CountingPollingListener implements PollingListener {
     private final int retries;
     private final ConcurrentHashMap<TransactionId, Integer> transAttempts;
 
-    public CountingPollingListener(long duration, TimeUnit unit, int retries) {
+    /**
+     * Creates a new instance of CountingPollingListener with the given number
+     * of retries.
+     * 
+     * @param retries the number of retries.
+     */
+    public CountingPollingListener(final int retries) {
         this.retries = retries;
         this.transAttempts = new ConcurrentHashMap<TransactionId, Integer>();
     }
@@ -20,8 +25,8 @@ public class CountingPollingListener implements PollingListener {
     /**
      * {@inheritDoc}
      */
-    public synchronized boolean poll(TransactionId id) {
-        transAttempts.putIfAbsent(id, 0);
+    public synchronized boolean poll(final TransactionId id) {
+        transAttempts.putIfAbsent(id, 1);
 
         int attempts = transAttempts.get(id);
 
@@ -29,7 +34,7 @@ public class CountingPollingListener implements PollingListener {
             return false;
         }
 
-        transAttempts.put(id, attempts++);
+        transAttempts.put(id, ++attempts);
 
         return true;
     }

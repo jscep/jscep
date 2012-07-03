@@ -5,6 +5,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
+import com.google.common.primitives.Bytes;
 
 /**
  * CertificateVerifier that uses a known message digest to verify the
@@ -31,7 +32,7 @@ public final class MessageDigestCertificateVerifier implements
     public MessageDigestCertificateVerifier(MessageDigest digest,
             byte[] expected) {
         this.digest = digest;
-        this.expected = expected;
+        this.expected = Bytes.concat(expected);
     }
 
     /**

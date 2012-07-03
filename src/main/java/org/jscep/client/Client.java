@@ -446,14 +446,6 @@ public final class Client {
                     "Callback handler should not be null");
         }
 
-        if (!identity.getPublicKey().getAlgorithm().equals("RSA")) {
-            throw new IllegalArgumentException(
-                    "Public key algorithm should be RSA");
-        }
-        if (!priKey.getAlgorithm().equals("RSA")) {
-            throw new IllegalArgumentException(
-                    "Private key algorithm should be RSA");
-        }
         if (!arePair(priKey, identity.getPublicKey())) {
             throw new IllegalArgumentException(
                     "Private key and certificate public key should be pair");
@@ -473,7 +465,15 @@ public final class Client {
     }
 
     private boolean arePair(PrivateKey pri, PublicKey pub) {
+        if (!(pub instanceof RSAKey)) {
+            throw new IllegalArgumentException(
+                    "Public key algorithm should be RSA");
+        }
         RSAKey rsaPub = RSAKey.class.cast(pub);
+        if (!(pri instanceof RSAKey)) {
+            throw new IllegalArgumentException(
+                    "Private key algorithm should be RSA");
+        }
         RSAKey rsaPri = RSAKey.class.cast(pri);
 
         return rsaPub.getModulus().equals(rsaPri.getModulus());
