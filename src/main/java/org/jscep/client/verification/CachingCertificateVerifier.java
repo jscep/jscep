@@ -26,13 +26,16 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
     }
 
     /**
-     * This implementation will verify the provided certificate with the
-     * delegate provided to the constructor and cache the response.
+     * This implementation will forward the provided certificate to the delegate
+     * provider in the constructor, and cache the delegate's response.
      * <p>
-     * On subsequent invocations, the initial response from the delegate will be
-     * replayed.
-     * <p>
-     * {@inheritDoc}
+     * On every subsequent invocation, the initial response from the delegate
+     * will be returned.
+     * 
+     * @param cert
+     *            the certificate to verify.
+     * @return the result of calling <tt>verify</tt> on the delegate
+     *         <tt>CertificateVerifier</tt>.
      */
     public synchronized boolean verify(final X509Certificate cert) {
         if (verificationAnswers.containsKey(cert)) {
