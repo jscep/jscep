@@ -35,7 +35,8 @@ import com.google.common.base.Objects;
  * This class represents an abstract SCEP PkiMessage, which may be either a
  * request or response.
  * 
- * @param <T> the MessageData for this message.
+ * @param <T>
+ *            the MessageData for this message.
  */
 public abstract class PkiMessage<T> {
     private final TransactionId transId;

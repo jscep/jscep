@@ -15,8 +15,10 @@ public final class ConstantTimePollingListener implements PollingListener {
     /**
      * Creates a new ConstantTimePollingListener with the given interval.
      * 
-     * @param duration the amount of time
-     * @param unit the time unit
+     * @param duration
+     *            the amount of time
+     * @param unit
+     *            the time unit
      */
     public ConstantTimePollingListener(final long duration, final TimeUnit unit) {
         this.duration = duration;

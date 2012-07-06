@@ -9,7 +9,7 @@ import java.security.*;
 /**
  * This is a sanity test for the algorithms recognised by the algorithm
  * dictionary.
- *
+ * 
  * @author David Grant
  */
 public class AlgorithmDictionaryTest {

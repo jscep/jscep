@@ -69,7 +69,8 @@ public final class Authorities {
      * If the CertStore only contains a single CA certificate, that certificate
      * will be used for all three roles.
      * 
-     * @param store the store to inspect.
+     * @param store
+     *            the store to inspect.
      * @return the Authorities instance.
      */
     public static Authorities fromCertStore(final CertStore store) {

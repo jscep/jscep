@@ -33,7 +33,8 @@ public final class GetCaCert extends Request {
     /**
      * Creates a new GetCACert request with the given CA identification string.
      * 
-     * @param caIdentifier the CA identification string.
+     * @param caIdentifier
+     *            the CA identification string.
      */
     public GetCaCert(String caIdentifier) {
         super(Operation.GET_CA_CERT);

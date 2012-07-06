@@ -55,8 +55,10 @@ public final class SignedDataUtil {
      * Checks if the provided signedData was signed by the entity represented by
      * the provided certificate.
      * 
-     * @param sd the signedData to verify.
-     * @param signer the signing entity.
+     * @param sd
+     *            the signedData to verify.
+     * @param signer
+     *            the signing entity.
      * @return <code>true</code> if the signedData was signed by the entity,
      *         <code>false</code> otherwise.
      */

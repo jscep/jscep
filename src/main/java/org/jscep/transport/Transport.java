@@ -75,6 +75,7 @@ public abstract class Transport {
 
     /**
      * Returns the URL configured for use by this transport.
+     * 
      * @return the URL.
      */
     public final URL getURL() {
@@ -84,9 +85,13 @@ public abstract class Transport {
     /**
      * Sends the given request to the URL provided in the constructor and uses
      * the {@link Request}'s content handler to parse the response.
-     * @param <T> the response type.
-     * @param msg the message to send.
-     * @param handler the response handler
+     * 
+     * @param <T>
+     *            the response type.
+     * @param msg
+     *            the message to send.
+     * @param handler
+     *            the response handler
      * @return the response of type T.
      * @throws TransportException
      * @throws InvalidContentTypeException
@@ -99,9 +104,13 @@ public abstract class Transport {
     /**
      * Creates a new <code>Transport</code> of type <code>method</code> with the
      * provided URL over the provided proxy.
-     * @param method the transport type.
-     * @param url the URL.
-     * @param proxy the proxy.
+     * 
+     * @param method
+     *            the transport type.
+     * @param url
+     *            the URL.
+     * @param proxy
+     *            the proxy.
      * @return a new Transport instance.
      */
     public static Transport createTransport(final Method method, final URL url,
@@ -121,8 +130,11 @@ public abstract class Transport {
     /**
      * Creates a new <code>Transport</code> of type <code>method</code> with the
      * provided URL.
-     * @param method the transport type.
-     * @param url the url.
+     * 
+     * @param method
+     *            the transport type.
+     * @param url
+     *            the url.
      * @return a new Transport instance.
      */
     public static Transport createTransport(final Method method, final URL url) {
@@ -132,9 +144,12 @@ public abstract class Transport {
 
     /**
      * Returns the URL for the given operation.
-     * @param op the operation.
+     * 
+     * @param op
+     *            the operation.
      * @return the URL for the given operation.
-     * @throws MalformedURLException if the generated URL is malformed.
+     * @throws MalformedURLException
+     *             if the generated URL is malformed.
      */
     final URL getUrl(final Operation op) throws MalformedURLException {
         return new URL(url.toExternalForm() + "?operation=" + op.getName());
@@ -142,7 +157,9 @@ public abstract class Transport {
 
     /**
      * Converts the given object varargs to an object array.
-     * @param objects the objects to convert.
+     * 
+     * @param objects
+     *            the objects to convert.
      * @return the object array.
      */
     protected final Object[] varargs(final Object... objects) {

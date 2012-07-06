@@ -470,9 +470,11 @@ public abstract class ScepServlet extends HttpServlet {
     /**
      * Returns the capabilities of the specified CA.
      * 
-     * @param identifier the CA identifier, which may be an empty string.
+     * @param identifier
+     *            the CA identifier, which may be an empty string.
      * @return the capabilities.
-     * @throws Exception if any problem occurs
+     * @throws Exception
+     *             if any problem occurs
      */
     protected abstract Set<Capability> doCapabilities(String identifier)
             throws Exception;
@@ -480,9 +482,11 @@ public abstract class ScepServlet extends HttpServlet {
     /**
      * Returns the certificate chain of the specified CA.
      * 
-     * @param identifier the CA identifier, which may be an empty string.
+     * @param identifier
+     *            the CA identifier, which may be an empty string.
      * @return the CA's certificate.
-     * @throws Exception if any problem occurs
+     * @throws Exception
+     *             if any problem occurs
      */
     protected abstract List<X509Certificate> doGetCaCertificate(
             String identifier) throws Exception;
@@ -491,9 +495,11 @@ public abstract class ScepServlet extends HttpServlet {
      * Return the chain of the next X.509 certificate which will be used by the
      * specified CA.
      * 
-     * @param identifier the CA identifier, which may be an empty string.
+     * @param identifier
+     *            the CA identifier, which may be an empty string.
      * @return the list of certificates.
-     * @throws Exception if any problem occurs
+     * @throws Exception
+     *             if any problem occurs
      */
     protected abstract List<X509Certificate> getNextCaCertificate(
             String identifier) throws Exception;
@@ -501,11 +507,15 @@ public abstract class ScepServlet extends HttpServlet {
     /**
      * Retrieve the certificate chain identified by the given parameters.
      * 
-     * @param issuer the issuer name.
-     * @param serial the serial number.
+     * @param issuer
+     *            the issuer name.
+     * @param serial
+     *            the serial number.
      * @return the identified certificate, if any.
-     * @throws OperationFailureException if the operation cannot be completed
-     * @throws Exception if any problem occurs
+     * @throws OperationFailureException
+     *             if the operation cannot be completed
+     * @throws Exception
+     *             if any problem occurs
      */
     protected abstract List<X509Certificate> doGetCert(X500Name issuer,
             BigInteger serial) throws OperationFailureException, Exception;
@@ -516,11 +526,15 @@ public abstract class ScepServlet extends HttpServlet {
      * certificate chain. Otherwise, this method should return null or an empty
      * list to indicate that the request is still pending.
      * 
-     * @param issuer the issuer name.
-     * @param subject the subject name.
+     * @param issuer
+     *            the issuer name.
+     * @param subject
+     *            the subject name.
      * @return the identified certificate, if any.
-     * @throws OperationFailureException if the operation cannot be completed
-     * @throws Exception if any problem occurs
+     * @throws OperationFailureException
+     *             if the operation cannot be completed
+     * @throws Exception
+     *             if any problem occurs
      */
     protected abstract List<X509Certificate> doGetCertInitial(X500Name issuer,
             X500Name subject) throws OperationFailureException, Exception;
@@ -528,11 +542,15 @@ public abstract class ScepServlet extends HttpServlet {
     /**
      * Retrieve the CRL covering the given certificate identifiers.
      * 
-     * @param issuer the certificate issuer.
-     * @param serial the certificate serial number.
+     * @param issuer
+     *            the certificate issuer.
+     * @param serial
+     *            the certificate serial number.
      * @return the CRL.
-     * @throws OperationFailureException if the operation cannot be completed
-     * @throws Exception if any problem occurs
+     * @throws OperationFailureException
+     *             if the operation cannot be completed
+     * @throws Exception
+     *             if any problem occurs
      */
     protected abstract X509CRL doGetCrl(X500Name issuer, BigInteger serial)
             throws OperationFailureException, Exception;
@@ -543,10 +561,13 @@ public abstract class ScepServlet extends HttpServlet {
      * appropriate certificate chain. If the request is pending, this method
      * should return null or any empty list.
      * 
-     * @param certificationRequest the PKCS #10 CertificationRequest
+     * @param certificationRequest
+     *            the PKCS #10 CertificationRequest
      * @return the certificate chain, if any
-     * @throws OperationFailureException if the operation cannot be completed
-     * @throws Exception if any problem occurs
+     * @throws OperationFailureException
+     *             if the operation cannot be completed
+     * @throws Exception
+     *             if any problem occurs
      */
     protected abstract List<X509Certificate> doEnrol(
             PKCS10CertificationRequest certificationRequest)

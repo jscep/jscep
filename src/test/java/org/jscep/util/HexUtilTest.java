@@ -3,11 +3,10 @@ package org.jscep.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class HexUtilTest {
     @Test
     public void testSimple() {
-        byte[] bytes = new byte[]{0, 1, 2, 3, 4};
+        byte[] bytes = new byte[] {0, 1, 2, 3, 4};
         Assert.assertArrayEquals(bytes, HexUtil.fromHex(HexUtil.toHex(bytes)));
     }
 

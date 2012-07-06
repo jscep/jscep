@@ -53,18 +53,19 @@ public abstract class AbstractClientTest {
         final CallbackHandler cbh = new DefaultCallbackHandler(
                 new OptimisticCertificateVerifier());
 
-        client = new Client(url, identity, keyPair.getPrivate(), cbh);
+        client = new Client(url, cbh);
     }
 
     /**
      * Removes any trust checking for SSL connections.
      * 
-     * @throws Exception if any error occurs.
+     * @throws Exception
+     *             if any error occurs.
      */
     @BeforeClass
     public static void setUpTrustManager() throws Exception {
         SSLContext ctx = SSLContext.getInstance("TLS");
-        ctx.init(null, new TrustManager[] { new X509TrustManager() {
+        ctx.init(null, new TrustManager[] {new X509TrustManager() {
             public void checkClientTrusted(X509Certificate[] arg0, String arg1)
                     throws CertificateException {
             }
@@ -76,7 +77,7 @@ public abstract class AbstractClientTest {
             public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
-        } }, null);
+        }}, null);
         HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
         HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
             public boolean verify(String hostname, SSLSession session) {

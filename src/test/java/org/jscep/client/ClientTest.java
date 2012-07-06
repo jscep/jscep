@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertStore;
@@ -29,7 +27,6 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.jscep.client.polling.NoPollPollingListener;
 import org.jscep.client.verification.OptimisticCertificateVerifier;
 import org.jscep.transaction.OperationFailureException;
-import org.jscep.x509.X509Util;
 import org.junit.Assume;
 import org.junit.Test;
 
@@ -39,23 +36,6 @@ import org.junit.Test;
  * @author David Grant
  */
 public class ClientTest extends AbstractClientTest {
-    /**
-     * The requester MUST use RSA keys for all symmetric key operations.
-     * 
-     * @throws Exception if any error occurs.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testRsa() throws Exception {
-        final KeyPair keyPair = KeyPairGenerator.getInstance("DSA")
-                .generateKeyPair();
-        final X509Certificate identity = X509Util.createEphemeralCertificate(
-                new X500Principal("CN=jscep.org"), keyPair);
-        final URL url = new URL("http://jscep.org/pkiclient.exe");
-
-        new Client(url, identity, keyPair.getPrivate(),
-                new DefaultCallbackHandler(new OptimisticCertificateVerifier()));
-    }
-
     @Test
     public void testRenewalEnrollAllowed() throws Exception {
         // Ignore this test if the CA doesn't support renewal.
@@ -64,7 +44,8 @@ public class ClientTest extends AbstractClientTest {
         PKCS10CertificationRequest csr = getCsr(
                 identity.getSubjectX500Principal(), keyPair.getPublic(),
                 keyPair.getPrivate(), password);
-        CertStore cs = client.enrol(csr, new NoPollPollingListener());
+        client.enrol(identity, keyPair.getPrivate(), csr,
+                new NoPollPollingListener());
     }
 
     @Test
@@ -72,18 +53,19 @@ public class ClientTest extends AbstractClientTest {
         PKCS10CertificationRequest csr = getCsr(
                 identity.getSubjectX500Principal(), keyPair.getPublic(),
                 keyPair.getPrivate(), password);
-        CertStore cs = client.enrol(csr, new NoPollPollingListener());
+        client.enrol(identity, keyPair.getPrivate(), csr,
+                new NoPollPollingListener());
     }
 
     @Test
     public void testEnrollThenGet() throws Exception {
-        CertStore cs = client.enrol(
+        CertStore cs = client.enrol(identity, keyPair.getPrivate(), 
                 getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
                         keyPair.getPrivate(), password),
                 new NoPollPollingListener());
         X509Certificate issued = (X509Certificate) cs.getCertificates(null)
                 .iterator().next();
-        Certificate retrieved = client.getCertificate(issued.getSerialNumber())
+        Certificate retrieved = client.getCertificate(identity, keyPair.getPrivate(), issued.getSerialNumber())
                 .iterator().next();
 
         assertEquals(issued, retrieved);
@@ -91,7 +73,7 @@ public class ClientTest extends AbstractClientTest {
 
     @Test(expected = OperationFailureException.class)
     public void testEnrollInvalidPassword() throws Exception {
-        client.enrol(
+        client.enrol(identity, keyPair.getPrivate(), 
                 getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
                         keyPair.getPrivate(), new char[0]),
                 new NoPollPollingListener());
@@ -100,14 +82,9 @@ public class ClientTest extends AbstractClientTest {
     @Test
     public void cgiProgIsIgnoredForIssue24() throws GeneralSecurityException,
             MalformedURLException {
-        final KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
-                .generateKeyPair();
-        final X509Certificate identity = X509Util.createEphemeralCertificate(
-                new X500Principal("CN=jscep.org"), keyPair);
         final URL url = new URL("http://someurl/certsrv/mscep/mscep.dll");
 
-        Client c = new Client(url, identity, keyPair.getPrivate(),
-                new DefaultCallbackHandler(new OptimisticCertificateVerifier()));
+        Client c = new Client(url, new DefaultCallbackHandler(new OptimisticCertificateVerifier()));
         assertNotNull(c);
     }
 

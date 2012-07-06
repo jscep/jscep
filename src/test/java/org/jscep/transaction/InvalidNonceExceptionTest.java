@@ -7,17 +7,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class InvalidNonceExceptionTest {
-	private String msg;
-	private InvalidNonceException exception;
+    private String msg;
+    private InvalidNonceException exception;
 
-	@Before
-	public void setUp() {
-		msg = "Message";
-		exception = new InvalidNonceException(msg);
-	}
-	
-	@Test
-	public void testGetMessage() {
-		assertThat(exception.getMessage(), is(msg));
-	}
+    @Before
+    public void setUp() {
+        msg = "Message";
+        exception = new InvalidNonceException(msg);
+    }
+
+    @Test
+    public void testGetMessage() {
+        assertThat(exception.getMessage(), is(msg));
+    }
 }

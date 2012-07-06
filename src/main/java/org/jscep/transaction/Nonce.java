@@ -21,27 +21,30 @@
  */
 package org.jscep.transaction;
 
-import org.jscep.util.HexUtil;
-
-import com.google.common.primitives.Bytes;
-
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 
+import org.jscep.util.HexUtil;
+
+import com.google.common.primitives.Bytes;
+
 /**
  * This class represents the <code>senderNonce</code> and
  * <code>recipientNonce</code> types.
+ * 
  * @author David Grant
  */
 public final class Nonce {
     private static final int NONCE_LENGTH = 16;
     private static final Random RND = new SecureRandom();
-    private byte[] nonce;
+    private final byte[] nonce;
 
     /**
      * Creates a new nonce with the given byte array.
-     * @param nonce the byte array.
+     * 
+     * @param nonce
+     *            the byte array.
      */
     public Nonce(final byte[] nonce) {
         this.nonce = Bytes.concat(nonce);
@@ -49,6 +52,7 @@ public final class Nonce {
 
     /**
      * Returns the nonce byte array.
+     * 
      * @return the byte array.
      */
     public byte[] getBytes() {
@@ -66,6 +70,7 @@ public final class Nonce {
      * This method does not guarantee that multiple invocations will produce a
      * different nonce, as the byte generation is provided by a SecureRandom
      * instance.
+     * 
      * @return the generated nonce.
      * @see java.security.SecureRandom
      */

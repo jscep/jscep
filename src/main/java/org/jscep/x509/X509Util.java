@@ -66,13 +66,16 @@ public final class X509Util {
      * The resulting certificate will have a not-before date of yesterday, and
      * not-after date of tomorrow.
      * 
-     * @param subject the subject to certify.
-     * @param keyPair the key pair to sign the certificate with.
+     * @param subject
+     *            the subject to certify.
+     * @param keyPair
+     *            the key pair to sign the certificate with.
      * @return a new certificate.
-     * @throws GeneralSecurityException if any security problem occurs.
+     * @throws GeneralSecurityException
+     *             if any security problem occurs.
      */
     public static X509Certificate createEphemeralCertificate(
-            X500Principal subject, KeyPair keyPair)
+            final X500Principal subject, final KeyPair keyPair)
             throws GeneralSecurityException {
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -80,10 +83,11 @@ public final class X509Util {
         cal.add(Calendar.DATE, 2);
         final Date notAfter = cal.getTime();
 
+        
+        
         ContentSigner signer;
         try {
-            signer = new JcaContentSignerBuilder("SHA1with"
-                    + keyPair.getPublic().getAlgorithm()).build(keyPair
+            signer = new JcaContentSignerBuilder(sigAlg(keyPair)).build(keyPair
                     .getPrivate());
         } catch (OperatorCreationException e) {
             throw new GeneralSecurityException(e);
@@ -95,10 +99,15 @@ public final class X509Util {
         return new JcaX509CertificateConverter().getCertificate(holder);
     }
 
+    private static String sigAlg(KeyPair keyPair) {
+        return "SHA1with" + keyPair.getPrivate().getAlgorithm();
+    }
+
     /**
      * Converts a Java SE X500Principal to a Bouncy Castle X509Name.
      * 
-     * @param principal the principal to convert.
+     * @param principal
+     *            the principal to convert.
      * @return the converted name.
      */
     public static X500Name toX509Name(X500Principal principal) {
@@ -109,7 +118,8 @@ public final class X509Util {
     /**
      * Checks the provided certificate to see if it is self-signed.
      * 
-     * @param cert the certificate to check.
+     * @param cert
+     *            the certificate to check.
      * @return <code>true</code> if the certificate is self-signed,
      *         <code>false</code> otherwise.
      */
@@ -126,7 +136,8 @@ public final class X509Util {
     /**
      * Creates a new IssuerAndSerialNumber from the provided certificate.
      * 
-     * @param certificate the certificate to use.
+     * @param certificate
+     *            the certificate to use.
      * @return the IssuerAndSerialNumber to represent the certificate.
      */
     public static IssuerAndSerialNumber toIssuerAndSerialNumber(

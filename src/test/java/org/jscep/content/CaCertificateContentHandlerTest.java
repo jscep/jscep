@@ -11,13 +11,12 @@ import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class CaCertificateContentHandlerTest {
     private CaCertificateContentHandler fixture;
 
     @Before
     public void setUp() throws Exception {
-    	CertificateFactory factory = CertificateFactory.getInstance("X509");
+        CertificateFactory factory = CertificateFactory.getInstance("X509");
         fixture = new CaCertificateContentHandler(factory);
     }
 
@@ -28,15 +27,15 @@ public class CaCertificateContentHandlerTest {
         fixture.getContent(cert.getEncoded(), "application/x-x509-ca-cert");
     }
 
-//	@Test(expected=IOException.class)
-//	public void testSingleCertificateFail() throws Exception {
-//		final SignedDataGenerator generator = new SignedDataGenerator();
-//		generator.addCertificate(getCertificate());
-//		SignedData dsd = generator.generate();
-//		
-//		InputStream in = new ByteArrayInputStream(dsd.getEncoded());
-//		fixture.getContent(in, "application/x-x509-ca-cert");
-//	}
+    // @Test(expected=IOException.class)
+    // public void testSingleCertificateFail() throws Exception {
+    // final SignedDataGenerator generator = new SignedDataGenerator();
+    // generator.addCertificate(getCertificate());
+    // SignedData dsd = generator.generate();
+    //
+    // InputStream in = new ByteArrayInputStream(dsd.getEncoded());
+    // fixture.getContent(in, "application/x-x509-ca-cert");
+    // }
 
     @Test(expected = InvalidContentException.class)
     public void testMultipleCertificatesFail() throws Exception {

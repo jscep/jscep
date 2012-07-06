@@ -34,7 +34,7 @@ public class DefaultCallbackHandlerTest {
     @Test(expected = UnsupportedCallbackException.class)
     public void testHandleForUnrecognisedCallback() throws IOException,
             UnsupportedCallbackException {
-        handler.handle(new Callback[] { new LanguageCallback() });
+        handler.handle(new Callback[] {new LanguageCallback()});
     }
 
     @Test
@@ -42,7 +42,7 @@ public class DefaultCallbackHandlerTest {
             throws IOException, UnsupportedCallbackException {
         CertificateVerificationCallback callback = getCallback();
         when(verifier.verify(cert)).thenReturn(true);
-        handler.handle(new Callback[] { callback });
+        handler.handle(new Callback[] {callback});
 
         assertTrue(callback.isVerified());
         verify(verifier).verify(cert);
@@ -54,7 +54,7 @@ public class DefaultCallbackHandlerTest {
             throws IOException, UnsupportedCallbackException {
         CertificateVerificationCallback callback = getCallback();
         when(verifier.verify(cert)).thenReturn(false);
-        handler.handle(new Callback[] { callback });
+        handler.handle(new Callback[] {callback});
 
         assertFalse(callback.isVerified());
         verify(verifier).verify(cert);

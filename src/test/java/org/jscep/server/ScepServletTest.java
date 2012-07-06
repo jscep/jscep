@@ -91,20 +91,21 @@ public class ScepServletTest {
     }
 
     private X509Certificate generateCertificate() throws Exception {
-    	ContentSigner signer;
-		try {
-			signer = new JcaContentSignerBuilder("SHA1withRSA").build(priKey);
-		} catch (OperatorCreationException e) {
-			throw new Exception(e);
-		}
-		Calendar cal = GregorianCalendar.getInstance();
-		cal.add(Calendar.YEAR, -1);
-		Date notBefore = cal.getTime();
-		cal.add(Calendar.YEAR, 2);
-		Date notAfter = cal.getTime();
-		JcaX509v1CertificateBuilder builder = new JcaX509v1CertificateBuilder(name, BigInteger.ONE, notBefore, notAfter, name, pubKey);
-		X509CertificateHolder holder = builder.build(signer);
-		return new JcaX509CertificateConverter().getCertificate(holder);
+        ContentSigner signer;
+        try {
+            signer = new JcaContentSignerBuilder("SHA1withRSA").build(priKey);
+        } catch (OperatorCreationException e) {
+            throw new Exception(e);
+        }
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.add(Calendar.YEAR, -1);
+        Date notBefore = cal.getTime();
+        cal.add(Calendar.YEAR, 2);
+        Date notAfter = cal.getTime();
+        JcaX509v1CertificateBuilder builder = new JcaX509v1CertificateBuilder(
+                name, BigInteger.ONE, notBefore, notAfter, name, pubKey);
+        X509CertificateHolder holder = builder.build(signer);
+        return new JcaX509CertificateConverter().getCertificate(holder);
     }
 
     @Before
@@ -132,16 +133,18 @@ public class ScepServletTest {
         GetCaCert req = new GetCaCert();
         Transport transport = Transport.createTransport(Method.GET, getURL());
         CertificateFactory factory;
-		try {
-			factory = CertificateFactory.getInstance("X509");
-		} catch (CertificateException e) {
-			IOException ioe = new IOException();
-        	ioe.initCause(e);
-        	
+        try {
+            factory = CertificateFactory.getInstance("X509");
+        } catch (CertificateException e) {
+            IOException ioe = new IOException();
+            ioe.initCause(e);
+
             throw ioe;
-		}
-        CertStore store = transport.sendRequest(req, new CaCertificateContentHandler(factory));
-        Collection<? extends Certificate> certs = store.getCertificates(new X509CertSelector());
+        }
+        CertStore store = transport.sendRequest(req,
+                new CaCertificateContentHandler(factory));
+        Collection<? extends Certificate> certs = store
+                .getCertificates(new X509CertSelector());
 
         if (certs.size() > 0) {
             return (X509Certificate) certs.iterator().next();
@@ -154,7 +157,8 @@ public class ScepServletTest {
     public void testGetCaCaps() throws Exception {
         GetCaCaps req = new GetCaCaps();
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        Capabilities caps = transport.sendRequest(req, new CaCapabilitiesContentHandler());
+        Capabilities caps = transport.sendRequest(req,
+                new CaCapabilitiesContentHandler());
 
         System.out.println(caps);
     }
@@ -163,7 +167,8 @@ public class ScepServletTest {
     public void getNextCaCertificateGood() throws Exception {
         GetNextCaCert req = new GetNextCaCert(goodIdentifier);
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        List<X509Certificate> certs = transport.sendRequest(req, new NextCaCertificateContentHandler(getRecipient()));
+        List<X509Certificate> certs = transport.sendRequest(req,
+                new NextCaCertificateContentHandler(getRecipient()));
 
         assertThat(certs.size(), is(1));
     }
@@ -172,22 +177,26 @@ public class ScepServletTest {
     public void getNextCaCertificateBad() throws Exception {
         GetNextCaCert req = new GetNextCaCert(badIdentifier);
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        List<X509Certificate> certs = transport.sendRequest(req, new NextCaCertificateContentHandler(getRecipient()));
-        
+        List<X509Certificate> certs = transport.sendRequest(req,
+                new NextCaCertificateContentHandler(getRecipient()));
+
         assertThat(certs.size(), is(1));
     }
 
     @Test
     public void testGetCRL() throws Exception {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, goodSerial);
-        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());
-        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender, envEncoder);
+        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+                getRecipient());
+        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+                envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        Transaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CRL);
+        Transaction t = new NonEnrollmentTransaction(transport, encoder,
+                decoder, iasn, MessageType.GET_CRL);
         State s = t.send();
 
         assertThat(s, is(State.CERT_ISSUED));
@@ -196,31 +205,38 @@ public class ScepServletTest {
     @Test
     public void testGetCertBad() throws Exception {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, badSerial);
-        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());
-        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender, envEncoder);
+        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+                getRecipient());
+        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+                envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        Transaction t = new NonEnrollmentTransaction(transport, encoder, decoder, iasn, MessageType.GET_CERT);
+        Transaction t = new NonEnrollmentTransaction(transport, encoder,
+                decoder, iasn, MessageType.GET_CERT);
         State s = t.send();
-        
+
         assertThat(s, is(State.CERT_NON_EXISTANT));
     }
 
     @Test
     public void testEnrollmentGet() throws Exception {
-        PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey, "password".toCharArray());
+        PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey,
+                "password".toCharArray());
 
-        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());
-        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender, envEncoder);
+        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+                getRecipient());
+        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+                envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
-        Transaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
+        Transaction t = new EnrolmentTransaction(transport, encoder, decoder,
+                csr);
 
         State s = t.send();
         assertThat(s, is(State.CERT_ISSUED));
@@ -228,58 +244,72 @@ public class ScepServletTest {
 
     @Test
     public void testEnrollmentPost() throws Exception {
-        PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey, "password".toCharArray());
+        PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey,
+                "password".toCharArray());
 
-        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());
-        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender, envEncoder);
+        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+                getRecipient());
+        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+                envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.POST, getURL());
-        Transaction t = new EnrolmentTransaction(transport, encoder, decoder, csr);
-        
+        Transaction t = new EnrolmentTransaction(transport, encoder, decoder,
+                csr);
+
         State s = t.send();
         assertThat(s, is(State.CERT_ISSUED));
     }
 
     @Test
     public void testEnrollmentWithPoll() throws Exception {
-        PKCS10CertificationRequest csr = getCsr(pollName, pubKey, priKey, "password".toCharArray());
+        PKCS10CertificationRequest csr = getCsr(pollName, pubKey, priKey,
+                "password".toCharArray());
 
-        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(getRecipient());
-        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender, envEncoder);
+        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+                getRecipient());
+        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+                envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.POST, getURL());
-        EnrolmentTransaction trans = new EnrolmentTransaction(transport, encoder, decoder, csr);
+        EnrolmentTransaction trans = new EnrolmentTransaction(transport,
+                encoder, decoder, csr);
         State state = trans.send();
         assertThat(state, is(State.CERT_REQ_PENDING));
-        
+
         trans.setIssuer(sender);
         state = trans.poll();
         assertThat(state, is(State.CERT_REQ_PENDING));
     }
 
-    private PKCS10CertificationRequest getCsr(X500Name subject, PublicKey pubKey, PrivateKey priKey, char[] password) throws GeneralSecurityException, IOException {
-        SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey.getEncoded());
-        
-        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA1withRSA");
+    private PKCS10CertificationRequest getCsr(X500Name subject,
+            PublicKey pubKey, PrivateKey priKey, char[] password)
+            throws GeneralSecurityException, IOException {
+        SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
+                .getEncoded());
+
+        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(
+                "SHA1withRSA");
         ContentSigner signer;
-		try {
-			signer = signerBuilder.build(priKey);
-		} catch (OperatorCreationException e) {
-			IOException ioe = new IOException();
-			ioe.initCause(e);
-			
-			throw ioe;
-		}
-        
-        PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(subject, pkInfo);
-        builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, new DERPrintableString(new String(password)));
-        
+        try {
+            signer = signerBuilder.build(priKey);
+        } catch (OperatorCreationException e) {
+            IOException ioe = new IOException();
+            ioe.initCause(e);
+
+            throw ioe;
+        }
+
+        PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(
+                subject, pkInfo);
+        builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword,
+                new DERPrintableString(new String(password)));
+
         return builder.build(signer);
     }
 }

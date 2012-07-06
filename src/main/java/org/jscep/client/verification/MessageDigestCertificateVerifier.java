@@ -26,8 +26,10 @@ public final class MessageDigestCertificateVerifier implements
      * Creates a new instance with a digest algorithm, and the expected digest
      * result.
      * 
-     * @param digest the digest algorithm to use to verify.
-     * @param expected the digest result
+     * @param digest
+     *            the digest algorithm to use to verify.
+     * @param expected
+     *            the digest result
      */
     public MessageDigestCertificateVerifier(MessageDigest digest,
             byte[] expected) {

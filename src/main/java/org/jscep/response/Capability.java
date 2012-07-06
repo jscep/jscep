@@ -67,8 +67,10 @@ public enum Capability {
     /**
      * Constructs a new instance of this enum.
      * 
-     * @param capability the name of the capability.
-     * @param description description of the capability
+     * @param capability
+     *            the name of the capability.
+     * @param description
+     *            description of the capability
      */
     private Capability(String capability, String description) {
         this.capability = capability;

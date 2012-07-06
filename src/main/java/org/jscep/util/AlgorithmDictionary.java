@@ -101,7 +101,8 @@ public final class AlgorithmDictionary {
     /**
      * Returns the cipher part of the provided transformation.
      * 
-     * @param transformation the transformation, e.g. "DES/CBC/PKCS5Padding"
+     * @param transformation
+     *            the transformation, e.g. "DES/CBC/PKCS5Padding"
      * @return the cipher, e.g. "DES"
      */
     public static String fromTransformation(String transformation) {
@@ -111,7 +112,8 @@ public final class AlgorithmDictionary {
     /**
      * Returns the name of the given algorithm.
      * 
-     * @param alg the algorithm to look up.
+     * @param alg
+     *            the algorithm to look up.
      * @return the algorithm name.
      */
     public static String lookup(AlgorithmIdentifier alg) {

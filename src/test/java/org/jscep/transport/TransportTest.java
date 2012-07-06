@@ -11,20 +11,24 @@ public class TransportTest {
 
     @Test
     public void testCreateTransportPost() throws Exception {
-        Transport t = Transport.createTransport(Method.POST, new URL("http://example.org/"));
+        Transport t = Transport.createTransport(Method.POST, new URL(
+                "http://example.org/"));
         Assert.assertTrue(t instanceof HttpPostTransport);
     }
 
     @Test
     public void testCreateTransportGet() throws Exception {
-        Transport t = Transport.createTransport(Method.GET, new URL("http://example.org/"));
+        Transport t = Transport.createTransport(Method.GET, new URL(
+                "http://example.org/"));
         Assert.assertTrue(t instanceof HttpGetTransport);
     }
 
     @Test
     public void testGetURL() throws Exception {
-        Transport t = Transport.createTransport(Method.GET, new URL("http://example.org/"));
+        Transport t = Transport.createTransport(Method.GET, new URL(
+                "http://example.org/"));
         URL url = t.getUrl(Operation.GET_CA_CAPS);
-        Assert.assertTrue(url.getQuery().contains("operation=" + Operation.GET_CA_CAPS.getName()));
+        Assert.assertTrue(url.getQuery().contains(
+                "operation=" + Operation.GET_CA_CAPS.getName()));
     }
 }

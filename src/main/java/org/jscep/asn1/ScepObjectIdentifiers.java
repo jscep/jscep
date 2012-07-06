@@ -23,6 +23,7 @@ package org.jscep.asn1;
 
 /**
  * Object Identifiers used by SCEP.
+ * 
  * @author David Grant
  */
 public interface ScepObjectIdentifiers {

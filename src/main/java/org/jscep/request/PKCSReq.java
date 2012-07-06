@@ -43,7 +43,8 @@ public class PKCSReq extends Request {
      * Creates a new instance of this class using the provided pkiMessage and
      * response handler.
      * 
-     * @param msgData the pkiMessage to use.
+     * @param msgData
+     *            the pkiMessage to use.
      */
     public PKCSReq(byte[] msgData) {
         super(Operation.PKI_OPERATION);

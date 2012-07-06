@@ -167,8 +167,8 @@ public class PkiMessageEncoder {
         LOGGER.debug("Signing {} content", signable);
         CMSSignedData sd;
         try {
-            sd = sdGenerator.generate("1.2.840.113549.1.7.1",
-                    signable, true, (Provider) null, true);
+            sd = sdGenerator.generate("1.2.840.113549.1.7.1", signable, true,
+                    (Provider) null, true);
         } catch (NoSuchAlgorithmException e) {
             IOException ioe = new IOException();
             ioe.initCause(e);

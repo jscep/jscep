@@ -15,7 +15,8 @@ public class CountingPollingListener implements PollingListener {
      * Creates a new instance of CountingPollingListener with the given number
      * of retries.
      * 
-     * @param retries the number of retries.
+     * @param retries
+     *            the number of retries.
      */
     public CountingPollingListener(final int retries) {
         this.retries = retries;

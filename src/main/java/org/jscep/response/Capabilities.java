@@ -38,7 +38,8 @@ public final class Capabilities {
     /**
      * Constructs a new instance of this class with the specified capabilities.
      * 
-     * @param capabilities the capabilities.
+     * @param capabilities
+     *            the capabilities.
      */
     public Capabilities(Capability... capabilities) {
         this.capabilities = EnumSet.noneOf(Capability.class);
@@ -48,7 +49,8 @@ public final class Capabilities {
     /**
      * Add the provided capability to this capabilities set.
      * 
-     * @param capability the capability to add.
+     * @param capability
+     *            the capability to add.
      */
     public void add(Capability capability) {
         capabilities.add(capability);
@@ -58,7 +60,8 @@ public final class Capabilities {
      * Returns <code>true</code> if the server supports the provided Capability,
      * <code>false</code> otherwise.
      * 
-     * @param capability the capability to test for.
+     * @param capability
+     *            the capability to test for.
      * @return <code>true</code> if the server supports the provided Capability,
      *         <code>false</code> otherwise.
      */

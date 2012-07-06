@@ -28,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * This class provides utilities for converting between byte arrays and
  * hexadecimal strings.
+ * 
  * @author David Grant
  */
 public final class HexUtil {
@@ -35,10 +36,10 @@ public final class HexUtil {
     private static final int HEX_SINGLE_F = 0xF;
     private static final int NIBBLE = 4;
     private static final int BITS_IN_TWO_BYTES = 16;
-    static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2',
+    static final byte[] HEX_CHAR_TABLE = {(byte) '0', (byte) '1', (byte) '2',
             (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7',
             (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c',
-            (byte) 'd', (byte) 'e', (byte) 'f' };
+            (byte) 'd', (byte) 'e', (byte) 'f'};
 
     /**
      * Private constructor.
@@ -49,7 +50,9 @@ public final class HexUtil {
 
     /**
      * Converts the given byte array to an array of hex characters.
-     * @param bytes the byte array to convert.
+     * 
+     * @param bytes
+     *            the byte array to convert.
      * @return an array of hex characters.
      */
     public static byte[] toHex(final byte[] bytes) {
@@ -67,7 +70,9 @@ public final class HexUtil {
 
     /**
      * Converts the provided byte array to a string of hex characters.
-     * @param bytes the byte array.
+     * 
+     * @param bytes
+     *            the byte array.
      * @return a string of hex characters.
      */
     public static String toHexString(final byte[] bytes) {
@@ -80,7 +85,9 @@ public final class HexUtil {
 
     /**
      * Converts the given hex string to a byte array.
-     * @param hex the hex string
+     * 
+     * @param hex
+     *            the hex string
      * @return a byte array
      */
     public static byte[] fromHex(final String hex) {
@@ -93,7 +100,9 @@ public final class HexUtil {
 
     /**
      * Converts the given hex array to a byte array.
-     * @param hex the hex array
+     * 
+     * @param hex
+     *            the hex array
      * @return the byte array
      */
     public static byte[] fromHex(final byte[] hex) {

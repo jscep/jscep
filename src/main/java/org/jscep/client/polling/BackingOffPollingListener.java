@@ -21,8 +21,10 @@ public final class BackingOffPollingListener implements PollingListener {
     /**
      * Creates a new BackingOffPollingListener with the startng interval.
      * 
-     * @param duration the amount of time
-     * @param unit the time unit
+     * @param duration
+     *            the amount of time
+     * @param unit
+     *            the time unit
      */
     public BackingOffPollingListener(final long duration, final TimeUnit unit) {
         this.duration = duration;

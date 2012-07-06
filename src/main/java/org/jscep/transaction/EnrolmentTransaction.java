@@ -82,7 +82,8 @@ public class EnrolmentTransaction extends Transaction {
      * Performs a certificate enrolment for the CSR given in the constructor.
      * 
      * @return the resulting transaction state.
-     * @throws IOException if any I/O error occurs.
+     * @throws IOException
+     *             if any I/O error occurs.
      * @throws TransportException
      * @throws InvalidContentTypeException
      * @throws InvalidContentException
@@ -113,7 +114,8 @@ public class EnrolmentTransaction extends Transaction {
      * Polls the SCEP server for an update on the enrolment operation.
      * 
      * @return the resulting transaction state.
-     * @throws IOException if any I/O error occurs.
+     * @throws IOException
+     *             if any I/O error occurs.
      * @throws InvalidContentTypeException
      * @throws InvalidContentException
      */

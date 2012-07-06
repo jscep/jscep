@@ -32,10 +32,14 @@ public class CertRep extends PkiResponse<byte[]> {
     /**
      * Creates a new CertRep to indicate <em>success</em> state.
      * 
-     * @param transId the transaction ID
-     * @param senderNonce the sender nonce
-     * @param recipientNonce the recipient nonce
-     * @param messageData the message data
+     * @param transId
+     *            the transaction ID
+     * @param senderNonce
+     *            the sender nonce
+     * @param recipientNonce
+     *            the recipient nonce
+     * @param messageData
+     *            the message data
      */
     public CertRep(TransactionId transId, Nonce senderNonce,
             Nonce recipientNonce, byte[] messageData) {
@@ -46,10 +50,14 @@ public class CertRep extends PkiResponse<byte[]> {
     /**
      * Creates a new CertRep to indicate <em>failure</em> state.
      * 
-     * @param transId the transaction ID
-     * @param senderNonce the sender nonce
-     * @param recipientNonce the recipient nonce
-     * @param failInfo the fail info enum
+     * @param transId
+     *            the transaction ID
+     * @param senderNonce
+     *            the sender nonce
+     * @param recipientNonce
+     *            the recipient nonce
+     * @param failInfo
+     *            the fail info enum
      */
     public CertRep(TransactionId transId, Nonce senderNonce,
             Nonce recipientNonce, FailInfo failInfo) {
@@ -60,9 +68,12 @@ public class CertRep extends PkiResponse<byte[]> {
     /**
      * Creates a new CertRep to indicate <em>pending</em> state.
      * 
-     * @param transId the transaction ID
-     * @param senderNonce the sender nonce
-     * @param recipientNonce the recipient nonce
+     * @param transId
+     *            the transaction ID
+     * @param senderNonce
+     *            the sender nonce
+     * @param recipientNonce
+     *            the recipient nonce
      */
     public CertRep(TransactionId transId, Nonce senderNonce,
             Nonce recipientNonce) {

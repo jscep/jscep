@@ -27,6 +27,7 @@ import java.security.cert.X509Certificate;
 
 /**
  * This class is used to obtain verification of a CA certificate.
+ * 
  * @author David Grant
  */
 public final class CertificateVerificationCallback implements Callback {
@@ -42,7 +43,9 @@ public final class CertificateVerificationCallback implements Callback {
     /**
      * Construct a <code>CertificateVerificationCallback</code> with the CA
      * certificate.
-     * @param caCertificate the CA certificate
+     * 
+     * @param caCertificate
+     *            the CA certificate
      */
     public CertificateVerificationCallback(final X509Certificate caCertificate) {
         this.caCertificate = caCertificate;
@@ -50,6 +53,7 @@ public final class CertificateVerificationCallback implements Callback {
 
     /**
      * Returns the CA certificate.
+     * 
      * @return the CA certificate.
      */
     public X509Certificate getCertificate() {
@@ -61,6 +65,7 @@ public final class CertificateVerificationCallback implements Callback {
      * <p/>
      * If the CA certificate was verified, this method returns <code>true</code>
      * ; and <code>false</code> if the certificate could not be verified.
+     * 
      * @return the outcome.
      */
     public boolean isVerified() {
@@ -73,7 +78,9 @@ public final class CertificateVerificationCallback implements Callback {
      * If the CA certificate was verified, this method should be called with an
      * argument of <code>true</code>. If the certificate can not be verified,
      * the argument should be <code>false</code>.
-     * @param verified the outcome.
+     * 
+     * @param verified
+     *            the outcome.
      */
     public void setVerified(final boolean verified) {
         this.verified = verified;

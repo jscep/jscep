@@ -46,38 +46,38 @@ public class CapabilitiesTest {
         Capabilities caps = new Capabilities(Capability.GET_NEXT_CA_CERT);
         Assert.assertTrue(caps.isRolloverSupported());
     }
-    
+
     @Test
     public void testContains() {
-    	Capabilities caps = new Capabilities(Capability.GET_NEXT_CA_CERT);
-    	assertTrue(caps.contains(Capability.GET_NEXT_CA_CERT));
+        Capabilities caps = new Capabilities(Capability.GET_NEXT_CA_CERT);
+        assertTrue(caps.contains(Capability.GET_NEXT_CA_CERT));
     }
-    
+
     @Test
     public void testNoAlgorithmSupportYieldsDefaultCipher() {
-    	Provider[] providers = Security.getProviders();
-    	for (Provider provider : providers) {
-    		Security.removeProvider(provider.getName());
-    	}
-    	Capabilities caps = new Capabilities(Capability.TRIPLE_DES);
-    	assertThat(caps.getStrongestCipher(), is("DES"));
-    	
-    	for (Provider provider : providers) {
-    		Security.addProvider(provider);
-    	}
+        Provider[] providers = Security.getProviders();
+        for (Provider provider : providers) {
+            Security.removeProvider(provider.getName());
+        }
+        Capabilities caps = new Capabilities(Capability.TRIPLE_DES);
+        assertThat(caps.getStrongestCipher(), is("DES"));
+
+        for (Provider provider : providers) {
+            Security.addProvider(provider);
+        }
     }
-    
+
     @Test
     public void testNoAlgorithmSupportYieldsDefaultDigest() {
-    	Provider[] providers = Security.getProviders();
-    	for (Provider provider : providers) {
-    		Security.removeProvider(provider.getName());
-    	}
-    	Capabilities caps = new Capabilities(Capability.SHA_512);
-    	assertThat(caps.getStrongestMessageDigest(), is("MD5"));
-    	
-    	for (Provider provider : providers) {
-    		Security.addProvider(provider);
-    	}
+        Provider[] providers = Security.getProviders();
+        for (Provider provider : providers) {
+            Security.removeProvider(provider.getName());
+        }
+        Capabilities caps = new Capabilities(Capability.SHA_512);
+        assertThat(caps.getStrongestMessageDigest(), is("MD5"));
+
+        for (Provider provider : providers) {
+            Security.addProvider(provider);
+        }
     }
 }

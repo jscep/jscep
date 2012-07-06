@@ -38,7 +38,8 @@ abstract public class AbstractTransportTest {
     public void setUp() throws Exception {
         server = new Server(0);
         server.start();
-        url = new URL("http://localhost:" + server.getConnectors()[0].getLocalPort() + "/");
+        url = new URL("http://localhost:"
+                + server.getConnectors()[0].getLocalPort() + "/");
         proxy = Proxy.NO_PROXY;
         transport = Transport.createTransport(getMethod(), url, proxy);
     }
@@ -59,14 +60,17 @@ abstract public class AbstractTransportTest {
     public void test404() throws Exception {
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 
-        PkcsPkiEnvelopeEncoder envEnc = new PkcsPkiEnvelopeEncoder(getCertificate(keyPair));
-        PkiMessageEncoder enc = new PkiMessageEncoder(keyPair.getPrivate(), getCertificate(keyPair), envEnc);
+        PkcsPkiEnvelopeEncoder envEnc = new PkcsPkiEnvelopeEncoder(
+                getCertificate(keyPair));
+        PkiMessageEncoder enc = new PkiMessageEncoder(keyPair.getPrivate(),
+                getCertificate(keyPair), envEnc);
 
         TransactionId transId = TransactionId.createTransactionId();
         Nonce senderNonce = Nonce.nextNonce();
         X500Name name = new X500Name("CN=jscep.org");
         BigInteger serialNumber = BigInteger.ONE;
-        IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serialNumber);
+        IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name,
+                serialNumber);
         GetCert getCert = new GetCert(transId, senderNonce, iasn);
         PKCSReq req = new PKCSReq(enc.encode(getCert));
 
@@ -77,7 +81,8 @@ abstract public class AbstractTransportTest {
         }
     }
 
-    private X509Certificate getCertificate(KeyPair keyPair) throws GeneralSecurityException {
+    private X509Certificate getCertificate(KeyPair keyPair)
+            throws GeneralSecurityException {
         final X500Principal subject = new X500Principal("CN=example.org");
 
         return X509Util.createEphemeralCertificate(subject, keyPair);

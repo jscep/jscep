@@ -10,7 +10,8 @@ public class Interupter implements Runnable {
     /**
      * Creates a new Interupter with a Thread to interupt.
      * 
-     * @param thread the Thread to interupt.
+     * @param thread
+     *            the Thread to interupt.
      */
     public Interupter(Thread thread, long duration, TimeUnit unit) {
         this.thread = thread;

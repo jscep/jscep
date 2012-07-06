@@ -13,7 +13,8 @@ public interface PollingListener {
      * When this method returns <tt>false</tt>, the client will throw a
      * PollingTerminatedException.
      * 
-     * @param id the transaction ID
+     * @param id
+     *            the transaction ID
      * @return <tt>true</tt> if the client should poll, <tt>false</tt>
      *         otherwise.
      */
@@ -31,7 +32,8 @@ public interface PollingListener {
      * In the former case, implementations can clean up state before returning
      * false, or wait until the call to this method.
      * 
-     * @param id the transaction ID.
+     * @param id
+     *            the transaction ID.
      */
     void pollingTerminated(TransactionId id);
 }

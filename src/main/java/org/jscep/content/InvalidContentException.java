@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 public class InvalidContentException extends Exception {
     /**
-	 * 
-	 */
+     * 
+     */
     private static final long serialVersionUID = 8144078591967730995L;
 
     public InvalidContentException(String actual, String... expected) {

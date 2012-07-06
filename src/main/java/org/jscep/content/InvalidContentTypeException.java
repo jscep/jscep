@@ -7,12 +7,10 @@ import java.util.Arrays;
  * received.
  */
 public class InvalidContentTypeException extends Exception {
-    /**
-	 * 
-	 */
     private static final long serialVersionUID = 8144078591967730995L;
 
-    public InvalidContentTypeException(String actual, String... expected) {
+    public InvalidContentTypeException(final String actual,
+            final String... expected) {
         this(String.format("Expected %s, but was %s",
                 Arrays.toString(expected), actual));
     }

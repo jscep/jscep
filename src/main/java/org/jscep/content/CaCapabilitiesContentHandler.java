@@ -96,4 +96,3 @@ public final class CaCapabilitiesContentHandler implements
         return caps;
     }
 }
-

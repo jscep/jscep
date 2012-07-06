@@ -76,8 +76,10 @@ public final class TransactionId {
      * Each call to this method will return the same transaction ID for the same
      * parameters.
      * 
-     * @param pubKey public key
-     * @param digestAlgorithm digest algorithm
+     * @param pubKey
+     *            public key
+     * @param digestAlgorithm
+     *            digest algorithm
      * @return the new Transaction Id
      */
     public static TransactionId createTransactionId(PublicKey pubKey,

@@ -14,7 +14,6 @@ import org.jscep.transport.Transport.Method;
 import org.jscep.x509.X509Util;
 import org.junit.Test;
 
-
 public class HttpPostTransportTest extends AbstractTransportTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetCACert() throws Exception {
@@ -30,10 +29,12 @@ public class HttpPostTransportTest extends AbstractTransportTest {
     public void testGetNextCACert() throws Exception {
         X500Principal subject = new X500Principal("CN=example.org");
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate cert = X509Util.createEphemeralCertificate(subject, keyPair);
+        X509Certificate cert = X509Util.createEphemeralCertificate(subject,
+                keyPair);
 
         GetNextCaCert nextCa = new GetNextCaCert();
-        transport.sendRequest(nextCa, new NextCaCertificateContentHandler(cert));
+        transport
+                .sendRequest(nextCa, new NextCaCertificateContentHandler(cert));
     }
 
     @Override

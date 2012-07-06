@@ -39,7 +39,7 @@ public class ConsoleCallbackVerifierTest {
 
         byte[] bytes = String.format("Y%n").getBytes(Charsets.US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
-        handler.handle(new Callback[] { callback });
+        handler.handle(new Callback[] {callback});
 
         assertTrue(callback.isVerified());
     }
@@ -54,7 +54,7 @@ public class ConsoleCallbackVerifierTest {
 
         byte[] bytes = String.format("%n").getBytes(Charsets.US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
-        handler.handle(new Callback[] { callback });
+        handler.handle(new Callback[] {callback});
 
         assertFalse(callback.isVerified());
     }
@@ -65,7 +65,7 @@ public class ConsoleCallbackVerifierTest {
 
         byte[] bytes = String.format("N%n").getBytes(Charsets.US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
-        handler.handle(new Callback[] { callback });
+        handler.handle(new Callback[] {callback});
 
         assertFalse(callback.isVerified());
     }
@@ -77,7 +77,7 @@ public class ConsoleCallbackVerifierTest {
         byte[] bytes = String.format("X%nY%n").getBytes(
                 Charsets.US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
-        handler.handle(new Callback[] { callback });
+        handler.handle(new Callback[] {callback});
 
         assertTrue(callback.isVerified());
     }

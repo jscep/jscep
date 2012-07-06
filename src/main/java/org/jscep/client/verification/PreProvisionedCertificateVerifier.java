@@ -2,7 +2,6 @@ package org.jscep.client.verification;
 
 import java.security.cert.X509Certificate;
 
-
 /**
  * CertificateVerifier that uses a pre-provisioned certificate.
  */
@@ -16,7 +15,8 @@ public final class PreProvisionedCertificateVerifier implements
     /**
      * Creates a new instance of this class with a pre-provisioned certificate.
      * 
-     * @param cert the pre-provisioned certificate.
+     * @param cert
+     *            the pre-provisioned certificate.
      */
     public PreProvisionedCertificateVerifier(X509Certificate cert) {
         this.cert = cert;

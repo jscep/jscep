@@ -17,24 +17,33 @@ public class PkiMessageEncoderTest {
     @Test
     public void simpleTest() throws Exception {
         KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate ca = X509Util.createEphemeralCertificate(new X500Principal("CN=CA"), caPair);
+        X509Certificate ca = X509Util.createEphemeralCertificate(
+                new X500Principal("CN=CA"), caPair);
 
-        KeyPair clientPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate client = X509Util.createEphemeralCertificate(new X500Principal("CN=Client"), clientPair);
+        KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
+                .generateKeyPair();
+        X509Certificate client = X509Util.createEphemeralCertificate(
+                new X500Principal("CN=Client"), clientPair);
 
-        TransactionId transId = TransactionId.createTransactionId(clientPair.getPublic(), "SHA-1");
+        TransactionId transId = TransactionId.createTransactionId(
+                clientPair.getPublic(), "SHA-1");
         Nonce senderNonce = Nonce.nextNonce();
-        IssuerAndSubject messageData = new IssuerAndSubject(new X500Name("CN=CA"), new X500Name("CN=Client"));
+        IssuerAndSubject messageData = new IssuerAndSubject(new X500Name(
+                "CN=CA"), new X500Name("CN=Client"));
 
-//		GetCRL crl = new GetCRL(transId, senderNonce, messageData);
-        GetCertInitial outgoingMessage = new GetCertInitial(transId, senderNonce, messageData);
+        // GetCRL crl = new GetCRL(transId, senderNonce, messageData);
+        GetCertInitial outgoingMessage = new GetCertInitial(transId,
+                senderNonce, messageData);
 
         // Everything below this line only available to client
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca);
-        PkiMessageEncoder encoder = new PkiMessageEncoder(clientPair.getPrivate(), client, envEncoder);
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(caPair.getPrivate());
+        PkiMessageEncoder encoder = new PkiMessageEncoder(
+                clientPair.getPrivate(), client, envEncoder);
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
+                caPair.getPrivate());
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
-        PkiMessage<?> incomingMessage = decoder.decode(encoder.encode(outgoingMessage));
+        PkiMessage<?> incomingMessage = decoder.decode(encoder
+                .encode(outgoingMessage));
 
         System.out.println(incomingMessage);
     }

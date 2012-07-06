@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.io.*;
 
-
 public class CaCapabilitiesContentHandlerTest {
     private CaCapabilitiesContentHandler fixture;
 
@@ -40,7 +39,8 @@ public class CaCapabilitiesContentHandlerTest {
     @Test
     public void charsetIsIgnored() throws InvalidContentTypeException {
         final byte[] is = getBytesForCapabilities("DES3");
-        final Capabilities caps = fixture.getContent(is, "text/plain;charset=UTF-8");
+        final Capabilities caps = fixture.getContent(is,
+                "text/plain;charset=UTF-8");
 
         Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
@@ -48,20 +48,21 @@ public class CaCapabilitiesContentHandlerTest {
     private byte[] getBytesForCapabilities(String... capabilities) {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baos));
+        final BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(baos));
         for (String capability : capabilities) {
             try {
-				writer.write(capability);
-				writer.write('\n');
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+                writer.write(capability);
+                writer.write('\n');
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         try {
-			writer.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return baos.toByteArray();
     }

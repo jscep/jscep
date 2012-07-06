@@ -9,7 +9,8 @@ public interface CertificateVerifier {
     /**
      * Verifies the certificate.
      * 
-     * @param cert the certificate to verify.
+     * @param cert
+     *            the certificate to verify.
      * @return <tt>true</tt> if the identity of the certificate can be verified,
      *         <tt>false</tt> otherwise.
      */

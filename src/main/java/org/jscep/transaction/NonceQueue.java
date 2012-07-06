@@ -43,7 +43,9 @@ public final class NonceQueue {
 
     /**
      * Creates a new <tt>NonceQueue</tt> of the specified size.
-     * @param size the size of the queue.
+     * 
+     * @param size
+     *            the size of the queue.
      */
     public NonceQueue(int size) {
         this.size = size;
@@ -62,7 +64,9 @@ public final class NonceQueue {
      * <p/>
      * This queue will maintain a fixed size, pushing out the oldest nonce
      * first, so this method will always return true.
-     * @param nonce the nonce to add.
+     * 
+     * @param nonce
+     *            the nonce to add.
      * @return <tt>true</tt> if the nonce is added, <tt>false</tt> otherwise.
      */
     public synchronized boolean add(final Nonce nonce) {
@@ -77,7 +81,9 @@ public final class NonceQueue {
 
     /**
      * Checks if the queue contains the given nonce.
-     * @param nonce the nonce to check for.
+     * 
+     * @param nonce
+     *            the nonce to check for.
      * @return <tt>true</tt> if the nonce is present, <tt>false</tt> otherwise.
      */
     public synchronized boolean contains(final Nonce nonce) {

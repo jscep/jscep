@@ -21,7 +21,8 @@ public final class DefaultCallbackHandler implements CallbackHandler {
     /**
      * Default callback handler that delegates verification to a verifier.
      * 
-     * @param verifier the verifier to use.
+     * @param verifier
+     *            the verifier to use.
      */
     public DefaultCallbackHandler(final CertificateVerifier verifier) {
         this.verifier = verifier;
@@ -44,7 +45,8 @@ public final class DefaultCallbackHandler implements CallbackHandler {
     /**
      * Verify the callback certificate.
      * 
-     * @param callback the callback to verify.
+     * @param callback
+     *            the callback to verify.
      */
     private void verify(final CertificateVerificationCallback callback) {
         callback.setVerified(verifier.verify(callback.getCertificate()));

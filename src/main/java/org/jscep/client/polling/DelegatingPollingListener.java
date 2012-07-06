@@ -23,7 +23,8 @@ public final class DelegatingPollingListener implements PollingListener {
     /**
      * Creates a new instance with the given delegate PollingListeners.
      * 
-     * @param listeners the listeners to delegate to.
+     * @param listeners
+     *            the listeners to delegate to.
      */
     public DelegatingPollingListener(final PollingListener... listeners) {
         this.listeners = listeners;

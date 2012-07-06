@@ -37,7 +37,8 @@ public class InvalidNonceException extends RuntimeException {
     /**
      * Constructs a new InvalidNonceException with the specified detail message.
      * 
-     * @param msg the detail message.
+     * @param msg
+     *            the detail message.
      */
     public InvalidNonceException(String msg) {
         super(msg);

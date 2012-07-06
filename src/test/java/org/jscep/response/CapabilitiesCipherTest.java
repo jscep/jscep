@@ -19,9 +19,9 @@ public class CapabilitiesCipherTest {
         Capabilities capabilities;
 
         capabilities = new Capabilities();
-        params.add(new Object[]{capabilities, "DES"});
+        params.add(new Object[] {capabilities, "DES"});
         capabilities = new Capabilities(Capability.TRIPLE_DES);
-        params.add(new Object[]{capabilities, "DESede"});
+        params.add(new Object[] {capabilities, "DESede"});
 
         return params;
     }

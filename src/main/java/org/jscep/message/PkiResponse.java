@@ -40,13 +40,20 @@ public class PkiResponse<T> extends PkiMessage<T> {
     private final FailInfo failInfo;
 
     /**
-     * @param transId the transaction ID
-     * @param messageType the message type
-     * @param senderNonce the sender nonce
-     * @param recipientNonce the recipient nonce
-     * @param pkiStatus the PKI status
-     * @param messageData the message data
-     * @param failInfo the fail info enum
+     * @param transId
+     *            the transaction ID
+     * @param messageType
+     *            the message type
+     * @param senderNonce
+     *            the sender nonce
+     * @param recipientNonce
+     *            the recipient nonce
+     * @param pkiStatus
+     *            the PKI status
+     * @param messageData
+     *            the message data
+     * @param failInfo
+     *            the fail info enum
      */
     public PkiResponse(TransactionId transId, MessageType messageType,
             Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus,
