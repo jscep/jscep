@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import org.jscep.transaction.TransactionId;
 
 /**
- * This PollingListener always returns true, blocking between polls for a
- * duration that doubles on each poll event.
+ * This implementation of <tt>PollingListener</tt> always returns true, blocking
+ * between polls for a duration that doubles on each invocation of {@link poll}.
  * <p>
  * For example, if instantiated with one minute, this implementation will block
  * for one minute initially, followed by two minutes, then four minutes, then
