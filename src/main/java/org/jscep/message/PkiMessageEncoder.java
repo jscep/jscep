@@ -172,46 +172,4 @@ public class PkiMessageEncoder {
         LOGGER.debug("Encoded to: {}", sd.getEncoded());
         return sd.getEncoded();
     }
-
-    private ASN1ObjectIdentifier toOid(String oid) {
-        return new ASN1ObjectIdentifier(oid);
-    }
-
-    private ASN1Set toSet(Object object) {
-        if (object instanceof FailInfo) {
-            return toSet((FailInfo) object);
-        } else if (object instanceof PkiStatus) {
-            return toSet((PkiStatus) object);
-        } else if (object instanceof Nonce) {
-            return toSet((Nonce) object);
-        } else if (object instanceof TransactionId) {
-            return toSet((TransactionId) object);
-        } else if (object instanceof MessageType) {
-            return toSet((MessageType) object);
-        }
-        throw new IllegalArgumentException("Unexpected object");
-    }
-
-    private ASN1Set toSet(FailInfo failInfo) {
-        return new DERSet(new DERPrintableString(Integer.toString(failInfo
-                .getValue())));
-    }
-
-    private ASN1Set toSet(PkiStatus pkiStatus) {
-        return new DERSet(new DERPrintableString(Integer.toString(pkiStatus
-                .getValue())));
-    }
-
-    private ASN1Set toSet(Nonce nonce) {
-        return new DERSet(new DEROctetString(nonce.getBytes()));
-    }
-
-    private ASN1Set toSet(TransactionId transId) {
-        return new DERSet(new DERPrintableString(transId.toString()));
-    }
-
-    private ASN1Set toSet(MessageType messageType) {
-        return new DERSet(new DERPrintableString(Integer.toString(messageType
-                .getValue())));
-    }
 }

@@ -144,7 +144,7 @@ public class PkiMessageDecoder {
         TransactionId transId = toTransactionId(attrTable
                 .get(toOid(ScepObjectIdentifiers.TRANS_ID)));
 
-        PkiMessage<?> decoded;
+        PkiMessage<?> pkiMessage;
         if (messageType == MessageType.CERT_REP) {
             PkiStatus pkiStatus = toPkiStatus(attrTable
                     .get(toOid(ScepObjectIdentifiers.PKI_STATUS)));
@@ -155,80 +155,56 @@ public class PkiMessageDecoder {
                 FailInfo failInfo = toFailInfo(attrTable
                         .get(toOid(ScepObjectIdentifiers.FAIL_INFO)));
 
-                decoded = new CertRep(transId, senderNonce, recipientNonce,
+                pkiMessage = new CertRep(transId, senderNonce, recipientNonce,
                         failInfo);
             } else if (pkiStatus == PkiStatus.PENDING) {
 
-                decoded = new CertRep(transId, senderNonce, recipientNonce);
+                pkiMessage = new CertRep(transId, senderNonce, recipientNonce);
             } else {
-                final EnvelopedData ed = getEnvelopedData((byte[]) signedContent
+                final EnvelopedData ed = getEnvelopedData(signedContent
                         .getContent());
                 final byte[] envelopedContent = decoder.decode(ed);
                 DEROctetString messageData = new DEROctetString(
                         envelopedContent);
 
-                decoded = new CertRep(transId, senderNonce, recipientNonce,
+                pkiMessage = new CertRep(transId, senderNonce, recipientNonce,
                         messageData.getOctets());
             }
-        } else if (messageType == MessageType.GET_CERT) {
-            EnvelopedData ed = getEnvelopedData((byte[]) signedContent
-                    .getContent());
-            IssuerAndSerialNumber messageData = new IssuerAndSerialNumber(
-                    toDERSequence(decoder.decode(ed)));
-
-            decoded = new GetCert(transId, senderNonce, messageData);
-        } else if (messageType == MessageType.GET_CERT_INITIAL) {
-            EnvelopedData ed = getEnvelopedData((byte[]) signedContent
-                    .getContent());
-
-            IssuerAndSubject messageData = new IssuerAndSubject(
-                    decoder.decode(ed));
-
-            decoded = new GetCertInitial(transId, senderNonce, messageData);
-        } else if (messageType == MessageType.GET_CRL) {
-            EnvelopedData ed = getEnvelopedData((byte[]) signedContent
-                    .getContent());
-            IssuerAndSerialNumber messageData = new IssuerAndSerialNumber(
-                    toDERSequence(decoder.decode(ed)));
-
-            decoded = new GetCRL(transId, senderNonce, messageData);
         } else {
-            EnvelopedData ed = getEnvelopedData((byte[]) signedContent
-                    .getContent());
-            PKCS10CertificationRequest messageData = new PKCS10CertificationRequest(
-                    decoder.decode(ed));
+            EnvelopedData ed = getEnvelopedData(signedContent.getContent());
+            byte[] decoded = decoder.decode(ed);
+            if (messageType == MessageType.GET_CERT) {
+                IssuerAndSerialNumber messageData = IssuerAndSerialNumber
+                        .getInstance(decoded);
 
-            decoded = new PKCSReq(transId, senderNonce, messageData);
-        }
+                pkiMessage = new GetCert(transId, senderNonce, messageData);
+            } else if (messageType == MessageType.GET_CERT_INITIAL) {
+                IssuerAndSubject messageData = new IssuerAndSubject(decoded);
 
-        LOGGER.debug("Decoded to: {}", decoded);
-        return decoded;
-    }
+                pkiMessage = new GetCertInitial(transId, senderNonce,
+                        messageData);
+            } else if (messageType == MessageType.GET_CRL) {
+                IssuerAndSerialNumber messageData = IssuerAndSerialNumber
+                        .getInstance(decoded);
 
-    private ASN1Sequence toDERSequence(byte[] bytes) {
-        ASN1InputStream dIn = null;
-        try {
-            dIn = new ASN1InputStream(bytes);
+                pkiMessage = new GetCRL(transId, senderNonce, messageData);
+            } else {
+                PKCS10CertificationRequest messageData = new PKCS10CertificationRequest(
+                        decoded);
 
-            return (ASN1Sequence) dIn.readObject();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("badly encoded request");
-        } finally {
-            if (dIn != null) {
-                try {
-                    dIn.close();
-                } catch (IOException e) {
-                    LOGGER.error("Failed to close ASN.1 stream", e);
-                }
+                pkiMessage = new PKCSReq(transId, senderNonce, messageData);
             }
         }
+
+        LOGGER.debug("Decoded to: {}", pkiMessage);
+        return pkiMessage;
     }
 
     private DERObjectIdentifier toOid(String oid) {
         return new DERObjectIdentifier(oid);
     }
 
-    private EnvelopedData getEnvelopedData(byte[] bytes) throws IOException {
+    private EnvelopedData getEnvelopedData(Object bytes) throws IOException {
         // We expect the byte array to be a sequence
         // ... and that sequence to be a ContentInfo (but might be the
         // EnvelopedData)
