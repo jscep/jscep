@@ -454,21 +454,6 @@ public final class Client {
         }
     }
 
-    private boolean arePair(PrivateKey pri, PublicKey pub) {
-        if (!(pub instanceof RSAKey)) {
-            throw new IllegalArgumentException(
-                    "Public key algorithm should be RSA");
-        }
-        RSAKey rsaPub = RSAKey.class.cast(pub);
-        if (!(pri instanceof RSAKey)) {
-            throw new IllegalArgumentException(
-                    "Private key algorithm should be RSA");
-        }
-        RSAKey rsaPri = RSAKey.class.cast(pri);
-
-        return rsaPub.getModulus().equals(rsaPri.getModulus());
-    }
-
     private PkiMessageEncoder getEncoder(X509Certificate identity, PrivateKey priKey, String profile) throws IOException {
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
                 getRecipientCertificate(profile));
