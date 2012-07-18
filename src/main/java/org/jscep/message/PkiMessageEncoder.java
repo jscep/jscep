@@ -103,19 +103,8 @@ public class PkiMessageEncoder {
             signable = null;
         }
 
-        Hashtable<DERObjectIdentifier, Attribute> table = new Hashtable<DERObjectIdentifier, Attribute>();
-        for (Map.Entry<String, Object> entry : message.getAttributes()
-                .entrySet()) {
-            ASN1ObjectIdentifier oid = toOid(entry.getKey());
-            table.put(oid, new Attribute(oid, toSet(entry.getValue())));
-        }
-        // table.put(PKCSObjectIdentifiers.pkcs_9_at_contentType, new
-        // Attribute(PKCSObjectIdentifiers.pkcs_9_at_contentType,
-        // toSet(PKCSObjectIdentifiers.data)));
-        // table.put(PKCSObjectIdentifiers.pkcs_9_at_messageDigest, new
-        // Attribute(PKCSObjectIdentifiers.pkcs_9_at_messageDigest,
-        // toSet(PKCSObjectIdentifiers.sha1WithRSAEncryption)));
-        AttributeTable signedAttrs = new AttributeTable(table);
+        AttributeTableFactory attrFactory = new AttributeTableFactory();
+        AttributeTable signedAttrs = attrFactory.fromPkiMessage(message);
         Collection<X509Certificate> certColl = Collections
                 .singleton(senderCert);
         JcaCertStore store;
@@ -199,8 +188,6 @@ public class PkiMessageEncoder {
             return toSet((TransactionId) object);
         } else if (object instanceof MessageType) {
             return toSet((MessageType) object);
-        } else if (object instanceof ASN1ObjectIdentifier) {
-            return new DERSet((ASN1ObjectIdentifier) object);
         }
         throw new IllegalArgumentException("Unexpected object");
     }

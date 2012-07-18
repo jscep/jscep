@@ -68,15 +68,6 @@ public abstract class PkiMessage<T> {
         return messageData;
     }
 
-    public Map<String, Object> getAttributes() {
-        Map<String, Object> attr = new HashMap<String, Object>();
-        attr.put(ScepObjectIdentifiers.TRANS_ID, transId);
-        attr.put(ScepObjectIdentifiers.MESSAGE_TYPE, messageType);
-        attr.put(ScepObjectIdentifiers.SENDER_NONCE, senderNonce);
-
-        return attr;
-    }
-
     public String toString() {
         return Objects.toStringHelper(this).add("type", messageType)
                 .add("transId", transId).add("msgData", messageData)

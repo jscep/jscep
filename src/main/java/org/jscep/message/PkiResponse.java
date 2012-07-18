@@ -34,7 +34,7 @@ import org.jscep.transaction.TransactionId;
 
 import com.google.common.base.Objects;
 
-public class PkiResponse<T> extends PkiMessage<T> {
+public abstract class PkiResponse<T> extends PkiMessage<T> {
     private final Nonce recipientNonce;
     private final PkiStatus pkiStatus;
     private final FailInfo failInfo;
@@ -86,21 +86,6 @@ public class PkiResponse<T> extends PkiMessage<T> {
             throw new IllegalStateException();
         }
         return super.getMessageData();
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        Map<String, Object> attr = new HashMap<String, Object>();
-        attr.put(ScepObjectIdentifiers.PKI_STATUS, pkiStatus);
-        attr.put(ScepObjectIdentifiers.RECIPIENT_NONCE, recipientNonce);
-
-        if (pkiStatus == PkiStatus.FAILURE) {
-            attr.put(ScepObjectIdentifiers.FAIL_INFO, failInfo);
-        }
-
-        attr.putAll(super.getAttributes());
-
-        return attr;
     }
 
     public String toString() {
