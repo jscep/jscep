@@ -120,8 +120,6 @@ public class PkiMessageEncoder {
         CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
         LOGGER.debug("Signing message using key belonging to '{}'",
                 senderCert.getSubjectDN());
-        // sdGenerator.addSigner(senderKey, senderCert,
-        // CMSSignedGenerator.DIGEST_SHA1, signedAttrs, null);
         try {
             JcaSignerInfoGeneratorBuilder builder = new JcaSignerInfoGeneratorBuilder(
                     new JcaDigestCalculatorProviderBuilder().build());

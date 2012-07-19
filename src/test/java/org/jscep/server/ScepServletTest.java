@@ -191,7 +191,7 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
@@ -210,7 +210,7 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
@@ -231,7 +231,7 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.GET, getURL());
@@ -252,7 +252,7 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.POST, getURL());
@@ -273,7 +273,7 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
 
         Transport transport = Transport.createTransport(Method.POST, getURL());

@@ -22,95 +22,51 @@
 package org.jscep.message;
 
 import java.io.IOException;
-import java.security.AlgorithmParameters;
-import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.cms.EncryptedContentInfo;
-import org.bouncycastle.asn1.cms.EnvelopedData;
-import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
-import org.bouncycastle.asn1.cms.RecipientInfo;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.jscep.util.AlgorithmDictionary;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.RecipientInformation;
+import org.bouncycastle.cms.RecipientInformationStore;
+import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.cms.jcajce.JceKeyTransRecipientId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PkcsPkiEnvelopeDecoder {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PkcsPkiEnvelopeDecoder.class);
+    private final X509Certificate recipient;
     private final PrivateKey priKey;
 
-    public PkcsPkiEnvelopeDecoder(PrivateKey priKey) {
+    /**
+     * 
+     * @param recipient the entity for whom the message was enveloped
+     * @param priKey the key to open decrypt the envelope
+     */
+    public PkcsPkiEnvelopeDecoder(X509Certificate recipient, PrivateKey priKey) {
+        this.recipient = recipient;
         this.priKey = priKey;
     }
 
-    public byte[] decode(EnvelopedData envelopedData) throws IOException {
-        LOGGER.debug("Decrypting message: {}", envelopedData.getEncoded());
-        // Figure out the type of secret key
-        final EncryptedContentInfo contentInfo = envelopedData
-                .getEncryptedContentInfo();
-        final AlgorithmIdentifier contentAlg = contentInfo
-                .getContentEncryptionAlgorithm();
-        final String transformationName = getCipherName(contentAlg);
-        final String cipherName = AlgorithmDictionary
-                .fromTransformation(transformationName);
-        LOGGER.debug("Decrypting using {}", cipherName);
+    public byte[] decode(CMSEnvelopedData ed) throws IOException {
+        LOGGER.debug("Decrypting message: {}", ed.getEncoded());
 
-        Cipher decryptingCipher;
-        AlgorithmParameters params;
+        final RecipientInformationStore recipientInfos = ed.getRecipientInfos();
+        RecipientInformation info =  recipientInfos.get(new JceKeyTransRecipientId(recipient));
+        
+        if (info == null) {
+            throw new IOException("Missing expected key transfer recipient");
+        }
+        
         try {
-            decryptingCipher = Cipher.getInstance(transformationName);
-            params = AlgorithmParameters.getInstance(cipherName);
-            DEROctetString paramsString = (DEROctetString) contentAlg
-                    .getParameters();
-            params.init(paramsString.getEncoded());
-        } catch (GeneralSecurityException e) {
+            return info.getContent(new JceKeyTransEnvelopedRecipient(priKey));
+        } catch (CMSException e) {
             IOException ioe = new IOException();
-            ioe.initCause(e);
+          ioe.initCause(e);
 
-            throw ioe;
+          throw ioe;
         }
-
-        // Make sure we have a recipientInfo to decrypt the key
-        final ASN1Set recipientInfos = envelopedData.getRecipientInfos();
-        if (recipientInfos.size() == 0) {
-            throw new IOException("Invalid RecipientInfos");
-        }
-
-        byte[] encryptedContentBytes = contentInfo.getEncryptedContent()
-                .getOctets();
-        RecipientInfo encodable = RecipientInfo.getInstance(recipientInfos
-                .getObjectAt(0));
-        KeyTransRecipientInfo keyTrans = KeyTransRecipientInfo
-                .getInstance(encodable.getInfo());
-        byte[] wrappedKey = keyTrans.getEncryptedKey().getOctets();
-        try {
-            // Decrypt the secret key
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.UNWRAP_MODE, priKey);
-            SecretKey secretKey = (SecretKey) cipher.unwrap(wrappedKey,
-                    cipherName, Cipher.SECRET_KEY);
-            // Use the secret key to decrypt the content
-            decryptingCipher.init(Cipher.DECRYPT_MODE, secretKey, params);
-            byte[] contentBytes = decryptingCipher
-                    .doFinal(encryptedContentBytes);
-
-            LOGGER.debug("Decrypted to: {}", contentBytes);
-            return contentBytes;
-        } catch (GeneralSecurityException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
-        }
-    }
-
-    private String getCipherName(AlgorithmIdentifier algId) {
-        return AlgorithmDictionary.lookup(algId);
     }
 }

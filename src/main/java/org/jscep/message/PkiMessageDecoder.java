@@ -36,11 +36,14 @@ import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataParser;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
@@ -161,7 +164,7 @@ public class PkiMessageDecoder {
 
                 pkiMessage = new CertRep(transId, senderNonce, recipientNonce);
             } else {
-                final EnvelopedData ed = getEnvelopedData(signedContent
+                final CMSEnvelopedData ed = getEnvelopedData(signedContent
                         .getContent());
                 final byte[] envelopedContent = decoder.decode(ed);
                 DEROctetString messageData = new DEROctetString(
@@ -171,7 +174,7 @@ public class PkiMessageDecoder {
                         messageData.getOctets());
             }
         } else {
-            EnvelopedData ed = getEnvelopedData(signedContent.getContent());
+            CMSEnvelopedData ed = getEnvelopedData(signedContent.getContent());
             byte[] decoded = decoder.decode(ed);
             if (messageType == MessageType.GET_CERT) {
                 IssuerAndSerialNumber messageData = IssuerAndSerialNumber
@@ -204,15 +207,18 @@ public class PkiMessageDecoder {
         return new DERObjectIdentifier(oid);
     }
 
-    private EnvelopedData getEnvelopedData(Object bytes) throws IOException {
+    private CMSEnvelopedData getEnvelopedData(Object bytes) throws IOException {
         // We expect the byte array to be a sequence
         // ... and that sequence to be a ContentInfo (but might be the
         // EnvelopedData)
-        ContentInfo contentInfo = ContentInfo.getInstance(bytes);
-        // If it *is* a ContentInfo, the content *should* be EnvelopedData
-        ASN1Encodable content = contentInfo.getContent();
-
-        return EnvelopedData.getInstance(content);
+        try {
+            return new CMSEnvelopedData((byte[]) bytes);
+        } catch (CMSException e) {
+            IOException ioe = new IOException();
+            ioe.initCause(e);
+            
+            throw ioe;
+        }
     }
 
     private Nonce toNonce(Attribute attr) {

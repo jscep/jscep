@@ -212,7 +212,7 @@ public abstract class ScepServlet extends HttpServlet {
 
             PkiMessage<?> msg;
             try {
-                PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
+                PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(getSender(), 
                         getPrivate());
                 PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
                 msg = decoder.decode(body);

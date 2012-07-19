@@ -270,7 +270,7 @@ public final class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(identity, priKey, profile), getDecoder(priKey), iasn, MessageType.GET_CRL);
+                getEncoder(identity, priKey, profile), getDecoder(identity, priKey), iasn, MessageType.GET_CRL);
         State state;
         try {
             state = t.send();
@@ -328,7 +328,7 @@ public final class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(identity, priKey, profile), getDecoder(priKey), iasn, MessageType.GET_CERT);
+                getEncoder(identity, priKey, profile), getDecoder(identity, priKey), iasn, MessageType.GET_CERT);
 
         State state;
         try {
@@ -392,7 +392,7 @@ public final class Client {
                 envEncoder);
 
         final EnrolmentTransaction t = new EnrolmentTransaction(transport,
-                encoder, getDecoder(priKey), csr);
+                encoder, getDecoder(identity, priKey), csr);
         t.setIssuer(verifyCert);
 
         State s = t.send();
@@ -461,8 +461,8 @@ public final class Client {
         return new PkiMessageEncoder(priKey, identity, envEncoder);
     }
 
-    private PkiMessageDecoder getDecoder(PrivateKey priKey) {
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(priKey);
+    private PkiMessageDecoder getDecoder(X509Certificate identity, PrivateKey priKey) {
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(identity, priKey);
 
         return new PkiMessageDecoder(envDecoder);
     }

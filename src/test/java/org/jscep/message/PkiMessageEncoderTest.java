@@ -39,7 +39,7 @@ public class PkiMessageEncoderTest {
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca);
         PkiMessageEncoder encoder = new PkiMessageEncoder(
                 clientPair.getPrivate(), client, envEncoder);
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(client, 
                 caPair.getPrivate());
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
         PkiMessage<?> incomingMessage = decoder.decode(encoder
