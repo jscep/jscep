@@ -21,10 +21,6 @@
  */
 package org.jscep.message;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jscep.asn1.ScepObjectIdentifiers;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
