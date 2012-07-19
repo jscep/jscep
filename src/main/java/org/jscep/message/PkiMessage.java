@@ -21,6 +21,8 @@
  */
 package org.jscep.message;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
@@ -66,45 +68,12 @@ public abstract class PkiMessage<T> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((messageData == null) ? 0 : messageData.hashCode());
-        result = prime * result
-                + ((messageType == null) ? 0 : messageType.hashCode());
-        result = prime * result
-                + ((senderNonce == null) ? 0 : senderNonce.hashCode());
-        result = prime * result + ((transId == null) ? 0 : transId.hashCode());
-        return result;
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PkiMessage<?> other = (PkiMessage<?>) obj;
-        if (messageData == null) {
-            if (other.messageData != null)
-                return false;
-        } else if (!messageData.equals(other.messageData))
-            return false;
-        if (messageType != other.messageType)
-            return false;
-        if (senderNonce == null) {
-            if (other.senderNonce != null)
-                return false;
-        } else if (!senderNonce.equals(other.senderNonce))
-            return false;
-        if (transId == null) {
-            if (other.transId != null)
-                return false;
-        } else if (!transId.equals(other.transId))
-            return false;
-        return true;
+        return EqualsBuilder.reflectionEquals(this, obj);
     }
 
     @Override

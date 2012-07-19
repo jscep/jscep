@@ -89,4 +89,38 @@ public abstract class PkiResponse<T> extends PkiMessage<T> {
                 .add("rcptNonce", recipientNonce).add("failInfo", failInfo)
                 .toString();
     }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result
+                + ((failInfo == null) ? 0 : failInfo.hashCode());
+        result = prime * result
+                + ((pkiStatus == null) ? 0 : pkiStatus.hashCode());
+        result = prime * result
+                + ((recipientNonce == null) ? 0 : recipientNonce.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PkiResponse other = (PkiResponse) obj;
+        if (failInfo != other.failInfo)
+            return false;
+        if (pkiStatus != other.pkiStatus)
+            return false;
+        if (recipientNonce == null) {
+            if (other.recipientNonce != null)
+                return false;
+        } else if (!recipientNonce.equals(other.recipientNonce))
+            return false;
+        return true;
+    }
 }
