@@ -24,6 +24,7 @@ package org.jscep.transaction;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
@@ -66,11 +67,16 @@ public class EnrolmentTransaction extends Transaction {
     private X509Certificate issuer;
 
     public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder,
-            PkiMessageDecoder decoder, PKCS10CertificationRequest csr)
-            throws IOException {
+            PkiMessageDecoder decoder, PKCS10CertificationRequest csr) throws TransactionException {
         super(transport, encoder, decoder);
-        this.transId = TransactionId.createTransactionId(
-                X509Util.getPublicKey(csr), "SHA-1");
+        try {
+            this.transId = TransactionId.createTransactionId(
+                    X509Util.getPublicKey(csr), "SHA-1");
+        } catch (IOException e) {
+            throw new TransactionException(e);
+        } catch (InvalidKeySpecException e) {
+            throw new TransactionException(e);
+        }
         this.request = new org.jscep.message.PKCSReq(transId,
                 Nonce.nextNonce(), csr);
     }

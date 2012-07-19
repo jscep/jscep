@@ -150,11 +150,11 @@ public final class Client {
      * @throws IOException
      *             if any I/O error occurs.
      */
-    public CertStore getCaCertificate() throws IOException {
+    public CertStore getCaCertificate() throws ClientException {
         return getCaCertificate(null);
     }
 
-    public CertStore getCaCertificate(String profile) throws IOException {
+    public CertStore getCaCertificate(String profile) throws ClientException {
         LOGGER.debug("Retriving current CA certificate");
         // NON-TRANSACTIONAL
         // CA and RA public key distribution
@@ -166,14 +166,14 @@ public final class Client {
         try {
             factory = CertificateFactory.getInstance("X509");
         } catch (CertificateException e) {
-            throw ioe(e);
+            throw new RuntimeException(e);
         }
         CertStore store;
         try {
             store = trans.sendRequest(req, new CaCertificateContentHandler(
                     factory));
         } catch (TransportException e) {
-            throw ioe(e);
+            throw new ClientException(e);
         }
         verifyCA(selectIssuerCertificate(store));
 
@@ -187,7 +187,7 @@ public final class Client {
         return e;
     }
 
-    public List<X509Certificate> getRolloverCertificate() throws IOException {
+    public List<X509Certificate> getRolloverCertificate() throws ClientException {
         return getRolloverCertificate(null);
     }
 
@@ -204,7 +204,7 @@ public final class Client {
      *             if any I/O error occurs.
      */
     public List<X509Certificate> getRolloverCertificate(final String profile)
-            throws IOException {
+            throws ClientException {
         LOGGER.debug("Retriving next CA certificate from CA");
         // NON-TRANSACTIONAL
         if (!getCaCapabilities(profile).isRolloverSupported()) {
@@ -220,7 +220,7 @@ public final class Client {
             return trans.sendRequest(req, new NextCaCertificateContentHandler(
                     issuer));
         } catch (TransportException e) {
-            throw ioe(e);
+            throw new ClientException(e);
         }
     }
 
@@ -243,7 +243,7 @@ public final class Client {
      */
     @SuppressWarnings("unchecked")
     public X509CRL getRevocationList(X509Certificate identity, PrivateKey priKey, final X500Principal issuer,
-            final BigInteger serial, final String profile) throws IOException,
+            final BigInteger serial, final String profile) throws ClientException,
             OperationFailureException {
         LOGGER.debug("Retriving CRL from CA");
         // TRANSACTIONAL
@@ -262,7 +262,7 @@ public final class Client {
         try {
             state = t.send();
         } catch (TransactionException e) {
-            throw ioe(e);
+            throw new ClientException(e);
         }
 
         if (state == State.CERT_ISSUED) {
@@ -284,7 +284,7 @@ public final class Client {
     }
     
     public X509CRL getRevocationList(X509Certificate identity, PrivateKey priKey, final X500Principal issuer,
-            final BigInteger serial) throws IOException,
+            final BigInteger serial) throws ClientException,
             OperationFailureException {
         return getRevocationList(identity, priKey, issuer, serial, null);
     }
@@ -302,10 +302,11 @@ public final class Client {
      *             if any I/O error occurs.
      * @throws OperationFailureException
      *             if the operation fails.
+     * @throws ClientException 
      */
     @SuppressWarnings("unchecked")
     public List<X509Certificate> getCertificate(X509Certificate identity, PrivateKey priKey, BigInteger serial,
-            String profile) throws IOException, OperationFailureException {
+            String profile) throws OperationFailureException, ClientException {
         LOGGER.debug("Retriving certificate from CA");
         // TRANSACTIONAL
         // Certificate query
@@ -321,7 +322,7 @@ public final class Client {
         try {
             state = t.send();
         } catch (TransactionException e) {
-            throw ioe(e);
+            throw new ClientException(e);
         }
 
         if (state == State.CERT_ISSUED) {
@@ -340,7 +341,7 @@ public final class Client {
     }
 
     public List<X509Certificate> getCertificate(X509Certificate identity, PrivateKey priKey, BigInteger serial)
-            throws IOException, OperationFailureException {
+            throws ClientException, OperationFailureException {
         return getCertificate(identity, priKey, serial, null);
     }
 
@@ -364,9 +365,7 @@ public final class Client {
      * @throws TransactionException 
      */
     public CertStore enrol(X509Certificate identity, PrivateKey priKey, final PKCS10CertificationRequest csr,
-            final PollingListener listener, String profile) throws IOException,
-            TransportException, PollingTerminatedException,
-            OperationFailureException, TransactionException {
+            final PollingListener listener, String profile) throws ClientException, OperationFailureException, PollingTerminatedException, TransactionException {
         LOGGER.debug("Enrolling certificate with CA");
         // TRANSACTIONAL
         // Certificate enrollment
@@ -404,9 +403,7 @@ public final class Client {
     }
 
     public CertStore enrol(X509Certificate identity, PrivateKey priKey, final PKCS10CertificationRequest csr,
-            final PollingListener listener) throws IOException,
-            TransportException, PollingTerminatedException,
-            OperationFailureException, TransactionException {
+            final PollingListener listener) throws ClientException, OperationFailureException, PollingTerminatedException, TransactionException {
         return enrol(identity, priKey, csr, listener, null);
     }
 
@@ -442,7 +439,7 @@ public final class Client {
         }
     }
 
-    private PkiMessageEncoder getEncoder(X509Certificate identity, PrivateKey priKey, String profile) throws IOException {
+    private PkiMessageEncoder getEncoder(X509Certificate identity, PrivateKey priKey, String profile) throws ClientException {
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
                 getRecipientCertificate(profile));
 
@@ -476,7 +473,7 @@ public final class Client {
      * @throws IOException
      *             if any I/O error occurs.
      */
-    private Transport createTransport(final String profile) throws IOException {
+    private Transport createTransport(final String profile) {
         final Transport t;
         if (getCaCapabilities(profile).isPostSupported()) {
             t = Transport.createTransport(Transport.Method.POST, url);
@@ -501,7 +498,7 @@ public final class Client {
         }
     }
 
-    private void verifyCA(X509Certificate cert) throws IOException {
+    private void verifyCA(X509Certificate cert) throws ClientException {
         CertificateVerificationCallback callback = new CertificateVerificationCallback(
                 cert);
         try {
@@ -511,23 +508,25 @@ public final class Client {
             cbh.handle(callbacks);
         } catch (UnsupportedCallbackException e) {
             LOGGER.debug("Certificate verification failed.");
-            throw new RuntimeException(e);
+            throw new ClientException(e);
+        } catch (IOException e) {
+            throw new ClientException(e);
         }
         if (!callback.isVerified()) {
             LOGGER.debug("Certificate verification failed.");
-            throw new IOException(
+            throw new ClientException(
                     "CA certificate fingerprint could not be verified.");
         } else {
             LOGGER.debug("Certificate verification passed.");
         }
     }
 
-    private X509Certificate retrieveCA(String profile) throws IOException {
+    private X509Certificate retrieveCA(String profile) throws ClientException {
         return selectVerificationCertificate(getCaCertificate(profile));
     }
 
     private X509Certificate getRecipientCertificate(String profile)
-            throws IOException {
+            throws ClientException {
         final CertStore store = getCaCertificate(profile);
         // The CA or RA
         return selectEncryptionCertificate(store);

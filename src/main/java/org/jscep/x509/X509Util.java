@@ -27,8 +27,10 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Calendar;
@@ -83,8 +85,6 @@ public final class X509Util {
         cal.add(Calendar.DATE, 2);
         final Date notAfter = cal.getTime();
 
-        
-        
         ContentSigner signer;
         try {
             signer = new JcaContentSignerBuilder(sigAlg(keyPair)).build(keyPair
@@ -148,21 +148,19 @@ public final class X509Util {
     }
 
     public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
-            throws IOException {
+            throws InvalidKeySpecException, IOException {
         SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();
         RSAKeyParameters keyParams = (RSAKeyParameters) PublicKeyFactory
                 .createKey(pubKeyInfo);
         KeySpec keySpec = new RSAPublicKeySpec(keyParams.getModulus(),
                 keyParams.getExponent());
 
+        KeyFactory kf;
         try {
-            KeyFactory kf = KeyFactory.getInstance("RSA");
-            return kf.generatePublic(keySpec);
-        } catch (Exception e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+            kf = KeyFactory.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
+        return kf.generatePublic(keySpec);
     }
 }
