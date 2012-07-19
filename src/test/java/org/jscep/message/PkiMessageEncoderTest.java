@@ -1,5 +1,7 @@
 package org.jscep.message;
 
+import static org.junit.Assert.assertEquals;
+
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.X509Certificate;
@@ -39,12 +41,14 @@ public class PkiMessageEncoderTest {
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca);
         PkiMessageEncoder encoder = new PkiMessageEncoder(
                 clientPair.getPrivate(), client, envEncoder);
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(client, 
+        
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca, 
                 caPair.getPrivate());
         PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+        
         PkiMessage<?> incomingMessage = decoder.decode(encoder
                 .encode(outgoingMessage));
 
-        System.out.println(incomingMessage);
+        assertEquals(outgoingMessage, incomingMessage);
     }
 }

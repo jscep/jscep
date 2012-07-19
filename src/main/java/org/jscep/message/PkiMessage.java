@@ -64,6 +64,50 @@ public abstract class PkiMessage<T> {
         return messageData;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((messageData == null) ? 0 : messageData.hashCode());
+        result = prime * result
+                + ((messageType == null) ? 0 : messageType.hashCode());
+        result = prime * result
+                + ((senderNonce == null) ? 0 : senderNonce.hashCode());
+        result = prime * result + ((transId == null) ? 0 : transId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PkiMessage<?> other = (PkiMessage<?>) obj;
+        if (messageData == null) {
+            if (other.messageData != null)
+                return false;
+        } else if (!messageData.equals(other.messageData))
+            return false;
+        if (messageType != other.messageType)
+            return false;
+        if (senderNonce == null) {
+            if (other.senderNonce != null)
+                return false;
+        } else if (!senderNonce.equals(other.senderNonce))
+            return false;
+        if (transId == null) {
+            if (other.transId != null)
+                return false;
+        } else if (!transId.equals(other.transId))
+            return false;
+        return true;
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("type", messageType)
                 .add("transId", transId).add("msgData", messageData)
