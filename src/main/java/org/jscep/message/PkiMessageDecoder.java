@@ -84,15 +84,7 @@ public class PkiMessageDecoder {
         // The signed content is always an octet string
         CMSProcessable signedContent = signedData.getSignedContent();
 
-        Store store;
-        try {
-            store = signedData.getCertificates();
-        } catch (Exception e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
-        }
+        Store store = signedData.getCertificates();
         Collection<SignerInformation> signerInfos = signedData.getSignerInfos()
                 .getSigners();
         SignerInformation signerInfo = signerInfos.iterator().next();

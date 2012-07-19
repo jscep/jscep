@@ -144,7 +144,7 @@ public class PkiMessageEncoder {
         }
         try {
             sdGenerator.addCertificates(store);
-        } catch (Exception e) {
+        } catch (CMSException e) {
             IOException ioe = new IOException();
             ioe.initCause(e);
 

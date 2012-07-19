@@ -84,11 +84,7 @@ public abstract class Transaction {
             throws IOException {
         try {
             return transport.sendRequest(req, handler);
-        } catch (InvalidContentException e) {
-            throw ioe(e);
-        } catch (TransportException e) {
-            throw ioe(e);
-        } catch (InvalidContentTypeException e) {
+        } catch (Exception e) {
             throw ioe(e);
         }
     }
