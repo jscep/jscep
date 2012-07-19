@@ -21,7 +21,6 @@
  */
 package org.jscep.message;
 
-import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
@@ -31,42 +30,37 @@ import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipientId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PkcsPkiEnvelopeDecoder {
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(PkcsPkiEnvelopeDecoder.class);
     private final X509Certificate recipient;
     private final PrivateKey priKey;
 
     /**
      * 
-     * @param recipient the entity for whom the message was enveloped
-     * @param priKey the key to open decrypt the envelope
+     * @param recipient
+     *            the entity for whom the message was enveloped
+     * @param priKey
+     *            the key to open decrypt the envelope
      */
     public PkcsPkiEnvelopeDecoder(X509Certificate recipient, PrivateKey priKey) {
         this.recipient = recipient;
         this.priKey = priKey;
     }
 
-    public byte[] decode(CMSEnvelopedData ed) throws IOException {
-        LOGGER.debug("Decrypting message: {}", ed.getEncoded());
-
+    public byte[] decode(CMSEnvelopedData ed) throws MessageDecodingException {
         final RecipientInformationStore recipientInfos = ed.getRecipientInfos();
-        RecipientInformation info =  recipientInfos.get(new JceKeyTransRecipientId(recipient));
-        
+        RecipientInformation info = recipientInfos
+                .get(new JceKeyTransRecipientId(recipient));
+
         if (info == null) {
-            throw new IOException("Missing expected key transfer recipient");
+            throw new MessageDecodingException(
+                    "Missing expected key transfer recipient");
         }
-        
+
         try {
             return info.getContent(new JceKeyTransEnvelopedRecipient(priKey));
         } catch (CMSException e) {
-            IOException ioe = new IOException();
-          ioe.initCause(e);
-
-          throw ioe;
+            throw new MessageDecodingException(e);
         }
     }
 }

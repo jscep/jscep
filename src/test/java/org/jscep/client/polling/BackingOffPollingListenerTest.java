@@ -8,7 +8,7 @@ import org.jscep.transaction.TransactionId;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ConstantTimePollingListenerTest {
+public class BackingOffPollingListenerTest {
     private PollingListener listener;
     private static final long HALF_DURATION = 1L;
     private static final long DURATION = 2L;
@@ -16,7 +16,7 @@ public class ConstantTimePollingListenerTest {
 
     @Before
     public void setUp() {
-        listener = new ConstantTimePollingListener(DURATION, UNIT);
+        listener = new BackingOffPollingListener(DURATION, UNIT);
     }
 
     @Test
@@ -24,11 +24,16 @@ public class ConstantTimePollingListenerTest {
         TransactionId id = TransactionId.createTransactionId();
         long start = System.currentTimeMillis();
         assertTrue(listener.poll(id));
+        long mid = System.currentTimeMillis();
+        assertTrue(listener.poll(id));
         long end = System.currentTimeMillis();
-        long actualDuration = end - start;
+        long firstDuration = mid - start;
+        long secondDuration = end - mid;
+        
         long expectedDuration = UNIT.toMillis(DURATION);
 
-        assertTrue(actualDuration >= expectedDuration);
+        assertTrue(firstDuration >= expectedDuration);
+        assertTrue(secondDuration >= expectedDuration * 2);
     }
 
     @Test

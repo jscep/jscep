@@ -1,7 +1,6 @@
 package org.jscep.message;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.math.BigInteger;

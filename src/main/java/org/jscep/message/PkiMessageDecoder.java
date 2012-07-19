@@ -22,34 +22,25 @@
 package org.jscep.message;
 
 import java.io.IOException;
-import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Hashtable;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.CMSEnvelopedDataParser;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.util.Store;
+import org.bouncycastle.util.StoreException;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.asn1.ScepObjectIdentifiers;
 import org.jscep.transaction.FailInfo;
@@ -70,17 +61,13 @@ public class PkiMessageDecoder {
     }
 
     @SuppressWarnings("unchecked")
-    public PkiMessage<?> decode(byte[] bytes) throws IOException {
+    public PkiMessage<?> decode(byte[] bytes) throws MessageDecodingException {
         CMSSignedData signedData;
         try {
             signedData = new CMSSignedData(bytes);
         } catch (CMSException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+            throw new MessageDecodingException(e);
         }
-        LOGGER.debug("Decoding message: {}", signedData.getEncoded());
         // The signed content is always an octet string
         CMSProcessable signedContent = signedData.getSignedContent();
 
@@ -91,11 +78,8 @@ public class PkiMessageDecoder {
         Collection<?> certColl;
         try {
             certColl = store.getMatches(signerInfo.getSID());
-        } catch (Exception e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+        } catch (StoreException e) {
+            throw new MessageDecodingException(e);
         }
         if (certColl.size() > 0) {
             X509CertificateHolder cert = (X509CertificateHolder) certColl
@@ -105,25 +89,9 @@ public class PkiMessageDecoder {
             SignerInformationVerifier verifier;
             try {
                 verifier = new JcaSimpleSignerInfoVerifierBuilder().build(cert);
-            } catch (OperatorCreationException e) {
-                IOException ioe = new IOException();
-                ioe.initCause(e);
-
-                throw ioe;
-            } catch (CertificateException e) {
-                IOException ioe = new IOException();
-                ioe.initCause(e);
-
-                throw ioe;
-            }
-
-            try {
                 signerInfo.verify(verifier);
             } catch (Exception e) {
-                IOException ioe = new IOException();
-                ioe.initCause(e);
-
-                throw ioe;
+                throw new MessageDecodingException(e);
             }
         } else {
             LOGGER.error("Unable to verify message");
@@ -184,8 +152,12 @@ public class PkiMessageDecoder {
 
                 pkiMessage = new GetCRL(transId, senderNonce, messageData);
             } else {
-                PKCS10CertificationRequest messageData = new PKCS10CertificationRequest(
-                        decoded);
+                PKCS10CertificationRequest messageData;
+                try {
+                    messageData = new PKCS10CertificationRequest(decoded);
+                } catch (IOException e) {
+                    throw new MessageDecodingException(e);
+                }
 
                 pkiMessage = new PKCSReq(transId, senderNonce, messageData);
             }
@@ -199,17 +171,15 @@ public class PkiMessageDecoder {
         return new DERObjectIdentifier(oid);
     }
 
-    private CMSEnvelopedData getEnvelopedData(Object bytes) throws IOException {
+    private CMSEnvelopedData getEnvelopedData(Object bytes)
+            throws MessageDecodingException {
         // We expect the byte array to be a sequence
         // ... and that sequence to be a ContentInfo (but might be the
         // EnvelopedData)
         try {
             return new CMSEnvelopedData((byte[]) bytes);
         } catch (CMSException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-            
-            throw ioe;
+            throw new MessageDecodingException(e);
         }
     }
 

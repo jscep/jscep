@@ -98,8 +98,7 @@ public abstract class Transport {
      * @throws InvalidContentException
      */
     public abstract <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
-            throws TransportException, InvalidContentTypeException,
-            InvalidContentException;
+            throws TransportException;
 
     /**
      * Creates a new <code>Transport</code> of type <code>method</code> with the

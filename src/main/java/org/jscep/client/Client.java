@@ -27,19 +27,15 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.RSAKey;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -55,8 +51,6 @@ import org.jscep.client.polling.PollingListener;
 import org.jscep.client.polling.PollingTerminatedException;
 import org.jscep.content.CaCapabilitiesContentHandler;
 import org.jscep.content.CaCertificateContentHandler;
-import org.jscep.content.InvalidContentException;
-import org.jscep.content.InvalidContentTypeException;
 import org.jscep.content.NextCaCertificateContentHandler;
 import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
@@ -72,6 +66,7 @@ import org.jscep.transaction.NonEnrollmentTransaction;
 import org.jscep.transaction.OperationFailureException;
 import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
+import org.jscep.transaction.TransactionException;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
 import org.slf4j.Logger;
@@ -179,10 +174,6 @@ public final class Client {
                     factory));
         } catch (TransportException e) {
             throw ioe(e);
-        } catch (InvalidContentTypeException e) {
-            throw ioe(e);
-        } catch (InvalidContentException e) {
-            throw ioe(e);
         }
         verifyCA(selectIssuerCertificate(store));
 
@@ -230,10 +221,6 @@ public final class Client {
                     issuer));
         } catch (TransportException e) {
             throw ioe(e);
-        } catch (InvalidContentTypeException e) {
-            throw ioe(e);
-        } catch (InvalidContentException e) {
-            throw ioe(e);
         }
     }
 
@@ -274,7 +261,7 @@ public final class Client {
         State state;
         try {
             state = t.send();
-        } catch (TransportException e) {
+        } catch (TransactionException e) {
             throw ioe(e);
         }
 
@@ -333,7 +320,7 @@ public final class Client {
         State state;
         try {
             state = t.send();
-        } catch (TransportException e) {
+        } catch (TransactionException e) {
             throw ioe(e);
         }
 
@@ -374,11 +361,12 @@ public final class Client {
      *             if polling is terminated by the listener
      * @throws OperationFailureException
      *             if the enrollment fails
+     * @throws TransactionException 
      */
     public CertStore enrol(X509Certificate identity, PrivateKey priKey, final PKCS10CertificationRequest csr,
             final PollingListener listener, String profile) throws IOException,
             TransportException, PollingTerminatedException,
-            OperationFailureException {
+            OperationFailureException, TransactionException {
         LOGGER.debug("Enrolling certificate with CA");
         // TRANSACTIONAL
         // Certificate enrollment
@@ -418,7 +406,7 @@ public final class Client {
     public CertStore enrol(X509Certificate identity, PrivateKey priKey, final PKCS10CertificationRequest csr,
             final PollingListener listener) throws IOException,
             TransportException, PollingTerminatedException,
-            OperationFailureException {
+            OperationFailureException, TransactionException {
         return enrol(identity, priKey, csr, listener, null);
     }
 
@@ -508,12 +496,6 @@ public final class Client {
         try {
             return trans.sendRequest(req, new CaCapabilitiesContentHandler());
         } catch (TransportException e) {
-            LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
-            return new Capabilities();
-        } catch (InvalidContentTypeException e) {
-            LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
-            return new Capabilities();
-        } catch (InvalidContentException e) {
             LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
             return new Capabilities();
         }

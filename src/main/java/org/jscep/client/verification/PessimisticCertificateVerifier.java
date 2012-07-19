@@ -11,7 +11,7 @@ public final class PessimisticCertificateVerifier implements
      * {@inheritDoc}
      */
     public boolean verify(final X509Certificate cert) {
-        return true;
+        return false;
     }
 
 }

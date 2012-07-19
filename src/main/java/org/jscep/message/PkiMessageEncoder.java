@@ -22,43 +22,27 @@
 package org.jscep.message;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERObjectIdentifier;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSAttributeTableGenerator;
-import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.jscep.transaction.FailInfo;
-import org.jscep.transaction.MessageType;
-import org.jscep.transaction.Nonce;
 import org.jscep.transaction.PkiStatus;
-import org.jscep.transaction.TransactionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +60,7 @@ public class PkiMessageEncoder {
         this.encoder = enveloper;
     }
 
-    public byte[] encode(PkiMessage<?> message) throws IOException {
+    public byte[] encode(PkiMessage<?> message) throws MessageEncodingException {
         LOGGER.debug("Encoding message: {}", message);
         CMSProcessableByteArray signable;
 
@@ -92,11 +76,19 @@ public class PkiMessageEncoder {
             if (message.getMessageData() instanceof byte[]) {
                 ed = encoder.encode((byte[]) message.getMessageData());
             } else if (message.getMessageData() instanceof PKCS10CertificationRequest) {
-                ed = encoder.encode(((PKCS10CertificationRequest) message
-                        .getMessageData()).getEncoded());
+                try {
+                    ed = encoder.encode(((PKCS10CertificationRequest) message
+                            .getMessageData()).getEncoded());
+                } catch (IOException e) {
+                    throw new MessageEncodingException(e);
+                }
             } else {
-                ed = encoder.encode(((ASN1Object) message.getMessageData())
-                        .getEncoded());
+                try {
+                    ed = encoder.encode(((ASN1Object) message.getMessageData())
+                            .getEncoded());
+                } catch (IOException e) {
+                    throw new MessageEncodingException(e);
+                }
             }
             signable = new CMSProcessableByteArray(ed);
         } else {
@@ -111,10 +103,7 @@ public class PkiMessageEncoder {
         try {
             store = new JcaCertStore(certColl);
         } catch (CertificateEncodingException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+            throw new MessageEncodingException(e);
         }
 
         CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
@@ -131,43 +120,18 @@ public class PkiMessageEncoder {
             SignerInfoGenerator infoGen = builder.build(
                     contentSignerBuilder.build(senderKey), senderCert);
             sdGenerator.addSignerInfoGenerator(infoGen);
-        } catch (CertificateEncodingException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
-        } catch (OperatorCreationException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
-        }
-        try {
             sdGenerator.addCertificates(store);
-        } catch (CMSException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+        } catch (Exception e) {
+            throw new MessageEncodingException(e);
         }
-
         LOGGER.debug("Signing {} content", signable);
         CMSSignedData sd;
         try {
             sd = sdGenerator.generate("1.2.840.113549.1.7.1", signable, true,
                     (Provider) null, true);
-        } catch (NoSuchAlgorithmException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
-        } catch (CMSException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+            return sd.getEncoded();
+        } catch (Exception e) {
+            throw new MessageEncodingException(e);
         }
-        LOGGER.debug("Encoded to: {}", sd.getEncoded());
-        return sd.getEncoded();
     }
 }

@@ -22,20 +22,19 @@
  */
 package org.jscep.transaction;
 
-import java.io.IOException;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.jscep.content.CertRepContentHandler;
 import org.jscep.message.CertRep;
 import org.jscep.message.GetCRL;
 import org.jscep.message.GetCert;
+import org.jscep.message.MessageDecodingException;
+import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.message.PkiRequest;
 import org.jscep.request.PKCSReq;
 import org.jscep.transport.Transport;
-import org.jscep.transport.TransportException;
 
 public class NonEnrollmentTransaction extends Transaction {
     private final TransactionId transId;
@@ -62,19 +61,29 @@ public class NonEnrollmentTransaction extends Transaction {
     }
 
     @Override
-    public final State send() throws IOException, TransportException {
+    public final State send() throws TransactionException {
         final CertRepContentHandler handler = new CertRepContentHandler();
-        final byte[] signedData = encode(request);
+        byte[] signedData;
+        try {
+            signedData = encode(request);
+        } catch (MessageEncodingException e) {
+            throw new TransactionException(e);
+        }
 
         byte[] res = send(handler, new PKCSReq(signedData));
-        final CertRep response = (CertRep) decode(res);
+        CertRep response;
+        try {
+            response = (CertRep) decode(res);
+        } catch (MessageDecodingException e) {
+            throw new TransactionException(e);
+        }
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
             return failure(response.getFailInfo());
         } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
             return success(extractCertStore(response));
         } else {
-            throw new IOException("Invalid Response");
+            throw new TransactionException("Invalid Response");
         }
     }
 }

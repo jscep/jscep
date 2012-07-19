@@ -28,9 +28,9 @@ import java.security.cert.CertStore;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.content.CertRepContentHandler;
-import org.jscep.content.InvalidContentException;
-import org.jscep.content.InvalidContentTypeException;
 import org.jscep.message.CertRep;
+import org.jscep.message.MessageDecodingException;
+import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
@@ -76,24 +76,23 @@ public abstract class Transaction {
         return certStore;
     }
 
-    public abstract State send() throws IOException, TransportException;
+    public abstract State send() throws TransactionException;
 
     public abstract TransactionId getId();
 
-    protected byte[] send(final CertRepContentHandler handler, final Request req)
-            throws IOException {
+    protected byte[] send(final CertRepContentHandler handler, final Request req) throws TransactionException {
         try {
             return transport.sendRequest(req, handler);
-        } catch (Exception e) {
-            throw ioe(e);
+        } catch (TransportException e) {
+            throw new TransactionException(e);
         }
     }
 
-    protected PkiMessage<?> decode(byte[] res) throws IOException {
+    protected PkiMessage<?> decode(byte[] res) throws MessageDecodingException {
         return decoder.decode(res);
     }
 
-    protected byte[] encode(final PkiMessage<?> message) throws IOException {
+    protected byte[] encode(final PkiMessage<?> message) throws MessageEncodingException {
         return encoder.encode(message);
     }
 
@@ -116,14 +115,14 @@ public abstract class Transaction {
         return state;
     }
 
-    protected CertStore extractCertStore(CertRep response) throws IOException {
+    protected CertStore extractCertStore(CertRep response) throws TransactionException {
         try {
             CMSSignedData signedData = new CMSSignedData(
                     response.getMessageData());
 
             return CertStoreUtils.fromSignedData(signedData);
         } catch (CMSException e) {
-            throw ioe(e);
+            throw new TransactionException(e);
         }
     }
 

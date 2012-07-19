@@ -65,6 +65,8 @@ import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.message.CertRep;
+import org.jscep.message.MessageDecodingException;
+import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessage;
@@ -212,12 +214,12 @@ public abstract class ScepServlet extends HttpServlet {
 
             PkiMessage<?> msg;
             try {
-                PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(getSender(), 
-                        getPrivate());
+                PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
+                        getSender(), getPrivate());
                 PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
                 msg = decoder.decode(body);
-            } catch (IOException e) {
-                LOGGER.error("Error decoding message", e);
+            } catch (MessageDecodingException e) {
+                LOGGER.error("Error decoding request", e);
                 throw new ServletException(e);
             }
 
@@ -328,7 +330,13 @@ public abstract class ScepServlet extends HttpServlet {
                     reqCert);
             PkiMessageEncoder encoder = new PkiMessageEncoder(getPrivate(),
                     getSender(), envEncoder);
-            byte[] signedData = encoder.encode(certRep);
+            byte[] signedData;
+            try {
+                signedData = encoder.encode(certRep);
+            } catch (MessageEncodingException e) {
+                LOGGER.error("Error decoding response", e);
+                throw new ServletException(e);
+            }
 
             res.getOutputStream().write(signedData);
             res.getOutputStream().close();

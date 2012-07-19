@@ -23,11 +23,10 @@ package org.jscep.message;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
-
-import com.google.common.base.Objects;
 
 /**
  * This class represents an abstract SCEP PkiMessage, which may be either a
@@ -78,8 +77,6 @@ public abstract class PkiMessage<T> {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("type", messageType)
-                .add("transId", transId).add("msgData", messageData)
-                .add("nonce", senderNonce).toString();
+        return ToStringBuilder.reflectionToString(this);
     }
 }

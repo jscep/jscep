@@ -34,8 +34,6 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import org.bouncycastle.util.encoders.Base64;
-import org.jscep.content.InvalidContentException;
-import org.jscep.content.InvalidContentTypeException;
 import org.jscep.content.ScepContentHandler;
 import org.jscep.request.PKCSReq;
 import org.jscep.request.Request;
@@ -59,8 +57,7 @@ public class HttpPostTransport extends Transport {
 
     @Override
     public <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
-            throws InvalidContentTypeException, TransportException,
-            InvalidContentException {
+            throws TransportException {
         if (!PKCSReq.class.isAssignableFrom(msg.getClass())) {
             throw new IllegalArgumentException(
                     "POST transport may not be used for " + msg.getOperation()
@@ -131,7 +128,11 @@ public class HttpPostTransport extends Transport {
             throw new TransportException("Error reading response stream", e);
         }
 
-        return handler.getContent(response, conn.getContentType());
+        try {
+            return handler.getContent(response, conn.getContentType());
+        } catch (Exception e) {
+            throw new TransportException(e);
+        }
     }
 
     /**

@@ -48,9 +48,7 @@ public class PkcsPkiEnvelopeEncoder {
         this.recipient = recipient;
     }
 
-    public byte[] encode(byte[] payload) throws IOException {
-        LOGGER.debug("Encrypting message: {}", payload);
-
+    public byte[] encode(byte[] payload) throws MessageEncodingException {
         CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
         CMSTypedData envelopable = new CMSProcessableByteArray(payload);
         RecipientInfoGenerator recipientGenerator;
@@ -58,10 +56,7 @@ public class PkcsPkiEnvelopeEncoder {
             recipientGenerator = new JceKeyTransRecipientInfoGenerator(
                     recipient);
         } catch (CertificateEncodingException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+            throw new MessageEncodingException(e);
         }
         edGenerator.addRecipientInfoGenerator(recipientGenerator);
         LOGGER.debug("Encrypting session key using key belonging to '{}'",
@@ -72,21 +67,18 @@ public class PkcsPkiEnvelopeEncoder {
             encryptor = new JceCRMFEncryptorBuilder(
                     PKCSObjectIdentifiers.des_EDE3_CBC).build();
         } catch (CRMFException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+            throw new MessageEncodingException(e);
         }
         CMSEnvelopedData data;
         try {
             data = edGenerator.generate(envelopable, encryptor);
         } catch (CMSException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+            throw new MessageEncodingException(e);
         }
-        LOGGER.debug("Encrypted to: {}", data.getEncoded());
-        return data.getEncoded();
+        try {
+            return data.getEncoded();
+        } catch (IOException e) {
+            throw new MessageEncodingException(e);
+        }
     }
 }

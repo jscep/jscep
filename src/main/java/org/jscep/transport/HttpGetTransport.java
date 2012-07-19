@@ -29,8 +29,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import org.jscep.content.InvalidContentException;
-import org.jscep.content.InvalidContentTypeException;
 import org.jscep.content.ScepContentHandler;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
@@ -54,8 +52,7 @@ public class HttpGetTransport extends Transport {
 
     @Override
     public <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
-            throws TransportException, InvalidContentTypeException,
-            InvalidContentException {
+            throws TransportException {
         URL url;
         try {
             url = getUrl(msg.getOperation(), msg.getMessage());
@@ -95,7 +92,11 @@ public class HttpGetTransport extends Transport {
             throw new TransportException("Error reading response stream", e);
         }
 
-        return handler.getContent(response, conn.getContentType());
+        try {
+            return handler.getContent(response, conn.getContentType());
+        } catch (Exception e) {
+            throw new TransportException(e);
+        }
     }
 
     private URL getUrl(Operation op, String message)

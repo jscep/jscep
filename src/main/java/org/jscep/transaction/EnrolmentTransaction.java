@@ -33,6 +33,8 @@ import org.jscep.content.InvalidContentException;
 import org.jscep.content.InvalidContentTypeException;
 import org.jscep.message.CertRep;
 import org.jscep.message.GetCertInitial;
+import org.jscep.message.MessageDecodingException;
+import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
@@ -85,18 +87,29 @@ public class EnrolmentTransaction extends Transaction {
      * @throws IOException
      *             if any I/O error occurs.
      * @throws TransportException
+     * @throws TransactionException 
      * @throws InvalidContentTypeException
      * @throws InvalidContentException
      */
     @Override
-    public State send() throws IOException, TransportException {
-        byte[] signedData = encode(request);
+    public State send() throws TransactionException {
+        byte[] signedData;
+        try {
+            signedData = encode(request);
+        } catch (MessageEncodingException e) {
+            throw new TransactionException(e);
+        }
         LOGGER.debug("Sending {}", signedData);
         CertRepContentHandler handler = new CertRepContentHandler();
         byte[] res = send(handler, new PKCSReq(signedData));
         LOGGER.debug("Received response {}", res);
 
-        CertRep response = (CertRep) decode(res);
+        CertRep response;
+        try {
+            response = (CertRep) decode(res);
+        } catch (MessageDecodingException e) {
+            throw new TransactionException(e);
+        }
         validateExchange(request, response);
 
         LOGGER.debug("Response: {}", response);
@@ -116,10 +129,11 @@ public class EnrolmentTransaction extends Transaction {
      * @return the resulting transaction state.
      * @throws IOException
      *             if any I/O error occurs.
+     * @throws TransactionException 
      * @throws InvalidContentTypeException
      * @throws InvalidContentException
      */
-    public State poll() throws IOException, TransportException {
+    public State poll() throws TransactionException {
         X500Name issuerName = X509Util.toX509Name(issuer
                 .getSubjectX500Principal());
         X500Name subjectName = request.getMessageData().getSubject();
@@ -127,11 +141,21 @@ public class EnrolmentTransaction extends Transaction {
         final GetCertInitial pollReq = new GetCertInitial(transId,
                 Nonce.nextNonce(), ias);
 
-        byte[] signedData = encode(pollReq);
+        byte[] signedData;
+        try {
+            signedData = encode(pollReq);
+        } catch (MessageEncodingException e) {
+            throw new TransactionException(e);
+        }
         CertRepContentHandler handler = new CertRepContentHandler();
         byte[] res = send(handler, new PKCSReq(signedData));
 
-        CertRep response = (CertRep) decode(res);
+        CertRep response;
+        try {
+            response = (CertRep) decode(res);
+        } catch (MessageDecodingException e) {
+            throw new TransactionException(e);
+        }
         validateExchange(pollReq, response);
 
         if (response.getPkiStatus() == PkiStatus.FAILURE) {
@@ -144,11 +168,11 @@ public class EnrolmentTransaction extends Transaction {
     }
 
     private void validateExchange(PkiMessage<?> req, CertRep res)
-            throws IOException {
+            throws TransactionException {
         LOGGER.debug("Validating SCEP message exchange");
 
         if (!res.getTransactionId().equals(req.getTransactionId())) {
-            throw new IOException("Transaction ID Mismatch");
+            throw new TransactionException("Transaction ID Mismatch");
         } else {
             LOGGER.debug("Matched transaction IDs");
         }
