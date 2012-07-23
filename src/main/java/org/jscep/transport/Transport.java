@@ -25,8 +25,6 @@ package org.jscep.transport;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.jscep.content.InvalidContentException;
-import org.jscep.content.InvalidContentTypeException;
 import org.jscep.content.ScepContentHandler;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;

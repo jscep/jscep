@@ -33,12 +33,16 @@ import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSAttributeTableGenerator;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
@@ -95,34 +99,25 @@ public class PkiMessageEncoder {
             signable = null;
         }
 
-        AttributeTableFactory attrFactory = new AttributeTableFactory();
-        AttributeTable signedAttrs = attrFactory.fromPkiMessage(message);
-        Collection<X509Certificate> certColl = Collections
-                .singleton(senderCert);
-        JcaCertStore store;
-        try {
-            store = new JcaCertStore(certColl);
-        } catch (CertificateEncodingException e) {
-            throw new MessageEncodingException(e);
-        }
-
+        
         CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
         LOGGER.debug("Signing message using key belonging to '{}'",
                 senderCert.getSubjectDN());
         try {
-            JcaSignerInfoGeneratorBuilder builder = new JcaSignerInfoGeneratorBuilder(
-                    new JcaDigestCalculatorProviderBuilder().build());
-            CMSAttributeTableGenerator signedGen = new DefaultSignedAttributeTableGenerator(
-                    signedAttrs);
-            builder.setSignedAttributeGenerator(signedGen);
-            JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(
-                    "SHA1withRSA");
-            SignerInfoGenerator infoGen = builder.build(
-                    contentSignerBuilder.build(senderKey), senderCert);
-            sdGenerator.addSignerInfoGenerator(infoGen);
-            sdGenerator.addCertificates(store);
-        } catch (Exception e) {
+            sdGenerator.addSignerInfoGenerator(getSignerInfo(message));
+        } catch (CertificateEncodingException e) {
             throw new MessageEncodingException(e);
+        } catch (OperatorCreationException e) {
+            throw new MessageEncodingException(e);
+        }
+        try {
+            Collection<X509Certificate> certColl = Collections.singleton(senderCert);
+            sdGenerator.addCertificates(new JcaCertStore(certColl));
+        } catch (CMSException e) {
+            throw new MessageEncodingException(e);
+        } catch (CertificateEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         LOGGER.debug("Signing {} content", signable);
         CMSSignedData sd;
@@ -133,5 +128,33 @@ public class PkiMessageEncoder {
         } catch (Exception e) {
             throw new MessageEncodingException(e);
         }
+    }
+
+    private SignerInfoGenerator getSignerInfo(PkiMessage<?> message)
+            throws OperatorCreationException, CertificateEncodingException {
+        JcaSignerInfoGeneratorBuilder signerInfoBuilder = new JcaSignerInfoGeneratorBuilder(getDigestCalculator());
+        signerInfoBuilder.setSignedAttributeGenerator(getTableGenerator(message));
+        SignerInfoGenerator signerInfo = signerInfoBuilder.build(getContentSigner(), senderCert);
+        return signerInfo;
+    }
+
+    private CMSAttributeTableGenerator getTableGenerator(PkiMessage<?> message) {
+        AttributeTableFactory attrFactory = new AttributeTableFactory();
+        AttributeTable signedAttrs = attrFactory.fromPkiMessage(message);
+        CMSAttributeTableGenerator atGen = new DefaultSignedAttributeTableGenerator(
+                signedAttrs);
+        return atGen;
+    }
+
+    private DigestCalculatorProvider getDigestCalculator()
+            throws OperatorCreationException {
+        return new JcaDigestCalculatorProviderBuilder()
+                .build();
+    }
+
+    private ContentSigner getContentSigner() throws OperatorCreationException {
+        JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(
+                "SHA1withRSA");
+        return contentSignerBuilder.build(senderKey);
     }
 }
