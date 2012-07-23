@@ -1,6 +1,6 @@
 package org.jscep.transaction;
 
-public class OperationFailureException extends Exception {
+public class OperationFailureException extends TransactionException {
     /**
      *
      */
@@ -8,6 +8,8 @@ public class OperationFailureException extends Exception {
     private final FailInfo failInfo;
 
     public OperationFailureException(FailInfo failInfo) {
+        super();
+        
         this.failInfo = failInfo;
     }
 

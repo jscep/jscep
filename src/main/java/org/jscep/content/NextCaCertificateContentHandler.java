@@ -35,8 +35,8 @@ import java.util.List;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.pkcs7.SignedDataUtil;
 import org.jscep.util.CertStoreUtils;
+import org.jscep.util.SignedDataUtil;
 
 /**
  * This class handles responses to <code>GetNextCACert</code> requests.
@@ -58,7 +58,7 @@ public class NextCaCertificateContentHandler implements
      * @throws InvalidContentTypeException
      */
     public List<X509Certificate> getContent(byte[] content, String mimeType)
-            throws InvalidContentTypeException {
+            throws ContentException {
         if (mimeType.startsWith(NEXT_CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 
@@ -74,7 +74,7 @@ public class NextCaCertificateContentHandler implements
 
                 final CMSSignedData sd = new CMSSignedData(cmsContentInfo);
                 if (!SignedDataUtil.isSignedBy(sd, issuer)) {
-                    throw new InvalidContentTypeException("Invalid Signer");
+                    throw new InvalidContentException("Invalid Signer");
                 }
                 // The content of the SignedData PKCS#7 [RFC2315] is a
                 // degenerate

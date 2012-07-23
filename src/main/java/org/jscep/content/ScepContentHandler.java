@@ -41,7 +41,7 @@ public interface ScepContentHandler<T> {
      *             if there is a problem decoding
      * @throws InvalidContentException
      *             if there is a problem with the message
+     * @throws ContentException
      */
-    T getContent(byte[] response, String mimeType)
-            throws InvalidContentTypeException, InvalidContentException;
+    T getContent(byte[] response, String mimeType) throws ContentException;
 }

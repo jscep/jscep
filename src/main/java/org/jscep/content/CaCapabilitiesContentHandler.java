@@ -53,7 +53,7 @@ public final class CaCapabilitiesContentHandler implements
      * @throws InvalidContentTypeException
      */
     public Capabilities getContent(byte[] content, String mimeType)
-            throws InvalidContentTypeException {
+            throws ContentException {
         if (mimeType == null || !mimeType.startsWith(TEXT_PLAIN)) {
             LOGGER.warn(
                     "Content-Type mismatch: was '{}', expected 'text/plain'",

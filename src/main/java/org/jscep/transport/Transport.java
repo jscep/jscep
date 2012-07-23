@@ -23,7 +23,6 @@
 package org.jscep.transport;
 
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
 
 import org.jscep.content.InvalidContentException;
@@ -31,8 +30,6 @@ import org.jscep.content.InvalidContentTypeException;
 import org.jscep.content.ScepContentHandler;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a transport for sending a message to the SCEP server.
@@ -50,23 +47,6 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 public abstract class Transport {
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(Transport.class);
-
-    /**
-     * Represents the <code>HTTP</code> method to be used for transport.
-     */
-    public static enum Method {
-        /**
-         * The <code>HTTP GET</code> method.
-         */
-        GET,
-        /**
-         * The <code>HTTP POST</code> method.
-         */
-        POST
-    }
-
     final URL url;
 
     Transport(URL url) {
@@ -99,47 +79,6 @@ public abstract class Transport {
      */
     public abstract <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
             throws TransportException;
-
-    /**
-     * Creates a new <code>Transport</code> of type <code>method</code> with the
-     * provided URL over the provided proxy.
-     * 
-     * @param method
-     *            the transport type.
-     * @param url
-     *            the URL.
-     * @param proxy
-     *            the proxy.
-     * @return a new Transport instance.
-     */
-    public static Transport createTransport(final Method method, final URL url,
-            final Proxy proxy) {
-        LOGGER.trace("Creating {} transport for {}", method, url);
-        final Transport t;
-
-        if (method.equals(Method.GET)) {
-            t = new HttpGetTransport(url);
-        } else {
-            t = new HttpPostTransport(url);
-        }
-
-        return t;
-    }
-
-    /**
-     * Creates a new <code>Transport</code> of type <code>method</code> with the
-     * provided URL.
-     * 
-     * @param method
-     *            the transport type.
-     * @param url
-     *            the url.
-     * @return a new Transport instance.
-     */
-    public static Transport createTransport(final Method method, final URL url) {
-        return createTransport(method, url, Proxy.NO_PROXY);
-
-    }
 
     /**
      * Returns the URL for the given operation.

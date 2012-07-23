@@ -58,7 +58,7 @@ public final class CaCertificateContentHandler implements
      * @throws InvalidContentException
      */
     public CertStore getContent(byte[] content, String mimeType)
-            throws InvalidContentTypeException, InvalidContentException {
+            throws ContentException {
         if (mimeType.startsWith(CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.1
             try {

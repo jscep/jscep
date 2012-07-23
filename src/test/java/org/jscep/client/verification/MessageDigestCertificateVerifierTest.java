@@ -44,5 +44,4 @@ public class MessageDigestCertificateVerifierTest {
         CertificateVerifier verifier = new MessageDigestCertificateVerifier(digest, expected);
         assertTrue(verifier.verify(cert));
     }
-
 }

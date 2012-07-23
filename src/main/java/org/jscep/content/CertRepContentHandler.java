@@ -38,7 +38,7 @@ public final class CertRepContentHandler implements ScepContentHandler<byte[]> {
      * @throws IOException
      */
     public byte[] getContent(byte[] content, String mimeType)
-            throws InvalidContentTypeException {
+            throws ContentException {
         if (mimeType.startsWith(PKI_MESSAGE)) {
             return content;
         } else {

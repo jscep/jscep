@@ -16,28 +16,28 @@ public class CaCapabilitiesContentHandlerTest {
     }
 
     @Test
-    public void testContentTypeIgnored() throws InvalidContentTypeException {
+    public void testContentTypeIgnored() throws ContentException {
         final byte[] is = getBytesForCapabilities("DES3");
         final Capabilities caps = fixture.getContent(is, "foo/bar");
         Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     @Test
-    public void testNullContentTypeIgnored() throws InvalidContentTypeException {
+    public void testNullContentTypeIgnored() throws ContentException {
         final byte[] is = getBytesForCapabilities("DES3");
         final Capabilities caps = fixture.getContent(is, null);
         Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     @Test
-    public void testCorrectContentType() throws InvalidContentTypeException {
+    public void testCorrectContentType() throws ContentException {
         final byte[] is = getBytesForCapabilities("DES3");
         final Capabilities caps = fixture.getContent(is, "text/plain");
         Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     @Test
-    public void charsetIsIgnored() throws InvalidContentTypeException {
+    public void charsetIsIgnored() throws ContentException {
         final byte[] is = getBytesForCapabilities("DES3");
         final Capabilities caps = fixture.getContent(is,
                 "text/plain;charset=UTF-8");

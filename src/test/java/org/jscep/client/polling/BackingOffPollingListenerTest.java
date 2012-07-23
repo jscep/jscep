@@ -27,10 +27,9 @@ public class BackingOffPollingListenerTest {
         long mid = System.currentTimeMillis();
         assertTrue(listener.poll(id));
         long end = System.currentTimeMillis();
-        long firstDuration = mid - start;
-        long secondDuration = end - mid;
-        
-        long expectedDuration = UNIT.toMillis(DURATION);
+        double firstDuration = Long.valueOf(mid - start).doubleValue();
+        double secondDuration = Long.valueOf(end - mid).doubleValue();
+        double expectedDuration = UNIT.toMillis(DURATION) * 0.95;
 
         assertTrue(firstDuration >= expectedDuration);
         assertTrue(secondDuration >= expectedDuration * 2);
@@ -49,8 +48,8 @@ public class BackingOffPollingListenerTest {
         long start = System.currentTimeMillis();
         assertTrue(listener.poll(id));
         long end = System.currentTimeMillis();
-        long actualDuration = end - start;
-        long expectedDuration = UNIT.toMillis(DURATION);
+        double actualDuration = Long.valueOf(end - start).doubleValue();
+        double expectedDuration = UNIT.toMillis(DURATION) * 0.95;
 
         assertTrue(actualDuration < expectedDuration);
     }

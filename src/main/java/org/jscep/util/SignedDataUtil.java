@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.pkcs7;
+package org.jscep.util;
 
 import java.security.cert.X509Certificate;
 import java.util.Collection;

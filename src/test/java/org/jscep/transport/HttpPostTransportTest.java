@@ -1,5 +1,6 @@
 package org.jscep.transport;
 
+import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.X509Certificate;
@@ -10,7 +11,6 @@ import org.jscep.content.NextCaCertificateContentHandler;
 import org.jscep.request.GetCaCaps;
 import org.jscep.request.GetCaCert;
 import org.jscep.request.GetNextCaCert;
-import org.jscep.transport.Transport.Method;
 import org.jscep.x509.X509Util;
 import org.junit.Test;
 
@@ -38,7 +38,7 @@ public class HttpPostTransportTest extends AbstractTransportTest {
     }
 
     @Override
-    protected Method getMethod() {
-        return Method.POST;
+    protected Transport getTransport(URL url) {
+        return new HttpPostTransport(url);
     }
 }

@@ -46,7 +46,7 @@ public class HttpGetTransport extends Transport {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(HttpGetTransport.class);
 
-    HttpGetTransport(URL url) {
+    public HttpGetTransport(URL url) {
         super(url);
     }
 

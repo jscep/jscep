@@ -67,6 +67,8 @@ import org.jscep.transaction.OperationFailureException;
 import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transaction.TransactionException;
+import org.jscep.transport.HttpGetTransport;
+import org.jscep.transport.HttpPostTransport;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
 import org.slf4j.Logger;
@@ -169,8 +171,7 @@ public final class Client {
         LOGGER.debug("Determining capabilities of SCEP server");
         // NON-TRANSACTIONAL
         final GetCaCaps req = new GetCaCaps(profile);
-        final Transport trans = Transport.createTransport(Transport.Method.GET,
-                url);
+        final Transport trans = new HttpGetTransport(url);
         try {
             return trans.sendRequest(req, new CaCapabilitiesContentHandler());
         } catch (TransportException e) {
@@ -199,8 +200,7 @@ public final class Client {
         // NON-TRANSACTIONAL
         // CA and RA public key distribution
         final GetCaCert req = new GetCaCert(profile);
-        final Transport trans = Transport.createTransport(Transport.Method.GET,
-                url);
+        final Transport trans = new HttpGetTransport(url);
 
         CertificateFactory factory;
         try {
@@ -246,8 +246,7 @@ public final class Client {
         }
         final X509Certificate issuer = getRecipientCertificate(profile);
 
-        final Transport trans = Transport.createTransport(Transport.Method.GET,
-                url);
+        final Transport trans = new HttpGetTransport(url);
         final GetNextCaCert req = new GetNextCaCert(profile);
 
         try {
@@ -492,9 +491,9 @@ public final class Client {
     private Transport createTransport(final String profile) {
         final Transport t;
         if (getCaCapabilities(profile).isPostSupported()) {
-            t = Transport.createTransport(Transport.Method.POST, url);
+            t = new HttpPostTransport(url);
         } else {
-            t = Transport.createTransport(Transport.Method.GET, url);
+            t = new HttpGetTransport(url);
         }
 
         return t;

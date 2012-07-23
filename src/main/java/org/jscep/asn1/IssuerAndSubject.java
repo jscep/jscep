@@ -22,17 +22,12 @@
  */
 package org.jscep.asn1;
 
-import java.io.IOException;
-
 import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the SCEP <code>IssuerAndSubject</code> ASN.1 object.
@@ -49,8 +44,6 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 public final class IssuerAndSubject extends ASN1Object {
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(IssuerAndSubject.class);
     /**
      * The issuer name.
      */
@@ -91,7 +84,7 @@ public final class IssuerAndSubject extends ASN1Object {
      *            the byte array.
      */
     public IssuerAndSubject(final byte[] bytes) {
-        this(toDERSequence(bytes));
+        this(ASN1Sequence.getInstance(bytes));
     }
 
     /**
@@ -120,31 +113,5 @@ public final class IssuerAndSubject extends ASN1Object {
         v.add(subject);
 
         return new DERSequence(v);
-    }
-
-    /**
-     * Converts the given byte array to an ASN.1 sequence.
-     * 
-     * @param bytes
-     *            the bytes to convert.
-     * @return a sequence describing the given byte aray.
-     */
-    private static ASN1Sequence toDERSequence(final byte[] bytes) {
-        ASN1InputStream dIn = null;
-        try {
-            dIn = new ASN1InputStream(bytes);
-
-            return (ASN1Sequence) dIn.readObject();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("badly encoded request");
-        } finally {
-            if (dIn != null) {
-                try {
-                    dIn.close();
-                } catch (IOException e) {
-                    LOGGER.error("Failed to close ASN.1 stream", e);
-                }
-            }
-        }
     }
 }

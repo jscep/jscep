@@ -27,7 +27,7 @@ package org.jscep.transaction;
  * 
  * @author David Grant
  */
-public class InvalidNonceException extends RuntimeException {
+public class InvalidNonceException extends TransactionException {
 
     /**
      *

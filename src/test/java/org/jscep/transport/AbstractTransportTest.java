@@ -22,7 +22,6 @@ import org.jscep.message.PkiMessageEncoder;
 import org.jscep.request.PKCSReq;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
-import org.jscep.transport.Transport.Method;
 import org.jscep.x509.X509Util;
 import org.junit.After;
 import org.junit.Before;
@@ -41,10 +40,10 @@ abstract public class AbstractTransportTest {
         url = new URL("http://localhost:"
                 + server.getConnectors()[0].getLocalPort() + "/");
         proxy = Proxy.NO_PROXY;
-        transport = Transport.createTransport(getMethod(), url, proxy);
+        transport = getTransport(url);
     }
 
-    abstract protected Method getMethod();
+    abstract protected Transport getTransport(URL url);
 
     @After
     public void tearDown() throws Exception {

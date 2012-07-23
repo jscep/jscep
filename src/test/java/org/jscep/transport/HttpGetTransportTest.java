@@ -1,7 +1,9 @@
 package org.jscep.transport;
 
+import java.net.URL;
+
 import junit.framework.Assert;
-import org.jscep.transport.Transport.Method;
+
 import org.junit.Test;
 
 public class HttpGetTransportTest extends AbstractTransportTest {
@@ -11,7 +13,7 @@ public class HttpGetTransportTest extends AbstractTransportTest {
     }
 
     @Override
-    protected Method getMethod() {
-        return Method.GET;
+    protected Transport getTransport(URL url) {
+        return new HttpGetTransport(url);
     }
 }

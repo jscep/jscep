@@ -25,8 +25,8 @@ public class ConstantTimePollingListenerTest {
         long start = System.currentTimeMillis();
         assertTrue(listener.poll(id));
         long end = System.currentTimeMillis();
-        long actualDuration = end - start;
-        long expectedDuration = UNIT.toMillis(DURATION);
+        double actualDuration = Long.valueOf(end - start).doubleValue();
+        double expectedDuration = UNIT.toMillis(DURATION) * 0.95;
 
         assertTrue(actualDuration >= expectedDuration);
     }
