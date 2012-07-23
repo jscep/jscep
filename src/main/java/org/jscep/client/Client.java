@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -111,21 +111,46 @@ public final class Client {
      * 
      * @param url
      *            the URL to the SCEP server.
-     * @param client
-     *            the certificate to identify this client.
-     * @param priKey
-     *            the private key for the identity.
      * @param cbh
      *            the callback handler to check the CA identity.
-     * @param profile
-     *            the name of the CA profile.
      */
     public Client(URL url, CallbackHandler cbh) {
         this.url = url;
         this.cbh = cbh;
-        // this.profile = profile;
 
         validateInput();
+    }
+    
+    /**
+     * Validates all the input to this client.
+     * 
+     * @throws NullPointerException
+     *             if any member variables are null.
+     * @throws IllegalArgumentException
+     *             if any member variables are invalid.
+     */
+    private void validateInput() throws NullPointerException,
+            IllegalArgumentException {
+        // Check for null values first.
+        if (url == null) {
+            throw new NullPointerException("URL should not be null");
+        }
+        if (!url.getProtocol().matches("^https?$")) {
+            throw new IllegalArgumentException(
+                    "URL protocol should be HTTP or HTTPS");
+        }
+        if (url.getRef() != null) {
+            throw new IllegalArgumentException(
+                    "URL should contain no reference");
+        }
+        if (url.getQuery() != null) {
+            throw new IllegalArgumentException(
+                    "URL should contain no query string");
+        }
+        if (cbh == null) {
+            throw new NullPointerException(
+                    "Callback handler should not be null");
+        }
     }
 
     // INFORMATIONAL REQUESTS
@@ -138,6 +163,20 @@ public final class Client {
     public Capabilities getCaCapabilities() {
         // NON-TRANSACTIONAL
         return getCaCapabilities(null);
+    }
+
+    public Capabilities getCaCapabilities(final String profile) {
+        LOGGER.debug("Determining capabilities of SCEP server");
+        // NON-TRANSACTIONAL
+        final GetCaCaps req = new GetCaCaps(profile);
+        final Transport trans = Transport.createTransport(Transport.Method.GET,
+                url);
+        try {
+            return trans.sendRequest(req, new CaCapabilitiesContentHandler());
+        } catch (TransportException e) {
+            LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
+            return new Capabilities();
+        }
     }
 
     /**
@@ -154,7 +193,8 @@ public final class Client {
         return getCaCertificate(null);
     }
 
-    public CertStore getCaCertificate(String profile) throws ClientException {
+    public CertStore getCaCertificate(final String profile)
+            throws ClientException {
         LOGGER.debug("Retriving current CA certificate");
         // NON-TRANSACTIONAL
         // CA and RA public key distribution
@@ -180,14 +220,8 @@ public final class Client {
         return store;
     }
 
-    private IOException ioe(Throwable t) {
-        IOException e = new IOException();
-        e.initCause(t);
-
-        return e;
-    }
-
-    public List<X509Certificate> getRolloverCertificate() throws ClientException {
+    public List<X509Certificate> getRolloverCertificate()
+            throws ClientException {
         return getRolloverCertificate(null);
     }
 
@@ -226,6 +260,13 @@ public final class Client {
 
     // TRANSACTIONAL
 
+    public X509CRL getRevocationList(X509Certificate identity,
+            PrivateKey priKey, final X500Principal issuer,
+            final BigInteger serial) throws ClientException,
+            OperationFailureException {
+        return getRevocationList(identity, priKey, issuer, serial, null);
+    }
+
     /**
      * Returns the current CA's certificate revocation list.
      * 
@@ -242,9 +283,10 @@ public final class Client {
      *             if the operation fails.
      */
     @SuppressWarnings("unchecked")
-    public X509CRL getRevocationList(X509Certificate identity, PrivateKey priKey, final X500Principal issuer,
-            final BigInteger serial, final String profile) throws ClientException,
-            OperationFailureException {
+    public X509CRL getRevocationList(X509Certificate identity,
+            PrivateKey priKey, final X500Principal issuer,
+            final BigInteger serial, final String profile)
+            throws ClientException, OperationFailureException {
         LOGGER.debug("Retriving CRL from CA");
         // TRANSACTIONAL
         // CRL query
@@ -257,7 +299,8 @@ public final class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(identity, priKey, profile), getDecoder(identity, priKey), iasn, MessageType.GET_CRL);
+                getEncoder(identity, priKey, profile), getDecoder(identity,
+                        priKey), iasn, MessageType.GET_CRL);
         State state;
         try {
             state = t.send();
@@ -282,11 +325,11 @@ public final class Client {
             throw new OperationFailureException(t.getFailInfo());
         }
     }
-    
-    public X509CRL getRevocationList(X509Certificate identity, PrivateKey priKey, final X500Principal issuer,
-            final BigInteger serial) throws ClientException,
+
+    public List<X509Certificate> getCertificate(X509Certificate identity,
+            PrivateKey priKey, BigInteger serial) throws ClientException,
             OperationFailureException {
-        return getRevocationList(identity, priKey, issuer, serial, null);
+        return getCertificate(identity, priKey, serial, null);
     }
 
     /**
@@ -302,11 +345,12 @@ public final class Client {
      *             if any I/O error occurs.
      * @throws OperationFailureException
      *             if the operation fails.
-     * @throws ClientException 
+     * @throws ClientException
      */
     @SuppressWarnings("unchecked")
-    public List<X509Certificate> getCertificate(X509Certificate identity, PrivateKey priKey, BigInteger serial,
-            String profile) throws OperationFailureException, ClientException {
+    public List<X509Certificate> getCertificate(X509Certificate identity,
+            PrivateKey priKey, BigInteger serial, String profile)
+            throws OperationFailureException, ClientException {
         LOGGER.debug("Retriving certificate from CA");
         // TRANSACTIONAL
         // Certificate query
@@ -316,7 +360,8 @@ public final class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(identity, priKey, profile), getDecoder(identity, priKey), iasn, MessageType.GET_CERT);
+                getEncoder(identity, priKey, profile), getDecoder(identity,
+                        priKey), iasn, MessageType.GET_CERT);
 
         State state;
         try {
@@ -340,9 +385,11 @@ public final class Client {
         }
     }
 
-    public List<X509Certificate> getCertificate(X509Certificate identity, PrivateKey priKey, BigInteger serial)
-            throws ClientException, OperationFailureException {
-        return getCertificate(identity, priKey, serial, null);
+    public CertStore enrol(X509Certificate identity, PrivateKey priKey,
+            final PKCS10CertificationRequest csr, final PollingListener listener)
+            throws ClientException, OperationFailureException,
+            PollingTerminatedException, TransactionException {
+        return enrol(identity, priKey, csr, listener, null);
     }
 
     /**
@@ -362,10 +409,13 @@ public final class Client {
      *             if polling is terminated by the listener
      * @throws OperationFailureException
      *             if the enrollment fails
-     * @throws TransactionException 
+     * @throws TransactionException
      */
-    public CertStore enrol(X509Certificate identity, PrivateKey priKey, final PKCS10CertificationRequest csr,
-            final PollingListener listener, String profile) throws ClientException, OperationFailureException, PollingTerminatedException, TransactionException {
+    public CertStore enrol(X509Certificate identity, PrivateKey priKey,
+            final PKCS10CertificationRequest csr,
+            final PollingListener listener, String profile)
+            throws ClientException, OperationFailureException,
+            PollingTerminatedException, TransactionException {
         LOGGER.debug("Enrolling certificate with CA");
         // TRANSACTIONAL
         // Certificate enrollment
@@ -402,52 +452,18 @@ public final class Client {
         }
     }
 
-    public CertStore enrol(X509Certificate identity, PrivateKey priKey, final PKCS10CertificationRequest csr,
-            final PollingListener listener) throws ClientException, OperationFailureException, PollingTerminatedException, TransactionException {
-        return enrol(identity, priKey, csr, listener, null);
-    }
-
-    /**
-     * Validates all the input to this client.
-     * 
-     * @throws NullPointerException
-     *             if any member variables are null.
-     * @throws IllegalArgumentException
-     *             if any member variables are invalid.
-     */
-    private void validateInput() throws NullPointerException,
-            IllegalArgumentException {
-        // Check for null values first.
-        if (url == null) {
-            throw new NullPointerException("URL should not be null");
-        }
-        if (cbh == null) {
-            throw new NullPointerException(
-                    "Callback handler should not be null");
-        }
-        if (!url.getProtocol().matches("^https?$")) {
-            throw new IllegalArgumentException(
-                    "URL protocol should be HTTP or HTTPS");
-        }
-        if (url.getRef() != null) {
-            throw new IllegalArgumentException(
-                    "URL should contain no reference");
-        }
-        if (url.getQuery() != null) {
-            throw new IllegalArgumentException(
-                    "URL should contain no query string");
-        }
-    }
-
-    private PkiMessageEncoder getEncoder(X509Certificate identity, PrivateKey priKey, String profile) throws ClientException {
+    private PkiMessageEncoder getEncoder(X509Certificate identity,
+            PrivateKey priKey, String profile) throws ClientException {
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
                 getRecipientCertificate(profile));
 
         return new PkiMessageEncoder(priKey, identity, envEncoder);
     }
 
-    private PkiMessageDecoder getDecoder(X509Certificate identity, PrivateKey priKey) {
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(identity, priKey);
+    private PkiMessageDecoder getDecoder(X509Certificate identity,
+            PrivateKey priKey) {
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
+                identity, priKey);
 
         return new PkiMessageDecoder(envDecoder);
     }
@@ -482,20 +498,6 @@ public final class Client {
         }
 
         return t;
-    }
-
-    public Capabilities getCaCapabilities(String profile) {
-        LOGGER.debug("Determining capabilities of SCEP server");
-        // NON-TRANSACTIONAL
-        final GetCaCaps req = new GetCaCaps(profile);
-        final Transport trans = Transport.createTransport(Transport.Method.GET,
-                url);
-        try {
-            return trans.sendRequest(req, new CaCapabilitiesContentHandler());
-        } catch (TransportException e) {
-            LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
-            return new Capabilities();
-        }
     }
 
     private void verifyCA(X509Certificate cert) throws ClientException {

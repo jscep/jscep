@@ -25,7 +25,7 @@ public final class Authorities {
     private final X509Certificate encrypter;
     private final X509Certificate issuer;
 
-    public Authorities(X509Certificate verifier, X509Certificate encrypter,
+    private Authorities(X509Certificate verifier, X509Certificate encrypter,
             X509Certificate issuer) {
         this.verifier = verifier;
         this.encrypter = encrypter;

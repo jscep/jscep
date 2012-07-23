@@ -26,33 +26,44 @@ package org.jscep.asn1;
  * 
  * @author David Grant
  */
-public interface ScepObjectIdentifiers {
+public enum ScepObjectIdentifier {
     /**
      * <code>2.16.840.1.113733.1.9.2</code>
      */
-    String MESSAGE_TYPE = "2.16.840.1.113733.1.9.2";
+    MESSAGE_TYPE("2.16.840.1.113733.1.9.2"),
     /**
      * <code>2.16.840.1.113733.1.9.3</code>
      */
-    String PKI_STATUS = "2.16.840.1.113733.1.9.3";
+    PKI_STATUS("2.16.840.1.113733.1.9.3"),
     /**
      * <code>2.16.840.1.113733.1.9.4</code>
      */
-    String FAIL_INFO = "2.16.840.1.113733.1.9.4";
+    FAIL_INFO("2.16.840.1.113733.1.9.4"),
     /**
      * <code>2.16.840.1.113733.1.9.5</code>
      */
-    String SENDER_NONCE = "2.16.840.1.113733.1.9.5";
+    SENDER_NONCE("2.16.840.1.113733.1.9.5"),
     /**
      * <code>2.16.840.1.113733.1.9.6</code>
      */
-    String RECIPIENT_NONCE = "2.16.840.1.113733.1.9.6";
+    RECIPIENT_NONCE("2.16.840.1.113733.1.9.6"),
     /**
      * <code>2.16.840.1.113733.1.9.7</code>
      */
-    String TRANS_ID = "2.16.840.1.113733.1.9.7";
+    TRANS_ID("2.16.840.1.113733.1.9.7");
+    
+    private final String objId;
+    
+    ScepObjectIdentifier(final String objId) {
+        this.objId = objId;
+    }
+    
     /**
-     * <code>2.16.840.1.113733.1.9.8</code>
+     * Returns the ObjectIdentifier as a String.
+     * 
+     * @return the ObjectIdentifier
      */
-    String EXTENSION_REQ = "2.16.840.1.113733.1.9.8";
+    public String id() {
+        return objId;
+    }
 }

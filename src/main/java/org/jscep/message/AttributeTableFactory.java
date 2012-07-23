@@ -10,7 +10,7 @@ import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
-import static org.jscep.asn1.ScepObjectIdentifiers.*;
+import static org.jscep.asn1.ScepObjectIdentifier.*;
 
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
@@ -39,7 +39,7 @@ public class AttributeTableFactory {
         
         attributes.add(getAttribute(message.getTransactionId()));
         attributes.add(getAttribute(message.getMessageType()));
-        attributes.add(getAttribute(message.getSenderNonce(), SENDER_NONCE));
+        attributes.add(getAttribute(message.getSenderNonce(), SENDER_NONCE.id()));
         
         return attributes;
     }
@@ -48,7 +48,7 @@ public class AttributeTableFactory {
         List<Attribute> attributes = new ArrayList<Attribute>();
         
         attributes.add(getAttribute(message.getPkiStatus()));
-        attributes.add(getAttribute(message.getRecipientNonce(), RECIPIENT_NONCE));
+        attributes.add(getAttribute(message.getRecipientNonce(), RECIPIENT_NONCE.id()));
         if (message.getPkiStatus() == PkiStatus.FAILURE) {
             attributes.add(getAttribute(message.getFailInfo()));
         }
@@ -57,14 +57,14 @@ public class AttributeTableFactory {
     }
 
     private Attribute getAttribute(FailInfo failInfo) {
-        ASN1ObjectIdentifier oid = toOid(FAIL_INFO);
+        ASN1ObjectIdentifier oid = toOid(FAIL_INFO.id());
         
         return new Attribute(oid, new DERSet(new DERPrintableString(Integer.toString(failInfo
                 .getValue()))));
     }
 
     private Attribute getAttribute(PkiStatus pkiStatus) {
-        ASN1ObjectIdentifier oid = toOid(PKI_STATUS);
+        ASN1ObjectIdentifier oid = toOid(PKI_STATUS.id());
         
         return new Attribute(oid, new DERSet(new DERPrintableString(Integer.toString(pkiStatus
                 .getValue()))));
@@ -77,12 +77,12 @@ public class AttributeTableFactory {
     }
 
     private Attribute getAttribute(MessageType messageType) {
-        ASN1ObjectIdentifier oid = toOid(MESSAGE_TYPE);
+        ASN1ObjectIdentifier oid = toOid(MESSAGE_TYPE.id());
         return new Attribute(oid, new DERSet(new DERPrintableString(Integer.toString(messageType.getValue()))));
     }
 
     private Attribute getAttribute(TransactionId transId) {
-        ASN1ObjectIdentifier oid = toOid(TRANS_ID);
+        ASN1ObjectIdentifier oid = toOid(TRANS_ID.id());
         return new Attribute(oid, new DERSet(new DERPrintableString(transId.toString())));
     }
 

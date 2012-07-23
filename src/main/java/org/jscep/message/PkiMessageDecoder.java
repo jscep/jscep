@@ -42,7 +42,8 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.StoreException;
 import org.jscep.asn1.IssuerAndSubject;
-import org.jscep.asn1.ScepObjectIdentifiers;
+import org.jscep.asn1.ScepObjectIdentifier;
+import static org.jscep.asn1.ScepObjectIdentifier.*;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
@@ -101,22 +102,22 @@ public class PkiMessageDecoder {
                 .getSignedAttributes().toHashtable();
 
         MessageType messageType = toMessageType(attrTable
-                .get(toOid(ScepObjectIdentifiers.MESSAGE_TYPE)));
+                .get(toOid(MESSAGE_TYPE)));
         Nonce senderNonce = toNonce(attrTable
-                .get(toOid(ScepObjectIdentifiers.SENDER_NONCE)));
+                .get(toOid(SENDER_NONCE)));
         TransactionId transId = toTransactionId(attrTable
-                .get(toOid(ScepObjectIdentifiers.TRANS_ID)));
+                .get(toOid(TRANS_ID)));
 
         PkiMessage<?> pkiMessage;
         if (messageType == MessageType.CERT_REP) {
             PkiStatus pkiStatus = toPkiStatus(attrTable
-                    .get(toOid(ScepObjectIdentifiers.PKI_STATUS)));
+                    .get(toOid(PKI_STATUS)));
             Nonce recipientNonce = toNonce(attrTable
-                    .get(toOid(ScepObjectIdentifiers.RECIPIENT_NONCE)));
+                    .get(toOid(RECIPIENT_NONCE)));
 
             if (pkiStatus == PkiStatus.FAILURE) {
                 FailInfo failInfo = toFailInfo(attrTable
-                        .get(toOid(ScepObjectIdentifiers.FAIL_INFO)));
+                        .get(toOid(FAIL_INFO)));
 
                 pkiMessage = new CertRep(transId, senderNonce, recipientNonce,
                         failInfo);
@@ -167,8 +168,8 @@ public class PkiMessageDecoder {
         return pkiMessage;
     }
 
-    private DERObjectIdentifier toOid(String oid) {
-        return new DERObjectIdentifier(oid);
+    private DERObjectIdentifier toOid(ScepObjectIdentifier oid) {
+        return new DERObjectIdentifier(oid.id());
     }
 
     private CMSEnvelopedData getEnvelopedData(Object bytes)
