@@ -33,9 +33,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -49,6 +47,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.CertificateVerificationCallback;
 import org.jscep.client.polling.PollingListener;
 import org.jscep.client.polling.PollingTerminatedException;
+import org.jscep.client.verification.CertificateVerifier;
 import org.jscep.content.CaCapabilitiesContentHandler;
 import org.jscep.content.CaCertificateContentHandler;
 import org.jscep.content.NextCaCertificateContentHandler;
@@ -75,7 +74,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <tt>Client</tt> class represents a SCEP client.
+ * The <tt>Client</tt> class is used for interacting with a SCEP server.
+ * <p>
+ * Each of the operations of this class is overloaded with a profile argument to
+ * support SCEP servers with multiple (or mandatory) profile names.
  */
 public final class Client {
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
@@ -96,33 +98,48 @@ public final class Client {
     // acceptance of a fingerprint via a user-interface element).
     //
     // We use a callback handler for this.
-    private final CallbackHandler cbh;
-
-    // The requester MUST have MESSAGE information configured if the
-    // Certification Authority requires it (see Section 5.1).
-    //
-    // How does one determine that the CA _requires_ this?
-    // private final String profile;
+    private final CallbackHandler handler;
 
     /**
-     * Creates a new Client instance with a profile identifier.
+     * Constructs a new <tt>Client</tt> instance using the provided
+     * <tt>CallbackHandler</tt> for the provided URL.
      * <p/>
-     * With the exception of the profile name, this method will throw a
-     * NullPointerException if any of the arguments are null, and an
-     * InvalidArgumentException if any of the arguments is invalid.
+     * This constructor should be used when it is necessary to reuse the
+     * <tt>CallbackHandler</tt> to handle other <tt>Callback</tt>s. Otherwise,
+     * users of this class are recommended to use the
+     * {@link #Client(URL, CertificateVerifier)} constructor instead.
      * 
      * @param url
-     *            the URL to the SCEP server.
-     * @param cbh
-     *            the callback handler to check the CA identity.
+     *            the URL of the SCEP server.
+     * @param handler
+     *            the callback handler used to check the CA identity.
      */
-    public Client(URL url, CallbackHandler cbh) {
+    public Client(URL url, CallbackHandler handler) {
         this.url = url;
-        this.cbh = cbh;
+        this.handler = handler;
 
         validateInput();
     }
-    
+
+    /**
+     * Constructs a new <tt>Client</tt> instance using the provided
+     * <tt>CertificateVerifier</tt> for the provided URL.
+     * <p/>
+     * The provided <tt>CertificateVerifier</tt> is used to verify that the
+     * identity of the SCEP server matches what the client expects.
+     * 
+     * @param url
+     *            the URL of the SCEP server.
+     * @param verifier
+     *            the verifier used to confirm the server identity.
+     */
+    public Client(URL url, CertificateVerifier verifier) {
+        this.url = url;
+        this.handler = new DefaultCallbackHandler(verifier);
+
+        validateInput();
+    }
+
     /**
      * Validates all the input to this client.
      * 
@@ -149,7 +166,7 @@ public final class Client {
             throw new IllegalArgumentException(
                     "URL should contain no query string");
         }
-        if (cbh == null) {
+        if (handler == null) {
             throw new NullPointerException(
                     "Callback handler should not be null");
         }
@@ -159,6 +176,9 @@ public final class Client {
 
     /**
      * Retrieves the set of SCEP capabilities from the CA.
+     * <p>
+     * If the SCEP server supports multiple profiles, use
+     * {@link #getCaCapabilities(String)} instead.
      * 
      * @return the capabilities of the server.
      */
@@ -167,6 +187,15 @@ public final class Client {
         return getCaCapabilities(null);
     }
 
+    /**
+     * Retrieves the capabilities of the SCEP server.
+     * <p>
+     * If the SCEP server does not support multiple profiles, use
+     * {@link Client#getCaCapabilities()} instead.
+     * 
+     * @param profile
+     * @return the capabilities of the server.
+     */
     public Capabilities getCaCapabilities(final String profile) {
         LOGGER.debug("Determining capabilities of SCEP server");
         // NON-TRANSACTIONAL
@@ -181,19 +210,39 @@ public final class Client {
     }
 
     /**
-     * Retrieves the CA certificate.
-     * <p/>
-     * If the CA is using an RA, the RA certificate will also be present in the
-     * returned list.
+     * Retrieves the certificates used by the SCEP server.
+     * <p>
+     * This method queries the server for the certificates it will use in a SCEP
+     * message exchange. If the SCEP server represents a single entity, only a
+     * single CA certificate will be returned. If the SCEP server supports
+     * multiple entities (for example, if it uses a separate entity for signing
+     * SCEP messages), additional RA certificates will also be returned.
      * 
-     * @return the list of certificates.
-     * @throws IOException
-     *             if any I/O error occurs.
+     * @return the certificate store.
+     * @throws ClientException
+     *             if any error occurs.
+     * @see CertStoreInspector
      */
     public CertStore getCaCertificate() throws ClientException {
         return getCaCertificate(null);
     }
 
+    /**
+     * Retrieves the certificates used by the SCEP server.
+     * <p>
+     * This method queries the server for the certificates it will use in a SCEP
+     * message exchange. If the SCEP server represents a single entity, only a
+     * single CA certificate will be returned. If the SCEP server supports
+     * multiple entities (for example, if it uses a separate entity for signing
+     * SCEP messages), additional RA certificates will also be returned.
+     * <p>
+     * This method provides support for SCEP servers with multiple profiles.
+     * 
+     * @return the certificate store.
+     * @throws ClientException
+     *             if any error occurs.
+     * @see CertStoreInspector
+     */
     public CertStore getCaCertificate(final String profile)
             throws ClientException {
         LOGGER.debug("Retriving current CA certificate");
@@ -220,8 +269,7 @@ public final class Client {
         return store;
     }
 
-    public List<X509Certificate> getRolloverCertificate()
-            throws ClientException {
+    public CertStore getRolloverCertificate() throws ClientException {
         return getRolloverCertificate(null);
     }
 
@@ -237,7 +285,7 @@ public final class Client {
      * @throws IOException
      *             if any I/O error occurs.
      */
-    public List<X509Certificate> getRolloverCertificate(final String profile)
+    public CertStore getRolloverCertificate(final String profile)
             throws ClientException {
         LOGGER.debug("Retriving next CA certificate from CA");
         // NON-TRANSACTIONAL
@@ -260,30 +308,28 @@ public final class Client {
     // TRANSACTIONAL
 
     public X509CRL getRevocationList(X509Certificate identity,
-            PrivateKey priKey, final X500Principal issuer,
+            PrivateKey key, final X500Principal issuer,
             final BigInteger serial) throws ClientException,
             OperationFailureException {
-        return getRevocationList(identity, priKey, issuer, serial, null);
+        return getRevocationList(identity, key, issuer, serial, null);
     }
 
     /**
-     * Returns the current CA's certificate revocation list.
-     * 
+     * Returns the certificate revocation list for the current CA.
+     * <p>
+     * This method 
+     * @param identity
+     * @param key
      * @param issuer
-     *            the issuer X500 name
      * @param serial
-     *            the serial number of the certificate
      * @param profile
-     *            profile to use for determining if HTTP POST is supported
-     * @return a collection of CRLs
-     * @throws IOException
-     *             if any I/O error occurs.
+     * @return
+     * @throws ClientException
      * @throws OperationFailureException
-     *             if the operation fails.
      */
     @SuppressWarnings("unchecked")
     public X509CRL getRevocationList(X509Certificate identity,
-            PrivateKey priKey, final X500Principal issuer,
+            PrivateKey key, final X500Principal issuer,
             final BigInteger serial, final String profile)
             throws ClientException, OperationFailureException {
         LOGGER.debug("Retriving CRL from CA");
@@ -298,8 +344,8 @@ public final class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(identity, priKey, profile), getDecoder(identity,
-                        priKey), iasn, MessageType.GET_CRL);
+                getEncoder(identity, key, profile), getDecoder(identity,
+                        key), iasn, MessageType.GET_CRL);
         State state;
         try {
             state = t.send();
@@ -325,30 +371,60 @@ public final class Client {
         }
     }
 
-    public List<X509Certificate> getCertificate(X509Certificate identity,
-            PrivateKey priKey, BigInteger serial) throws ClientException,
+    /**
+     * Retrieves the certificate corresponding to the provided serial number.
+     * <p>
+     * This request relates only to the current CA certificate. If the CA
+     * certificate has changed since the requested certificate was issued, this
+     * operation will fail.
+     * <p>
+     * If the SCEP server supports multiple profiles, use
+     * {@link #getCertificate(X509Certificate, PrivateKey, BigInteger, String)}
+     * instead.
+     * 
+     * @param identity
+     *            the certificate to identify the SCEP client
+     * @param key
+     *            the private key to signed SCEP message objects.
+     * @param serial
+     *            the serial number of the requested certificate.
+     * @return the certificate store containing the requested certificate.
+     * @throws ClientException
+     *             if any client error occurs.
+     * @throws OperationFailureException
+     *             if the SCEP server refuses to service the request.
+     */
+    public CertStore getCertificate(X509Certificate identity, PrivateKey key,
+            BigInteger serial) throws ClientException,
             OperationFailureException {
-        return getCertificate(identity, priKey, serial, null);
+        return getCertificate(identity, key, serial, null);
     }
 
     /**
-     * Returns the certificate corresponding to the provided serial number, as
-     * issued by the current CA.
+     * Retrieves the certificate corresponding to the provided serial number.
+     * <p>
+     * This request relates only to the current CA certificate. If the CA
+     * certificate has changed since the requested certificate was issued, this
+     * operation will fail.
+     * <p>
+     * If the SCEP server does not support multiple profiles, use
+     * {@link #getCertificate(X509Certificate, PrivateKey, BigInteger)}
+     * instead.
      * 
+     * @param identity
+     *            the certificate to identify the SCEP client
+     * @param key
+     *            the private key to signed SCEP message objects.
      * @param serial
-     *            the serial number.
-     * @param profile
-     *            the profile to use to determine whether to use HTTP POST
-     * @return the certificate.
-     * @throws IOException
-     *             if any I/O error occurs.
-     * @throws OperationFailureException
-     *             if the operation fails.
+     *            the serial number of the requested certificate.
+     * @return the certificate store containing the requested certificate.
      * @throws ClientException
+     *             if any client error occurs.
+     * @throws OperationFailureException
+     *             if the SCEP server refuses to service the request.
      */
-    @SuppressWarnings("unchecked")
-    public List<X509Certificate> getCertificate(X509Certificate identity,
-            PrivateKey priKey, BigInteger serial, String profile)
+    public CertStore getCertificate(X509Certificate identity,
+            PrivateKey key, BigInteger serial, String profile)
             throws OperationFailureException, ClientException {
         LOGGER.debug("Retriving certificate from CA");
         // TRANSACTIONAL
@@ -359,8 +435,8 @@ public final class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(identity, priKey, profile), getDecoder(identity,
-                        priKey), iasn, MessageType.GET_CERT);
+                getEncoder(identity, key, profile), getDecoder(identity,
+                        key), iasn, MessageType.GET_CERT);
 
         State state;
         try {
@@ -370,13 +446,7 @@ public final class Client {
         }
 
         if (state == State.CERT_ISSUED) {
-            try {
-                Collection<X509Certificate> certs = (Collection<X509Certificate>) t
-                        .getCertStore().getCertificates(null);
-                return new ArrayList<X509Certificate>(certs);
-            } catch (CertStoreException e) {
-                throw new RuntimeException(e);
-            }
+            return t.getCertStore();
         } else if (state == State.CERT_REQ_PENDING) {
             throw new IllegalStateException();
         } else {
@@ -384,33 +454,64 @@ public final class Client {
         }
     }
 
-    public CertStore enrol(X509Certificate identity, PrivateKey priKey,
+    /**
+     * Sends a CSR to the SCEP server for enrolling in a PKI.
+     * <p>
+     * This method enrols the provider <tt>CertificationRequest</tt> into the
+     * PKI represented by the SCEP server.
+     * 
+     * @param identity
+     *            the identity of the client
+     * @param key
+     *            the private key to sign the SCEP request
+     * @param csr
+     *            the CSR to send
+     * @param listener
+     *            the polling listener
+     * @return the certificate store returned by the server.
+     * @throws ClientException
+     *             if any client error occurs.
+     * @throws OperationFailureException
+     *             if the operation fails.
+     * @throws PollingTerminatedException
+     *             if polling is terminated
+     * @throws TransactionException
+     *             if there is a problem with the SCEP transaction.
+     */
+    public CertStore enrol(X509Certificate identity, PrivateKey key,
             final PKCS10CertificationRequest csr, final PollingListener listener)
             throws ClientException, OperationFailureException,
             PollingTerminatedException, TransactionException {
-        return enrol(identity, priKey, csr, listener, null);
+        return enrol(identity, key, csr, listener, null);
     }
 
     /**
-     * Enrols the provided CSR into a PKI.
+     * Sends a CSR to the SCEP server for enrolling in a PKI.
+     * <p>
+     * This method enrols the provider <tt>CertificationRequest</tt> into the
+     * PKI represented by the SCEP server.
      * 
+     * @param identity
+     *            the identity of the client
+     * @param key
+     *            the private key to sign the SCEP request
      * @param csr
-     *            the certificate signing request
+     *            the CSR to send
      * @param listener
      *            the polling listener
      * @param profile
-     *            profile to use for retrieving a CA certificate.
-     * @return the enrollment transaction.
-     * @throws IOException
-     *             if any I/O error occurs.
-     * @throws TransportException
-     * @throws PollingTerminatedException
-     *             if polling is terminated by the listener
+     *            the name of the profile to use.
+     * @return the certificate store returned by the server.
+     * @throws ClientException
+     *             if any client error occurs.
      * @throws OperationFailureException
-     *             if the enrollment fails
+     *             if the operation fails.
+     * @throws PollingTerminatedException
+     *             if polling is terminated
      * @throws TransactionException
+     *             if there is a problem with the SCEP transaction.
      */
-    public CertStore enrol(X509Certificate identity, PrivateKey priKey,
+    public CertStore enrol(X509Certificate identity, PrivateKey key,
             final PKCS10CertificationRequest csr,
             final PollingListener listener, String profile)
             throws ClientException, OperationFailureException,
@@ -424,11 +525,12 @@ public final class Client {
         X509Certificate verifyCert = selectVerificationCertificate(store);
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
                 encryptCert);
-        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, identity,
+        PkiMessageEncoder encoder = new PkiMessageEncoder(key, identity,
                 envEncoder);
 
+        PkiMessageDecoder decoder = getDecoder(identity, key);
         final EnrolmentTransaction t = new EnrolmentTransaction(transport,
-                encoder, getDecoder(identity, priKey), csr);
+                encoder, decoder, csr);
         t.setIssuer(verifyCert);
 
         State s = t.send();
@@ -506,7 +608,7 @@ public final class Client {
             LOGGER.debug("Requesting certificate verification.");
             Callback[] callbacks = new Callback[1];
             callbacks[0] = callback;
-            cbh.handle(callbacks);
+            handler.handle(callbacks);
         } catch (UnsupportedCallbackException e) {
             LOGGER.debug("Certificate verification failed.");
             throw new ClientException(e);
@@ -534,19 +636,19 @@ public final class Client {
     }
 
     private X509Certificate selectEncryptionCertificate(CertStore store) {
-        Authorities certPair = Authorities.fromCertStore(store);
+        CertStoreInspector certPair = CertStoreInspector.fromCertStore(store);
 
         return certPair.getEncrypter();
     }
 
     private X509Certificate selectVerificationCertificate(CertStore store) {
-        Authorities certPair = Authorities.fromCertStore(store);
+        CertStoreInspector certPair = CertStoreInspector.fromCertStore(store);
 
         return certPair.getVerifier();
     }
 
     private X509Certificate selectIssuerCertificate(CertStore store) {
-        Authorities certPair = Authorities.fromCertStore(store);
+        CertStoreInspector certPair = CertStoreInspector.fromCertStore(store);
 
         return certPair.getIssuer();
     }

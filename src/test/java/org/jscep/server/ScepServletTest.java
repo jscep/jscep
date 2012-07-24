@@ -22,7 +22,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
@@ -167,20 +166,20 @@ public class ScepServletTest {
     public void getNextCaCertificateGood() throws Exception {
         GetNextCaCert req = new GetNextCaCert(goodIdentifier);
         Transport transport = new HttpGetTransport(getURL());
-        List<X509Certificate> certs = transport.sendRequest(req,
+        CertStore certs = transport.sendRequest(req,
                 new NextCaCertificateContentHandler(getRecipient()));
 
-        assertThat(certs.size(), is(1));
+        assertThat(certs.getCertificates(null).size(), is(1));
     }
 
     @Test(expected = TransportException.class)
     public void getNextCaCertificateBad() throws Exception {
         GetNextCaCert req = new GetNextCaCert(badIdentifier);
         Transport transport = new HttpGetTransport(getURL());
-        List<X509Certificate> certs = transport.sendRequest(req,
+        CertStore certs = transport.sendRequest(req,
                 new NextCaCertificateContentHandler(getRecipient()));
 
-        assertThat(certs.size(), is(1));
+        assertThat(certs.getCertificates(null).size(), is(1));
     }
 
     @Test

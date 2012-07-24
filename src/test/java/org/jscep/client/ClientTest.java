@@ -59,13 +59,17 @@ public class ClientTest extends AbstractClientTest {
 
     @Test
     public void testEnrollThenGet() throws Exception {
-        CertStore cs = client.enrol(identity, keyPair.getPrivate(), 
+        CertStore cs = client.enrol(
+                identity,
+                keyPair.getPrivate(),
                 getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
                         keyPair.getPrivate(), password),
                 new NoPollPollingListener());
         X509Certificate issued = (X509Certificate) cs.getCertificates(null)
                 .iterator().next();
-        Certificate retrieved = client.getCertificate(identity, keyPair.getPrivate(), issued.getSerialNumber())
+        Certificate retrieved = client
+                .getCertificate(identity, keyPair.getPrivate(),
+                        issued.getSerialNumber()).getCertificates(null)
                 .iterator().next();
 
         assertEquals(issued, retrieved);
@@ -73,7 +77,9 @@ public class ClientTest extends AbstractClientTest {
 
     @Test(expected = OperationFailureException.class)
     public void testEnrollInvalidPassword() throws Exception {
-        client.enrol(identity, keyPair.getPrivate(), 
+        client.enrol(
+                identity,
+                keyPair.getPrivate(),
                 getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
                         keyPair.getPrivate(), new char[0]),
                 new NoPollPollingListener());
@@ -84,7 +90,8 @@ public class ClientTest extends AbstractClientTest {
             MalformedURLException {
         final URL url = new URL("http://someurl/certsrv/mscep/mscep.dll");
 
-        Client c = new Client(url, new DefaultCallbackHandler(new OptimisticCertificateVerifier()));
+        Client c = new Client(url, new DefaultCallbackHandler(
+                new OptimisticCertificateVerifier()));
         assertNotNull(c);
     }
 

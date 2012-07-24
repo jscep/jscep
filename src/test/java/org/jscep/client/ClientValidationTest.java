@@ -11,12 +11,12 @@ import org.junit.Test;
 public class ClientValidationTest {
     @Test(expected = NullPointerException.class)
     public void testNullUrl() {
-        new Client(null, null);
+        new Client(null, (CallbackHandler) null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullCallbackHandler() {
-        new Client(getUrl(), null);
+        new Client(getUrl(), (CallbackHandler) null);
     }
 
     @Test(expected = IllegalArgumentException.class)

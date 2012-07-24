@@ -23,14 +23,8 @@
 package org.jscep.content;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.cert.CertStore;
-import java.security.cert.Certificate;
-import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cms.CMSException;
@@ -44,7 +38,7 @@ import org.jscep.util.SignedDataUtil;
  * @author David Grant
  */
 public class NextCaCertificateContentHandler implements
-        ScepContentHandler<List<X509Certificate>> {
+        ScepContentHandler<CertStore> {
     private static final String NEXT_CA_CERT = "application/x-x509-next-ca-cert";
     private final X509Certificate issuer;
 
@@ -57,16 +51,13 @@ public class NextCaCertificateContentHandler implements
      * 
      * @throws InvalidContentTypeException
      */
-    public List<X509Certificate> getContent(byte[] content, String mimeType)
+    public CertStore getContent(byte[] content, String mimeType)
             throws ContentException {
         if (mimeType.startsWith(NEXT_CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 
             // The response consists of a SignedData PKCS#7 [RFC2315],
             // signed by the current CA (or RA) signing key.
-            final List<X509Certificate> certs = new ArrayList<X509Certificate>();
-
-            Collection<? extends Certificate> collection;
             try {
                 CMSSignedData cmsMessageData = new CMSSignedData(content);
                 ContentInfo cmsContentInfo = ContentInfo
@@ -83,20 +74,12 @@ public class NextCaCertificateContentHandler implements
                 // new CA certificate and any new RA certificates, as defined in
                 // Section 5.2.1.1.2, to be used when the current CA certificate
                 // expires.
-                CertStore store = CertStoreUtils.fromSignedData(sd);
-                collection = store.getCertificates(new X509CertSelector());
+                return CertStoreUtils.fromSignedData(sd);
             } catch (IOException e) {
-                throw new InvalidContentTypeException(e);
-            } catch (GeneralSecurityException e) {
                 throw new InvalidContentTypeException(e);
             } catch (CMSException e) {
                 throw new InvalidContentTypeException(e);
             }
-
-            for (Certificate cert : collection) {
-                certs.add((X509Certificate) cert);
-            }
-            return certs;
         } else {
             throw new InvalidContentTypeException(mimeType, NEXT_CA_CERT);
         }

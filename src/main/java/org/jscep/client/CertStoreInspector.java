@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is used for storing CA and RA certificates.
  */
-public final class Authorities {
+public final class CertStoreInspector {
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(Authorities.class);
+            .getLogger(CertStoreInspector.class);
     private static final int KEY_USAGE_LENGTH = 9;
     private static final int DIGITAL_SIGNATURE = 0;
     private static final int KEY_ENCIPHERMENT = 2;
@@ -25,7 +25,7 @@ public final class Authorities {
     private final X509Certificate encrypter;
     private final X509Certificate issuer;
 
-    private Authorities(X509Certificate verifier, X509Certificate encrypter,
+    private CertStoreInspector(X509Certificate verifier, X509Certificate encrypter,
             X509Certificate issuer) {
         this.verifier = verifier;
         this.encrypter = encrypter;
@@ -73,7 +73,7 @@ public final class Authorities {
      *            the store to inspect.
      * @return the Authorities instance.
      */
-    public static Authorities fromCertStore(final CertStore store) {
+    public static CertStoreInspector fromCertStore(final CertStore store) {
         try {
             Collection<? extends Certificate> certs = store
                     .getCertificates(null);
@@ -95,7 +95,7 @@ public final class Authorities {
             X509Certificate issuer = selectIssuerCertificate(store);
             LOGGER.debug("Using {} for issuer", signing.getSubjectDN());
 
-            return new Authorities(signing, encryption, issuer);
+            return new CertStoreInspector(signing, encryption, issuer);
         } catch (CertStoreException e) {
             throw new RuntimeException(e);
         }
