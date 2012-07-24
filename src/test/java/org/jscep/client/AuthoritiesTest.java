@@ -70,7 +70,7 @@ public class AuthoritiesTest {
 
     @Test
     public void example() {
-        CertStoreInspector auths = CertStoreInspector.fromCertStore(store);
+        CertStoreInspector auths = CertStoreInspector.inspect(store);
 
         Assert.assertEquals(encryption, auths.getEncrypter().getSubjectDN()
                 .getName());

@@ -73,7 +73,7 @@ public final class CertStoreInspector {
      *            the store to inspect.
      * @return the Authorities instance.
      */
-    public static CertStoreInspector fromCertStore(final CertStore store) {
+    public static CertStoreInspector inspect(final CertStore store) {
         try {
             Collection<? extends Certificate> certs = store
                     .getCertificates(null);

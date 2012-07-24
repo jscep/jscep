@@ -636,19 +636,19 @@ public final class Client {
     }
 
     private X509Certificate selectEncryptionCertificate(CertStore store) {
-        CertStoreInspector certPair = CertStoreInspector.fromCertStore(store);
+        CertStoreInspector certPair = CertStoreInspector.inspect(store);
 
         return certPair.getEncrypter();
     }
 
     private X509Certificate selectVerificationCertificate(CertStore store) {
-        CertStoreInspector certPair = CertStoreInspector.fromCertStore(store);
+        CertStoreInspector certPair = CertStoreInspector.inspect(store);
 
         return certPair.getVerifier();
     }
 
     private X509Certificate selectIssuerCertificate(CertStore store) {
-        CertStoreInspector certPair = CertStoreInspector.fromCertStore(store);
+        CertStoreInspector certPair = CertStoreInspector.inspect(store);
 
         return certPair.getIssuer();
     }
