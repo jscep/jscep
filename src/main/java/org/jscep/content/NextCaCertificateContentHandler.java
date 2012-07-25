@@ -40,10 +40,10 @@ import org.jscep.util.SignedDataUtil;
 public class NextCaCertificateContentHandler implements
         ScepContentHandler<CertStore> {
     private static final String NEXT_CA_CERT = "application/x-x509-next-ca-cert";
-    private final X509Certificate issuer;
+    private final X509Certificate signer;
 
-    public NextCaCertificateContentHandler(X509Certificate issuer) {
-        this.issuer = issuer;
+    public NextCaCertificateContentHandler(X509Certificate signer) {
+        this.signer = signer;
     }
 
     /**
@@ -64,7 +64,7 @@ public class NextCaCertificateContentHandler implements
                         .getInstance(cmsMessageData.getEncoded());
 
                 final CMSSignedData sd = new CMSSignedData(cmsContentInfo);
-                if (!SignedDataUtil.isSignedBy(sd, issuer)) {
+                if (!SignedDataUtil.isSignedBy(sd, signer)) {
                     throw new InvalidContentException("Invalid Signer");
                 }
                 // The content of the SignedData PKCS#7 [RFC2315] is a

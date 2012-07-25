@@ -317,14 +317,14 @@ public final class Client {
         if (!getCaCapabilities(profile).isRolloverSupported()) {
             throw new UnsupportedOperationException();
         }
-        final X509Certificate issuer = getRecipientCertificate(profile);
+        final X509Certificate signer = getSignerCertificate(profile);
 
         final Transport trans = new HttpGetTransport(url);
         final GetNextCaCert req = new GetNextCaCert(profile);
 
         try {
             return trans.sendRequest(req, new NextCaCertificateContentHandler(
-                    issuer));
+                    signer));
         } catch (TransportException e) {
             throw new ClientException(e);
         }
@@ -686,6 +686,13 @@ public final class Client {
         final CertStore store = getCaCertificate(profile);
         // The CA or RA
         return selectRecipientCertificate(store);
+    }
+    
+    private X509Certificate getSignerCertificate(String profile)
+            throws ClientException {
+        final CertStore store = getCaCertificate(profile);
+        // The CA or RA
+        return selectSignerCertificate(store);
     }
 
     private X509Certificate selectRecipientCertificate(CertStore store) {
