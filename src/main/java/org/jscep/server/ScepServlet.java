@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -81,8 +82,6 @@ import org.jscep.transaction.OperationFailureException;
 import org.jscep.transaction.TransactionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.ByteStreams;
 
 /**
  * This class provides a base Servlet which can be extended using the abstract
@@ -611,7 +610,7 @@ public abstract class ScepServlet extends HttpServlet {
 
     private byte[] getMessageBytes(HttpServletRequest req) throws IOException {
         if (req.getMethod().equals(POST)) {
-            return ByteStreams.toByteArray(req.getInputStream());
+            return IOUtils.toByteArray(req.getInputStream());
         } else {
             Operation op = getOperation(req);
 

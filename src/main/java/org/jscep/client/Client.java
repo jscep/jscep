@@ -681,10 +681,6 @@ public final class Client {
         }
     }
 
-    private X509Certificate retrieveCA(String profile) throws ClientException {
-        return selectIssuerCertificate(getCaCertificate(profile));
-    }
-
     private X509Certificate getRecipientCertificate(String profile)
             throws ClientException {
         final CertStore store = getCaCertificate(profile);

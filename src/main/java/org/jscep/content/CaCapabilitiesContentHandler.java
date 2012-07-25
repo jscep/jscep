@@ -21,8 +21,6 @@
  */
 package org.jscep.content;
 
-import static com.google.common.base.Charsets.US_ASCII;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,6 +29,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.io.Charsets;
 import org.jscep.response.Capabilities;
 import org.jscep.response.Capability;
 import org.slf4j.Logger;
@@ -66,7 +65,7 @@ public final class CaCapabilitiesContentHandler implements
             LOGGER.debug("CA capabilities:");
         }
         BufferedReader reader = new BufferedReader(new InputStreamReader(
-                new ByteArrayInputStream(content), Charset.forName(US_ASCII
+                new ByteArrayInputStream(content), Charset.forName(Charsets.US_ASCII
                         .name())));
         Set<String> caCaps = new HashSet<String>();
         String capability;

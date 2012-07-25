@@ -29,13 +29,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.apache.commons.io.IOUtils;
 import org.jscep.content.ScepContentHandler;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.ByteStreams;
 
 /**
  * Transport representing the <code>HTTP GET</code> method
@@ -87,7 +86,7 @@ public class HttpGetTransport extends Transport {
 
         byte[] response;
         try {
-            response = ByteStreams.toByteArray(conn.getInputStream());
+            response = IOUtils.toByteArray(conn.getInputStream());
         } catch (IOException e) {
             throw new TransportException("Error reading response stream", e);
         }

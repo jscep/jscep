@@ -25,9 +25,8 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 
-import org.jscep.util.HexUtil;
-
-import com.google.common.primitives.Bytes;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  * This class represents the <code>senderNonce</code> and
@@ -47,7 +46,7 @@ public final class Nonce {
      *            the byte array.
      */
     public Nonce(final byte[] nonce) {
-        this.nonce = Bytes.concat(nonce);
+        this.nonce = ArrayUtils.clone(nonce);
     }
 
     /**
@@ -56,12 +55,12 @@ public final class Nonce {
      * @return the byte array.
      */
     public byte[] getBytes() {
-        return Bytes.concat(nonce);
+        return ArrayUtils.clone(nonce);
     }
 
     @Override
     public String toString() {
-        return "Nonce [" + HexUtil.toHexString(nonce) + "]";
+        return "Nonce [" + Hex.encodeHexString(nonce) + "]";
     }
 
     /**

@@ -22,8 +22,6 @@
  */
 package org.jscep.transport;
 
-import static com.google.common.base.Charsets.US_ASCII;
-
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,14 +31,14 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.jscep.content.ScepContentHandler;
 import org.jscep.request.PKCSReq;
 import org.jscep.request.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.ByteStreams;
 
 /**
  * Transport representing the <code>HTTP POST</code> method
@@ -86,7 +84,7 @@ public class HttpPostTransport extends Transport {
 
         byte[] message;
         try {
-            message = Base64.decode(msg.getMessage().getBytes(US_ASCII.name()));
+            message = Base64.decode(msg.getMessage().getBytes(Charsets.US_ASCII.name()));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
@@ -123,7 +121,7 @@ public class HttpPostTransport extends Transport {
 
         byte[] response;
         try {
-            response = ByteStreams.toByteArray(conn.getInputStream());
+            response = IOUtils.toByteArray(conn.getInputStream());
         } catch (IOException e) {
             throw new TransportException("Error reading response stream", e);
         }

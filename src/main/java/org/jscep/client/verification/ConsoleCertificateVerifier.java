@@ -1,7 +1,6 @@
 package org.jscep.client.verification;
 
 import static java.security.Security.getAlgorithms;
-import static org.jscep.util.HexUtil.toHexString;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -13,6 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import org.apache.commons.codec.binary.Hex;
 
 /**
  * This class is a console-focused implementation of CertificateVerifier.
@@ -53,7 +54,7 @@ public final class ConsoleCertificateVerifier implements CertificateVerifier {
             } catch (CertificateEncodingException e) {
                 return false;
             }
-            System.out.format("%" + max + "s: %s%n", alg, toHexString(hash));
+            System.out.format("%" + max + "s: %s%n", alg, Hex.encodeHexString(hash));
         }
         final Scanner scanner = new Scanner(System.in, Charset.defaultCharset()
                 .name()).useDelimiter(String.format("%n"));

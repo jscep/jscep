@@ -13,6 +13,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.x500.X500Principal;
 
+import org.apache.commons.io.Charsets;
 import org.jscep.client.CertificateVerificationCallback;
 import org.jscep.client.DefaultCallbackHandler;
 import org.jscep.client.verification.ConsoleCertificateVerifier;
@@ -20,7 +21,6 @@ import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.base.Charsets;
 
 public class ConsoleCallbackVerifierTest {
     private X509Certificate cert;

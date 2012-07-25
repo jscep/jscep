@@ -22,14 +22,12 @@
  */
 package org.jscep.request;
 
-import static com.google.common.base.Charsets.US_ASCII;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import org.apache.commons.io.Charsets;
+import org.apache.commons.lang.ArrayUtils;
 import org.bouncycastle.util.encoders.Base64;
-
-import com.google.common.primitives.Bytes;
 
 /**
  * This class represents a <code>PKCSReq</code> request.
@@ -49,7 +47,7 @@ public class PKCSReq extends Request {
     public PKCSReq(byte[] msgData) {
         super(Operation.PKI_OPERATION);
 
-        this.msgData = Bytes.concat(msgData);
+        this.msgData = ArrayUtils.clone(msgData);
     }
 
     /**
@@ -59,7 +57,7 @@ public class PKCSReq extends Request {
         byte[] bytes = Base64.encode(msgData);
 
         try {
-            return new String(bytes, US_ASCII.name());
+            return new String(bytes, Charsets.US_ASCII.name());
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
