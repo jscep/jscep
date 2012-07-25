@@ -14,7 +14,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.LanguageCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.jscep.CertificateVerificationCallback;
 import org.jscep.client.verification.CertificateVerifier;
 import org.junit.Before;
 import org.junit.Test;

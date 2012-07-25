@@ -1,4 +1,4 @@
-package org.jscep;
+package org.jscep.client;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -9,6 +9,7 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.jscep.client.CertificateVerificationCallback;
 import org.jscep.x509.X509Util;
 import org.junit.Before;
 import org.junit.Test;

@@ -37,7 +37,7 @@ public final class CertStoreInspector {
      * 
      * @return the verifier certificate.
      */
-    public X509Certificate getVerifier() {
+    public X509Certificate getSigner() {
         return verifier;
     }
 
@@ -46,7 +46,7 @@ public final class CertStoreInspector {
      * 
      * @return the encrypter certificate.
      */
-    public X509Certificate getEncrypter() {
+    public X509Certificate getRecipient() {
         return encrypter;
     }
 
@@ -88,11 +88,11 @@ public final class CertStoreInspector {
             LOGGER.debug("Using {} for message encryption",
                     encryption.getSubjectDN());
 
-            X509Certificate signing = selectMessageVerifier(store);
+            X509Certificate signing = selectSigner(store);
             LOGGER.debug("Using {} for message verification",
                     signing.getSubjectDN());
 
-            X509Certificate issuer = selectIssuerCertificate(store);
+            X509Certificate issuer = selectIssuer(store);
             LOGGER.debug("Using {} for issuer", signing.getSubjectDN());
 
             return new CertStoreInspector(signing, encryption, issuer);
@@ -101,7 +101,7 @@ public final class CertStoreInspector {
         }
     }
 
-    private static X509Certificate selectIssuerCertificate(CertStore store)
+    private static X509Certificate selectIssuer(CertStore store)
             throws CertStoreException {
         LOGGER.debug("Selecting issuer certificate");
 
@@ -109,7 +109,7 @@ public final class CertStoreInspector {
         return getCaCertificate(store);
     }
 
-    private static X509Certificate selectMessageVerifier(CertStore store)
+    private static X509Certificate selectSigner(CertStore store)
             throws CertStoreException {
         LOGGER.debug("Selecting verifier certificate");
         X509CertSelector signingSelector = new X509CertSelector();

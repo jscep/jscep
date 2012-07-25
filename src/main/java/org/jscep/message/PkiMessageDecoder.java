@@ -21,7 +21,15 @@
  */
 package org.jscep.message;
 
+import static org.jscep.asn1.ScepObjectIdentifier.FAIL_INFO;
+import static org.jscep.asn1.ScepObjectIdentifier.MESSAGE_TYPE;
+import static org.jscep.asn1.ScepObjectIdentifier.PKI_STATUS;
+import static org.jscep.asn1.ScepObjectIdentifier.RECIPIENT_NONCE;
+import static org.jscep.asn1.ScepObjectIdentifier.SENDER_NONCE;
+import static org.jscep.asn1.ScepObjectIdentifier.TRANS_ID;
+
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Hashtable;
 
@@ -36,14 +44,15 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.jcajce.JcaSignerId;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.StoreException;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.asn1.ScepObjectIdentifier;
-import static org.jscep.asn1.ScepObjectIdentifier.*;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
@@ -56,9 +65,11 @@ public class PkiMessageDecoder {
     private static Logger LOGGER = LoggerFactory
             .getLogger(PkiMessageDecoder.class);
     private final PkcsPkiEnvelopeDecoder decoder;
+    private final X509Certificate signer;
 
-    public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder) {
+    public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder, X509Certificate signer) {
         this.decoder = decoder;
+        this.signer = signer;
     }
 
     @SuppressWarnings("unchecked")
@@ -72,10 +83,9 @@ public class PkiMessageDecoder {
         // The signed content is always an octet string
         CMSProcessable signedContent = signedData.getSignedContent();
 
+        SignerInformationStore signerStore = signedData.getSignerInfos();
+        SignerInformation signerInfo = signerStore.get(new JcaSignerId(signer));
         Store store = signedData.getCertificates();
-        Collection<SignerInformation> signerInfos = signedData.getSignerInfos()
-                .getSigners();
-        SignerInformation signerInfo = signerInfos.iterator().next();
         Collection<?> certColl;
         try {
             certColl = store.getMatches(signerInfo.getSID());

@@ -206,12 +206,22 @@ public class ScepServletImpl extends ScepServlet {
     }
 
     @Override
-    protected PrivateKey getPrivate() {
+    protected PrivateKey getRecipientKey() {
         return priKey;
     }
 
     @Override
-    protected X509Certificate getSender() {
+    protected X509Certificate getRecipient() {
+        return ca;
+    }
+
+    @Override
+    protected PrivateKey getSignerKey() {
+        return priKey;
+    }
+
+    @Override
+    protected X509Certificate getSigner() {
         return ca;
     }
 

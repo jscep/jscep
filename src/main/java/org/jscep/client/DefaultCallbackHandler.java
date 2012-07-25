@@ -6,7 +6,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.jscep.CertificateVerificationCallback;
 import org.jscep.client.verification.CertificateVerifier;
 
 /**

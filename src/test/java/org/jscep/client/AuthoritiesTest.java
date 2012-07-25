@@ -72,9 +72,9 @@ public class AuthoritiesTest {
     public void example() {
         CertStoreInspector auths = CertStoreInspector.inspect(store);
 
-        Assert.assertEquals(encryption, auths.getEncrypter().getSubjectDN()
+        Assert.assertEquals(encryption, auths.getRecipient().getSubjectDN()
                 .getName());
-        Assert.assertEquals(signing, auths.getVerifier().getSubjectDN()
+        Assert.assertEquals(signing, auths.getSigner().getSubjectDN()
                 .getName());
         Assert.assertEquals(issuer, auths.getIssuer().getSubjectDN().getName());
     }

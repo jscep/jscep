@@ -208,7 +208,7 @@ public class EnrolmentTransaction extends Transaction {
         LOGGER.debug("SCEP message exchange validated successfully");
     }
 
-    public void setIssuer(X509Certificate ca) {
-        issuer = ca;
+    public void setIssuer(X509Certificate issuer) {
+        this.issuer = issuer;
     }
 }

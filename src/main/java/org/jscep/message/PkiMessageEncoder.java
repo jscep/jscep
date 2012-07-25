@@ -53,15 +53,15 @@ import org.slf4j.LoggerFactory;
 public class PkiMessageEncoder {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PkiMessageEncoder.class);
-    private final PrivateKey senderKey;
-    private final X509Certificate senderCert;
-    private final PkcsPkiEnvelopeEncoder encoder;
+    private final PrivateKey signerKey;
+    private final X509Certificate signerId;
+    private final PkcsPkiEnvelopeEncoder enveloper;
 
-    public PkiMessageEncoder(PrivateKey priKey, X509Certificate sender,
+    public PkiMessageEncoder(PrivateKey signerKey, X509Certificate signerId,
             PkcsPkiEnvelopeEncoder enveloper) {
-        this.senderKey = priKey;
-        this.senderCert = sender;
-        this.encoder = enveloper;
+        this.signerKey = signerKey;
+        this.signerId = signerId;
+        this.enveloper = enveloper;
     }
 
     public byte[] encode(PkiMessage<?> message) throws MessageEncodingException {
@@ -78,17 +78,17 @@ public class PkiMessageEncoder {
         if (hasMessageData) {
             byte[] ed;
             if (message.getMessageData() instanceof byte[]) {
-                ed = encoder.encode((byte[]) message.getMessageData());
+                ed = enveloper.encode((byte[]) message.getMessageData());
             } else if (message.getMessageData() instanceof PKCS10CertificationRequest) {
                 try {
-                    ed = encoder.encode(((PKCS10CertificationRequest) message
+                    ed = enveloper.encode(((PKCS10CertificationRequest) message
                             .getMessageData()).getEncoded());
                 } catch (IOException e) {
                     throw new MessageEncodingException(e);
                 }
             } else {
                 try {
-                    ed = encoder.encode(((ASN1Object) message.getMessageData())
+                    ed = enveloper.encode(((ASN1Object) message.getMessageData())
                             .getEncoded());
                 } catch (IOException e) {
                     throw new MessageEncodingException(e);
@@ -102,7 +102,7 @@ public class PkiMessageEncoder {
         
         CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
         LOGGER.debug("Signing message using key belonging to '{}'",
-                senderCert.getSubjectDN());
+                signerId.getSubjectDN());
         try {
             sdGenerator.addSignerInfoGenerator(getSignerInfo(message));
         } catch (CertificateEncodingException e) {
@@ -111,7 +111,7 @@ public class PkiMessageEncoder {
             throw new MessageEncodingException(e);
         }
         try {
-            Collection<X509Certificate> certColl = Collections.singleton(senderCert);
+            Collection<X509Certificate> certColl = Collections.singleton(signerId);
             sdGenerator.addCertificates(new JcaCertStore(certColl));
         } catch (CMSException e) {
             throw new MessageEncodingException(e);
@@ -134,7 +134,7 @@ public class PkiMessageEncoder {
             throws OperatorCreationException, CertificateEncodingException {
         JcaSignerInfoGeneratorBuilder signerInfoBuilder = new JcaSignerInfoGeneratorBuilder(getDigestCalculator());
         signerInfoBuilder.setSignedAttributeGenerator(getTableGenerator(message));
-        SignerInfoGenerator signerInfo = signerInfoBuilder.build(getContentSigner(), senderCert);
+        SignerInfoGenerator signerInfo = signerInfoBuilder.build(getContentSigner(), signerId);
         return signerInfo;
     }
 
@@ -155,6 +155,6 @@ public class PkiMessageEncoder {
     private ContentSigner getContentSigner() throws OperatorCreationException {
         JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(
                 "SHA1withRSA");
-        return contentSignerBuilder.build(senderKey);
+        return contentSignerBuilder.build(signerKey);
     }
 }

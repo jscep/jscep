@@ -191,7 +191,7 @@ public class ScepServletTest {
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         Transaction t = new NonEnrollmentTransaction(transport, encoder,
@@ -210,7 +210,7 @@ public class ScepServletTest {
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         Transaction t = new NonEnrollmentTransaction(transport, encoder,
@@ -231,7 +231,7 @@ public class ScepServletTest {
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         Transaction t = new EnrolmentTransaction(transport, encoder, decoder,
@@ -252,7 +252,7 @@ public class ScepServletTest {
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         Transaction t = new EnrolmentTransaction(transport, encoder, decoder,
@@ -273,7 +273,7 @@ public class ScepServletTest {
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         EnrolmentTransaction trans = new EnrolmentTransaction(transport,

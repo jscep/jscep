@@ -215,8 +215,8 @@ public abstract class ScepServlet extends HttpServlet {
             PkiMessage<?> msg;
             try {
                 PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
-                        getSender(), getPrivate());
-                PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder);
+                        getRecipient(), getRecipientKey());
+                PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, reqCert);
                 msg = decoder.decode(body);
             } catch (MessageDecodingException e) {
                 LOGGER.error("Error decoding request", e);
@@ -328,8 +328,8 @@ public abstract class ScepServlet extends HttpServlet {
 
             PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
                     reqCert);
-            PkiMessageEncoder encoder = new PkiMessageEncoder(getPrivate(),
-                    getSender(), envEncoder);
+            PkiMessageEncoder encoder = new PkiMessageEncoder(getSignerKey(),
+                    getSigner(), envEncoder);
             byte[] signedData;
             try {
                 signedData = encoder.encode(certRep);
@@ -406,9 +406,9 @@ public abstract class ScepServlet extends HttpServlet {
             SignerInfoGeneratorBuilder infoGenBuilder = new SignerInfoGeneratorBuilder(
                     digestProvider);
             X509CertificateHolder certHolder = new X509CertificateHolder(
-                    getSender().getEncoded());
+                    getRecipient().getEncoded());
             ContentSigner contentSigner = new JcaContentSignerBuilder(
-                    "SHA1withRSA").build(getPrivate());
+                    "SHA1withRSA").build(getRecipientKey());
             SignerInfoGenerator infoGen = infoGenBuilder.build(contentSigner,
                     certHolder);
             generator.addSignerInfoGenerator(infoGen);
@@ -582,18 +582,32 @@ public abstract class ScepServlet extends HttpServlet {
             throws OperationFailureException, Exception;
 
     /**
+     * Returns the private key of the recipient entity represented by this SCEP server.
+     * 
+     * @return the private key.
+     */
+    protected abstract PrivateKey getRecipientKey();
+
+    /**
+     * Returns the certificate of the server recipient entity.
+     * 
+     * @return the certificate.
+     */
+    protected abstract X509Certificate getRecipient();
+    
+    /**
      * Returns the private key of the entity represented by this SCEP server.
      * 
      * @return the private key.
      */
-    protected abstract PrivateKey getPrivate();
+    protected abstract PrivateKey getSignerKey();
 
     /**
      * Returns the certificate of the entity represented by this SCEP server.
      * 
      * @return the certificate.
      */
-    protected abstract X509Certificate getSender();
+    protected abstract X509Certificate getSigner();
 
     private byte[] getMessageBytes(HttpServletRequest req) throws IOException {
         if (req.getMethod().equals(POST)) {

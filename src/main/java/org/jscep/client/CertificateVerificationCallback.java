@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep;
+package org.jscep.client;
 
 import javax.security.auth.callback.Callback;
 import java.security.cert.X509Certificate;
