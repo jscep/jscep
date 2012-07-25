@@ -7,13 +7,13 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class GetNextCaCertTest {
-    private GetNextCaCert fixture;
+    private GetNextCaCertRequest fixture;
     private String caIdentifier;
 
     @Before
     public void setUp() {
         caIdentifier = "id";
-        fixture = new GetNextCaCert(caIdentifier);
+        fixture = new GetNextCaCertRequest(caIdentifier);
     }
 
     @Test

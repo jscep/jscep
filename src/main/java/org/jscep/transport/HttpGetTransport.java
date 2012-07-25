@@ -29,8 +29,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.apache.commons.io.IOUtils;
-import org.jscep.content.ScepContentHandler;
+import org.jscep.content.ScepResponseHandler;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
 import org.slf4j.Logger;
@@ -41,6 +43,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author David Grant
  */
+@ThreadSafe
 public class HttpGetTransport extends Transport {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(HttpGetTransport.class);
@@ -50,7 +53,7 @@ public class HttpGetTransport extends Transport {
     }
 
     @Override
-    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
+    public <T> T sendRequest(Request msg, ScepResponseHandler<T> handler)
             throws TransportException {
         URL url;
         try {
@@ -92,7 +95,7 @@ public class HttpGetTransport extends Transport {
         }
 
         try {
-            return handler.getContent(response, conn.getContentType());
+            return handler.getResponse(response, conn.getContentType());
         } catch (Exception e) {
             throw new TransportException(e);
         }
@@ -109,6 +112,6 @@ public class HttpGetTransport extends Transport {
      */
     @Override
     public String toString() {
-        return "[GET] " + url;
+        return "[GET] " + getUrl();
     }
 }

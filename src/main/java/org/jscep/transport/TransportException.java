@@ -1,5 +1,11 @@
 package org.jscep.transport;
 
+import net.jcip.annotations.Immutable;
+
+/**
+ * <tt>TransportException</tt> is thrown by the transport layer for any networking issues.
+ */
+@Immutable
 public class TransportException extends Exception {
     /**
 	 * 

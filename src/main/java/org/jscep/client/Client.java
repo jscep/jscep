@@ -47,16 +47,16 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.client.polling.PollingListener;
 import org.jscep.client.polling.PollingTerminatedException;
 import org.jscep.client.verification.CertificateVerifier;
-import org.jscep.content.CaCapabilitiesContentHandler;
-import org.jscep.content.CaCertificateContentHandler;
-import org.jscep.content.NextCaCertificateContentHandler;
+import org.jscep.content.GetCaCapsResponseHandler;
+import org.jscep.content.GetCaCertResponseHandler;
+import org.jscep.content.GetNextCaCertResponseHandler;
 import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.GetCaCaps;
-import org.jscep.request.GetCaCert;
-import org.jscep.request.GetNextCaCert;
+import org.jscep.request.GetCaCapsRequest;
+import org.jscep.request.GetCaCertRequest;
+import org.jscep.request.GetNextCaCertRequest;
 import org.jscep.response.Capabilities;
 import org.jscep.transaction.EnrolmentTransaction;
 import org.jscep.transaction.MessageType;
@@ -208,10 +208,10 @@ public final class Client {
     public Capabilities getCaCapabilities(final String profile) {
         LOGGER.debug("Determining capabilities of SCEP server");
         // NON-TRANSACTIONAL
-        final GetCaCaps req = new GetCaCaps(profile);
+        final GetCaCapsRequest req = new GetCaCapsRequest(profile);
         final Transport trans = new HttpGetTransport(url);
         try {
-            return trans.sendRequest(req, new CaCapabilitiesContentHandler());
+            return trans.sendRequest(req, new GetCaCapsResponseHandler());
         } catch (TransportException e) {
             LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
             return new Capabilities();
@@ -259,7 +259,7 @@ public final class Client {
         LOGGER.debug("Retriving current CA certificate");
         // NON-TRANSACTIONAL
         // CA and RA public key distribution
-        final GetCaCert req = new GetCaCert(profile);
+        final GetCaCertRequest req = new GetCaCertRequest(profile);
         final Transport trans = new HttpGetTransport(url);
 
         CertificateFactory factory;
@@ -270,7 +270,7 @@ public final class Client {
         }
         CertStore store;
         try {
-            store = trans.sendRequest(req, new CaCertificateContentHandler(
+            store = trans.sendRequest(req, new GetCaCertResponseHandler(
                     factory));
         } catch (TransportException e) {
             throw new ClientException(e);
@@ -320,10 +320,10 @@ public final class Client {
         final X509Certificate signer = getSignerCertificate(profile);
 
         final Transport trans = new HttpGetTransport(url);
-        final GetNextCaCert req = new GetNextCaCert(profile);
+        final GetNextCaCertRequest req = new GetNextCaCertRequest(profile);
 
         try {
-            return trans.sendRequest(req, new NextCaCertificateContentHandler(
+            return trans.sendRequest(req, new GetNextCaCertResponseHandler(
                     signer));
         } catch (TransportException e) {
             throw new ClientException(e);

@@ -27,7 +27,7 @@ import java.security.cert.CertStore;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.content.CertRepContentHandler;
+import org.jscep.content.PkcsReqResponseHandler;
 import org.jscep.message.CertRep;
 import org.jscep.message.MessageDecodingException;
 import org.jscep.message.MessageEncodingException;
@@ -80,7 +80,7 @@ public abstract class Transaction {
 
     public abstract TransactionId getId();
 
-    protected byte[] send(final CertRepContentHandler handler, final Request req) throws TransactionException {
+    protected byte[] send(final PkcsReqResponseHandler handler, final Request req) throws TransactionException {
         try {
             return transport.sendRequest(req, handler);
         } catch (TransportException e) {

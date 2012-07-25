@@ -28,7 +28,7 @@ package org.jscep.content;
  *            the content handled by the handler implementation
  * @author David Grant
  */
-public interface ScepContentHandler<T> {
+public interface ScepResponseHandler<T> {
     /**
      * Read and interpret the content from the input stream.
      * 
@@ -43,5 +43,5 @@ public interface ScepContentHandler<T> {
      *             if there is a problem with the message
      * @throws ContentException
      */
-    T getContent(byte[] response, String mimeType) throws ContentException;
+    T getResponse(byte[] response, String mimeType) throws ContentException;
 }

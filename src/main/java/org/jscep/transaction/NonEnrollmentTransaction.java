@@ -24,16 +24,16 @@ package org.jscep.transaction;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.jscep.content.CertRepContentHandler;
+import org.jscep.content.PkcsReqResponseHandler;
 import org.jscep.message.CertRep;
-import org.jscep.message.GetCRL;
 import org.jscep.message.GetCert;
+import org.jscep.message.GetCrl;
 import org.jscep.message.MessageDecodingException;
 import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.message.PkiRequest;
-import org.jscep.request.PKCSReq;
+import org.jscep.request.PkcsReqRequest;
 import org.jscep.transport.Transport;
 
 public class NonEnrollmentTransaction extends Transaction {
@@ -49,7 +49,7 @@ public class NonEnrollmentTransaction extends Transaction {
         if (msgType == MessageType.GET_CERT) {
             this.request = new GetCert(transId, Nonce.nextNonce(), iasn);
         } else if (msgType == MessageType.GET_CRL) {
-            this.request = new GetCRL(transId, Nonce.nextNonce(), iasn);
+            this.request = new GetCrl(transId, Nonce.nextNonce(), iasn);
         } else {
             throw new IllegalArgumentException(msgType.toString());
         }
@@ -62,7 +62,7 @@ public class NonEnrollmentTransaction extends Transaction {
 
     @Override
     public final State send() throws TransactionException {
-        final CertRepContentHandler handler = new CertRepContentHandler();
+        final PkcsReqResponseHandler handler = new PkcsReqResponseHandler();
         byte[] signedData;
         try {
             signedData = encode(request);
@@ -70,7 +70,7 @@ public class NonEnrollmentTransaction extends Transaction {
             throw new TransactionException(e);
         }
 
-        byte[] res = send(handler, new PKCSReq(signedData));
+        byte[] res = send(handler, new PkcsReqRequest(signedData));
         CertRep response;
         try {
             response = (CertRep) decode(res);

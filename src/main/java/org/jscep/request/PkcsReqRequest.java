@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,46 +22,44 @@
  */
 package org.jscep.request;
 
+import java.util.Arrays;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.ArrayUtils;
+
 /**
- * This class represents a <code>GetNextCACert</code> request.
+ * This class represents a <code>PKCSReq</code> request.
  * 
  * @author David Grant
  */
-public class GetNextCaCert extends Request {
-    private final String caIdentifier;
+public class PkcsReqRequest extends Request {
+    private final byte[] msgData;
 
     /**
-     * Creates a new GetNextCACert request with the given CA identification
-     * string.
+     * Creates a new instance of this class using the provided pkiMessage and
+     * response handler.
      * 
-     * @param caIdentifier
-     *            the CA identification string.
+     * @param msgData
+     *            the pkiMessage to use.
      */
-    public GetNextCaCert(String caIdentifier) {
-        super(Operation.GET_NEXT_CA_CERT);
-        this.caIdentifier = caIdentifier;
-    }
+    public PkcsReqRequest(byte[] msgData) {
+        super(Operation.PKI_OPERATION);
 
-    public GetNextCaCert() {
-        this(null);
+        this.msgData = ArrayUtils.clone(msgData);
     }
 
     /**
      * {@inheritDoc}
      */
     public String getMessage() {
-        if (caIdentifier == null) {
-            return "";
-        }
-        return caIdentifier;
+    	return Base64.encodeBase64String(msgData);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
-        if (caIdentifier != null) {
-            return "GetNextCACert(" + caIdentifier + ")";
-        } else {
-            return "GetNextCACert";
-        }
+        return Arrays.toString(msgData);
     }
 }

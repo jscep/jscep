@@ -9,7 +9,7 @@ import org.junit.Test;
 public class HttpGetTransportTest extends AbstractTransportTest {
     @Test
     public void testGetURL() {
-        Assert.assertEquals(url, transport.getURL());
+        Assert.assertEquals(url, transport.getUrl());
     }
 
     @Override

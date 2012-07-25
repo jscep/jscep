@@ -6,18 +6,18 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.jscep.x509.X509Util;
+import org.jscep.util.X509Certificates;
 import org.junit.Before;
 import org.junit.Test;
 
 public class NextCaCertificateContentHandlerTest {
-    private NextCaCertificateContentHandler fixture;
+    private GetNextCaCertResponseHandler fixture;
 
     @Before
     public void setUp() throws Exception {
         KeyPair keyPair = getKeyPair();
         X509Certificate ca = getCertificate(keyPair);
-        fixture = new NextCaCertificateContentHandler(ca);
+        fixture = new GetNextCaCertResponseHandler(ca);
     }
 
     // @Test
@@ -74,12 +74,12 @@ public class NextCaCertificateContentHandlerTest {
 
     @Test(expected = InvalidContentTypeException.class)
     public void testInvalidContent() throws Throwable {
-        fixture.getContent(new byte[] {1}, "application/x-x509-next-ca-cert");
+        fixture.getResponse(new byte[] {1}, "application/x-x509-next-ca-cert");
     }
 
     private X509Certificate getCertificate(KeyPair keyPair) throws Exception {
         X500Principal subject = new X500Principal("CN=example.org");
-        return X509Util.createEphemeralCertificate(subject, keyPair);
+        return X509Certificates.createEphemeral(subject, keyPair);
     }
 
     private KeyPair getKeyPair() throws Exception {

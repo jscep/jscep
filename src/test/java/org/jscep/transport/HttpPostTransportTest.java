@@ -7,34 +7,34 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.jscep.content.NextCaCertificateContentHandler;
-import org.jscep.request.GetCaCaps;
-import org.jscep.request.GetCaCert;
-import org.jscep.request.GetNextCaCert;
-import org.jscep.x509.X509Util;
+import org.jscep.content.GetNextCaCertResponseHandler;
+import org.jscep.request.GetCaCapsRequest;
+import org.jscep.request.GetCaCertRequest;
+import org.jscep.request.GetNextCaCertRequest;
+import org.jscep.util.X509Certificates;
 import org.junit.Test;
 
 public class HttpPostTransportTest extends AbstractTransportTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetCACert() throws Exception {
-        transport.sendRequest(new GetCaCert(), null);
+        transport.sendRequest(new GetCaCertRequest(), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetCACaps() throws Exception {
-        transport.sendRequest(new GetCaCaps(), null);
+        transport.sendRequest(new GetCaCapsRequest(), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetNextCACert() throws Exception {
         X500Principal subject = new X500Principal("CN=example.org");
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate cert = X509Util.createEphemeralCertificate(subject,
+        X509Certificate cert = X509Certificates.createEphemeral(subject,
                 keyPair);
 
-        GetNextCaCert nextCa = new GetNextCaCert();
+        GetNextCaCertRequest nextCa = new GetNextCaCertRequest();
         transport
-                .sendRequest(nextCa, new NextCaCertificateContentHandler(cert));
+                .sendRequest(nextCa, new GetNextCaCertResponseHandler(cert));
     }
 
     @Override

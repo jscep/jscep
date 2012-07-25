@@ -161,7 +161,7 @@ public class PkiMessageDecoder {
                 IssuerAndSerialNumber messageData = IssuerAndSerialNumber
                         .getInstance(decoded);
 
-                pkiMessage = new GetCRL(transId, senderNonce, messageData);
+                pkiMessage = new GetCrl(transId, senderNonce, messageData);
             } else {
                 PKCS10CertificationRequest messageData;
                 try {
@@ -170,7 +170,7 @@ public class PkiMessageDecoder {
                     throw new MessageDecodingException(e);
                 }
 
-                pkiMessage = new PKCSReq(transId, senderNonce, messageData);
+                pkiMessage = new PkcsReq(transId, senderNonce, messageData);
             }
         }
 

@@ -30,7 +30,7 @@ import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
-import org.jscep.x509.X509Util;
+import org.jscep.util.X509Certificates;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -56,8 +56,8 @@ public class PkiMessageEncoderTest {
 
         params.add(new Object[] {new GetCert(transId, senderNonce, iasn)});
         params.add(new Object[] {new GetCertInitial(transId, senderNonce, ias)});
-        params.add(new Object[] {new GetCRL(transId, senderNonce, iasn)});
-        params.add(new Object[] {new PKCSReq(transId, senderNonce, csr)});
+        params.add(new Object[] {new GetCrl(transId, senderNonce, iasn)});
+        params.add(new Object[] {new PkcsReq(transId, senderNonce, csr)});
         params.add(new Object[] {new CertRep(transId, senderNonce,
                 recipientNonce)});
         params.add(new Object[] {new CertRep(transId, senderNonce,
@@ -77,12 +77,12 @@ public class PkiMessageEncoderTest {
     @Test
     public void simpleTest() throws Exception {
         KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate ca = X509Util.createEphemeralCertificate(
+        X509Certificate ca = X509Certificates.createEphemeral(
                 new X500Principal("CN=CA"), caPair);
 
         KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
                 .generateKeyPair();
-        X509Certificate client = X509Util.createEphemeralCertificate(
+        X509Certificate client = X509Certificates.createEphemeral(
                 new X500Principal("CN=Client"), clientPair);
 
         // Everything below this line only available to client

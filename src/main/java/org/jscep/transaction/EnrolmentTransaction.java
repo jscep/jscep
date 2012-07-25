@@ -29,7 +29,7 @@ import java.security.spec.InvalidKeySpecException;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.asn1.IssuerAndSubject;
-import org.jscep.content.CertRepContentHandler;
+import org.jscep.content.PkcsReqResponseHandler;
 import org.jscep.message.CertRep;
 import org.jscep.message.GetCertInitial;
 import org.jscep.message.MessageDecodingException;
@@ -37,7 +37,7 @@ import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.PKCSReq;
+import org.jscep.request.PkcsReqRequest;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.x509.X509Util;
@@ -59,7 +59,7 @@ public class EnrolmentTransaction extends Transaction {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(EnrolmentTransaction.class);
     private final TransactionId transId;
-    private final org.jscep.message.PKCSReq request;
+    private final org.jscep.message.PkcsReq request;
     private static NonceQueue QUEUE = new NonceQueue();
     private X509Certificate issuer;
 
@@ -74,7 +74,7 @@ public class EnrolmentTransaction extends Transaction {
         } catch (InvalidKeySpecException e) {
             throw new TransactionException(e);
         }
-        this.request = new org.jscep.message.PKCSReq(transId,
+        this.request = new org.jscep.message.PkcsReq(transId,
                 Nonce.nextNonce(), csr);
     }
 
@@ -103,8 +103,8 @@ public class EnrolmentTransaction extends Transaction {
             throw new TransactionException(e);
         }
         LOGGER.debug("Sending {}", signedData);
-        CertRepContentHandler handler = new CertRepContentHandler();
-        byte[] res = send(handler, new PKCSReq(signedData));
+        PkcsReqResponseHandler handler = new PkcsReqResponseHandler();
+        byte[] res = send(handler, new PkcsReqRequest(signedData));
         LOGGER.debug("Received response {}", res);
 
         CertRep response;
@@ -146,12 +146,13 @@ public class EnrolmentTransaction extends Transaction {
 
         byte[] signedData;
         try {
+//        	signedData = 
             signedData = encode(pollReq);
         } catch (MessageEncodingException e) {
             throw new TransactionException(e);
         }
-        CertRepContentHandler handler = new CertRepContentHandler();
-        byte[] res = send(handler, new PKCSReq(signedData));
+        PkcsReqResponseHandler handler = new PkcsReqResponseHandler();
+        byte[] res = send(handler, new PkcsReqRequest(signedData));
 
         CertRep response;
         try {

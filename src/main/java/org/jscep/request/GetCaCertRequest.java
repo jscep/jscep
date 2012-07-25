@@ -22,52 +22,46 @@
  */
 package org.jscep.request;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-
-import org.apache.commons.io.Charsets;
-import org.apache.commons.lang.ArrayUtils;
-import org.bouncycastle.util.encoders.Base64;
-
 /**
- * This class represents a <code>PKCSReq</code> request.
+ * This class represents a <code>GetCACert</code> request.
  * 
  * @author David Grant
  */
-public class PKCSReq extends Request {
-    private final byte[] msgData;
+public final class GetCaCertRequest extends Request {
+    private final String profile;
 
     /**
-     * Creates a new instance of this class using the provided pkiMessage and
-     * response handler.
+     * Creates a new GetCACert request with the given CA identification string.
      * 
-     * @param msgData
-     *            the pkiMessage to use.
+     * @param profile
+     *            the CA identification string.
      */
-    public PKCSReq(byte[] msgData) {
-        super(Operation.PKI_OPERATION);
+    public GetCaCertRequest(String profile) {
+        super(Operation.GET_CA_CERT);
 
-        this.msgData = ArrayUtils.clone(msgData);
+        this.profile = profile;
+    }
+
+    public GetCaCertRequest() {
+        this(null);
     }
 
     /**
      * {@inheritDoc}
      */
     public String getMessage() {
-        byte[] bytes = Base64.encode(msgData);
-
-        try {
-            return new String(bytes, Charsets.US_ASCII.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+        if (profile == null) {
+            return "";
         }
+        return profile;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
-        return Arrays.toString(msgData);
+        if (profile != null) {
+            return "GetCACert(" + profile + ")";
+        } else {
+            return "GetCACert";
+        }
     }
 }

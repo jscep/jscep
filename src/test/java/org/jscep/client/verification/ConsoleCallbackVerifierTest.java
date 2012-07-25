@@ -16,8 +16,7 @@ import javax.security.auth.x500.X500Principal;
 import org.apache.commons.io.Charsets;
 import org.jscep.client.CertificateVerificationCallback;
 import org.jscep.client.DefaultCallbackHandler;
-import org.jscep.client.verification.ConsoleCertificateVerifier;
-import org.jscep.x509.X509Util;
+import org.jscep.util.X509Certificates;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +29,7 @@ public class ConsoleCallbackVerifierTest {
     public void setUp() throws GeneralSecurityException {
         X500Principal subject = new X500Principal("CN=example");
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
-        cert = X509Util.createEphemeralCertificate(subject, keyPair);
+        cert = X509Certificates.createEphemeral(subject, keyPair);
         handler = new DefaultCallbackHandler(new ConsoleCertificateVerifier());
     }
 

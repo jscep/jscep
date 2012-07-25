@@ -116,8 +116,7 @@ public class PkiMessageEncoder {
         } catch (CMSException e) {
             throw new MessageEncodingException(e);
         } catch (CertificateEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new MessageEncodingException(e);
         }
         LOGGER.debug("Signing {} content", signable);
         CMSSignedData sd;

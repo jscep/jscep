@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2009-2012 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,48 +19,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.request;
+package org.jscep.message;
+
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.jscep.transaction.MessageType;
+import org.jscep.transaction.Nonce;
+import org.jscep.transaction.TransactionId;
 
 /**
- * This class represents a <code>GetCACert</code> request.
- * 
- * @author David Grant
+ * This class represents a GetCRL PKIMessage, which wraps an
+ * IssuerAndSerialNumber object.
  */
-public final class GetCaCert extends Request {
-    private final String caIdentifier;
-
-    /**
-     * Creates a new GetCACert request with the given CA identification string.
-     * 
-     * @param caIdentifier
-     *            the CA identification string.
-     */
-    public GetCaCert(String caIdentifier) {
-        super(Operation.GET_CA_CERT);
-
-        this.caIdentifier = caIdentifier;
-    }
-
-    public GetCaCert() {
-        this(null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getMessage() {
-        if (caIdentifier == null) {
-            return "";
-        }
-        return caIdentifier;
-    }
-
-    @Override
-    public String toString() {
-        if (caIdentifier != null) {
-            return "GetCACert(" + caIdentifier + ")";
-        } else {
-            return "GetCACert";
-        }
+public class GetCrl extends PkiRequest<IssuerAndSerialNumber> {
+    public GetCrl(TransactionId transId, Nonce senderNonce,
+            IssuerAndSerialNumber messageData) {
+        super(transId, MessageType.GET_CRL, senderNonce, messageData);
     }
 }

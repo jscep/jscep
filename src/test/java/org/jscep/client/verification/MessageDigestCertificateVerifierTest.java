@@ -13,7 +13,7 @@ import java.util.Set;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.jscep.x509.X509Util;
+import org.jscep.util.X509Certificates;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -37,7 +37,7 @@ public class MessageDigestCertificateVerifierTest {
     public void testVerify(MessageDigest digest) throws Exception {
         X500Principal subject = new X500Principal("CN=example");
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate cert = X509Util.createEphemeralCertificate(subject, keyPair);
+        X509Certificate cert = X509Certificates.createEphemeral(subject, keyPair);
         
         byte[] expected = digest.digest(cert.getTBSCertificate());
         

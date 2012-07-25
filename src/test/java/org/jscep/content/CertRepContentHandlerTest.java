@@ -4,15 +4,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CertRepContentHandlerTest {
-    private CertRepContentHandler fixture;
+    private PkcsReqResponseHandler fixture;
 
     @Before
     public void setUp() throws Exception {
-        fixture = new CertRepContentHandler();
+        fixture = new PkcsReqResponseHandler();
     }
 
     @Test(expected = InvalidContentTypeException.class)
     public void testInvalidMime() throws Exception {
-        fixture.getContent(new byte[0], "text/plain");
+        fixture.getResponse(new byte[0], "text/plain");
     }
 }

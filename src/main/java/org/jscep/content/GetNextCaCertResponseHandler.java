@@ -37,12 +37,12 @@ import org.jscep.util.SignedDataUtil;
  * 
  * @author David Grant
  */
-public class NextCaCertificateContentHandler implements
-        ScepContentHandler<CertStore> {
+public class GetNextCaCertResponseHandler implements
+        ScepResponseHandler<CertStore> {
     private static final String NEXT_CA_CERT = "application/x-x509-next-ca-cert";
     private final X509Certificate signer;
 
-    public NextCaCertificateContentHandler(X509Certificate signer) {
+    public GetNextCaCertResponseHandler(X509Certificate signer) {
         this.signer = signer;
     }
 
@@ -51,7 +51,7 @@ public class NextCaCertificateContentHandler implements
      * 
      * @throws InvalidContentTypeException
      */
-    public CertStore getContent(byte[] content, String mimeType)
+    public CertStore getResponse(byte[] content, String mimeType)
             throws ContentException {
         if (mimeType.startsWith(NEXT_CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1

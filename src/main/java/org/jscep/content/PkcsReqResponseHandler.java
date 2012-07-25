@@ -20,41 +20,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.request;
+package org.jscep.content;
 
 /**
- * This class represents a <code>GetCACaps</code> request.
+ * This class handles responses to <code>PKCSReq</code> requests.
  * 
  * @author David Grant
  */
-public final class GetCaCaps extends Request {
-    private final String caIdentifier;
-
-    public GetCaCaps() {
-        this(null);
-    }
-
-    public GetCaCaps(String caIdentifier) {
-        super(Operation.GET_CA_CAPS);
-        this.caIdentifier = caIdentifier;
-    }
+public final class PkcsReqResponseHandler implements ScepResponseHandler<byte[]> {
+    private static final String PKI_MESSAGE = "application/x-pki-message";
 
     /**
      * {@inheritDoc}
+     * 
+     * @throws InvalidContentTypeException
+     * 
+     * @throws IOException
      */
-    public String getMessage() {
-        if (caIdentifier == null) {
-            return "";
-        }
-        return caIdentifier;
-    }
-
-    @Override
-    public String toString() {
-        if (caIdentifier != null) {
-            return "GetCACaps(" + caIdentifier + ")";
+    public byte[] getResponse(byte[] content, String mimeType)
+            throws ContentException {
+        if (mimeType.startsWith(PKI_MESSAGE)) {
+            return content;
         } else {
-            return "GetCACaps";
+            throw new InvalidContentTypeException(mimeType, PKI_MESSAGE);
         }
     }
 }

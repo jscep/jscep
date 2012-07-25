@@ -19,7 +19,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.jscep.client.verification.OptimisticCertificateVerifier;
 import org.jscep.server.ScepServletImpl;
-import org.jscep.x509.X509Util;
+import org.jscep.util.X509Certificates;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -46,7 +46,7 @@ public abstract class AbstractClientTest {
 
         port = server.getConnectors()[0].getLocalPort();
         keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        identity = X509Util.createEphemeralCertificate(new X500Principal(
+        identity = X509Certificates.createEphemeral(new X500Principal(
                 "CN=jscep.org"), keyPair);
 
         url = new URL("http", "localhost", port, PATH);

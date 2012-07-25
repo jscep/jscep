@@ -15,14 +15,14 @@ import junit.framework.Assert;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.eclipse.jetty.server.Server;
-import org.jscep.content.CertRepContentHandler;
+import org.jscep.content.PkcsReqResponseHandler;
 import org.jscep.message.GetCert;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.PKCSReq;
+import org.jscep.request.PkcsReqRequest;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
-import org.jscep.x509.X509Util;
+import org.jscep.util.X509Certificates;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +52,7 @@ abstract public class AbstractTransportTest {
 
     @Test
     public void testGetURL() {
-        Assert.assertEquals(url, transport.getURL());
+        Assert.assertEquals(url, transport.getUrl());
     }
 
     @Test
@@ -71,10 +71,10 @@ abstract public class AbstractTransportTest {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name,
                 serialNumber);
         GetCert getCert = new GetCert(transId, senderNonce, iasn);
-        PKCSReq req = new PKCSReq(enc.encode(getCert));
+        PkcsReqRequest req = new PkcsReqRequest(enc.encode(getCert));
 
         try {
-            transport.sendRequest(req, new CertRepContentHandler());
+            transport.sendRequest(req, new PkcsReqResponseHandler());
         } catch (TransportException e) {
             Assert.assertEquals(e.getMessage(), "404 Not Found");
         }
@@ -84,6 +84,6 @@ abstract public class AbstractTransportTest {
             throws GeneralSecurityException {
         final X500Principal subject = new X500Principal("CN=example.org");
 
-        return X509Util.createEphemeralCertificate(subject, keyPair);
+        return X509Certificates.createEphemeral(subject, keyPair);
     }
 }

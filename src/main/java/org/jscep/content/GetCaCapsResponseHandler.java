@@ -40,18 +40,18 @@ import org.slf4j.LoggerFactory;
  * 
  * @author David Grant
  */
-public final class CaCapabilitiesContentHandler implements
-        ScepContentHandler<Capabilities> {
+public final class GetCaCapsResponseHandler implements
+        ScepResponseHandler<Capabilities> {
     private static final String TEXT_PLAIN = "text/plain";
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(CaCapabilitiesContentHandler.class);
+            .getLogger(GetCaCapsResponseHandler.class);
 
     /**
      * {@inheritDoc}
      * 
      * @throws InvalidContentTypeException
      */
-    public Capabilities getContent(byte[] content, String mimeType)
+    public Capabilities getResponse(byte[] content, String mimeType)
             throws ContentException {
         if (mimeType == null || !mimeType.startsWith(TEXT_PLAIN)) {
             LOGGER.warn(

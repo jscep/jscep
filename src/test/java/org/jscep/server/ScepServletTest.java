@@ -38,16 +38,16 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
-import org.jscep.content.CaCapabilitiesContentHandler;
-import org.jscep.content.CaCertificateContentHandler;
-import org.jscep.content.NextCaCertificateContentHandler;
+import org.jscep.content.GetCaCapsResponseHandler;
+import org.jscep.content.GetCaCertResponseHandler;
+import org.jscep.content.GetNextCaCertResponseHandler;
 import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.GetCaCaps;
-import org.jscep.request.GetCaCert;
-import org.jscep.request.GetNextCaCert;
+import org.jscep.request.GetCaCapsRequest;
+import org.jscep.request.GetCaCertRequest;
+import org.jscep.request.GetNextCaCertRequest;
 import org.jscep.response.Capabilities;
 import org.jscep.transaction.EnrolmentTransaction;
 import org.jscep.transaction.MessageType;
@@ -129,7 +129,7 @@ public class ScepServletTest {
     }
 
     private X509Certificate getRecipient() throws Exception {
-        GetCaCert req = new GetCaCert();
+        GetCaCertRequest req = new GetCaCertRequest();
         Transport transport = new HttpGetTransport(getURL());
         CertificateFactory factory;
         try {
@@ -141,7 +141,7 @@ public class ScepServletTest {
             throw ioe;
         }
         CertStore store = transport.sendRequest(req,
-                new CaCertificateContentHandler(factory));
+                new GetCaCertResponseHandler(factory));
         Collection<? extends Certificate> certs = store
                 .getCertificates(new X509CertSelector());
 
@@ -154,30 +154,30 @@ public class ScepServletTest {
 
     @Test
     public void testGetCaCaps() throws Exception {
-        GetCaCaps req = new GetCaCaps();
+        GetCaCapsRequest req = new GetCaCapsRequest();
         Transport transport = new HttpGetTransport(getURL());
         Capabilities caps = transport.sendRequest(req,
-                new CaCapabilitiesContentHandler());
+                new GetCaCapsResponseHandler());
 
         System.out.println(caps);
     }
 
     @Test
     public void getNextCaCertificateGood() throws Exception {
-        GetNextCaCert req = new GetNextCaCert(goodIdentifier);
+        GetNextCaCertRequest req = new GetNextCaCertRequest(goodIdentifier);
         Transport transport = new HttpGetTransport(getURL());
         CertStore certs = transport.sendRequest(req,
-                new NextCaCertificateContentHandler(getRecipient()));
+                new GetNextCaCertResponseHandler(getRecipient()));
 
         assertThat(certs.getCertificates(null).size(), is(1));
     }
 
     @Test(expected = TransportException.class)
     public void getNextCaCertificateBad() throws Exception {
-        GetNextCaCert req = new GetNextCaCert(badIdentifier);
+        GetNextCaCertRequest req = new GetNextCaCertRequest(badIdentifier);
         Transport transport = new HttpGetTransport(getURL());
         CertStore certs = transport.sendRequest(req,
-                new NextCaCertificateContentHandler(getRecipient()));
+                new GetNextCaCertResponseHandler(getRecipient()));
 
         assertThat(certs.getCertificates(null).size(), is(1));
     }

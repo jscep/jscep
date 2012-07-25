@@ -7,18 +7,18 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class GetCaCertTest {
-    private GetCaCert fixture;
+    private GetCaCertRequest fixture;
     private String caIdentifier;
 
     @Before
     public void setUp() {
         caIdentifier = "id";
-        fixture = new GetCaCert(caIdentifier);
+        fixture = new GetCaCertRequest(caIdentifier);
     }
 
     @Test
     public void testNullConstructor() {
-        fixture = new GetCaCert();
+        fixture = new GetCaCertRequest();
         Assert.assertEquals("", fixture.getMessage());
     }
 

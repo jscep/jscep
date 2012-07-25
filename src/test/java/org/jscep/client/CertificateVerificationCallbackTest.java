@@ -9,8 +9,7 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.jscep.client.CertificateVerificationCallback;
-import org.jscep.x509.X509Util;
+import org.jscep.util.X509Certificates;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +22,7 @@ public class CertificateVerificationCallbackTest {
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
         X500Principal subject = new X500Principal("cn=example");
 
-        certificate = X509Util.createEphemeralCertificate(subject, keyPair);
+        certificate = X509Certificates.createEphemeral(subject, keyPair);
         callback = new CertificateVerificationCallback(certificate);
     }
 

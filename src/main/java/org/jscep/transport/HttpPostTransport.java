@@ -31,11 +31,13 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
-import org.jscep.content.ScepContentHandler;
-import org.jscep.request.PKCSReq;
+import org.jscep.content.ScepResponseHandler;
+import org.jscep.request.PkcsReqRequest;
 import org.jscep.request.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +47,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author David Grant
  */
+@ThreadSafe
 public class HttpPostTransport extends Transport {
     private static Logger LOGGER = LoggerFactory
             .getLogger(HttpPostTransport.class);
@@ -54,9 +57,9 @@ public class HttpPostTransport extends Transport {
     }
 
     @Override
-    public <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
+    public <T> T sendRequest(Request msg, ScepResponseHandler<T> handler)
             throws TransportException {
-        if (!PKCSReq.class.isAssignableFrom(msg.getClass())) {
+        if (!PkcsReqRequest.class.isAssignableFrom(msg.getClass())) {
             throw new IllegalArgumentException(
                     "POST transport may not be used for " + msg.getOperation()
                             + " messages.");
@@ -127,7 +130,7 @@ public class HttpPostTransport extends Transport {
         }
 
         try {
-            return handler.getContent(response, conn.getContentType());
+            return handler.getResponse(response, conn.getContentType());
         } catch (Exception e) {
             throw new TransportException(e);
         }
@@ -138,6 +141,6 @@ public class HttpPostTransport extends Transport {
      */
     @Override
     public String toString() {
-        return "[POST] " + url;
+        return "[POST] " + getUrl();
     }
 }

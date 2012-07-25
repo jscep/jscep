@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2009-2010 David Grant
  * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,20 +20,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.message;
-
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.jscep.transaction.MessageType;
-import org.jscep.transaction.Nonce;
-import org.jscep.transaction.TransactionId;
+package org.jscep.request;
 
 /**
- * This class represents a GetCRL PKIMessage, which wraps an
- * IssuerAndSerialNumber object.
+ * This class represents a <code>GetNextCACert</code> request.
+ * 
+ * @author David Grant
  */
-public class GetCRL extends PkiRequest<IssuerAndSerialNumber> {
-    public GetCRL(TransactionId transId, Nonce senderNonce,
-            IssuerAndSerialNumber messageData) {
-        super(transId, MessageType.GET_CRL, senderNonce, messageData);
+public class GetNextCaCertRequest extends Request {
+    private final String profile;
+
+    /**
+     * Creates a new GetNextCACert request with the given CA identification
+     * string.
+     * 
+     * @param profile
+     *            the CA identification string.
+     */
+    public GetNextCaCertRequest(String profile) {
+        super(Operation.GET_NEXT_CA_CERT);
+        this.profile = profile;
+    }
+
+    public GetNextCaCertRequest() {
+        this(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getMessage() {
+        if (profile == null) {
+            return "";
+        }
+        return profile;
+    }
+
+    @Override
+    public String toString() {
+        if (profile != null) {
+            return "GetNextCACert(" + profile + ")";
+        } else {
+            return "GetNextCACert";
+        }
     }
 }

@@ -7,18 +7,18 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class GetCaCapsTest {
-    private GetCaCaps fixture;
+    private GetCaCapsRequest fixture;
     private String caIdentifier;
 
     @Before
     public void setUp() {
         caIdentifier = "id";
-        fixture = new GetCaCaps(caIdentifier);
+        fixture = new GetCaCapsRequest(caIdentifier);
     }
 
     @Test
     public void testNullConstructor() {
-        fixture = new GetCaCaps();
+        fixture = new GetCaCapsRequest();
         Assert.assertEquals("", fixture.getMessage());
     }
 

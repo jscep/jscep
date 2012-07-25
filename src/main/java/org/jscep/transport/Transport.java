@@ -25,7 +25,7 @@ package org.jscep.transport;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.jscep.content.ScepContentHandler;
+import org.jscep.content.ScepResponseHandler;
 import org.jscep.request.Operation;
 import org.jscep.request.Request;
 
@@ -45,7 +45,7 @@ import org.jscep.request.Request;
  * @author David Grant
  */
 public abstract class Transport {
-    final URL url;
+    private final URL url;
 
     Transport(URL url) {
         this.url = url;
@@ -56,7 +56,7 @@ public abstract class Transport {
      * 
      * @return the URL.
      */
-    public final URL getURL() {
+    public final URL getUrl() {
         return url;
     }
 
@@ -75,7 +75,7 @@ public abstract class Transport {
      * @throws InvalidContentTypeException
      * @throws InvalidContentException
      */
-    public abstract <T> T sendRequest(Request msg, ScepContentHandler<T> handler)
+    public abstract <T> T sendRequest(Request msg, ScepResponseHandler<T> handler)
             throws TransportException;
 
     /**

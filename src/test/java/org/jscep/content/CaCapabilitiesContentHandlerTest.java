@@ -8,38 +8,38 @@ import org.junit.Test;
 import java.io.*;
 
 public class CaCapabilitiesContentHandlerTest {
-    private CaCapabilitiesContentHandler fixture;
+    private GetCaCapsResponseHandler fixture;
 
     @Before
     public void setUp() {
-        fixture = new CaCapabilitiesContentHandler();
+        fixture = new GetCaCapsResponseHandler();
     }
 
     @Test
     public void testContentTypeIgnored() throws ContentException {
         final byte[] is = getBytesForCapabilities("DES3");
-        final Capabilities caps = fixture.getContent(is, "foo/bar");
+        final Capabilities caps = fixture.getResponse(is, "foo/bar");
         Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     @Test
     public void testNullContentTypeIgnored() throws ContentException {
         final byte[] is = getBytesForCapabilities("DES3");
-        final Capabilities caps = fixture.getContent(is, null);
+        final Capabilities caps = fixture.getResponse(is, null);
         Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     @Test
     public void testCorrectContentType() throws ContentException {
         final byte[] is = getBytesForCapabilities("DES3");
-        final Capabilities caps = fixture.getContent(is, "text/plain");
+        final Capabilities caps = fixture.getResponse(is, "text/plain");
         Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     @Test
     public void charsetIsIgnored() throws ContentException {
         final byte[] is = getBytesForCapabilities("DES3");
-        final Capabilities caps = fixture.getContent(is,
+        final Capabilities caps = fixture.getResponse(is,
                 "text/plain;charset=UTF-8");
 
         Assert.assertEquals("DESede", caps.getStrongestCipher());
