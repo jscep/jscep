@@ -24,7 +24,7 @@ package org.jscep.transaction;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.jscep.content.PkcsReqResponseHandler;
+import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.message.CertRep;
 import org.jscep.message.GetCert;
 import org.jscep.message.GetCrl;
@@ -33,8 +33,9 @@ import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.message.PkiRequest;
-import org.jscep.request.PkiOperationRequest;
 import org.jscep.transport.Transport;
+import org.jscep.transport.request.PkiOperationRequest;
+import org.jscep.transport.response.PkiOperationResponseHandler;
 
 public class NonEnrollmentTransaction extends Transaction {
     private final TransactionId transId;
@@ -62,15 +63,15 @@ public class NonEnrollmentTransaction extends Transaction {
 
     @Override
     public final State send() throws TransactionException {
-        final PkcsReqResponseHandler handler = new PkcsReqResponseHandler();
-        byte[] signedData;
+        final PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
+        CMSSignedData signedData;
         try {
             signedData = encode(request);
         } catch (MessageEncodingException e) {
             throw new TransactionException(e);
         }
 
-        byte[] res = send(handler, new PkiOperationRequest(signedData));
+        CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
         CertRep response;
         try {
             response = (CertRep) decode(res);

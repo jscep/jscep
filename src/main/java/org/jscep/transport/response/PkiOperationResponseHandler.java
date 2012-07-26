@@ -20,47 +20,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.request;
+package org.jscep.transport.response;
 
-import java.util.Arrays;
+import java.io.IOException;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.ArrayUtils;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
 
 /**
- * The <tt>PkiOperationRequest</tt> class may represent a <tt>PKCSReq</tt>,
- * <tt>GetCertInitial</tt>, <tt>GetCert</tt> and <tt>GetCRL</tt> request.
+ * This class handles responses to <tt>PKCSReq</tt>, <tt>GetCertInitial</tt>,
+ * <tt>GetCert</tt> and <tt>GetCRL</tt> requests.
  * 
  * @author David Grant
  */
-public class PkiOperationRequest extends Request {
-    private final byte[] msgData;
+public final class PkiOperationResponseHandler implements
+        ScepResponseHandler<CMSSignedData> {
+    private static final String PKI_MESSAGE = "application/x-pki-message";
 
     /**
-     * Creates a new instance of this class using the provided pkiMessage and
-     * response handler.
+     * {@inheritDoc}
      * 
-     * @param msgData
-     *            the pkiMessage to use.
+     * @throws InvalidContentTypeException
+     * 
+     * @throws IOException
      */
-    public PkiOperationRequest(byte[] msgData) {
-        super(Operation.PKI_OPERATION);
-
-        this.msgData = ArrayUtils.clone(msgData);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getMessage() {
-        return Base64.encodeBase64String(msgData);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return Arrays.toString(msgData);
+    public CMSSignedData getResponse(byte[] content, String mimeType)
+            throws ContentException {
+        if (mimeType.startsWith(PKI_MESSAGE)) {
+            try {
+                return new CMSSignedData(content);
+            } catch (CMSException e) {
+                throw new InvalidContentException(e);
+            }
+        } else {
+            throw new InvalidContentTypeException(mimeType, PKI_MESSAGE);
+        }
     }
 }

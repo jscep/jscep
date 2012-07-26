@@ -20,39 +20,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.request;
+package org.jscep.transport.request;
+
+import java.io.IOException;
+
+import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.cms.CMSSignedData;
 
 /**
- * This interface represents a SCEP request.
- * <p/>
- * Once an instance of a <code>Request</code> implementation has been obtained,
- * it can be sent to a SCEP server by using an instance of
- * {@link org.jscep.transport.Transport}.
+ * The <tt>PkiOperationRequest</tt> class may represent a <tt>PKCSReq</tt>,
+ * <tt>GetCertInitial</tt>, <tt>GetCert</tt> and <tt>GetCRL</tt> request.
  * 
  * @author David Grant
- * @see org.jscep.transport.Transport#sendRequest(Request,
- *      org.jscep.content.ScepContentHandler)
  */
-public abstract class Request {
-    private final Operation operation;
+public class PkiOperationRequest extends Request {
+    private final CMSSignedData msgData;
 
-    public Request(Operation operation) {
-        this.operation = operation;
+    /**
+     * Creates a new instance of this class using the provided pkiMessage and
+     * response handler.
+     * 
+     * @param msgData
+     *            the pkiMessage to use.
+     */
+  public PkiOperationRequest(CMSSignedData msgData) {
+        super(Operation.PKI_OPERATION);
+
+        this.msgData = msgData;
     }
 
     /**
-     * Returns the name of this operation.
-     * 
-     * @return the name of this operation.
+     * {@inheritDoc}
      */
-    public Operation getOperation() {
-        return operation;
+    public String getMessage() {
+        try {
+            return Base64.encodeBase64String(msgData.getEncoded());
+        } catch (IOException e) {
+           throw new RuntimeException(e);
+        }
     }
 
     /**
-     * Returns the message for this request.
-     * 
-     * @return the message.
+     * {@inheritDoc}
      */
-    public abstract String getMessage();
+    @Override
+    public String toString() {
+        return msgData.toString();
+    }
 }

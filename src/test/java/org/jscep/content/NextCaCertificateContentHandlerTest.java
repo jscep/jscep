@@ -6,6 +6,8 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.jscep.transport.response.GetNextCaCertResponseHandler;
+import org.jscep.transport.response.InvalidContentTypeException;
 import org.jscep.util.X509Certificates;
 import org.junit.Before;
 import org.junit.Test;

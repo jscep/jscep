@@ -15,13 +15,13 @@ import junit.framework.Assert;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.eclipse.jetty.server.Server;
-import org.jscep.content.PkcsReqResponseHandler;
 import org.jscep.message.GetCert;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.PkiOperationRequest;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
+import org.jscep.transport.request.PkiOperationRequest;
+import org.jscep.transport.response.PkiOperationResponseHandler;
 import org.jscep.util.X509Certificates;
 import org.junit.After;
 import org.junit.Before;
@@ -74,7 +74,7 @@ abstract public class AbstractTransportTest {
         PkiOperationRequest req = new PkiOperationRequest(enc.encode(getCert));
 
         try {
-            transport.sendRequest(req, new PkcsReqResponseHandler());
+            transport.sendRequest(req, new PkiOperationResponseHandler());
         } catch (TransportException e) {
             Assert.assertEquals(e.getMessage(), "404 Not Found");
         }

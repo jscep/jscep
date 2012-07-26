@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.response;
+package org.jscep.transport.response;
 
 import java.security.Provider;
 import java.security.Provider.Service;

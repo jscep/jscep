@@ -1,4 +1,4 @@
-package org.jscep.content;
+package org.jscep.transport.response;
 
 public class ContentException extends Exception {
     private static final long serialVersionUID = -959127316844320818L;

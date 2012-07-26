@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.content;
+package org.jscep.transport.response;
 
 import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;

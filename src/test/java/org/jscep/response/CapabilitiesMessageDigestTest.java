@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jscep.transport.response.Capabilities;
+import org.jscep.transport.response.Capability;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;

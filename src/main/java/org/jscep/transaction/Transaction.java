@@ -27,16 +27,16 @@ import java.security.cert.CertStore;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.content.PkcsReqResponseHandler;
 import org.jscep.message.CertRep;
 import org.jscep.message.MessageDecodingException;
 import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.Request;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
+import org.jscep.transport.request.Request;
+import org.jscep.transport.response.PkiOperationResponseHandler;
 import org.jscep.util.CertStoreUtils;
 
 public abstract class Transaction {
@@ -80,7 +80,7 @@ public abstract class Transaction {
 
     public abstract TransactionId getId();
 
-    protected byte[] send(final PkcsReqResponseHandler handler, final Request req) throws TransactionException {
+    protected CMSSignedData send(final PkiOperationResponseHandler handler, final Request req) throws TransactionException {
         try {
             return transport.sendRequest(req, handler);
         } catch (TransportException e) {
@@ -88,11 +88,11 @@ public abstract class Transaction {
         }
     }
 
-    protected PkiMessage<?> decode(byte[] res) throws MessageDecodingException {
+    protected PkiMessage<?> decode(CMSSignedData res) throws MessageDecodingException {
         return decoder.decode(res);
     }
 
-    protected byte[] encode(final PkiMessage<?> message) throws MessageEncodingException {
+    protected CMSSignedData encode(final PkiMessage<?> message) throws MessageEncodingException {
         return encoder.encode(message);
     }
 

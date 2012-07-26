@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import java.security.Provider;
 import java.security.Security;
 
+import org.jscep.transport.response.Capabilities;
+import org.jscep.transport.response.Capability;
 import org.junit.Assert;
 import org.junit.Test;
 

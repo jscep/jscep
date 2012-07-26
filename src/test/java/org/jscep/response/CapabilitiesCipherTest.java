@@ -1,5 +1,7 @@
 package org.jscep.response;
 
+import org.jscep.transport.response.Capabilities;
+import org.jscep.transport.response.Capability;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

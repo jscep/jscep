@@ -73,13 +73,13 @@ import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.Operation;
-import org.jscep.response.Capability;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.OperationFailureException;
 import org.jscep.transaction.TransactionId;
+import org.jscep.transport.request.Operation;
+import org.jscep.transport.response.Capability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,7 +216,7 @@ public abstract class ScepServlet extends HttpServlet {
                 PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
                         getRecipient(), getRecipientKey());
                 PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, reqCert);
-                msg = decoder.decode(body);
+                msg = decoder.decode(sd);
             } catch (MessageDecodingException e) {
                 LOGGER.error("Error decoding request", e);
                 throw new ServletException(e);
@@ -329,7 +329,7 @@ public abstract class ScepServlet extends HttpServlet {
                     reqCert);
             PkiMessageEncoder encoder = new PkiMessageEncoder(getSignerKey(),
                     getSigner(), envEncoder);
-            byte[] signedData;
+            CMSSignedData signedData;
             try {
                 signedData = encoder.encode(certRep);
             } catch (MessageEncodingException e) {
@@ -337,7 +337,7 @@ public abstract class ScepServlet extends HttpServlet {
                 throw new ServletException(e);
             }
 
-            res.getOutputStream().write(signedData);
+            res.getOutputStream().write(signedData.getEncoded());
             res.getOutputStream().close();
         } else {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST,

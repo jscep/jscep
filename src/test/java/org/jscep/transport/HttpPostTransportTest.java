@@ -7,10 +7,10 @@ import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.jscep.content.GetNextCaCertResponseHandler;
-import org.jscep.request.GetCaCapsRequest;
-import org.jscep.request.GetCaCertRequest;
-import org.jscep.request.GetNextCaCertRequest;
+import org.jscep.transport.request.GetCaCapsRequest;
+import org.jscep.transport.request.GetCaCertRequest;
+import org.jscep.transport.request.GetNextCaCertRequest;
+import org.jscep.transport.response.GetNextCaCertResponseHandler;
 import org.jscep.util.X509Certificates;
 import org.junit.Test;
 

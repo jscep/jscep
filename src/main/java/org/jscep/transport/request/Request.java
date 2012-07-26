@@ -20,41 +20,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.request;
+package org.jscep.transport.request;
 
 /**
- * This class represents a <code>GetCACaps</code> request.
+ * This interface represents a SCEP request.
+ * <p/>
+ * Once an instance of a <code>Request</code> implementation has been obtained,
+ * it can be sent to a SCEP server by using an instance of
+ * {@link org.jscep.transport.Transport}.
  * 
  * @author David Grant
+ * @see org.jscep.transport.Transport#sendRequest(Request,
+ *      org.jscep.content.ScepContentHandler)
  */
-public final class GetCaCapsRequest extends Request {
-    private final String profile;
+public abstract class Request {
+    private final Operation operation;
 
-    public GetCaCapsRequest() {
-        this(null);
-    }
-
-    public GetCaCapsRequest(String profile) {
-        super(Operation.GET_CA_CAPS);
-        this.profile = profile;
+    public Request(Operation operation) {
+        this.operation = operation;
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the name of this operation.
+     * 
+     * @return the name of this operation.
      */
-    public String getMessage() {
-        if (profile == null) {
-            return "";
-        }
-        return profile;
+    public Operation getOperation() {
+        return operation;
     }
 
-    @Override
-    public String toString() {
-        if (profile != null) {
-            return "GetCACaps(" + profile + ")";
-        } else {
-            return "GetCACaps";
-        }
-    }
+    /**
+     * Returns the message for this request.
+     * 
+     * @return the message.
+     */
+    public abstract String getMessage();
 }

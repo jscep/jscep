@@ -1,5 +1,7 @@
 package org.jscep.request;
 
+import org.jscep.transport.request.GetCaCertRequest;
+import org.jscep.transport.request.Operation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

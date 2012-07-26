@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.content;
+package org.jscep.transport.response;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -30,8 +30,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.io.Charsets;
-import org.jscep.response.Capabilities;
-import org.jscep.response.Capability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

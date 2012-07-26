@@ -27,9 +27,9 @@ import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.asn1.IssuerAndSubject;
-import org.jscep.content.PkcsReqResponseHandler;
 import org.jscep.message.CertRep;
 import org.jscep.message.GetCertInitial;
 import org.jscep.message.MessageDecodingException;
@@ -37,9 +37,10 @@ import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.PkiOperationRequest;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
+import org.jscep.transport.request.PkiOperationRequest;
+import org.jscep.transport.response.PkiOperationResponseHandler;
 import org.jscep.x509.X509Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,15 +97,15 @@ public class EnrolmentTransaction extends Transaction {
      */
     @Override
     public State send() throws TransactionException {
-        byte[] signedData;
+        CMSSignedData signedData;
         try {
             signedData = encode(request);
         } catch (MessageEncodingException e) {
             throw new TransactionException(e);
         }
         LOGGER.debug("Sending {}", signedData);
-        PkcsReqResponseHandler handler = new PkcsReqResponseHandler();
-        byte[] res = send(handler, new PkiOperationRequest(signedData));
+        PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
+        CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
         LOGGER.debug("Received response {}", res);
 
         CertRep response;
@@ -144,15 +145,15 @@ public class EnrolmentTransaction extends Transaction {
         final GetCertInitial pollReq = new GetCertInitial(transId,
                 Nonce.nextNonce(), ias);
 
-        byte[] signedData;
+        CMSSignedData signedData;
         try {
 //        	signedData = 
             signedData = encode(pollReq);
         } catch (MessageEncodingException e) {
             throw new TransactionException(e);
         }
-        PkcsReqResponseHandler handler = new PkcsReqResponseHandler();
-        byte[] res = send(handler, new PkiOperationRequest(signedData));
+        PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
+        CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
 
         CertRep response;
         try {

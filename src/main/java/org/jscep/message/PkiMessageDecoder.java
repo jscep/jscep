@@ -73,13 +73,7 @@ public class PkiMessageDecoder {
     }
 
     @SuppressWarnings("unchecked")
-    public PkiMessage<?> decode(byte[] bytes) throws MessageDecodingException {
-        CMSSignedData signedData;
-        try {
-            signedData = new CMSSignedData(bytes);
-        } catch (CMSException e) {
-            throw new MessageDecodingException(e);
-        }
+    public PkiMessage<?> decode(CMSSignedData signedData) throws MessageDecodingException {
         // The signed content is always an octet string
         CMSProcessable signedContent = signedData.getSignedContent();
 

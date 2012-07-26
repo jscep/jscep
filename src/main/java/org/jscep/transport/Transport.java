@@ -25,9 +25,9 @@ package org.jscep.transport;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.jscep.content.ScepResponseHandler;
-import org.jscep.request.Operation;
-import org.jscep.request.Request;
+import org.jscep.transport.request.Operation;
+import org.jscep.transport.request.Request;
+import org.jscep.transport.response.ScepResponseHandler;
 
 /**
  * This class represents a transport for sending a message to the SCEP server.

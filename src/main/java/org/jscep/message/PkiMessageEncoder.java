@@ -64,7 +64,7 @@ public class PkiMessageEncoder {
         this.enveloper = enveloper;
     }
 
-    public byte[] encode(PkiMessage<?> message) throws MessageEncodingException {
+    public CMSSignedData encode(PkiMessage<?> message) throws MessageEncodingException {
         LOGGER.debug("Encoding message: {}", message);
         CMSProcessableByteArray signable;
 
@@ -119,11 +119,9 @@ public class PkiMessageEncoder {
             throw new MessageEncodingException(e);
         }
         LOGGER.debug("Signing {} content", signable);
-        CMSSignedData sd;
         try {
-            sd = sdGenerator.generate("1.2.840.113549.1.7.1", signable, true,
+            return sdGenerator.generate("1.2.840.113549.1.7.1", signable, true,
                     (Provider) null, true);
-            return sd.getEncoded();
         } catch (Exception e) {
             throw new MessageEncodingException(e);
         }

@@ -36,9 +36,9 @@ import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
-import org.jscep.content.ScepResponseHandler;
-import org.jscep.request.PkiOperationRequest;
-import org.jscep.request.Request;
+import org.jscep.transport.request.PkiOperationRequest;
+import org.jscep.transport.request.Request;
+import org.jscep.transport.response.ScepResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

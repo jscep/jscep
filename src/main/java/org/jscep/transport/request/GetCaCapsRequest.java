@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2009-2010 David Grant
+ * Copyright (c) 2009-2012 David Grant
+ * Copyright (c) 2010 ThruPoint Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,29 +20,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jscep.content;
+package org.jscep.transport.request;
 
 /**
- * This interface represents a mechanism for handling specific SCEP content.
+ * This class represents a <code>GetCACaps</code> request.
  * 
- * @param <T>
- *            the content handled by the handler implementation
  * @author David Grant
  */
-public interface ScepResponseHandler<T> {
+public final class GetCaCapsRequest extends Request {
+    private final String profile;
+
+    public GetCaCapsRequest() {
+        this(null);
+    }
+
+    public GetCaCapsRequest(String profile) {
+        super(Operation.GET_CA_CAPS);
+        this.profile = profile;
+    }
+
     /**
-     * Read and interpret the content from the input stream.
-     * 
-     * @param response
-     *            the content.
-     * @param mimeType
-     *            the type of the input stream.
-     * @return the content in a usage form.
-     * @throws InvalidContentTypeException
-     *             if there is a problem decoding
-     * @throws InvalidContentException
-     *             if there is a problem with the message
-     * @throws ContentException
+     * {@inheritDoc}
      */
-    T getResponse(byte[] response, String mimeType) throws ContentException;
+    public String getMessage() {
+        if (profile == null) {
+            return "";
+        }
+        return profile;
+    }
+
+    @Override
+    public String toString() {
+        if (profile != null) {
+            return "GetCACaps(" + profile + ")";
+        } else {
+            return "GetCACaps";
+        }
+    }
 }
