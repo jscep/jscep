@@ -138,6 +138,8 @@ public class EnrolmentTransaction extends Transaction {
      * @throws InvalidContentException
      */
     public State poll() throws TransactionException {
+    	// TransactionId can be generated from PublicKey (no need to share TransactionId).
+    	
         X500Name issuerName = X509Util.toX509Name(issuer
                 .getSubjectX500Principal());
         X500Name subjectName = request.getMessageData().getSubject();
