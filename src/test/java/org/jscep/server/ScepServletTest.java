@@ -14,9 +14,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertStore;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Collection;
@@ -131,19 +128,10 @@ public class ScepServletTest {
     private X509Certificate getRecipient() throws Exception {
         GetCaCertRequest req = new GetCaCertRequest();
         Transport transport = new HttpGetTransport(getURL());
-        CertificateFactory factory;
-        try {
-            factory = CertificateFactory.getInstance("X509");
-        } catch (CertificateException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
 
-            throw ioe;
-        }
         CertStore store = transport.sendRequest(req,
-                new GetCaCertResponseHandler(factory));
-        Collection<? extends Certificate> certs = store
-                .getCertificates(new X509CertSelector());
+                new GetCaCertResponseHandler());
+        Collection<? extends Certificate> certs = store.getCertificates(null);
 
         if (certs.size() > 0) {
             return (X509Certificate) certs.iterator().next();
@@ -190,8 +178,10 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+                priKey);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
+                getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         Transaction t = new NonEnrollmentTransaction(transport, encoder,
@@ -209,8 +199,10 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+                priKey);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
+                getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         Transaction t = new NonEnrollmentTransaction(transport, encoder,
@@ -230,8 +222,10 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+                priKey);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
+                getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         Transaction t = new EnrolmentTransaction(transport, encoder, decoder,
@@ -251,8 +245,10 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+                priKey);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
+                getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         Transaction t = new EnrolmentTransaction(transport, encoder, decoder,
@@ -272,8 +268,10 @@ public class ScepServletTest {
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender, priKey);
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, getRecipient());
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+                priKey);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
+                getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
         EnrolmentTransaction trans = new EnrolmentTransaction(transport,

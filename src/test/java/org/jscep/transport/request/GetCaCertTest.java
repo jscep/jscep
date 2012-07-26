@@ -1,6 +1,6 @@
-package org.jscep.request;
+package org.jscep.transport.request;
 
-import org.jscep.transport.request.GetCaCapsRequest;
+import org.jscep.transport.request.GetCaCertRequest;
 import org.jscep.transport.request.Operation;
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,25 +8,25 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class GetCaCapsTest {
-    private GetCaCapsRequest fixture;
+public class GetCaCertTest {
+    private GetCaCertRequest fixture;
     private String caIdentifier;
 
     @Before
     public void setUp() {
         caIdentifier = "id";
-        fixture = new GetCaCapsRequest(caIdentifier);
+        fixture = new GetCaCertRequest(caIdentifier);
     }
 
     @Test
     public void testNullConstructor() {
-        fixture = new GetCaCapsRequest();
+        fixture = new GetCaCertRequest();
         Assert.assertEquals("", fixture.getMessage());
     }
 
     @Test
     public void testGetOperation() {
-        Assert.assertSame(Operation.GET_CA_CAPS, fixture.getOperation());
+        Assert.assertSame(Operation.GET_CA_CERT, fixture.getOperation());
     }
 
     @Test

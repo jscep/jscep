@@ -1,4 +1,4 @@
-package org.jscep.content;
+package org.jscep.transport.response;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;

@@ -1,4 +1,4 @@
-package org.jscep.response;
+package org.jscep.transport.response;
 
 import java.security.Provider;
 import java.security.Provider.Service;

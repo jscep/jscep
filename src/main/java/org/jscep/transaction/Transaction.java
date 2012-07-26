@@ -25,7 +25,6 @@ package org.jscep.transaction;
 import java.io.IOException;
 import java.security.cert.CertStore;
 
-import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.message.CertRep;
 import org.jscep.message.MessageDecodingException;
@@ -80,7 +79,8 @@ public abstract class Transaction {
 
     public abstract TransactionId getId();
 
-    protected CMSSignedData send(final PkiOperationResponseHandler handler, final Request req) throws TransactionException {
+    protected CMSSignedData send(final PkiOperationResponseHandler handler,
+            final Request req) throws TransactionException {
         try {
             return transport.sendRequest(req, handler);
         } catch (TransportException e) {
@@ -88,11 +88,13 @@ public abstract class Transaction {
         }
     }
 
-    protected PkiMessage<?> decode(CMSSignedData res) throws MessageDecodingException {
+    protected PkiMessage<?> decode(CMSSignedData res)
+            throws MessageDecodingException {
         return decoder.decode(res);
     }
 
-    protected CMSSignedData encode(final PkiMessage<?> message) throws MessageEncodingException {
+    protected CMSSignedData encode(final PkiMessage<?> message)
+            throws MessageEncodingException {
         return encoder.encode(message);
     }
 
@@ -115,15 +117,10 @@ public abstract class Transaction {
         return state;
     }
 
-    protected CertStore extractCertStore(CertRep response) throws TransactionException {
-        try {
-            CMSSignedData signedData = new CMSSignedData(
-                    response.getMessageData());
+    protected CertStore extractCertStore(CertRep response) {
+        CMSSignedData signedData = response.getMessageData();
 
-            return CertStoreUtils.fromSignedData(signedData);
-        } catch (CMSException e) {
-            throw new TransactionException(e);
-        }
+        return CertStoreUtils.fromSignedData(signedData);
     }
 
     protected IOException ioe(Throwable t) {

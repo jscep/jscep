@@ -31,7 +31,7 @@ package org.jscep.transport.request;
  * 
  * @author David Grant
  * @see org.jscep.transport.Transport#sendRequest(Request,
- *      org.jscep.content.ScepContentHandler)
+ *      org.jscep.transport.response.ScepResponseHandler)
  */
 public abstract class Request {
     private final Operation operation;

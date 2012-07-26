@@ -21,6 +21,9 @@
  */
 package org.jscep.transport.response;
 
+import org.jscep.transport.request.GetNextCaCertRequest;
+import org.jscep.transport.request.PkiOperationRequest;
+
 /**
  * This class represents a single SCEP server capability.
  * 
@@ -29,10 +32,14 @@ package org.jscep.transport.response;
 public enum Capability {
     /**
      * CA Supports the GetNextCACert message.
+     * 
+     * @see GetNextCaCertRequest
      */
     GET_NEXT_CA_CERT("GetNextCACert", "Certificate Rollover"),
     /**
-     * PKIOPeration messages may be sent via HTTP POST.
+     * PKIOperation messages may be sent via HTTP POST.
+     * 
+     * @see PkiOperationRequest
      */
     POST_PKI_OPERATION("POSTPKIOperation", "HTTP POST"),
     /**

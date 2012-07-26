@@ -1,4 +1,4 @@
-package org.jscep.content;
+package org.jscep.transport.response;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

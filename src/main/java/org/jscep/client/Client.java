@@ -29,8 +29,6 @@ import java.net.URL;
 import java.security.PrivateKey;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -262,16 +260,9 @@ public final class Client {
         final GetCaCertRequest req = new GetCaCertRequest(profile);
         final Transport trans = new HttpGetTransport(url);
 
-        CertificateFactory factory;
-        try {
-            factory = CertificateFactory.getInstance("X509");
-        } catch (CertificateException e) {
-            throw new RuntimeException(e);
-        }
         CertStore store;
         try {
-            store = trans.sendRequest(req, new GetCaCertResponseHandler(
-                    factory));
+            store = trans.sendRequest(req, new GetCaCertResponseHandler());
         } catch (TransportException e) {
             throw new ClientException(e);
         }
@@ -401,8 +392,8 @@ public final class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(identity, key, profile), getDecoder(identity, key, signer),
-                iasn, MessageType.GET_CRL);
+                getEncoder(identity, key, profile), getDecoder(identity, key,
+                        signer), iasn, MessageType.GET_CRL);
         State state;
         try {
             state = t.send();
@@ -490,8 +481,8 @@ public final class Client {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
-                getEncoder(identity, key, profile), getDecoder(identity, key, signer),
-                iasn, MessageType.GET_CERT);
+                getEncoder(identity, key, profile), getDecoder(identity, key,
+                        signer), iasn, MessageType.GET_CERT);
 
         State state;
         try {
@@ -687,7 +678,7 @@ public final class Client {
         // The CA or RA
         return selectRecipientCertificate(store);
     }
-    
+
     private X509Certificate getSignerCertificate(String profile)
             throws ClientException {
         final CertStore store = getCaCertificate(profile);

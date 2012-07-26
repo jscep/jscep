@@ -22,6 +22,7 @@
  */
 package org.jscep.message;
 
+import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
@@ -31,7 +32,7 @@ import org.jscep.transaction.TransactionId;
 /**
  * This class represents a <tt>CertRep</tt> <tt>pkiMessage</tt>.
  */
-public class CertRep extends PkiResponse<byte[]> {
+public class CertRep extends PkiResponse<CMSSignedData> {
     /**
      * Creates a new CertRep to indicate <em>success</em> state.
      * 
@@ -45,7 +46,7 @@ public class CertRep extends PkiResponse<byte[]> {
      *            the message data
      */
     public CertRep(TransactionId transId, Nonce senderNonce,
-            Nonce recipientNonce, byte[] messageData) {
+            Nonce recipientNonce, CMSSignedData messageData) {
         super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
                 PkiStatus.SUCCESS, messageData, null);
     }

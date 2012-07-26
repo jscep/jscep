@@ -1,6 +1,12 @@
 package org.jscep.transport.response;
 
-public class ContentException extends Exception {
+import org.jscep.transport.TransportException;
+
+/**
+ * The <tt>ContentException</tt> is a specialised <tt>TransportException</tt>
+ * which relates directly to invalid content being sent by a SCEP server.
+ */
+public class ContentException extends TransportException {
     private static final long serialVersionUID = -959127316844320818L;
 
     public ContentException(Throwable cause) {

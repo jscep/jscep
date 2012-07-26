@@ -45,7 +45,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -215,7 +214,8 @@ public abstract class ScepServlet extends HttpServlet {
             try {
                 PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
                         getRecipient(), getRecipientKey());
-                PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, reqCert);
+                PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
+                        reqCert);
                 msg = decoder.decode(sd);
             } catch (MessageDecodingException e) {
                 LOGGER.error("Error decoding request", e);
@@ -243,10 +243,10 @@ public abstract class ScepServlet extends HttpServlet {
                         certRep = new CertRep(transId, senderNonce,
                                 recipientNonce, FailInfo.badCertId);
                     } else {
-                        DEROctetString messageData = getMessageData(issued);
+                        CMSSignedData messageData = getMessageData(issued);
 
                         certRep = new CertRep(transId, senderNonce,
-                                recipientNonce, messageData.getOctets());
+                                recipientNonce, messageData);
                     }
                 } catch (OperationFailureException e) {
                     certRep = new CertRep(transId, senderNonce, recipientNonce,
@@ -267,10 +267,10 @@ public abstract class ScepServlet extends HttpServlet {
                         certRep = new CertRep(transId, senderNonce,
                                 recipientNonce);
                     } else {
-                        DEROctetString messageData = getMessageData(issued);
+                        CMSSignedData messageData = getMessageData(issued);
 
                         certRep = new CertRep(transId, senderNonce,
-                                recipientNonce, messageData.getOctets());
+                                recipientNonce, messageData);
                     }
                 } catch (OperationFailureException e) {
                     certRep = new CertRep(transId, senderNonce, recipientNonce,
@@ -286,11 +286,11 @@ public abstract class ScepServlet extends HttpServlet {
 
                 try {
                     LOGGER.debug("Invoking doGetCrl");
-                    DEROctetString messageData = getMessageData(doGetCrl(
+                    CMSSignedData messageData = getMessageData(doGetCrl(
                             issuer, serialNumber));
 
                     certRep = new CertRep(transId, senderNonce, recipientNonce,
-                            messageData.getOctets());
+                            messageData);
                 } catch (OperationFailureException e) {
                     LOGGER.error("Error executing GetCRL request", e);
                     certRep = new CertRep(transId, senderNonce, recipientNonce,
@@ -310,10 +310,10 @@ public abstract class ScepServlet extends HttpServlet {
                         certRep = new CertRep(transId, senderNonce,
                                 recipientNonce);
                     } else {
-                        DEROctetString messageData = getMessageData(issued);
+                        CMSSignedData messageData = getMessageData(issued);
 
                         certRep = new CertRep(transId, senderNonce,
-                                recipientNonce, messageData.getOctets());
+                                recipientNonce, messageData);
                     }
                 } catch (OperationFailureException e) {
                     certRep = new CertRep(transId, senderNonce, recipientNonce,
@@ -345,7 +345,7 @@ public abstract class ScepServlet extends HttpServlet {
         }
     }
 
-    private DEROctetString getMessageData(List<X509Certificate> certs)
+    private CMSSignedData getMessageData(List<X509Certificate> certs)
             throws IOException, CMSException, GeneralSecurityException {
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
         JcaCertStore store;
@@ -358,12 +358,10 @@ public abstract class ScepServlet extends HttpServlet {
             throw ioe;
         }
         generator.addCertificates(store);
-        CMSSignedData signed = generator.generate(new CMSAbsentContent());
-
-        return new DEROctetString(signed.getEncoded());
+        return generator.generate(new CMSAbsentContent());
     }
 
-    private DEROctetString getMessageData(X509CRL crl) throws IOException,
+    private CMSSignedData getMessageData(X509CRL crl) throws IOException,
             CMSException, GeneralSecurityException {
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
         JcaCRLStore store;
@@ -373,9 +371,7 @@ public abstract class ScepServlet extends HttpServlet {
             store = new JcaCRLStore(Collections.singleton(crl));
         }
         generator.addCertificates(store);
-        CMSSignedData signed = generator.generate(new CMSAbsentContent());
-
-        return new DEROctetString(signed.getEncoded());
+        return generator.generate(new CMSAbsentContent());
     }
 
     private void doGetNextCaCert(HttpServletRequest req, HttpServletResponse res)
@@ -581,7 +577,8 @@ public abstract class ScepServlet extends HttpServlet {
             throws OperationFailureException, Exception;
 
     /**
-     * Returns the private key of the recipient entity represented by this SCEP server.
+     * Returns the private key of the recipient entity represented by this SCEP
+     * server.
      * 
      * @return the private key.
      */
@@ -593,7 +590,7 @@ public abstract class ScepServlet extends HttpServlet {
      * @return the certificate.
      */
     protected abstract X509Certificate getRecipient();
-    
+
     /**
      * Returns the private key of the entity represented by this SCEP server.
      * 

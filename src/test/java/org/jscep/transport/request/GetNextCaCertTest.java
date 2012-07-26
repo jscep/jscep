@@ -1,4 +1,4 @@
-package org.jscep.request;
+package org.jscep.transport.request;
 
 import org.jscep.transport.request.GetNextCaCertRequest;
 import org.jscep.transport.request.Operation;

@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreParameters;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
@@ -45,11 +46,6 @@ public final class GetCaCertResponseHandler implements
         ScepResponseHandler<CertStore> {
     private static final String RA_CERT = "application/x-x509-ca-ra-cert";
     private static final String CA_CERT = "application/x-x509-ca-cert";
-    private CertificateFactory factory;
-
-    public GetCaCertResponseHandler(CertificateFactory factory) {
-        this.factory = factory;
-    }
 
     /**
      * {@inheritDoc}
@@ -61,6 +57,12 @@ public final class GetCaCertResponseHandler implements
             throws ContentException {
         if (mimeType.startsWith(CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.1
+            CertificateFactory factory;
+            try {
+                factory = CertificateFactory.getInstance("X509");
+            } catch (CertificateException e) {
+                throw new RuntimeException(e);
+            }
             try {
                 X509Certificate ca = (X509Certificate) factory
                         .generateCertificate(new ByteArrayInputStream(content));

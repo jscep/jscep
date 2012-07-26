@@ -1,6 +1,9 @@
 package org.jscep.transport.response;
 
-
+/**
+ * <tt>InvalidContentException</tt> is thrown if a {@link ScepResponseHandler}
+ * is unable to parse the content returned by the SCEP server.
+ */
 public class InvalidContentException extends ContentException {
     /**
      * 

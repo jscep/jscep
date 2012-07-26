@@ -1,15 +1,11 @@
-package org.jscep.content;
+package org.jscep.transport.response;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.jscep.transport.response.GetCaCertResponseHandler;
-import org.jscep.transport.response.InvalidContentException;
-import org.jscep.transport.response.InvalidContentTypeException;
 import org.jscep.util.X509Certificates;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +15,7 @@ public class CaCertificateContentHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        CertificateFactory factory = CertificateFactory.getInstance("X509");
-        fixture = new GetCaCertResponseHandler(factory);
+        fixture = new GetCaCertResponseHandler();
     }
 
     @Test

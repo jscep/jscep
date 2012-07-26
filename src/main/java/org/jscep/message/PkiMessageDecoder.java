@@ -67,13 +67,15 @@ public class PkiMessageDecoder {
     private final PkcsPkiEnvelopeDecoder decoder;
     private final X509Certificate signer;
 
-    public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder, X509Certificate signer) {
+    public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder,
+            X509Certificate signer) {
         this.decoder = decoder;
         this.signer = signer;
     }
 
     @SuppressWarnings("unchecked")
-    public PkiMessage<?> decode(CMSSignedData signedData) throws MessageDecodingException {
+    public PkiMessage<?> decode(CMSSignedData signedData)
+            throws MessageDecodingException {
         // The signed content is always an octet string
         CMSProcessable signedContent = signedData.getSignedContent();
 
@@ -107,21 +109,17 @@ public class PkiMessageDecoder {
 
         MessageType messageType = toMessageType(attrTable
                 .get(toOid(MESSAGE_TYPE)));
-        Nonce senderNonce = toNonce(attrTable
-                .get(toOid(SENDER_NONCE)));
-        TransactionId transId = toTransactionId(attrTable
-                .get(toOid(TRANS_ID)));
+        Nonce senderNonce = toNonce(attrTable.get(toOid(SENDER_NONCE)));
+        TransactionId transId = toTransactionId(attrTable.get(toOid(TRANS_ID)));
 
         PkiMessage<?> pkiMessage;
         if (messageType == MessageType.CERT_REP) {
-            PkiStatus pkiStatus = toPkiStatus(attrTable
-                    .get(toOid(PKI_STATUS)));
+            PkiStatus pkiStatus = toPkiStatus(attrTable.get(toOid(PKI_STATUS)));
             Nonce recipientNonce = toNonce(attrTable
                     .get(toOid(RECIPIENT_NONCE)));
 
             if (pkiStatus == PkiStatus.FAILURE) {
-                FailInfo failInfo = toFailInfo(attrTable
-                        .get(toOid(FAIL_INFO)));
+                FailInfo failInfo = toFailInfo(attrTable.get(toOid(FAIL_INFO)));
 
                 pkiMessage = new CertRep(transId, senderNonce, recipientNonce,
                         failInfo);
@@ -132,11 +130,15 @@ public class PkiMessageDecoder {
                 final CMSEnvelopedData ed = getEnvelopedData(signedContent
                         .getContent());
                 final byte[] envelopedContent = decoder.decode(ed);
-                DEROctetString messageData = new DEROctetString(
-                        envelopedContent);
+                CMSSignedData messageData;
+                try {
+                    messageData = new CMSSignedData(envelopedContent);
+                } catch (CMSException e) {
+                   throw new MessageDecodingException(e);
+                }
 
                 pkiMessage = new CertRep(transId, senderNonce, recipientNonce,
-                        messageData.getOctets());
+                        messageData);
             }
         } else {
             CMSEnvelopedData ed = getEnvelopedData(signedContent.getContent());

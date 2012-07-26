@@ -94,11 +94,7 @@ public class HttpGetTransport extends Transport {
             throw new TransportException("Error reading response stream", e);
         }
 
-        try {
-            return handler.getResponse(response, conn.getContentType());
-        } catch (Exception e) {
-            throw new TransportException(e);
-        }
+        return handler.getResponse(response, conn.getContentType());
     }
 
     private URL getUrl(Operation op, String message)

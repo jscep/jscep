@@ -86,6 +86,13 @@ public class PkiMessageEncoder {
                 } catch (IOException e) {
                     throw new MessageEncodingException(e);
                 }
+            } else if (message.getMessageData() instanceof CMSSignedData) {
+                try {
+                    ed = enveloper.encode(((CMSSignedData) message.getMessageData())
+                            .getEncoded());
+                } catch (IOException e) {
+                    throw new MessageEncodingException(e);
+                }
             } else {
                 try {
                     ed = enveloper.encode(((ASN1Object) message.getMessageData())

@@ -3,8 +3,9 @@ package org.jscep.transport.response;
 import java.util.Arrays;
 
 /**
- * This class represents a server error where an unexpected content type is
- * received.
+ * <tt>InvalidContentTypeException</tt> is thrown if the HTTP
+ * <tt>Content-Type</tt> header sent by the server does not match the value
+ * expected by a {@link ScepResponseHandler}.
  */
 public class InvalidContentTypeException extends ContentException {
     private static final long serialVersionUID = 8144078591967730995L;

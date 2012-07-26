@@ -29,8 +29,8 @@ import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
 /**
- * This class represents an abstract SCEP PkiMessage, which may be either a
- * request or response.
+ * This class represents an abstract SCEP <tt>pkiMessage</tt>, which may be
+ * either a request or response.
  * 
  * @param <T>
  *            the MessageData for this message.
@@ -67,12 +67,12 @@ public abstract class PkiMessage<T> {
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return HashCodeBuilder.reflectionHashCode(this, new String[] {"messageData"});
     }
 
     @Override
     public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+        return EqualsBuilder.reflectionEquals(this, obj, new String[] {"messageData"});
     }
 
     @Override

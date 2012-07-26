@@ -12,6 +12,7 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
@@ -21,11 +22,19 @@ import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSAbsentContent;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.CMSTypedData;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
+import org.bouncycastle.util.Store;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.Nonce;
@@ -53,6 +62,16 @@ public class PkiMessageEncoderTest {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(issuer, serial);
         PKCS10CertificationRequest csr = getCsr(new X500Principal("CN=Client"),
                 pair.getPublic(), pair.getPrivate(), "password".toCharArray());
+        CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
+        ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA").build(pair.getPrivate());
+        X509Certificate cert = X509Certificates.createEphemeral(new X500Principal("CN=client"), pair);
+        Store certs = new JcaCertStore(Collections.singleton(cert));
+        gen.addSignerInfoGenerator(
+                new JcaSignerInfoGeneratorBuilder(
+                     new JcaDigestCalculatorProviderBuilder().build()).build(sha1Signer, cert));
+        gen.addCertificates(certs);
+        CMSTypedData msg = new CMSAbsentContent();
+        CMSSignedData sigData = gen.generate(msg, false);
 
         params.add(new Object[] {new GetCert(transId, senderNonce, iasn)});
         params.add(new Object[] {new GetCertInitial(transId, senderNonce, ias)});
@@ -61,7 +80,7 @@ public class PkiMessageEncoderTest {
         params.add(new Object[] {new CertRep(transId, senderNonce,
                 recipientNonce)});
         params.add(new Object[] {new CertRep(transId, senderNonce,
-                recipientNonce, new byte[0])});
+                recipientNonce, sigData)});
         params.add(new Object[] {new CertRep(transId, senderNonce,
                 recipientNonce, FailInfo.badAlg)});
 

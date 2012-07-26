@@ -1,4 +1,4 @@
-package org.jscep.content;
+package org.jscep.transport.response;
 
 import org.jscep.transport.response.InvalidContentTypeException;
 import org.jscep.transport.response.PkiOperationResponseHandler;
