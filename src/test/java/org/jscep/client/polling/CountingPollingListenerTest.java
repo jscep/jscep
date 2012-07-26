@@ -20,22 +20,22 @@ public class CountingPollingListenerTest {
     public void testPoll() {
         TransactionId id = TransactionId.createTransactionId();
         for (int i = 0; i < COUNT; i++) {
-            assertTrue(listener.poll(id));
+            assertTrue(listener.pendingStatus(id));
         }
-        assertFalse(listener.poll(id));
+        assertFalse(listener.pendingStatus(id));
     }
 
     @Test
     public void testPollingTerminatedResets() {
         TransactionId id = TransactionId.createTransactionId();
         for (int i = 0; i < COUNT; i++) {
-            assertTrue(listener.poll(id));
+            assertTrue(listener.pendingStatus(id));
         }
         listener.pollingTerminated(id);
         for (int i = 0; i < COUNT; i++) {
-            assertTrue(listener.poll(id));
+            assertTrue(listener.pendingStatus(id));
         }
-        assertFalse(listener.poll(id));
+        assertFalse(listener.pendingStatus(id));
     }
 
 }

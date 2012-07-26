@@ -18,7 +18,7 @@ public interface PollingListener {
      * @return <tt>true</tt> if the client should poll, <tt>false</tt>
      *         otherwise.
      */
-    boolean poll(TransactionId id);
+    boolean pendingStatus(TransactionId id);
 
     /**
      * This method is invoked when the client gives up polling.

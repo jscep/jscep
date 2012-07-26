@@ -26,7 +26,7 @@ public class CountingPollingListener implements PollingListener {
     /**
      * {@inheritDoc}
      */
-    public synchronized boolean poll(final TransactionId id) {
+    public synchronized boolean pendingStatus(final TransactionId id) {
         transAttempts.putIfAbsent(id, 1);
 
         int attempts = transAttempts.get(id);

@@ -24,25 +24,25 @@ public class DelegatingPollingListenerTest {
     @Test
     public void testPollDelegatesNone() {
         TransactionId id = TransactionId.createTransactionId();
-        assertFalse(noDelegateslistener.poll(id));
+        assertFalse(noDelegateslistener.pendingStatus(id));
     }
 
     @Test
     public void testPollDelegatesNoPoll() {
         TransactionId id = TransactionId.createTransactionId();
-        oneDelegatelistener.poll(id);
+        oneDelegatelistener.pendingStatus(id);
 
-        verify(delegate).poll(id);
+        verify(delegate).pendingStatus(id);
     }
 
     @Test
     public void testPollDelegatesPoll() {
         TransactionId id = TransactionId.createTransactionId();
-        when(delegate.poll(id)).thenReturn(true);
+        when(delegate.pendingStatus(id)).thenReturn(true);
 
-        oneDelegatelistener.poll(id);
+        oneDelegatelistener.pendingStatus(id);
 
-        verify(delegate).poll(id);
+        verify(delegate).pendingStatus(id);
     }
 
     @Test

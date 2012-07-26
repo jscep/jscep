@@ -11,7 +11,7 @@ public final class NoPollPollingListener implements PollingListener {
      * 
      * {@inheritDoc}
      */
-    public boolean poll(final TransactionId id) {
+    public boolean pendingStatus(final TransactionId id) {
         return false;
     }
 

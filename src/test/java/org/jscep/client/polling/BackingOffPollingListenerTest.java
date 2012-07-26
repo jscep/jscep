@@ -23,9 +23,9 @@ public class BackingOffPollingListenerTest {
     public void testPoll() {
         TransactionId id = TransactionId.createTransactionId();
         long start = System.currentTimeMillis();
-        assertTrue(listener.poll(id));
+        assertTrue(listener.pendingStatus(id));
         long mid = System.currentTimeMillis();
-        assertTrue(listener.poll(id));
+        assertTrue(listener.pendingStatus(id));
         long end = System.currentTimeMillis();
         double firstDuration = Long.valueOf(mid - start).doubleValue();
         double secondDuration = Long.valueOf(end - mid).doubleValue();
@@ -46,7 +46,7 @@ public class BackingOffPollingListenerTest {
         t.start();
 
         long start = System.currentTimeMillis();
-        assertTrue(listener.poll(id));
+        assertTrue(listener.pendingStatus(id));
         long end = System.currentTimeMillis();
         double actualDuration = Long.valueOf(end - start).doubleValue();
         double expectedDuration = UNIT.toMillis(DURATION) * 0.95;
@@ -59,7 +59,7 @@ public class BackingOffPollingListenerTest {
         TransactionId id = TransactionId.createTransactionId();
 
         listener.pollingTerminated(id);
-        assertTrue(listener.poll(id));
+        assertTrue(listener.pendingStatus(id));
     }
 
 }

@@ -21,17 +21,16 @@
  */
 package org.jscep.transaction;
 
+import net.jcip.annotations.Immutable;
+
 /**
  * This class represents the error condition when an invalid Nonce is received
  * by a SCEP peer.
  * 
  * @author David Grant
  */
+@Immutable
 public class InvalidNonceException extends TransactionException {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 3875364340108674893L;
 
     /**

@@ -16,7 +16,7 @@ public class NoPollPollingListenerTest {
     
     @Test
     public void testPoll() {
-        assertFalse(listener.poll(TransactionId.createTransactionId()));
+        assertFalse(listener.pendingStatus(TransactionId.createTransactionId()));
     }
     
     @Test
@@ -24,7 +24,7 @@ public class NoPollPollingListenerTest {
         TransactionId id = TransactionId.createTransactionId();
 
         listener.pollingTerminated(id);
-        assertFalse(listener.poll(id));
+        assertFalse(listener.pendingStatus(id));
     }
 
 }

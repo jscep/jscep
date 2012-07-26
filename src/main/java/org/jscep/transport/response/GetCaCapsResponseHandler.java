@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,7 +58,7 @@ public final class GetCaCapsResponseHandler implements
                     mimeType);
         }
 
-        final Capabilities caps = new Capabilities();
+        final EnumSet<Capability> caps = EnumSet.noneOf(Capability.class);
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("CA capabilities:");
@@ -90,6 +91,6 @@ public final class GetCaCapsResponseHandler implements
             }
         }
 
-        return caps;
+        return new Capabilities(caps.toArray(new Capability[0]));
     }
 }

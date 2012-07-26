@@ -64,10 +64,6 @@ public final class TransactionId {
         }
     }
 
-    public byte[] getBytes() {
-        return ArrayUtils.clone(id);
-    }
-
     /**
      * Creates a new Transaction Id
      * <p/>

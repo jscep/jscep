@@ -27,11 +27,14 @@ import java.security.Security;
 import java.util.Collections;
 import java.util.EnumSet;
 
+import net.jcip.annotations.Immutable;
+
 /**
  * This class represents a set of capabilities for a particular SCEP server.
  * 
  * @author David Grant
  */
+@Immutable
 public final class Capabilities {
     private EnumSet<Capability> capabilities;
 
@@ -44,16 +47,6 @@ public final class Capabilities {
     public Capabilities(Capability... capabilities) {
         this.capabilities = EnumSet.noneOf(Capability.class);
         Collections.addAll(this.capabilities, capabilities);
-    }
-
-    /**
-     * Add the provided capability to this capabilities set.
-     * 
-     * @param capability
-     *            the capability to add.
-     */
-    public void add(Capability capability) {
-        capabilities.add(capability);
     }
 
     /**

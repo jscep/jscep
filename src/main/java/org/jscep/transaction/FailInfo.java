@@ -31,42 +31,33 @@ public enum FailInfo {
     /**
      * Unrecognized or unsupported algorithm identifier
      */
-    badAlg(0, "Unrecognized or unsupported algorithm identifier"),
+    badAlg(0),
     /**
      * Integrity check failed
      */
-    badMessageCheck(1, "Integrity check failed"),
+    badMessageCheck(1),
     /**
      * Transaction not permitted or supported
      */
-    badRequest(2, "Transaction not permitted or supported"),
+    badRequest(2),
     /**
      * The signingTime attribute from the PKCS#7 SignedAttributes was not
      * sufficiently close to the system time
      */
-    badTime(
-            3,
-            "The signingTime attribute from the PKCS#7 SignedAttributes was not sufficiently close to the system time"),
+    badTime(3),
     /**
      * No certificate could be identified matching the provided criteria
      */
-    badCertId(4,
-            "No certificate could be identified matching the provided criteria");
+    badCertId(4);
 
     private final int value;
-    private final String desc;
 
-    private FailInfo(int value, String desc) {
+    private FailInfo(int value) {
         this.value = value;
-        this.desc = desc;
     }
 
     public int getValue() {
         return value;
-    }
-
-    public String getDescription() {
-        return desc;
     }
 
     @Override

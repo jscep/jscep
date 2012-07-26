@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 import net.jcip.annotations.ThreadSafe;
@@ -65,22 +63,12 @@ public class HttpPostTransport extends Transport {
                             + " messages.");
         }
 
-        URL url;
-        try {
-            url = getUrl(msg.getOperation());
-        } catch (MalformedURLException e) {
-            // This is probably a configuration error
-            throw new TransportException(e);
-        }
+        URL url = getUrl(msg.getOperation());
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) url.openConnection();
-        } catch (IOException e) {
-            throw new TransportException(e);
-        }
-        try {
             conn.setRequestMethod("POST");
-        } catch (ProtocolException e) {
+        } catch (IOException e) {
             throw new TransportException(e);
         }
         conn.setDoOutput(true);
@@ -130,13 +118,5 @@ public class HttpPostTransport extends Transport {
         }
 
         return handler.getResponse(response, conn.getContentType());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "[POST] " + getUrl();
     }
 }

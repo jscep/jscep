@@ -28,7 +28,7 @@ public final class ConstantTimePollingListener implements PollingListener {
     /**
      * {@inheritDoc}
      */
-    public synchronized boolean poll(final TransactionId id) {
+    public synchronized boolean pendingStatus(final TransactionId id) {
         try {
             unit.sleep(duration);
         } catch (InterruptedException e) {

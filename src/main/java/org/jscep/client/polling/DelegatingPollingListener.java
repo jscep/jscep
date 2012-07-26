@@ -38,12 +38,12 @@ public final class DelegatingPollingListener implements PollingListener {
      * <p>
      * {@inheritDoc}
      */
-    public boolean poll(final TransactionId id) {
+    public boolean pendingStatus(final TransactionId id) {
         if (listeners.length == 0) {
             return false;
         }
         for (PollingListener listener : listeners) {
-            if (!listener.poll(id)) {
+            if (!listener.pendingStatus(id)) {
                 return false;
             }
         }

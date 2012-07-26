@@ -23,7 +23,7 @@ public class ConstantTimePollingListenerTest {
     public void testPoll() {
         TransactionId id = TransactionId.createTransactionId();
         long start = System.currentTimeMillis();
-        assertTrue(listener.poll(id));
+        assertTrue(listener.pendingStatus(id));
         long end = System.currentTimeMillis();
         double actualDuration = Long.valueOf(end - start).doubleValue();
         double expectedDuration = UNIT.toMillis(DURATION) * 0.95;
@@ -42,7 +42,7 @@ public class ConstantTimePollingListenerTest {
         t.start();
 
         long start = System.currentTimeMillis();
-        assertTrue(listener.poll(id));
+        assertTrue(listener.pendingStatus(id));
         long end = System.currentTimeMillis();
         long actualDuration = end - start;
         long expectedDuration = UNIT.toMillis(DURATION);
@@ -55,7 +55,7 @@ public class ConstantTimePollingListenerTest {
         TransactionId id = TransactionId.createTransactionId();
 
         listener.pollingTerminated(id);
-        assertTrue(listener.poll(id));
+        assertTrue(listener.pendingStatus(id));
     }
 
 }

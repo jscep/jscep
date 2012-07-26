@@ -84,11 +84,15 @@ public abstract class Transport {
      * @param op
      *            the operation.
      * @return the URL for the given operation.
-     * @throws MalformedURLException
+     * @throws TransportException
      *             if the generated URL is malformed.
      */
-    final URL getUrl(final Operation op) throws MalformedURLException {
-        return new URL(url.toExternalForm() + "?operation=" + op.getName());
+    final URL getUrl(final Operation op) throws TransportException {
+    	try {
+    		return new URL(url.toExternalForm() + "?operation=" + op.getName());
+    	} catch (MalformedURLException e) {
+    		throw new TransportException(e);
+    	}
     }
 
     /**

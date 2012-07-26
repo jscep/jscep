@@ -22,7 +22,6 @@
  */
 package org.jscep.transaction;
 
-import java.io.IOException;
 import java.security.cert.CertStore;
 
 import org.bouncycastle.cms.CMSSignedData;
@@ -121,13 +120,6 @@ public abstract class Transaction {
         CMSSignedData signedData = response.getMessageData();
 
         return CertStoreUtils.fromSignedData(signedData);
-    }
-
-    protected IOException ioe(Throwable t) {
-        IOException ioe = new IOException();
-        ioe.initCause(t);
-
-        return ioe;
     }
 
     /**

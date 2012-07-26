@@ -583,7 +583,7 @@ public final class Client {
 
         State s = t.send();
         while (s == State.CERT_REQ_PENDING) {
-            if (listener.poll(t.getId())) {
+            if (listener.pendingStatus(t.getId())) {
                 s = t.poll();
             } else {
                 listener.pollingTerminated(t.getId());

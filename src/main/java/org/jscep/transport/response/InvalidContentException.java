@@ -1,9 +1,12 @@
 package org.jscep.transport.response;
 
+import net.jcip.annotations.Immutable;
+
 /**
  * <tt>InvalidContentException</tt> is thrown if a {@link ScepResponseHandler}
  * is unable to parse the content returned by the SCEP server.
  */
+@Immutable
 public class InvalidContentException extends ContentException {
     /**
      * 

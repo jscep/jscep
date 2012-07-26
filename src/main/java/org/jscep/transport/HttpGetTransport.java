@@ -55,14 +55,7 @@ public class HttpGetTransport extends Transport {
     @Override
     public <T> T sendRequest(Request msg, ScepResponseHandler<T> handler)
             throws TransportException {
-        URL url;
-        try {
-            url = getUrl(msg.getOperation(), msg.getMessage());
-        } catch (MalformedURLException e) {
-            throw new TransportException(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new TransportException(e);
-        }
+        URL url = getUrl(msg.getOperation(), msg.getMessage());
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Sending {} to {}", msg, url);
         }
@@ -98,16 +91,14 @@ public class HttpGetTransport extends Transport {
     }
 
     private URL getUrl(Operation op, String message)
-            throws MalformedURLException, UnsupportedEncodingException {
-        return new URL(getUrl(op).toExternalForm() + "&message="
-                + URLEncoder.encode(message, "UTF-8"));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "[GET] " + getUrl();
+            throws TransportException {
+        try {
+			return new URL(getUrl(op).toExternalForm() + "&message="
+			        + URLEncoder.encode(message, "UTF-8"));
+		} catch (MalformedURLException e) {
+			throw new TransportException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new TransportException(e);
+		}
     }
 }
