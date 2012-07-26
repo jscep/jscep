@@ -28,11 +28,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
- * This class represents a <code>PKCSReq</code> request.
+ * The <tt>PkiOperationRequest</tt> class may represent a <tt>PKCSReq</tt>,
+ * <tt>GetCertInitial</tt>, <tt>GetCert</tt> and <tt>GetCRL</tt> request.
  * 
  * @author David Grant
  */
-public class PkcsReqRequest extends Request {
+public class PkiOperationRequest extends Request {
     private final byte[] msgData;
 
     /**
@@ -42,7 +43,7 @@ public class PkcsReqRequest extends Request {
      * @param msgData
      *            the pkiMessage to use.
      */
-    public PkcsReqRequest(byte[] msgData) {
+    public PkiOperationRequest(byte[] msgData) {
         super(Operation.PKI_OPERATION);
 
         this.msgData = ArrayUtils.clone(msgData);
@@ -52,7 +53,7 @@ public class PkcsReqRequest extends Request {
      * {@inheritDoc}
      */
     public String getMessage() {
-    	return Base64.encodeBase64String(msgData);
+        return Base64.encodeBase64String(msgData);
     }
 
     /**

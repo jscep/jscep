@@ -19,7 +19,7 @@ import org.jscep.content.PkcsReqResponseHandler;
 import org.jscep.message.GetCert;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.PkcsReqRequest;
+import org.jscep.request.PkiOperationRequest;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 import org.jscep.util.X509Certificates;
@@ -71,7 +71,7 @@ abstract public class AbstractTransportTest {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name,
                 serialNumber);
         GetCert getCert = new GetCert(transId, senderNonce, iasn);
-        PkcsReqRequest req = new PkcsReqRequest(enc.encode(getCert));
+        PkiOperationRequest req = new PkiOperationRequest(enc.encode(getCert));
 
         try {
             transport.sendRequest(req, new PkcsReqResponseHandler());

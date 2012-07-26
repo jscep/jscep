@@ -37,7 +37,7 @@ import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.jscep.content.ScepResponseHandler;
-import org.jscep.request.PkcsReqRequest;
+import org.jscep.request.PkiOperationRequest;
 import org.jscep.request.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,7 @@ public class HttpPostTransport extends Transport {
     @Override
     public <T> T sendRequest(Request msg, ScepResponseHandler<T> handler)
             throws TransportException {
-        if (!PkcsReqRequest.class.isAssignableFrom(msg.getClass())) {
+        if (!PkiOperationRequest.class.isAssignableFrom(msg.getClass())) {
             throw new IllegalArgumentException(
                     "POST transport may not be used for " + msg.getOperation()
                             + " messages.");

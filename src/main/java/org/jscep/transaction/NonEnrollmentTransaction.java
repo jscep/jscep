@@ -33,7 +33,7 @@ import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.message.PkiRequest;
-import org.jscep.request.PkcsReqRequest;
+import org.jscep.request.PkiOperationRequest;
 import org.jscep.transport.Transport;
 
 public class NonEnrollmentTransaction extends Transaction {
@@ -70,7 +70,7 @@ public class NonEnrollmentTransaction extends Transaction {
             throw new TransactionException(e);
         }
 
-        byte[] res = send(handler, new PkcsReqRequest(signedData));
+        byte[] res = send(handler, new PkiOperationRequest(signedData));
         CertRep response;
         try {
             response = (CertRep) decode(res);

@@ -28,6 +28,9 @@ import org.jscep.transaction.Nonce;
 import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
 
+/**
+ * This class represents a <tt>CertRep</tt> <tt>pkiMessage</tt>.
+ */
 public class CertRep extends PkiResponse<byte[]> {
     /**
      * Creates a new CertRep to indicate <em>success</em> state.

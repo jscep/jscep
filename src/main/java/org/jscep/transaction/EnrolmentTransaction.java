@@ -37,7 +37,7 @@ import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.request.PkcsReqRequest;
+import org.jscep.request.PkiOperationRequest;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.x509.X509Util;
@@ -104,7 +104,7 @@ public class EnrolmentTransaction extends Transaction {
         }
         LOGGER.debug("Sending {}", signedData);
         PkcsReqResponseHandler handler = new PkcsReqResponseHandler();
-        byte[] res = send(handler, new PkcsReqRequest(signedData));
+        byte[] res = send(handler, new PkiOperationRequest(signedData));
         LOGGER.debug("Received response {}", res);
 
         CertRep response;
@@ -152,7 +152,7 @@ public class EnrolmentTransaction extends Transaction {
             throw new TransactionException(e);
         }
         PkcsReqResponseHandler handler = new PkcsReqResponseHandler();
-        byte[] res = send(handler, new PkcsReqRequest(signedData));
+        byte[] res = send(handler, new PkiOperationRequest(signedData));
 
         CertRep response;
         try {
