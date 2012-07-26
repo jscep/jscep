@@ -35,6 +35,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessageDecoder;
@@ -54,6 +55,7 @@ import org.jscep.transport.response.Capabilities;
 import org.jscep.transport.response.GetCaCapsResponseHandler;
 import org.jscep.transport.response.GetCaCertResponseHandler;
 import org.jscep.transport.response.GetNextCaCertResponseHandler;
+import org.jscep.x509.X509Util;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -279,8 +281,9 @@ public class ScepServletTest {
         State state = trans.send();
         assertThat(state, is(State.CERT_REQ_PENDING));
 
-        trans.setIssuer(sender);
-        state = trans.poll();
+        IssuerAndSubject ias = new IssuerAndSubject(X509Util.toX509Name(sender.getIssuerX500Principal()), pollName);
+        trans = new EnrolmentTransaction(transport, encoder, decoder, ias, trans.getId());
+        state = trans.send();
         assertThat(state, is(State.CERT_REQ_PENDING));
     }
 

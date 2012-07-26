@@ -9,7 +9,6 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
@@ -24,11 +23,12 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
-import org.jscep.client.polling.NoPollPollingListener;
 import org.jscep.client.verification.OptimisticCertificateVerifier;
-import org.jscep.transaction.OperationFailureException;
+import org.jscep.transaction.FailInfo;
+import org.jscep.transaction.TransactionId;
 import org.junit.Assume;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * These tests are coupled to the ScepServletImpl class
@@ -36,89 +36,94 @@ import org.junit.Test;
  * @author David Grant
  */
 public class ClientTest extends AbstractClientTest {
-    @Test
-    public void testRenewalEnrollAllowed() throws Exception {
-        // Ignore this test if the CA doesn't support renewal.
-        Assume.assumeTrue(client.getCaCapabilities().isRenewalSupported());
+	@Test
+	public void testRenewalEnrollAllowed() throws Exception {
+		// Ignore this test if the CA doesn't support renewal.
+		Assume.assumeTrue(client.getCaCapabilities().isRenewalSupported());
 
-        PKCS10CertificationRequest csr = getCsr(
-                identity.getSubjectX500Principal(), keyPair.getPublic(),
-                keyPair.getPrivate(), password);
-        client.enrol(identity, keyPair.getPrivate(), csr,
-                new NoPollPollingListener());
-    }
+		PKCS10CertificationRequest csr = getCsr(
+				identity.getSubjectX500Principal(), keyPair.getPublic(),
+				keyPair.getPrivate(), password);
+		client.enrol(identity, keyPair.getPrivate(), csr,
+				new EnrollmentListenerSupport() {
+				});
+	}
 
-    @Test
-    public void testEnroll() throws Exception {
-        PKCS10CertificationRequest csr = getCsr(
-                identity.getSubjectX500Principal(), keyPair.getPublic(),
-                keyPair.getPrivate(), password);
-        client.enrol(identity, keyPair.getPrivate(), csr,
-                new NoPollPollingListener());
-    }
+	@Test
+	public void testEnroll() throws Exception {
+		PKCS10CertificationRequest csr = getCsr(
+				identity.getSubjectX500Principal(), keyPair.getPublic(),
+				keyPair.getPrivate(), password);
+		client.enrol(identity, keyPair.getPrivate(), csr,
+				new EnrollmentListenerSupport() {
+				});
+	}
 
-    @Test
-    public void testEnrollThenGet() throws Exception {
-        CertStore cs = client.enrol(
-                identity,
-                keyPair.getPrivate(),
-                getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
-                        keyPair.getPrivate(), password),
-                new NoPollPollingListener());
-        X509Certificate issued = (X509Certificate) cs.getCertificates(null)
-                .iterator().next();
-        Certificate retrieved = client
-                .getCertificate(identity, keyPair.getPrivate(),
-                        issued.getSerialNumber()).getCertificates(null)
-                .iterator().next();
+	@Test
+	public void testEnrollThenGet() throws Exception {
+		CapturingEnrollmentListener listener = new CapturingEnrollmentListener();
+		client.enrol(
+				identity,
+				keyPair.getPrivate(),
+				getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
+						keyPair.getPrivate(), password),
+				listener);
+		X509Certificate issued = (X509Certificate) listener.getCertStore().getCertificates(null)
+				.iterator().next();
+		Certificate retrieved = client
+				.getCertificate(identity, keyPair.getPrivate(),
+						issued.getSerialNumber()).getCertificates(null)
+				.iterator().next();
 
-        assertEquals(issued, retrieved);
-    }
+		assertEquals(issued, retrieved);
+	}
 
-    @Test(expected = OperationFailureException.class)
-    public void testEnrollInvalidPassword() throws Exception {
-        client.enrol(
-                identity,
-                keyPair.getPrivate(),
-                getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
-                        keyPair.getPrivate(), new char[0]),
-                new NoPollPollingListener());
-    }
+	@Test
+	public void testEnrollInvalidPassword() throws Exception {
+		EnrollmentListener listener = Mockito.mock(EnrollmentListener.class);
+		client.enrol(
+				identity,
+				keyPair.getPrivate(),
+				getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
+						keyPair.getPrivate(), new char[0]),
+				listener);
+		Mockito.verify(listener).onFailure(Mockito.any(TransactionId.class), Mockito.any(FailInfo.class));
+	}
 
-    @Test
-    public void cgiProgIsIgnoredForIssue24() throws GeneralSecurityException,
-            MalformedURLException {
-        final URL url = new URL("http://someurl/certsrv/mscep/mscep.dll");
+	@Test
+	public void cgiProgIsIgnoredForIssue24() throws GeneralSecurityException,
+			MalformedURLException {
+		final URL url = new URL("http://someurl/certsrv/mscep/mscep.dll");
 
-        Client c = new Client(url, new DefaultCallbackHandler(
-                new OptimisticCertificateVerifier()));
-        assertNotNull(c);
-    }
+		Client c = new Client(url, new DefaultCallbackHandler(
+				new OptimisticCertificateVerifier()));
+		assertNotNull(c);
+	}
 
-    private PKCS10CertificationRequest getCsr(X500Principal subject,
-            PublicKey pubKey, PrivateKey priKey, char[] password)
-            throws GeneralSecurityException, IOException {
-        DERPrintableString cpSet = new DERPrintableString(new String(password));
-        SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
-                .getEncoded());
+	private PKCS10CertificationRequest getCsr(X500Principal subject,
+			PublicKey pubKey, PrivateKey priKey, char[] password)
+			throws GeneralSecurityException, IOException {
+		DERPrintableString cpSet = new DERPrintableString(new String(password));
+		SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
+				.getEncoded());
 
-        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(
-                "SHA1withRSA");
-        ContentSigner signer;
-        try {
-            signer = signerBuilder.build(priKey);
-        } catch (OperatorCreationException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
+		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(
+				"SHA1withRSA");
+		ContentSigner signer;
+		try {
+			signer = signerBuilder.build(priKey);
+		} catch (OperatorCreationException e) {
+			IOException ioe = new IOException();
+			ioe.initCause(e);
 
-            throw ioe;
-        }
+			throw ioe;
+		}
 
-        PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(
-                X500Name.getInstance(subject.getEncoded()), pkInfo);
-        builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword,
-                cpSet);
+		PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(
+				X500Name.getInstance(subject.getEncoded()), pkInfo);
+		builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword,
+				cpSet);
 
-        return builder.build(signer);
-    }
+		return builder.build(signer);
+	}
 }

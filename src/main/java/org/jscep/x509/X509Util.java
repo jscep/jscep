@@ -60,8 +60,7 @@ public final class X509Util {
         byte[] bytes = principal.getEncoded();
         return X500Name.getInstance(bytes);
     }
-
-
+    
     public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
             throws InvalidKeySpecException, IOException {
         SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();

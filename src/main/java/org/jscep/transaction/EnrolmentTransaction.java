@@ -23,10 +23,8 @@
 package org.jscep.transaction;
 
 import java.io.IOException;
-import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.asn1.IssuerAndSubject;
@@ -34,12 +32,16 @@ import org.jscep.message.CertRep;
 import org.jscep.message.GetCertInitial;
 import org.jscep.message.MessageDecodingException;
 import org.jscep.message.MessageEncodingException;
+import org.jscep.message.PkcsReq;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.transaction.Transaction.State;
+import org.jscep.message.PkiRequest;
 import org.jscep.transport.Transport;
+import org.jscep.transport.TransportException;
 import org.jscep.transport.request.PkiOperationRequest;
+import org.jscep.transport.response.InvalidContentException;
+import org.jscep.transport.response.InvalidContentTypeException;
 import org.jscep.transport.response.PkiOperationResponseHandler;
 import org.jscep.x509.X509Util;
 import org.slf4j.Logger;
@@ -57,162 +59,163 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 public class EnrolmentTransaction extends Transaction {
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(EnrolmentTransaction.class);
-    private final TransactionId transId;
-    private final org.jscep.message.PkcsReq request;
-    private static NonceQueue QUEUE = new NonceQueue();
-    private X509Certificate issuer;
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(EnrolmentTransaction.class);
+	private final TransactionId transId;
+	private final PkiRequest<?> request;
+	private static NonceQueue QUEUE = new NonceQueue();
 
-    public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder,
-            PkiMessageDecoder decoder, PKCS10CertificationRequest csr) throws TransactionException {
-        super(transport, encoder, decoder);
-        try {
-            this.transId = TransactionId.createTransactionId(
-                    X509Util.getPublicKey(csr), "SHA-1");
-        } catch (IOException e) {
-            throw new TransactionException(e);
-        } catch (InvalidKeySpecException e) {
-            throw new TransactionException(e);
-        }
-        this.request = new org.jscep.message.PkcsReq(transId,
-                Nonce.nextNonce(), csr);
-    }
+	public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder,
+			PkiMessageDecoder decoder, PKCS10CertificationRequest csr)
+			throws TransactionException {
+		super(transport, encoder, decoder);
+		try {
+			this.transId = TransactionId.createTransactionId(
+					X509Util.getPublicKey(csr), "SHA-1");
+		} catch (IOException e) {
+			throw new TransactionException(e);
+		} catch (InvalidKeySpecException e) {
+			throw new TransactionException(e);
+		}
+		this.request = new PkcsReq(transId, Nonce.nextNonce(), csr);
+	}
+	
+	public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, IssuerAndSubject ias, TransactionId transId) {
+		super(transport, encoder, decoder);
+		
+		this.transId = transId;
+		this.request = new GetCertInitial(transId, Nonce.nextNonce(), ias);
+	}
 
-    @Override
-    public TransactionId getId() {
-        return transId;
-    }
+	@Override
+	public TransactionId getId() {
+		return transId;
+	}
 
-    /**
-     * Performs a certificate enrolment for the CSR given in the constructor.
-     * 
-     * @return the resulting transaction state.
-     * @throws IOException
-     *             if any I/O error occurs.
-     * @throws TransportException
-     * @throws TransactionException 
-     * @throws InvalidContentTypeException
-     * @throws InvalidContentException
-     */
-    @Override
-    public State send() throws TransactionException {
-        CMSSignedData signedData;
-        try {
-            signedData = encode(request);
-        } catch (MessageEncodingException e) {
-            throw new TransactionException(e);
-        }
-        LOGGER.debug("Sending {}", signedData);
-        PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
-        CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
-        LOGGER.debug("Received response {}", res);
+	/**
+	 * Performs a certificate enrolment for the CSR given in the constructor.
+	 * 
+	 * @return the resulting transaction state.
+	 * @throws IOException
+	 *             if any I/O error occurs.
+	 * @throws TransportException
+	 * @throws TransactionException
+	 * @throws InvalidContentTypeException
+	 * @throws InvalidContentException
+	 */
+	@Override
+	public State send() throws TransactionException {
+		CMSSignedData signedData;
+		try {
+			signedData = encode(request);
+		} catch (MessageEncodingException e) {
+			throw new TransactionException(e);
+		}
+		LOGGER.debug("Sending {}", signedData);
+		PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
+		CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
+		LOGGER.debug("Received response {}", res);
 
-        CertRep response;
-        try {
-            response = (CertRep) decode(res);
-        } catch (MessageDecodingException e) {
-            throw new TransactionException(e);
-        }
-        validateExchange(request, response);
+		CertRep response;
+		try {
+			response = (CertRep) decode(res);
+		} catch (MessageDecodingException e) {
+			throw new TransactionException(e);
+		}
+		validateExchange(request, response);
 
-        LOGGER.debug("Response: {}", response);
+		LOGGER.debug("Response: {}", response);
 
-        if (response.getPkiStatus() == PkiStatus.FAILURE) {
-            return failure(response.getFailInfo());
-        } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
-            return success(extractCertStore(response));
-        } else {
-            return pending();
-        }
-    }
+		if (response.getPkiStatus() == PkiStatus.FAILURE) {
+			return failure(response.getFailInfo());
+		} else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
+			return success(extractCertStore(response));
+		} else {
+			return pending();
+		}
+	}
 
-    /**
-     * Polls the SCEP server for an update on the enrolment operation.
-     * 
-     * @return the resulting transaction state.
-     * @throws IOException
-     *             if any I/O error occurs.
-     * @throws TransactionException 
-     * @throws InvalidContentTypeException
-     * @throws InvalidContentException
-     */
-    public State poll() throws TransactionException {
-    	// TransactionId can be generated from PublicKey (no need to share TransactionId).
-    	
-        X500Name issuerName = X509Util.toX509Name(issuer
-                .getSubjectX500Principal());
-        X500Name subjectName = request.getMessageData().getSubject();
-        IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
-        final GetCertInitial pollReq = new GetCertInitial(transId,
-                Nonce.nextNonce(), ias);
+//	/**
+//	 * Polls the SCEP server for an update on the enrolment operation.
+//	 * 
+//	 * @return the resulting transaction state.
+//	 * @throws IOException
+//	 *             if any I/O error occurs.
+//	 * @throws TransactionException
+//	 */
+//	public State poll() throws TransactionException {
+//		// TransactionId can be generated from PublicKey (no need to share
+//		// TransactionId).
+//
+//		X500Name issuerName = X509Util.toX509Name(issuer
+//				.getSubjectX500Principal());
+//		X500Name subjectName = request.getMessageData().getSubject();
+//		IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
+//		final GetCertInitial pollReq = new GetCertInitial(transId,
+//				Nonce.nextNonce(), ias);
+//
+//		CMSSignedData signedData;
+//		try {
+//			// signedData =
+//			signedData = encode(pollReq);
+//		} catch (MessageEncodingException e) {
+//			throw new TransactionException(e);
+//		}
+//		PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
+//		CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
+//
+//		CertRep response;
+//		try {
+//			response = (CertRep) decode(res);
+//		} catch (MessageDecodingException e) {
+//			throw new TransactionException(e);
+//		}
+//		validateExchange(pollReq, response);
+//
+//		if (response.getPkiStatus() == PkiStatus.FAILURE) {
+//			return failure(response.getFailInfo());
+//		} else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
+//			return success(extractCertStore(response));
+//		} else {
+//			return pending();
+//		}
+//	}
 
-        CMSSignedData signedData;
-        try {
-//        	signedData = 
-            signedData = encode(pollReq);
-        } catch (MessageEncodingException e) {
-            throw new TransactionException(e);
-        }
-        PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
-        CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
+	private void validateExchange(PkiMessage<?> req, CertRep res)
+			throws TransactionException {
+		LOGGER.debug("Validating SCEP message exchange");
 
-        CertRep response;
-        try {
-            response = (CertRep) decode(res);
-        } catch (MessageDecodingException e) {
-            throw new TransactionException(e);
-        }
-        validateExchange(pollReq, response);
+		if (!res.getTransactionId().equals(req.getTransactionId())) {
+			throw new TransactionException("Transaction ID Mismatch");
+		} else {
+			LOGGER.debug("Matched transaction IDs");
+		}
 
-        if (response.getPkiStatus() == PkiStatus.FAILURE) {
-            return failure(response.getFailInfo());
-        } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
-            return success(extractCertStore(response));
-        } else {
-            return pending();
-        }
-    }
+		// The requester SHOULD verify that the recipientNonce of the reply
+		// matches the senderNonce it sent in the request.
+		if (!res.getRecipientNonce().equals(req.getSenderNonce())) {
+			throw new InvalidNonceException(
+					"Response recipient nonce and request sender nonce are not equal");
+		} else {
+			LOGGER.debug("Matched request senderNonce and response recipientNonce");
+		}
 
-    private void validateExchange(PkiMessage<?> req, CertRep res)
-            throws TransactionException {
-        LOGGER.debug("Validating SCEP message exchange");
+		if (res.getSenderNonce() == null) {
+			LOGGER.warn("Response senderNonce is null");
+			return;
+		}
 
-        if (!res.getTransactionId().equals(req.getTransactionId())) {
-            throw new TransactionException("Transaction ID Mismatch");
-        } else {
-            LOGGER.debug("Matched transaction IDs");
-        }
+		// http://tools.ietf.org/html/draft-nourse-scep-20#section-8.5
+		// Check that the nonce has not been encountered before.
+		if (QUEUE.contains(res.getSenderNonce())) {
+			throw new InvalidNonceException(
+					"This nonce has been encountered before.  Possible replay attack?");
+		} else {
+			QUEUE.add(res.getSenderNonce());
+			LOGGER.debug("{} has not been encountered before",
+					res.getSenderNonce());
+		}
 
-        // The requester SHOULD verify that the recipientNonce of the reply
-        // matches the senderNonce it sent in the request.
-        if (!res.getRecipientNonce().equals(req.getSenderNonce())) {
-            throw new InvalidNonceException(
-                    "Response recipient nonce and request sender nonce are not equal");
-        } else {
-            LOGGER.debug("Matched request senderNonce and response recipientNonce");
-        }
-
-        if (res.getSenderNonce() == null) {
-            LOGGER.warn("Response senderNonce is null");
-            return;
-        }
-
-        // http://tools.ietf.org/html/draft-nourse-scep-20#section-8.5
-        // Check that the nonce has not been encountered before.
-        if (QUEUE.contains(res.getSenderNonce())) {
-            throw new InvalidNonceException(
-                    "This nonce has been encountered before.  Possible replay attack?");
-        } else {
-            QUEUE.add(res.getSenderNonce());
-            LOGGER.debug("{} has not been encountered before",
-                    res.getSenderNonce());
-        }
-
-        LOGGER.debug("SCEP message exchange validated successfully");
-    }
-
-    public void setIssuer(X509Certificate issuer) {
-        this.issuer = issuer;
-    }
+		LOGGER.debug("SCEP message exchange validated successfully");
+	}
 }
