@@ -91,6 +91,6 @@ public final class GetCaCapsResponseHandler implements
             }
         }
 
-        return new Capabilities(caps.toArray(new Capability[0]));
+        return new Capabilities(caps.toArray(new Capability[caps.size()]));
     }
 }

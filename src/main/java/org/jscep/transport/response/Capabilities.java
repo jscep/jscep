@@ -36,7 +36,7 @@ import net.jcip.annotations.Immutable;
  */
 @Immutable
 public final class Capabilities {
-    private EnumSet<Capability> capabilities;
+    private final EnumSet<Capability> capabilities;
 
     /**
      * Constructs a new instance of this class with the specified capabilities.
