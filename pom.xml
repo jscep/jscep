@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -172,7 +173,7 @@
 						<upload>
 							<file>
 								${project.build.directory}/${project.artifactId}-${project.version}-sources.${project.packaging}
-                            </file>
+							</file>
 							<summary>Source JAR for v${project.version}</summary>
 							<labels>
 								<label>Featured</label>
@@ -182,7 +183,7 @@
 						<upload>
 							<file>
 								${project.build.directory}/${project.artifactId}-${project.version}-javadoc.${project.packaging}
-                            </file>
+							</file>
 							<summary>Javadoc JAR for ${project.version}</summary>
 							<labels>
 								<label>Featured</label>
@@ -192,7 +193,7 @@
 						<upload>
 							<file>
 								${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}
-                            </file>
+							</file>
 							<summary>Binary JAR for v${project.version}</summary>
 							<labels>
 								<label>Featured</label>
@@ -296,7 +297,8 @@
 		</dependency>
 	</dependencies>
 	<ciManagement>
-		<system>jenkins</system>
+		<system>Jenkins</system>
 		<url>https://jscep.ci.cloudbees.com/</url>
 	</ciManagement>
+	<inceptionYear>2009</inceptionYear>
 </project>
