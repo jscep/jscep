@@ -21,6 +21,7 @@
  */
 package org.jscep.transaction;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -37,8 +38,9 @@ import org.apache.commons.lang.ArrayUtils;
  * 
  * @author David Grant
  */
-public final class TransactionId {
-    private static final AtomicLong ID_SOURCE = new AtomicLong();
+public final class TransactionId implements Serializable {
+	private static final long serialVersionUID = -5248125945726721520L;
+	private static final AtomicLong ID_SOURCE = new AtomicLong();
     private final byte[] id;
 
     public TransactionId(byte[] id) {
