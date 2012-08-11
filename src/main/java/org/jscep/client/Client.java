@@ -527,10 +527,10 @@ public final class Client {
 	 *             if there is a problem with the SCEP transaction.
 	 * @see CertStoreInspector
 	 */
-	public void enrol(X509Certificate identity, PrivateKey key,
-			final PKCS10CertificationRequest csr, final EnrollmentListener listener)
+	public EnrolmentResponse enrol(X509Certificate identity, PrivateKey key,
+			final PKCS10CertificationRequest csr)
 			throws ClientException, TransactionException {
-		enrol(identity, key, csr, listener, null);
+		return enrol(identity, key, csr, null);
 	}
 
 	/**
@@ -560,9 +560,8 @@ public final class Client {
 	 *             if there is a problem with the SCEP transaction.
 	 * @see CertStoreInspector
 	 */
-	public void enrol(X509Certificate identity, PrivateKey key,
-			final PKCS10CertificationRequest csr,
-			final EnrollmentListener listener, String profile)
+	public EnrolmentResponse enrol(X509Certificate identity, PrivateKey key,
+			final PKCS10CertificationRequest csr, String profile)
 			throws ClientException, TransactionException {
 		LOGGER.debug("Enrolling certificate with CA");
 		// TRANSACTIONAL
@@ -575,29 +574,19 @@ public final class Client {
 		PkiMessageEncoder encoder = new PkiMessageEncoder(key, identity,
 				envEncoder);
 		PkiMessageDecoder decoder = getDecoder(identity, key, signer);
-		final EnrolmentTransaction t = new EnrolmentTransaction(transport,
+		final EnrolmentTransaction trans = new EnrolmentTransaction(transport,
 				encoder, decoder, csr);
-		State s = t.send();
-
-		if (s == State.CERT_ISSUED) {
-			listener.onSuccess(t.getId(), t.getCertStore());
-		} else if (s == State.CERT_REQ_PENDING) {
-			listener.onPending(t.getId());
-		} else {
-			listener.onFailure(t.getId(), t.getFailInfo());
-		}
+		return send(trans);
 	}
 
-	public void poll(X509Certificate identity, PrivateKey identityKey,
-			X500Principal subject, TransactionId transId,
-			EnrollmentListener listener) throws ClientException,
+	public EnrolmentResponse poll(X509Certificate identity, PrivateKey identityKey,
+			X500Principal subject, TransactionId transId) throws ClientException,
 			TransactionException {
-		poll(identity, identityKey, subject, transId, listener, null);
+		return poll(identity, identityKey, subject, transId, null);
 	}
 
-	public void poll(X509Certificate identity, PrivateKey identityKey,
-			X500Principal subject, TransactionId transId,
-			EnrollmentListener listener, String profile)
+	public EnrolmentResponse poll(X509Certificate identity, PrivateKey identityKey,
+			X500Principal subject, TransactionId transId, String profile)
 			throws ClientException, TransactionException {
 		final Transport transport = createTransport(profile);
 		CertStore store = getCaCertificate(profile);
@@ -611,16 +600,21 @@ public final class Client {
 		IssuerAndSubject ias = new IssuerAndSubject(X509Util.toX509Name(issuer
 				.getIssuerX500Principal()), X509Util.toX509Name(subject));
 
-		final EnrolmentTransaction t = new EnrolmentTransaction(transport,
+		final EnrolmentTransaction trans = new EnrolmentTransaction(transport,
 				encoder, decoder, ias, transId);
-		State s = t.send();
+		return send(trans);
+	}
+
+	private EnrolmentResponse send(final EnrolmentTransaction trans)
+			throws TransactionException {
+		State s = trans.send();
 
 		if (s == State.CERT_ISSUED) {
-			listener.onSuccess(t.getId(), t.getCertStore());
+			return new EnrolmentResponse(trans.getId(), trans.getCertStore());
 		} else if (s == State.CERT_REQ_PENDING) {
-			listener.onPending(t.getId());
+			return new EnrolmentResponse(trans.getId());
 		} else {
-			listener.onFailure(t.getId(), t.getFailInfo());
+			return new EnrolmentResponse(trans.getId(), trans.getFailInfo());
 		}
 	}
 

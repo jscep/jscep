@@ -2,6 +2,7 @@ package org.jscep.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,11 +25,8 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.jscep.client.verification.OptimisticCertificateVerifier;
-import org.jscep.transaction.FailInfo;
-import org.jscep.transaction.TransactionId;
 import org.junit.Assume;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * These tests are coupled to the ScepServletImpl class
@@ -44,9 +42,7 @@ public class ClientTest extends AbstractClientTest {
 		PKCS10CertificationRequest csr = getCsr(
 				identity.getSubjectX500Principal(), keyPair.getPublic(),
 				keyPair.getPrivate(), password);
-		client.enrol(identity, keyPair.getPrivate(), csr,
-				new EnrollmentListenerSupport() {
-				});
+		client.enrol(identity, keyPair.getPrivate(), csr);
 	}
 
 	@Test
@@ -54,21 +50,17 @@ public class ClientTest extends AbstractClientTest {
 		PKCS10CertificationRequest csr = getCsr(
 				identity.getSubjectX500Principal(), keyPair.getPublic(),
 				keyPair.getPrivate(), password);
-		client.enrol(identity, keyPair.getPrivate(), csr,
-				new EnrollmentListenerSupport() {
-				});
+		client.enrol(identity, keyPair.getPrivate(), csr);
 	}
 
 	@Test
 	public void testEnrollThenGet() throws Exception {
-		CapturingEnrollmentListener listener = new CapturingEnrollmentListener();
-		client.enrol(
+		EnrolmentResponse response = client.enrol(
 				identity,
 				keyPair.getPrivate(),
 				getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
-						keyPair.getPrivate(), password),
-				listener);
-		X509Certificate issued = (X509Certificate) listener.getCertStore().getCertificates(null)
+						keyPair.getPrivate(), password));
+		X509Certificate issued = (X509Certificate) response.getCertStore().getCertificates(null)
 				.iterator().next();
 		Certificate retrieved = client
 				.getCertificate(identity, keyPair.getPrivate(),
@@ -80,14 +72,12 @@ public class ClientTest extends AbstractClientTest {
 
 	@Test
 	public void testEnrollInvalidPassword() throws Exception {
-		EnrollmentListener listener = Mockito.mock(EnrollmentListener.class);
-		client.enrol(
+		EnrolmentResponse response = client.enrol(
 				identity,
 				keyPair.getPrivate(),
 				getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
-						keyPair.getPrivate(), new char[0]),
-				listener);
-		Mockito.verify(listener).onFailure(Mockito.any(TransactionId.class), Mockito.any(FailInfo.class));
+						keyPair.getPrivate(), new char[0]));
+		assertTrue(response.isFailure());
 	}
 
 	@Test
