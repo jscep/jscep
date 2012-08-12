@@ -12,7 +12,7 @@ import org.jscep.transaction.TransactionId;
 import org.junit.Before;
 import org.junit.Test;
 
-public class EnrolmentResponseTest {
+public class EnrollmentResponseTest {
 	private TransactionId transId;
 	private FailInfo failInfo;
 	private CertStore certStore;
@@ -84,16 +84,16 @@ public class EnrolmentResponseTest {
 		assertSame(failInfo, failure().getFailInfo());
 	}
 	
-	private EnrolmentResponse success() {
-		return new EnrolmentResponse(transId, certStore);
+	private EnrollmentResponse success() {
+		return new EnrollmentResponse(transId, certStore);
 	}
 	
-	private EnrolmentResponse pending() {
-		return new EnrolmentResponse(transId);
+	private EnrollmentResponse pending() {
+		return new EnrollmentResponse(transId);
 	}
 
-	private EnrolmentResponse failure() {
-		EnrolmentResponse response = new EnrolmentResponse(transId, failInfo);
+	private EnrollmentResponse failure() {
+		EnrollmentResponse response = new EnrollmentResponse(transId, failInfo);
 		return response;
 	}
 }

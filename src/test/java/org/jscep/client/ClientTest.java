@@ -55,7 +55,7 @@ public class ClientTest extends AbstractClientTest {
 
 	@Test
 	public void testEnrollThenGet() throws Exception {
-		EnrolmentResponse response = client.enrol(
+		EnrollmentResponse response = client.enrol(
 				identity,
 				keyPair.getPrivate(),
 				getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),
@@ -72,7 +72,7 @@ public class ClientTest extends AbstractClientTest {
 
 	@Test
 	public void testEnrollInvalidPassword() throws Exception {
-		EnrolmentResponse response = client.enrol(
+		EnrollmentResponse response = client.enrol(
 				identity,
 				keyPair.getPrivate(),
 				getCsr(identity.getSubjectX500Principal(), keyPair.getPublic(),

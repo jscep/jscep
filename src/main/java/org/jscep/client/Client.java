@@ -43,13 +43,12 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.asn1.IssuerAndSubject;
-import org.jscep.client.polling.PollingTerminatedException;
 import org.jscep.client.verification.CertificateVerifier;
 import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.transaction.EnrolmentTransaction;
+import org.jscep.transaction.EnrollmentTransaction;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.NonEnrollmentTransaction;
 import org.jscep.transaction.OperationFailureException;
@@ -527,7 +526,7 @@ public final class Client {
 	 *             if there is a problem with the SCEP transaction.
 	 * @see CertStoreInspector
 	 */
-	public EnrolmentResponse enrol(X509Certificate identity, PrivateKey key,
+	public EnrollmentResponse enrol(X509Certificate identity, PrivateKey key,
 			final PKCS10CertificationRequest csr)
 			throws ClientException, TransactionException {
 		return enrol(identity, key, csr, null);
@@ -560,7 +559,7 @@ public final class Client {
 	 *             if there is a problem with the SCEP transaction.
 	 * @see CertStoreInspector
 	 */
-	public EnrolmentResponse enrol(X509Certificate identity, PrivateKey key,
+	public EnrollmentResponse enrol(X509Certificate identity, PrivateKey key,
 			final PKCS10CertificationRequest csr, String profile)
 			throws ClientException, TransactionException {
 		LOGGER.debug("Enrolling certificate with CA");
@@ -574,18 +573,18 @@ public final class Client {
 		PkiMessageEncoder encoder = new PkiMessageEncoder(key, identity,
 				envEncoder);
 		PkiMessageDecoder decoder = getDecoder(identity, key, signer);
-		final EnrolmentTransaction trans = new EnrolmentTransaction(transport,
+		final EnrollmentTransaction trans = new EnrollmentTransaction(transport,
 				encoder, decoder, csr);
 		return send(trans);
 	}
 
-	public EnrolmentResponse poll(X509Certificate identity, PrivateKey identityKey,
+	public EnrollmentResponse poll(X509Certificate identity, PrivateKey identityKey,
 			X500Principal subject, TransactionId transId) throws ClientException,
 			TransactionException {
 		return poll(identity, identityKey, subject, transId, null);
 	}
 
-	public EnrolmentResponse poll(X509Certificate identity, PrivateKey identityKey,
+	public EnrollmentResponse poll(X509Certificate identity, PrivateKey identityKey,
 			X500Principal subject, TransactionId transId, String profile)
 			throws ClientException, TransactionException {
 		final Transport transport = createTransport(profile);
@@ -600,21 +599,21 @@ public final class Client {
 		IssuerAndSubject ias = new IssuerAndSubject(X509Util.toX509Name(issuer
 				.getIssuerX500Principal()), X509Util.toX509Name(subject));
 
-		final EnrolmentTransaction trans = new EnrolmentTransaction(transport,
+		final EnrollmentTransaction trans = new EnrollmentTransaction(transport,
 				encoder, decoder, ias, transId);
 		return send(trans);
 	}
 
-	private EnrolmentResponse send(final EnrolmentTransaction trans)
+	private EnrollmentResponse send(final EnrollmentTransaction trans)
 			throws TransactionException {
 		State s = trans.send();
 
 		if (s == State.CERT_ISSUED) {
-			return new EnrolmentResponse(trans.getId(), trans.getCertStore());
+			return new EnrollmentResponse(trans.getId(), trans.getCertStore());
 		} else if (s == State.CERT_REQ_PENDING) {
-			return new EnrolmentResponse(trans.getId());
+			return new EnrollmentResponse(trans.getId());
 		} else {
-			return new EnrolmentResponse(trans.getId(), trans.getFailInfo());
+			return new EnrollmentResponse(trans.getId(), trans.getFailInfo());
 		}
 	}
 

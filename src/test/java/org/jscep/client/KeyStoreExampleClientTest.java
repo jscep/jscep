@@ -82,8 +82,8 @@ public class KeyStoreExampleClientTest extends ScepServerSupport {
 		ContentSigner signer = signerBuilder.build(entityPair.getPrivate());
 		PKCS10CertificationRequest csr = csrBuilder.build(signer);
 		
-		// Send the enrolment request
-		EnrolmentResponse response = client.enrol(id, idPair.getPrivate(), csr);
+		// Send the enrollment request
+		EnrollmentResponse response = client.enrol(id, idPair.getPrivate(), csr);
 		if (response.isFailure()) {
 			// Our request was rejected!
 			System.out.println("Failed!");

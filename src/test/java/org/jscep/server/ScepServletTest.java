@@ -40,7 +40,7 @@ import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.transaction.EnrolmentTransaction;
+import org.jscep.transaction.EnrollmentTransaction;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.NonEnrollmentTransaction;
 import org.jscep.transaction.Transaction;
@@ -230,7 +230,7 @@ public class ScepServletTest {
                 getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
-        Transaction t = new EnrolmentTransaction(transport, encoder, decoder,
+        Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
                 csr);
 
         State s = t.send();
@@ -253,7 +253,7 @@ public class ScepServletTest {
                 getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
-        Transaction t = new EnrolmentTransaction(transport, encoder, decoder,
+        Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
                 csr);
 
         State s = t.send();
@@ -276,13 +276,13 @@ public class ScepServletTest {
                 getRecipient());
 
         Transport transport = new HttpGetTransport(getURL());
-        EnrolmentTransaction trans = new EnrolmentTransaction(transport,
+        EnrollmentTransaction trans = new EnrollmentTransaction(transport,
                 encoder, decoder, csr);
         State state = trans.send();
         assertThat(state, is(State.CERT_REQ_PENDING));
 
         IssuerAndSubject ias = new IssuerAndSubject(X509Util.toX509Name(sender.getIssuerX500Principal()), pollName);
-        trans = new EnrolmentTransaction(transport, encoder, decoder, ias, trans.getId());
+        trans = new EnrollmentTransaction(transport, encoder, decoder, ias, trans.getId());
         state = trans.send();
         assertThat(state, is(State.CERT_REQ_PENDING));
     }

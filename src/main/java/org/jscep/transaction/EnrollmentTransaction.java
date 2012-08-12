@@ -52,20 +52,20 @@ import org.slf4j.LoggerFactory;
  * performing operations.
  * <p/>
  * The behaviour of this class changes in accordance with the possible valid
- * states for each transaction operation. For enrolment operations, clients
+ * states for each transaction operation. For enrollment operations, clients
  * should inspect the {@link State} returned by the {@link #send()} or
  * {@link #poll()}.
  * 
  * @author David Grant
  */
-public class EnrolmentTransaction extends Transaction {
+public class EnrollmentTransaction extends Transaction {
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(EnrolmentTransaction.class);
+			.getLogger(EnrollmentTransaction.class);
 	private final TransactionId transId;
 	private final PkiRequest<?> request;
 	private static NonceQueue QUEUE = new NonceQueue();
 
-	public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder,
+	public EnrollmentTransaction(Transport transport, PkiMessageEncoder encoder,
 			PkiMessageDecoder decoder, PKCS10CertificationRequest csr)
 			throws TransactionException {
 		super(transport, encoder, decoder);
@@ -80,7 +80,7 @@ public class EnrolmentTransaction extends Transaction {
 		this.request = new PkcsReq(transId, Nonce.nextNonce(), csr);
 	}
 	
-	public EnrolmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, IssuerAndSubject ias, TransactionId transId) {
+	public EnrollmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, IssuerAndSubject ias, TransactionId transId) {
 		super(transport, encoder, decoder);
 		
 		this.transId = transId;
@@ -93,7 +93,7 @@ public class EnrolmentTransaction extends Transaction {
 	}
 
 	/**
-	 * Performs a certificate enrolment for the CSR given in the constructor.
+	 * Performs a certificate enrollment for the CSR given in the constructor.
 	 * 
 	 * @return the resulting transaction state.
 	 * @throws IOException
@@ -134,52 +134,6 @@ public class EnrolmentTransaction extends Transaction {
 			return pending();
 		}
 	}
-
-//	/**
-//	 * Polls the SCEP server for an update on the enrolment operation.
-//	 * 
-//	 * @return the resulting transaction state.
-//	 * @throws IOException
-//	 *             if any I/O error occurs.
-//	 * @throws TransactionException
-//	 */
-//	public State poll() throws TransactionException {
-//		// TransactionId can be generated from PublicKey (no need to share
-//		// TransactionId).
-//
-//		X500Name issuerName = X509Util.toX509Name(issuer
-//				.getSubjectX500Principal());
-//		X500Name subjectName = request.getMessageData().getSubject();
-//		IssuerAndSubject ias = new IssuerAndSubject(issuerName, subjectName);
-//		final GetCertInitial pollReq = new GetCertInitial(transId,
-//				Nonce.nextNonce(), ias);
-//
-//		CMSSignedData signedData;
-//		try {
-//			// signedData =
-//			signedData = encode(pollReq);
-//		} catch (MessageEncodingException e) {
-//			throw new TransactionException(e);
-//		}
-//		PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
-//		CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
-//
-//		CertRep response;
-//		try {
-//			response = (CertRep) decode(res);
-//		} catch (MessageDecodingException e) {
-//			throw new TransactionException(e);
-//		}
-//		validateExchange(pollReq, response);
-//
-//		if (response.getPkiStatus() == PkiStatus.FAILURE) {
-//			return failure(response.getFailInfo());
-//		} else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
-//			return success(extractCertStore(response));
-//		} else {
-//			return pending();
-//		}
-//	}
 
 	private void validateExchange(PkiMessage<?> req, CertRep res)
 			throws TransactionException {
