@@ -18,7 +18,7 @@ import org.jscep.transaction.Nonce;
 import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
 
-public class AttributeTableFactory {
+class AttributeTableFactory {
     public AttributeTable fromPkiMessage(PkiMessage<?> message) {
         Hashtable<ASN1ObjectIdentifier, Attribute> table = new Hashtable<ASN1ObjectIdentifier, Attribute>();
         
