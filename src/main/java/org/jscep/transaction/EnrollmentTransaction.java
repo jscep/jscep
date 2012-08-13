@@ -65,6 +65,15 @@ public class EnrollmentTransaction extends Transaction {
 	private final PkiRequest<?> request;
 	private static NonceQueue QUEUE = new NonceQueue();
 
+	/**
+	 * Constructs a new enrollment transaction.
+	 * 
+	 * @param transport the transport to use to send the transaction request.
+	 * @param encoder the encoder to encode the transaction request.
+	 * @param decoder the decoder to decode the transaction response.
+	 * @param csr the signing request to send.
+	 * @throws TransactionException if there is a problem creating the transaction ID.
+	 */
 	public EnrollmentTransaction(Transport transport, PkiMessageEncoder encoder,
 			PkiMessageDecoder decoder, PKCS10CertificationRequest csr)
 			throws TransactionException {
@@ -80,6 +89,15 @@ public class EnrollmentTransaction extends Transaction {
 		this.request = new PkcsReq(transId, Nonce.nextNonce(), csr);
 	}
 	
+	/**
+	 * Constructs a new enrollment transaction for polling.
+	 * 
+	 * @param transport the transport to use to send the transaction request.
+	 * @param encoder the encoder to encode the transaction request.
+	 * @param decoder the decoder to decode the transaction response.
+	 * @param ias the issuer and subject to send.
+	 * @param transId the transaction ID to use.
+	 */
 	public EnrollmentTransaction(Transport transport, PkiMessageEncoder encoder, PkiMessageDecoder decoder, IssuerAndSubject ias, TransactionId transId) {
 		super(transport, encoder, decoder);
 		
@@ -87,21 +105,19 @@ public class EnrollmentTransaction extends Transaction {
 		this.request = new GetCertInitial(transId, Nonce.nextNonce(), ias);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public TransactionId getId() {
 		return transId;
 	}
 
 	/**
-	 * Performs a certificate enrollment for the CSR given in the constructor.
+	 * Sends the request to the SCEP server.
 	 * 
 	 * @return the resulting transaction state.
-	 * @throws IOException
-	 *             if any I/O error occurs.
-	 * @throws TransportException
-	 * @throws TransactionException
-	 * @throws InvalidContentTypeException
-	 * @throws InvalidContentException
+	 * @throws TransactionException if any error occurs.
 	 */
 	@Override
 	public State send() throws TransactionException {

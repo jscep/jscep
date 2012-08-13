@@ -513,8 +513,6 @@ public final class Client {
 	 *            the private key to sign the SCEP request.
 	 * @param csr
 	 *            the CSR to enrol.
-	 * @param listener
-	 *            the polling listener.
 	 * @return the certificate store returned by the server.
 	 * @throws ClientException
 	 *             if any client error occurs.
@@ -544,8 +542,6 @@ public final class Client {
 	 *            the private key to sign the SCEP request.
 	 * @param csr
 	 *            the CSR to enrol.
-	 * @param listener
-	 *            the polling listener.
 	 * @param profile
 	 *            the SCEP server profile.
 	 * @return the certificate store returned by the server.
