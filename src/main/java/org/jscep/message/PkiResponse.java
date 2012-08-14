@@ -75,7 +75,7 @@ public abstract class PkiResponse<T> extends PkiMessage<T> {
     }
 
     @Override
-    public T getMessageData() {
+    public final T getMessageData() {
         if (pkiStatus != PkiStatus.SUCCESS) {
             throw new IllegalStateException();
         }

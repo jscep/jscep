@@ -45,7 +45,7 @@ public abstract class Request {
      * 
      * @return the name of this operation.
      */
-    public Operation getOperation() {
+    public final Operation getOperation() {
         return operation;
     }
 

@@ -50,7 +50,7 @@ import org.jscep.transaction.PkiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PkiMessageEncoder {
+public final class PkiMessageEncoder {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PkiMessageEncoder.class);
     private final PrivateKey signerKey;

@@ -103,7 +103,7 @@ public abstract class ScepServlet extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void service(HttpServletRequest req, HttpServletResponse res)
+	public final void service(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 		byte[] body = getMessageBytes(req);
 

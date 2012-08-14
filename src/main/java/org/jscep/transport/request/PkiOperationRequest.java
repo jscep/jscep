@@ -33,7 +33,7 @@ import org.bouncycastle.cms.CMSSignedData;
  * 
  * @author David Grant
  */
-public class PkiOperationRequest extends Request {
+public final class PkiOperationRequest extends Request {
     private final CMSSignedData msgData;
 
     /**

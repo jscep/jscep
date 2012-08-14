@@ -1,5 +1,12 @@
 package org.jscep.message;
 
+import static org.jscep.asn1.ScepObjectIdentifier.FAIL_INFO;
+import static org.jscep.asn1.ScepObjectIdentifier.MESSAGE_TYPE;
+import static org.jscep.asn1.ScepObjectIdentifier.PKI_STATUS;
+import static org.jscep.asn1.ScepObjectIdentifier.RECIPIENT_NONCE;
+import static org.jscep.asn1.ScepObjectIdentifier.SENDER_NONCE;
+import static org.jscep.asn1.ScepObjectIdentifier.TRANS_ID;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -10,8 +17,6 @@ import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
-import static org.jscep.asn1.ScepObjectIdentifier.*;
-
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;

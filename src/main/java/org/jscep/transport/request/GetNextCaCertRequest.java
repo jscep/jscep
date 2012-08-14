@@ -27,7 +27,7 @@ package org.jscep.transport.request;
  * 
  * @author David Grant
  */
-public class GetNextCaCertRequest extends Request {
+public final class GetNextCaCertRequest extends Request {
     private final String profile;
 
     /**

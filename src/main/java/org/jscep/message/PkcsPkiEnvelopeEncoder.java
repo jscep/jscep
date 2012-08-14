@@ -39,7 +39,7 @@ import org.bouncycastle.operator.OutputEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PkcsPkiEnvelopeEncoder {
+public final class PkcsPkiEnvelopeEncoder {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PkcsPkiEnvelopeEncoder.class);
     private final X509Certificate recipient;

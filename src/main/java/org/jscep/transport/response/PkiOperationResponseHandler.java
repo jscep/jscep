@@ -22,8 +22,6 @@
  */
 package org.jscep.transport.response;
 
-import java.io.IOException;
-
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 
@@ -40,9 +38,7 @@ public final class PkiOperationResponseHandler implements
     /**
      * {@inheritDoc}
      * 
-     * @throws InvalidContentTypeException
-     * 
-     * @throws IOException
+     * @throws ContentException
      */
     public CMSSignedData getResponse(byte[] content, String mimeType)
             throws ContentException {

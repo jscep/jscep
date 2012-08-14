@@ -49,15 +49,15 @@ public abstract class PkiMessage<T> {
         this.messageData = messageData;
     }
 
-    public TransactionId getTransactionId() {
+    public final TransactionId getTransactionId() {
         return transId;
     }
 
-    public MessageType getMessageType() {
+    public final MessageType getMessageType() {
         return messageType;
     }
 
-    public Nonce getSenderNonce() {
+    public final Nonce getSenderNonce() {
         return senderNonce;
     }
 

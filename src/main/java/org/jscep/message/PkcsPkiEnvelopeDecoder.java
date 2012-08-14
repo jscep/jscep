@@ -31,7 +31,7 @@ import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipientId;
 
-public class PkcsPkiEnvelopeDecoder {
+public final class PkcsPkiEnvelopeDecoder {
     private final X509Certificate recipient;
     private final PrivateKey priKey;
 

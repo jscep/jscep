@@ -1,8 +1,8 @@
 package org.jscep.message;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.is;
 import static org.jscep.asn1.ScepObjectIdentifier.FAIL_INFO;
 import static org.jscep.asn1.ScepObjectIdentifier.MESSAGE_TYPE;
 import static org.jscep.asn1.ScepObjectIdentifier.PKI_STATUS;

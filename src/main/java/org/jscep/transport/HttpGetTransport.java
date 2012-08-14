@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 @ThreadSafe
-public class HttpGetTransport extends Transport {
+public final class HttpGetTransport extends Transport {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(HttpGetTransport.class);
 

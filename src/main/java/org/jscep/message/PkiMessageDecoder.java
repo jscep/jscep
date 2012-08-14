@@ -27,6 +27,7 @@ import static org.jscep.asn1.ScepObjectIdentifier.PKI_STATUS;
 import static org.jscep.asn1.ScepObjectIdentifier.RECIPIENT_NONCE;
 import static org.jscep.asn1.ScepObjectIdentifier.SENDER_NONCE;
 import static org.jscep.asn1.ScepObjectIdentifier.TRANS_ID;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
@@ -59,11 +60,9 @@ import org.jscep.transaction.Nonce;
 import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class PkiMessageDecoder {
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(PkiMessageDecoder.class);
+public final class PkiMessageDecoder {
+    private static final Logger LOGGER = getLogger(PkiMessageDecoder.class);
     private final PkcsPkiEnvelopeDecoder decoder;
     private final X509Certificate signer;
 
@@ -134,7 +133,7 @@ public class PkiMessageDecoder {
                 try {
                     messageData = new CMSSignedData(envelopedContent);
                 } catch (CMSException e) {
-                   throw new MessageDecodingException(e);
+                    throw new MessageDecodingException(e);
                 }
 
                 pkiMessage = new CertRep(transId, senderNonce, recipientNonce,

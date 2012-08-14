@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 @ThreadSafe
-public class HttpPostTransport extends Transport {
-    private static Logger LOGGER = LoggerFactory
+public final class HttpPostTransport extends Transport {
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(HttpPostTransport.class);
 
     public HttpPostTransport(URL url) {
@@ -75,7 +75,8 @@ public class HttpPostTransport extends Transport {
 
         byte[] message;
         try {
-            message = Base64.decode(msg.getMessage().getBytes(Charsets.US_ASCII.name()));
+            message = Base64.decode(msg.getMessage().getBytes(
+                    Charsets.US_ASCII.name()));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

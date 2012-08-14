@@ -21,9 +21,6 @@
  */
 package org.jscep.transport.response;
 
-import org.jscep.transport.request.GetNextCaCertRequest;
-import org.jscep.transport.request.PkiOperationRequest;
-
 /**
  * This class represents a single SCEP server capability.
  * 
