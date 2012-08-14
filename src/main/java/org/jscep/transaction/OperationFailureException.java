@@ -8,10 +8,10 @@ public class OperationFailureException extends TransactionException {
     private final FailInfo failInfo;
 
     public OperationFailureException(FailInfo failInfo) {
-        this.failInfo = failInfo;
+	this.failInfo = failInfo;
     }
 
     public FailInfo getFailInfo() {
-        return failInfo;
+	return failInfo;
     }
 }

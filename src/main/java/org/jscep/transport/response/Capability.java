@@ -77,8 +77,8 @@ public enum Capability {
      *            description of the capability
      */
     private Capability(String capability, String description) {
-        this.capability = capability;
-        this.description = description;
+	this.capability = capability;
+	this.description = description;
     }
 
     /**
@@ -88,10 +88,10 @@ public enum Capability {
      */
     @Override
     public String toString() {
-        return capability;
+	return capability;
     }
 
     public String getDescription() {
-        return description;
+	return description;
     }
 }

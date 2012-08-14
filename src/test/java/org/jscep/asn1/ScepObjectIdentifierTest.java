@@ -7,8 +7,8 @@ import org.junit.Test;
 public class ScepObjectIdentifierTest {
     @Test
     public void testValues() {
-        for (ScepObjectIdentifier oid : ScepObjectIdentifier.values()) {
-            assertSame(oid, ScepObjectIdentifier.valueOf(oid.name()));
-        }
+	for (ScepObjectIdentifier oid : ScepObjectIdentifier.values()) {
+	    assertSame(oid, ScepObjectIdentifier.valueOf(oid.name()));
+	}
     }
 }

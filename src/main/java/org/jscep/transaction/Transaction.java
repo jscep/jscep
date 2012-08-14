@@ -47,10 +47,10 @@ public abstract class Transaction {
     private CertStore certStore;
 
     public Transaction(Transport transport, PkiMessageEncoder encoder,
-            PkiMessageDecoder decoder) {
-        this.transport = transport;
-        this.encoder = encoder;
-        this.decoder = decoder;
+	    PkiMessageDecoder decoder) {
+	this.transport = transport;
+	this.encoder = encoder;
+	this.decoder = decoder;
     }
 
     /**
@@ -59,19 +59,19 @@ public abstract class Transaction {
      * @return the reason for failure.
      */
     public FailInfo getFailInfo() {
-        if (state != State.CERT_NON_EXISTANT) {
-            throw new IllegalStateException(
-                    "No failure has been received.  Check state!");
-        }
-        return failInfo;
+	if (state != State.CERT_NON_EXISTANT) {
+	    throw new IllegalStateException(
+		    "No failure has been received.  Check state!");
+	}
+	return failInfo;
     }
 
     public CertStore getCertStore() {
-        if (state != State.CERT_ISSUED) {
-            throw new IllegalStateException(
-                    "No certstore has been received.  Check state!");
-        }
-        return certStore;
+	if (state != State.CERT_ISSUED) {
+	    throw new IllegalStateException(
+		    "No certstore has been received.  Check state!");
+	}
+	return certStore;
     }
 
     public abstract State send() throws TransactionException;
@@ -79,47 +79,47 @@ public abstract class Transaction {
     public abstract TransactionId getId();
 
     protected CMSSignedData send(final PkiOperationResponseHandler handler,
-            final Request req) throws TransactionException {
-        try {
-            return transport.sendRequest(req, handler);
-        } catch (TransportException e) {
-            throw new TransactionException(e);
-        }
+	    final Request req) throws TransactionException {
+	try {
+	    return transport.sendRequest(req, handler);
+	} catch (TransportException e) {
+	    throw new TransactionException(e);
+	}
     }
 
     protected PkiMessage<?> decode(CMSSignedData res)
-            throws MessageDecodingException {
-        return decoder.decode(res);
+	    throws MessageDecodingException {
+	return decoder.decode(res);
     }
 
     protected CMSSignedData encode(final PkiMessage<?> message)
-            throws MessageEncodingException {
-        return encoder.encode(message);
+	    throws MessageEncodingException {
+	return encoder.encode(message);
     }
 
     protected State pending() {
-        this.state = State.CERT_REQ_PENDING;
-        return state;
+	this.state = State.CERT_REQ_PENDING;
+	return state;
     }
 
     protected State failure(FailInfo failInfo) {
-        this.failInfo = failInfo;
-        this.state = State.CERT_NON_EXISTANT;
+	this.failInfo = failInfo;
+	this.state = State.CERT_NON_EXISTANT;
 
-        return state;
+	return state;
     }
 
     protected State success(CertStore certStore) {
-        this.certStore = certStore;
-        this.state = State.CERT_ISSUED;
+	this.certStore = certStore;
+	this.state = State.CERT_ISSUED;
 
-        return state;
+	return state;
     }
 
     protected CertStore extractCertStore(CertRep response) {
-        CMSSignedData signedData = response.getMessageData();
+	CMSSignedData signedData = response.getMessageData();
 
-        return CertStoreUtils.fromSignedData(signedData);
+	return CertStoreUtils.fromSignedData(signedData);
     }
 
     /**
@@ -128,23 +128,23 @@ public abstract class Transaction {
      * @author David Grant
      */
     public static enum State {
-        /**
-         * The transaction is a pending state.
-         */
-        CERT_REQ_PENDING,
-        /**
-         * The transaction is in a failed state.
-         * <p/>
-         * Clients should use {@link Transaction#getFailInfo()} to retrieve the
-         * failure reason.
-         */
-        CERT_NON_EXISTANT,
-        /**
-         * The transaction has succeeded.
-         * <p/>
-         * Clients should use {@link Transaction#getCertStore()} to retrieve the
-         * enrolled certificates.
-         */
-        CERT_ISSUED,
+	/**
+	 * The transaction is a pending state.
+	 */
+	CERT_REQ_PENDING,
+	/**
+	 * The transaction is in a failed state.
+	 * <p/>
+	 * Clients should use {@link Transaction#getFailInfo()} to retrieve the
+	 * failure reason.
+	 */
+	CERT_NON_EXISTANT,
+	/**
+	 * The transaction has succeeded.
+	 * <p/>
+	 * Clients should use {@link Transaction#getCertStore()} to retrieve the
+	 * enrolled certificates.
+	 */
+	CERT_ISSUED,
     }
 }

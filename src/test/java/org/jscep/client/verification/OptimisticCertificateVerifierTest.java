@@ -11,8 +11,8 @@ public class OptimisticCertificateVerifierTest {
 
     @Test
     public void testVerify() {
-        CertificateVerifier verifier = new OptimisticCertificateVerifier();
-        assertTrue(verifier.verify(mock(X509Certificate.class)));
+	CertificateVerifier verifier = new OptimisticCertificateVerifier();
+	assertTrue(verifier.verify(mock(X509Certificate.class)));
     }
 
 }

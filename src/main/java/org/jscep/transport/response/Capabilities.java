@@ -45,8 +45,8 @@ public final class Capabilities {
      *            the capabilities.
      */
     public Capabilities(Capability... capabilities) {
-        this.capabilities = EnumSet.noneOf(Capability.class);
-        Collections.addAll(this.capabilities, capabilities);
+	this.capabilities = EnumSet.noneOf(Capability.class);
+	Collections.addAll(this.capabilities, capabilities);
     }
 
     /**
@@ -59,7 +59,7 @@ public final class Capabilities {
      *         <code>false</code> otherwise.
      */
     public boolean contains(Capability capability) {
-        return capabilities.contains(capability);
+	return capabilities.contains(capability);
     }
 
     /**
@@ -68,7 +68,7 @@ public final class Capabilities {
      * @return <tt>true</tt> if POST is supported, <tt>false</tt> otherwise.
      */
     public boolean isPostSupported() {
-        return capabilities.contains(Capability.POST_PKI_OPERATION);
+	return capabilities.contains(Capability.POST_PKI_OPERATION);
     }
 
     /**
@@ -79,7 +79,7 @@ public final class Capabilities {
      *         <tt>false</tt> otherwise.
      */
     public boolean isRolloverSupported() {
-        return capabilities.contains(Capability.GET_NEXT_CA_CERT);
+	return capabilities.contains(Capability.GET_NEXT_CA_CERT);
     }
 
     /**
@@ -90,7 +90,7 @@ public final class Capabilities {
      *         otherwise.
      */
     public boolean isRenewalSupported() {
-        return capabilities.contains(Capability.RENEWAL);
+	return capabilities.contains(Capability.RENEWAL);
     }
 
     /**
@@ -107,32 +107,32 @@ public final class Capabilities {
      *         client.
      */
     public String getStrongestCipher() {
-        final String cipher;
-        if (cipherExists("DESede")
-                && capabilities.contains(Capability.TRIPLE_DES)) {
-            cipher = "DESede";
-        } else {
-            cipher = "DES";
-        }
+	final String cipher;
+	if (cipherExists("DESede")
+		&& capabilities.contains(Capability.TRIPLE_DES)) {
+	    cipher = "DESede";
+	} else {
+	    cipher = "DES";
+	}
 
-        return cipher;
+	return cipher;
     }
 
     private boolean cipherExists(String algorithm) {
-        return algorithmExists("Cipher", algorithm);
+	return algorithmExists("Cipher", algorithm);
     }
 
     private boolean algorithmExists(String serviceType, String algorithm) {
-        for (Provider provider : Security.getProviders()) {
-            for (Service service : provider.getServices()) {
-                if (service.getType().equals(serviceType)
-                        && service.getAlgorithm().equals(algorithm)) {
-                    return true;
-                }
-            }
-        }
+	for (Provider provider : Security.getProviders()) {
+	    for (Service service : provider.getServices()) {
+		if (service.getType().equals(serviceType)
+			&& service.getAlgorithm().equals(algorithm)) {
+		    return true;
+		}
+	    }
+	}
 
-        return false;
+	return false;
     }
 
     /**
@@ -151,25 +151,25 @@ public final class Capabilities {
      *         and client.
      */
     public String getStrongestMessageDigest() {
-        final String digest;
-        if (digestExists("SHA-512")
-                && capabilities.contains(Capability.SHA_512)) {
-            digest = "SHA-512";
-        } else if (digestExists("SHA-256")
-                && capabilities.contains(Capability.SHA_256)) {
-            digest = "SHA-256";
-        } else if (digestExists("SHA-1")
-                && capabilities.contains(Capability.SHA_1)) {
-            digest = "SHA-1";
-        } else {
-            digest = "MD5";
-        }
+	final String digest;
+	if (digestExists("SHA-512")
+		&& capabilities.contains(Capability.SHA_512)) {
+	    digest = "SHA-512";
+	} else if (digestExists("SHA-256")
+		&& capabilities.contains(Capability.SHA_256)) {
+	    digest = "SHA-256";
+	} else if (digestExists("SHA-1")
+		&& capabilities.contains(Capability.SHA_1)) {
+	    digest = "SHA-1";
+	} else {
+	    digest = "MD5";
+	}
 
-        return digest;
+	return digest;
     }
 
     private boolean digestExists(String digest) {
-        return algorithmExists("MessageDigest", digest);
+	return algorithmExists("MessageDigest", digest);
     }
 
     /**
@@ -177,6 +177,6 @@ public final class Capabilities {
      */
     @Override
     public String toString() {
-        return capabilities.toString();
+	return capabilities.toString();
     }
 }

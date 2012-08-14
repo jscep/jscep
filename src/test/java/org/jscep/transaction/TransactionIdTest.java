@@ -10,32 +10,32 @@ public class TransactionIdTest {
 
     @Test
     public void testCreateTransactionIdKeyPairString() throws Exception {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-        KeyPair keyPair = generator.generateKeyPair();
+	KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+	KeyPair keyPair = generator.generateKeyPair();
 
-        TransactionId transA = TransactionId.createTransactionId(
-                keyPair.getPublic(), "SHA");
-        TransactionId transB = TransactionId.createTransactionId(
-                keyPair.getPublic(), "SHA");
+	TransactionId transA = TransactionId.createTransactionId(
+		keyPair.getPublic(), "SHA");
+	TransactionId transB = TransactionId.createTransactionId(
+		keyPair.getPublic(), "SHA");
 
-        Assert.assertEquals(transA, transB);
+	Assert.assertEquals(transA, transB);
     }
 
     @Test
     public void testCreateTransactionId() {
-        TransactionId transA = TransactionId.createTransactionId();
-        TransactionId transB = TransactionId.createTransactionId();
+	TransactionId transA = TransactionId.createTransactionId();
+	TransactionId transB = TransactionId.createTransactionId();
 
-        Assert.assertFalse(transA.equals(transB));
+	Assert.assertFalse(transA.equals(transB));
     }
 
     @Test
     public void testTransactionIdByteArray() {
-        final byte[] bytes = new byte[0];
+	final byte[] bytes = new byte[0];
 
-        TransactionId transA = new TransactionId(bytes);
-        TransactionId transB = new TransactionId(bytes);
+	TransactionId transA = new TransactionId(bytes);
+	TransactionId transB = new TransactionId(bytes);
 
-        Assert.assertEquals(transA, transB);
+	Assert.assertEquals(transA, transB);
     }
 }

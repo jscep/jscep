@@ -15,12 +15,14 @@ public class PreProvisionedCertificateVerifierTest {
 
     @Test
     public void testVerify() throws Exception {
-        X500Principal subject = new X500Principal("CN=example");
-        KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate cert = X509Certificates.createEphemeral(subject, keyPair);
-        
-        CertificateVerifier verifier = new PreProvisionedCertificateVerifier(cert);
-        assertTrue(verifier.verify(cert));
+	X500Principal subject = new X500Principal("CN=example");
+	KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+	X509Certificate cert = X509Certificates.createEphemeral(subject,
+		keyPair);
+
+	CertificateVerifier verifier = new PreProvisionedCertificateVerifier(
+		cert);
+	assertTrue(verifier.verify(cert));
     }
 
 }

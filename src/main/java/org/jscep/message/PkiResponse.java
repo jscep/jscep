@@ -50,35 +50,35 @@ public abstract class PkiResponse<T> extends PkiMessage<T> {
      *            the fail info enum
      */
     public PkiResponse(TransactionId transId, MessageType messageType,
-            Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus,
-            T messageData, FailInfo failInfo) {
-        super(transId, messageType, senderNonce, messageData);
+	    Nonce senderNonce, Nonce recipientNonce, PkiStatus pkiStatus,
+	    T messageData, FailInfo failInfo) {
+	super(transId, messageType, senderNonce, messageData);
 
-        this.recipientNonce = recipientNonce;
-        this.pkiStatus = pkiStatus;
-        this.failInfo = failInfo;
+	this.recipientNonce = recipientNonce;
+	this.pkiStatus = pkiStatus;
+	this.failInfo = failInfo;
     }
 
     public Nonce getRecipientNonce() {
-        return recipientNonce;
+	return recipientNonce;
     }
 
     public PkiStatus getPkiStatus() {
-        return pkiStatus;
+	return pkiStatus;
     }
 
     public FailInfo getFailInfo() {
-        if (pkiStatus != PkiStatus.FAILURE) {
-            throw new IllegalStateException();
-        }
-        return failInfo;
+	if (pkiStatus != PkiStatus.FAILURE) {
+	    throw new IllegalStateException();
+	}
+	return failInfo;
     }
 
     @Override
     public final T getMessageData() {
-        if (pkiStatus != PkiStatus.SUCCESS) {
-            throw new IllegalStateException();
-        }
-        return super.getMessageData();
+	if (pkiStatus != PkiStatus.SUCCESS) {
+	    throw new IllegalStateException();
+	}
+	return super.getMessageData();
     }
 }

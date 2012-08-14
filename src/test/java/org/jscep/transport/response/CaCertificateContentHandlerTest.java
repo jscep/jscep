@@ -15,14 +15,14 @@ public class CaCertificateContentHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        fixture = new GetCaCertResponseHandler();
+	fixture = new GetCaCertResponseHandler();
     }
 
     @Test
     public void testSingleCertificate() throws Exception {
-        X509Certificate cert = getCertificate();
+	X509Certificate cert = getCertificate();
 
-        fixture.getResponse(cert.getEncoded(), "application/x-x509-ca-cert");
+	fixture.getResponse(cert.getEncoded(), "application/x-x509-ca-cert");
     }
 
     // @Test(expected=IOException.class)
@@ -37,20 +37,20 @@ public class CaCertificateContentHandlerTest {
 
     @Test(expected = InvalidContentException.class)
     public void testMultipleCertificatesFail() throws Exception {
-        X509Certificate cert = getCertificate();
+	X509Certificate cert = getCertificate();
 
-        fixture.getResponse(cert.getEncoded(), "application/x-x509-ca-ra-cert");
+	fixture.getResponse(cert.getEncoded(), "application/x-x509-ca-ra-cert");
     }
 
     private X509Certificate getCertificate() throws Exception {
-        X500Principal subject = new X500Principal("CN=example.org");
-        KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
-        return X509Certificates.createEphemeral(subject, keyPair);
+	X500Principal subject = new X500Principal("CN=example.org");
+	KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
+	return X509Certificates.createEphemeral(subject, keyPair);
     }
 
     @Test(expected = InvalidContentTypeException.class)
     public void testInvalidMime() throws Exception {
-        fixture.getResponse(new byte[0], "text/plain");
+	fixture.getResponse(new byte[0], "text/plain");
     }
 
 }

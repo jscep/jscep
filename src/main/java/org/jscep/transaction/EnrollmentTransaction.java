@@ -77,18 +77,18 @@ public class EnrollmentTransaction extends Transaction {
      *             if there is a problem creating the transaction ID.
      */
     public EnrollmentTransaction(Transport transport,
-            PkiMessageEncoder encoder, PkiMessageDecoder decoder,
-            PKCS10CertificationRequest csr) throws TransactionException {
-        super(transport, encoder, decoder);
-        try {
-            this.transId = TransactionId.createTransactionId(
-                    X509Util.getPublicKey(csr), "SHA-1");
-        } catch (IOException e) {
-            throw new TransactionException(e);
-        } catch (InvalidKeySpecException e) {
-            throw new TransactionException(e);
-        }
-        this.request = new PkcsReq(transId, Nonce.nextNonce(), csr);
+	    PkiMessageEncoder encoder, PkiMessageDecoder decoder,
+	    PKCS10CertificationRequest csr) throws TransactionException {
+	super(transport, encoder, decoder);
+	try {
+	    this.transId = TransactionId.createTransactionId(
+		    X509Util.getPublicKey(csr), "SHA-1");
+	} catch (IOException e) {
+	    throw new TransactionException(e);
+	} catch (InvalidKeySpecException e) {
+	    throw new TransactionException(e);
+	}
+	this.request = new PkcsReq(transId, Nonce.nextNonce(), csr);
     }
 
     /**
@@ -106,12 +106,12 @@ public class EnrollmentTransaction extends Transaction {
      *            the transaction ID to use.
      */
     public EnrollmentTransaction(Transport transport,
-            PkiMessageEncoder encoder, PkiMessageDecoder decoder,
-            IssuerAndSubject ias, TransactionId transId) {
-        super(transport, encoder, decoder);
+	    PkiMessageEncoder encoder, PkiMessageDecoder decoder,
+	    IssuerAndSubject ias, TransactionId transId) {
+	super(transport, encoder, decoder);
 
-        this.transId = transId;
-        this.request = new GetCertInitial(transId, Nonce.nextNonce(), ias);
+	this.transId = transId;
+	this.request = new GetCertInitial(transId, Nonce.nextNonce(), ias);
     }
 
     /**
@@ -119,7 +119,7 @@ public class EnrollmentTransaction extends Transaction {
      */
     @Override
     public TransactionId getId() {
-        return transId;
+	return transId;
     }
 
     /**
@@ -131,71 +131,71 @@ public class EnrollmentTransaction extends Transaction {
      */
     @Override
     public State send() throws TransactionException {
-        CMSSignedData signedData;
-        try {
-            signedData = encode(request);
-        } catch (MessageEncodingException e) {
-            throw new TransactionException(e);
-        }
-        LOGGER.debug("Sending {}", signedData);
-        PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
-        CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
-        LOGGER.debug("Received response {}", res);
+	CMSSignedData signedData;
+	try {
+	    signedData = encode(request);
+	} catch (MessageEncodingException e) {
+	    throw new TransactionException(e);
+	}
+	LOGGER.debug("Sending {}", signedData);
+	PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
+	CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
+	LOGGER.debug("Received response {}", res);
 
-        CertRep response;
-        try {
-            response = (CertRep) decode(res);
-        } catch (MessageDecodingException e) {
-            throw new TransactionException(e);
-        }
-        validateExchange(request, response);
+	CertRep response;
+	try {
+	    response = (CertRep) decode(res);
+	} catch (MessageDecodingException e) {
+	    throw new TransactionException(e);
+	}
+	validateExchange(request, response);
 
-        LOGGER.debug("Response: {}", response);
+	LOGGER.debug("Response: {}", response);
 
-        if (response.getPkiStatus() == PkiStatus.FAILURE) {
-            return failure(response.getFailInfo());
-        } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
-            return success(extractCertStore(response));
-        } else {
-            return pending();
-        }
+	if (response.getPkiStatus() == PkiStatus.FAILURE) {
+	    return failure(response.getFailInfo());
+	} else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
+	    return success(extractCertStore(response));
+	} else {
+	    return pending();
+	}
     }
 
     private void validateExchange(PkiMessage<?> req, CertRep res)
-            throws TransactionException {
-        LOGGER.debug("Validating SCEP message exchange");
+	    throws TransactionException {
+	LOGGER.debug("Validating SCEP message exchange");
 
-        if (!res.getTransactionId().equals(req.getTransactionId())) {
-            throw new TransactionException("Transaction ID Mismatch");
-        } else {
-            LOGGER.debug("Matched transaction IDs");
-        }
+	if (!res.getTransactionId().equals(req.getTransactionId())) {
+	    throw new TransactionException("Transaction ID Mismatch");
+	} else {
+	    LOGGER.debug("Matched transaction IDs");
+	}
 
-        // The requester SHOULD verify that the recipientNonce of the reply
-        // matches the senderNonce it sent in the request.
-        if (!res.getRecipientNonce().equals(req.getSenderNonce())) {
-            throw new InvalidNonceException(
-                    "Response recipient nonce and request sender nonce are not equal");
-        } else {
-            LOGGER.debug("Matched request senderNonce and response recipientNonce");
-        }
+	// The requester SHOULD verify that the recipientNonce of the reply
+	// matches the senderNonce it sent in the request.
+	if (!res.getRecipientNonce().equals(req.getSenderNonce())) {
+	    throw new InvalidNonceException(
+		    "Response recipient nonce and request sender nonce are not equal");
+	} else {
+	    LOGGER.debug("Matched request senderNonce and response recipientNonce");
+	}
 
-        if (res.getSenderNonce() == null) {
-            LOGGER.warn("Response senderNonce is null");
-            return;
-        }
+	if (res.getSenderNonce() == null) {
+	    LOGGER.warn("Response senderNonce is null");
+	    return;
+	}
 
-        // http://tools.ietf.org/html/draft-nourse-scep-20#section-8.5
-        // Check that the nonce has not been encountered before.
-        if (QUEUE.contains(res.getSenderNonce())) {
-            throw new InvalidNonceException(
-                    "This nonce has been encountered before.  Possible replay attack?");
-        } else {
-            QUEUE.add(res.getSenderNonce());
-            LOGGER.debug("{} has not been encountered before",
-                    res.getSenderNonce());
-        }
+	// http://tools.ietf.org/html/draft-nourse-scep-20#section-8.5
+	// Check that the nonce has not been encountered before.
+	if (QUEUE.contains(res.getSenderNonce())) {
+	    throw new InvalidNonceException(
+		    "This nonce has been encountered before.  Possible replay attack?");
+	} else {
+	    QUEUE.add(res.getSenderNonce());
+	    LOGGER.debug("{} has not been encountered before",
+		    res.getSenderNonce());
+	}
 
-        LOGGER.debug("SCEP message exchange validated successfully");
+	LOGGER.debug("SCEP message exchange validated successfully");
     }
 }

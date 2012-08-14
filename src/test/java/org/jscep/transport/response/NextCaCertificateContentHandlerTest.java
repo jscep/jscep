@@ -17,9 +17,9 @@ public class NextCaCertificateContentHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        KeyPair keyPair = getKeyPair();
-        X509Certificate ca = getCertificate(keyPair);
-        fixture = new GetNextCaCertResponseHandler(ca);
+	KeyPair keyPair = getKeyPair();
+	X509Certificate ca = getCertificate(keyPair);
+	fixture = new GetNextCaCertResponseHandler(ca);
     }
 
     // @Test
@@ -76,15 +76,15 @@ public class NextCaCertificateContentHandlerTest {
 
     @Test(expected = InvalidContentTypeException.class)
     public void testInvalidContent() throws Throwable {
-        fixture.getResponse(new byte[] {1}, "application/x-x509-next-ca-cert");
+	fixture.getResponse(new byte[] { 1 }, "application/x-x509-next-ca-cert");
     }
 
     private X509Certificate getCertificate(KeyPair keyPair) throws Exception {
-        X500Principal subject = new X500Principal("CN=example.org");
-        return X509Certificates.createEphemeral(subject, keyPair);
+	X500Principal subject = new X500Principal("CN=example.org");
+	return X509Certificates.createEphemeral(subject, keyPair);
     }
 
     private KeyPair getKeyPair() throws Exception {
-        return KeyPairGenerator.getInstance("RSA").genKeyPair();
+	return KeyPairGenerator.getInstance("RSA").genKeyPair();
     }
 }

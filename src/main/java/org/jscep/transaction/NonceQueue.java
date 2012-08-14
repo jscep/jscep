@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public final class NonceQueue {
     private static final int DEFAULT_QUEUE_SIZE = 20;
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(NonceQueue.class);
+	    .getLogger(NonceQueue.class);
     private final int size;
     private final Queue<Nonce> backingQueue;
 
@@ -48,15 +48,15 @@ public final class NonceQueue {
      *            the size of the queue.
      */
     public NonceQueue(int size) {
-        this.size = size;
-        this.backingQueue = new LinkedList<Nonce>();
+	this.size = size;
+	this.backingQueue = new LinkedList<Nonce>();
     }
 
     /**
      * Creates a NonceQueue of a default size.
      */
     public NonceQueue() {
-        this(DEFAULT_QUEUE_SIZE);
+	this(DEFAULT_QUEUE_SIZE);
     }
 
     /**
@@ -70,13 +70,13 @@ public final class NonceQueue {
      * @return <tt>true</tt> if the nonce is added, <tt>false</tt> otherwise.
      */
     public synchronized boolean add(final Nonce nonce) {
-        if (backingQueue.size() == size) {
-            Nonce removedNonce = backingQueue.poll();
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Removed {} from head of queue.", removedNonce);
-            }
-        }
-        return backingQueue.offer(nonce);
+	if (backingQueue.size() == size) {
+	    Nonce removedNonce = backingQueue.poll();
+	    if (LOGGER.isTraceEnabled()) {
+		LOGGER.trace("Removed {} from head of queue.", removedNonce);
+	    }
+	}
+	return backingQueue.offer(nonce);
     }
 
     /**
@@ -87,6 +87,6 @@ public final class NonceQueue {
      * @return <tt>true</tt> if the nonce is present, <tt>false</tt> otherwise.
      */
     public synchronized boolean contains(final Nonce nonce) {
-        return backingQueue.contains(nonce);
+	return backingQueue.contains(nonce);
     }
 }

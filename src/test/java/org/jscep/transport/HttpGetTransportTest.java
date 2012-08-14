@@ -9,11 +9,11 @@ import org.junit.Test;
 public class HttpGetTransportTest extends AbstractTransportTest {
     @Test
     public void testGetURL() {
-        Assert.assertEquals(url, transport.getUrl());
+	Assert.assertEquals(url, transport.getUrl());
     }
 
     @Override
     protected Transport getTransport(URL url) {
-        return new HttpGetTransport(url);
+	return new HttpGetTransport(url);
     }
 }

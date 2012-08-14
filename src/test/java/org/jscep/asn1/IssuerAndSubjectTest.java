@@ -13,26 +13,26 @@ public class IssuerAndSubjectTest {
 
     @Before
     public void setUp() {
-        issuer = new X500Name("CN=issuer");
-        subject = new X500Name("CN=subject");
-        fixture = new IssuerAndSubject(issuer, subject);
+	issuer = new X500Name("CN=issuer");
+	subject = new X500Name("CN=subject");
+	fixture = new IssuerAndSubject(issuer, subject);
     }
 
     @Test
     public void testSequenceConstructor() {
-        final DERSequence seq = (DERSequence) fixture.toASN1Primitive();
-        IssuerAndSubject issuerSubject = new IssuerAndSubject(seq);
+	final DERSequence seq = (DERSequence) fixture.toASN1Primitive();
+	IssuerAndSubject issuerSubject = new IssuerAndSubject(seq);
 
-        Assert.assertEquals(fixture, issuerSubject);
+	Assert.assertEquals(fixture, issuerSubject);
     }
 
     @Test
     public void testGetIssuer() {
-        Assert.assertEquals(issuer, fixture.getIssuer());
+	Assert.assertEquals(issuer, fixture.getIssuer());
     }
 
     @Test
     public void testGetSubject() {
-        Assert.assertEquals(subject, fixture.getSubject());
+	Assert.assertEquals(subject, fixture.getSubject());
     }
 }

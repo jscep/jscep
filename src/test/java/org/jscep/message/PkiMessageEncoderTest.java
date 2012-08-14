@@ -49,99 +49,101 @@ import org.junit.runners.Parameterized.Parameters;
 public class PkiMessageEncoderTest {
     @Parameters
     public static Collection<Object[]> getParameters() throws Exception {
-        List<Object[]> params = new ArrayList<Object[]>();
+	List<Object[]> params = new ArrayList<Object[]>();
 
-        KeyPair pair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        TransactionId transId = TransactionId.createTransactionId();
-        Nonce recipientNonce = Nonce.nextNonce();
-        Nonce senderNonce = recipientNonce;
-        X500Name issuer = new X500Name("CN=CA");
-        X500Name subject = new X500Name("CN=Client");
-        IssuerAndSubject ias = new IssuerAndSubject(issuer, subject);
-        BigInteger serial = BigInteger.ONE;
-        IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(issuer, serial);
-        PKCS10CertificationRequest csr = getCsr(new X500Principal("CN=Client"),
-                pair.getPublic(), pair.getPrivate(), "password".toCharArray());
-        CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
-        ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA").build(pair.getPrivate());
-        X509Certificate cert = X509Certificates.createEphemeral(new X500Principal("CN=client"), pair);
-        Store certs = new JcaCertStore(Collections.singleton(cert));
-        gen.addSignerInfoGenerator(
-                new JcaSignerInfoGeneratorBuilder(
-                     new JcaDigestCalculatorProviderBuilder().build()).build(sha1Signer, cert));
-        gen.addCertificates(certs);
-        CMSTypedData msg = new CMSAbsentContent();
-        CMSSignedData sigData = gen.generate(msg, false);
+	KeyPair pair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+	TransactionId transId = TransactionId.createTransactionId();
+	Nonce recipientNonce = Nonce.nextNonce();
+	Nonce senderNonce = recipientNonce;
+	X500Name issuer = new X500Name("CN=CA");
+	X500Name subject = new X500Name("CN=Client");
+	IssuerAndSubject ias = new IssuerAndSubject(issuer, subject);
+	BigInteger serial = BigInteger.ONE;
+	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(issuer, serial);
+	PKCS10CertificationRequest csr = getCsr(new X500Principal("CN=Client"),
+		pair.getPublic(), pair.getPrivate(), "password".toCharArray());
+	CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
+	ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA")
+		.build(pair.getPrivate());
+	X509Certificate cert = X509Certificates.createEphemeral(
+		new X500Principal("CN=client"), pair);
+	Store certs = new JcaCertStore(Collections.singleton(cert));
+	gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
+		new JcaDigestCalculatorProviderBuilder().build()).build(
+		sha1Signer, cert));
+	gen.addCertificates(certs);
+	CMSTypedData msg = new CMSAbsentContent();
+	CMSSignedData sigData = gen.generate(msg, false);
 
-        params.add(new Object[] {new GetCert(transId, senderNonce, iasn)});
-        params.add(new Object[] {new GetCertInitial(transId, senderNonce, ias)});
-        params.add(new Object[] {new GetCrl(transId, senderNonce, iasn)});
-        params.add(new Object[] {new PkcsReq(transId, senderNonce, csr)});
-        params.add(new Object[] {new CertRep(transId, senderNonce,
-                recipientNonce)});
-        params.add(new Object[] {new CertRep(transId, senderNonce,
-                recipientNonce, sigData)});
-        params.add(new Object[] {new CertRep(transId, senderNonce,
-                recipientNonce, FailInfo.badAlg)});
+	params.add(new Object[] { new GetCert(transId, senderNonce, iasn) });
+	params.add(new Object[] { new GetCertInitial(transId, senderNonce, ias) });
+	params.add(new Object[] { new GetCrl(transId, senderNonce, iasn) });
+	params.add(new Object[] { new PkcsReq(transId, senderNonce, csr) });
+	params.add(new Object[] { new CertRep(transId, senderNonce,
+		recipientNonce) });
+	params.add(new Object[] { new CertRep(transId, senderNonce,
+		recipientNonce, sigData) });
+	params.add(new Object[] { new CertRep(transId, senderNonce,
+		recipientNonce, FailInfo.badAlg) });
 
-        return params;
+	return params;
     }
 
     private final PkiMessage<?> message;
 
     public PkiMessageEncoderTest(PkiMessage<?> message) {
-        this.message = message;
+	this.message = message;
     }
 
     @Test
     public void simpleTest() throws Exception {
-        KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate ca = X509Certificates.createEphemeral(
-                new X500Principal("CN=CA"), caPair);
+	KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+	X509Certificate ca = X509Certificates.createEphemeral(
+		new X500Principal("CN=CA"), caPair);
 
-        KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
-                .generateKeyPair();
-        X509Certificate client = X509Certificates.createEphemeral(
-                new X500Principal("CN=Client"), clientPair);
+	KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
+		.generateKeyPair();
+	X509Certificate client = X509Certificates.createEphemeral(
+		new X500Principal("CN=Client"), clientPair);
 
-        // Everything below this line only available to client
-        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca);
-        PkiMessageEncoder encoder = new PkiMessageEncoder(
-                clientPair.getPrivate(), client, envEncoder);
+	// Everything below this line only available to client
+	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca);
+	PkiMessageEncoder encoder = new PkiMessageEncoder(
+		clientPair.getPrivate(), client, envEncoder);
 
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
-                caPair.getPrivate());
-        PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, client);
+	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
+		caPair.getPrivate());
+	PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, client);
 
-        PkiMessage<?> actual = decoder.decode(encoder.encode(message));
+	PkiMessage<?> actual = decoder.decode(encoder.encode(message));
 
-        assertEquals(message, actual);
+	assertEquals(message, actual);
     }
 
     private static PKCS10CertificationRequest getCsr(X500Principal subject,
-            PublicKey pubKey, PrivateKey priKey, char[] password)
-            throws GeneralSecurityException, IOException {
-        DERPrintableString cpSet = new DERPrintableString(new String(password));
-        SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
-                .getEncoded());
+	    PublicKey pubKey, PrivateKey priKey, char[] password)
+	    throws GeneralSecurityException, IOException {
+	DERPrintableString cpSet = new DERPrintableString(new String(password));
+	SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
+		.getEncoded());
 
-        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(
-                "SHA1withRSA");
-        ContentSigner signer;
-        try {
-            signer = signerBuilder.build(priKey);
-        } catch (OperatorCreationException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
+	JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(
+		"SHA1withRSA");
+	ContentSigner signer;
+	try {
+	    signer = signerBuilder.build(priKey);
+	} catch (OperatorCreationException e) {
+	    IOException ioe = new IOException();
+	    ioe.initCause(e);
 
-            throw ioe;
-        }
+	    throw ioe;
+	}
 
-        PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(
-                X500Name.getInstance(subject.getEncoded()), pkInfo);
-        builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword,
-                cpSet);
+	PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(
+		X500Name.getInstance(subject.getEncoded()), pkInfo);
+	builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword,
+		cpSet);
 
-        return builder.build(signer);
+	return builder.build(signer);
     }
 }

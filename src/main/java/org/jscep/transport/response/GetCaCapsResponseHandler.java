@@ -40,10 +40,10 @@ import org.slf4j.LoggerFactory;
  * @author David Grant
  */
 public final class GetCaCapsResponseHandler implements
-        ScepResponseHandler<Capabilities> {
+	ScepResponseHandler<Capabilities> {
     private static final String TEXT_PLAIN = "text/plain";
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(GetCaCapsResponseHandler.class);
+	    .getLogger(GetCaCapsResponseHandler.class);
 
     /**
      * {@inheritDoc}
@@ -51,46 +51,46 @@ public final class GetCaCapsResponseHandler implements
      * @throws InvalidContentTypeException
      */
     public Capabilities getResponse(byte[] content, String mimeType)
-            throws ContentException {
-        if (mimeType == null || !mimeType.startsWith(TEXT_PLAIN)) {
-            LOGGER.warn(
-                    "Content-Type mismatch: was '{}', expected 'text/plain'",
-                    mimeType);
-        }
+	    throws ContentException {
+	if (mimeType == null || !mimeType.startsWith(TEXT_PLAIN)) {
+	    LOGGER.warn(
+		    "Content-Type mismatch: was '{}', expected 'text/plain'",
+		    mimeType);
+	}
 
-        final EnumSet<Capability> caps = EnumSet.noneOf(Capability.class);
+	final EnumSet<Capability> caps = EnumSet.noneOf(Capability.class);
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("CA capabilities:");
-        }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-                new ByteArrayInputStream(content), Charset.forName(Charsets.US_ASCII
-                        .name())));
-        Set<String> caCaps = new HashSet<String>();
-        String capability;
-        try {
-            while ((capability = reader.readLine()) != null) {
-                caCaps.add(capability);
-            }
-        } catch (IOException e) {
-            throw new InvalidContentTypeException(e);
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                LOGGER.error("Error closing reader", e);
-            }
-        }
+	if (LOGGER.isDebugEnabled()) {
+	    LOGGER.debug("CA capabilities:");
+	}
+	BufferedReader reader = new BufferedReader(new InputStreamReader(
+		new ByteArrayInputStream(content),
+		Charset.forName(Charsets.US_ASCII.name())));
+	Set<String> caCaps = new HashSet<String>();
+	String capability;
+	try {
+	    while ((capability = reader.readLine()) != null) {
+		caCaps.add(capability);
+	    }
+	} catch (IOException e) {
+	    throw new InvalidContentTypeException(e);
+	} finally {
+	    try {
+		reader.close();
+	    } catch (IOException e) {
+		LOGGER.error("Error closing reader", e);
+	    }
+	}
 
-        for (Capability enumValue : Capability.values()) {
-            if (caCaps.contains(enumValue.toString())) {
-                LOGGER.debug("[\u2713] {}", enumValue.getDescription());
-                caps.add(enumValue);
-            } else {
-                LOGGER.debug("[\u2717] {}", enumValue.getDescription());
-            }
-        }
+	for (Capability enumValue : Capability.values()) {
+	    if (caCaps.contains(enumValue.toString())) {
+		LOGGER.debug("[\u2713] {}", enumValue.getDescription());
+		caps.add(enumValue);
+	    } else {
+		LOGGER.debug("[\u2717] {}", enumValue.getDescription());
+	    }
+	}
 
-        return new Capabilities(caps.toArray(new Capability[caps.size()]));
+	return new Capabilities(caps.toArray(new Capability[caps.size()]));
     }
 }

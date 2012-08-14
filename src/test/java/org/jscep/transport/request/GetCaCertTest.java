@@ -14,29 +14,29 @@ public class GetCaCertTest {
 
     @Before
     public void setUp() {
-        caIdentifier = "id";
-        fixture = new GetCaCertRequest(caIdentifier);
+	caIdentifier = "id";
+	fixture = new GetCaCertRequest(caIdentifier);
     }
 
     @Test
     public void testNullConstructor() {
-        fixture = new GetCaCertRequest();
-        Assert.assertEquals("", fixture.getMessage());
+	fixture = new GetCaCertRequest();
+	Assert.assertEquals("", fixture.getMessage());
     }
 
     @Test
     public void testGetOperation() {
-        Assert.assertSame(Operation.GET_CA_CERT, fixture.getOperation());
+	Assert.assertSame(Operation.GET_CA_CERT, fixture.getOperation());
     }
 
     @Test
     public void testGetMessage() throws IOException {
-        Assert.assertEquals(caIdentifier, fixture.getMessage());
+	Assert.assertEquals(caIdentifier, fixture.getMessage());
     }
 
     @Test
     public void testString() {
-        // Coverage
-        fixture.toString();
+	// Coverage
+	fixture.toString();
     }
 }

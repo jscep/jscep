@@ -46,7 +46,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
  */
 public final class X509Util {
     private X509Util() {
-        // This constructor will never be invoked.
+	// This constructor will never be invoked.
     }
 
     /**
@@ -57,24 +57,24 @@ public final class X509Util {
      * @return the converted name.
      */
     public static X500Name toX509Name(X500Principal principal) {
-        byte[] bytes = principal.getEncoded();
-        return X500Name.getInstance(bytes);
+	byte[] bytes = principal.getEncoded();
+	return X500Name.getInstance(bytes);
     }
-    
-    public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
-            throws InvalidKeySpecException, IOException {
-        SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();
-        RSAKeyParameters keyParams = (RSAKeyParameters) PublicKeyFactory
-                .createKey(pubKeyInfo);
-        KeySpec keySpec = new RSAPublicKeySpec(keyParams.getModulus(),
-                keyParams.getExponent());
 
-        KeyFactory kf;
-        try {
-            kf = KeyFactory.getInstance("RSA");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        return kf.generatePublic(keySpec);
+    public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
+	    throws InvalidKeySpecException, IOException {
+	SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();
+	RSAKeyParameters keyParams = (RSAKeyParameters) PublicKeyFactory
+		.createKey(pubKeyInfo);
+	KeySpec keySpec = new RSAPublicKeySpec(keyParams.getModulus(),
+		keyParams.getExponent());
+
+	KeyFactory kf;
+	try {
+	    kf = KeyFactory.getInstance("RSA");
+	} catch (NoSuchAlgorithmException e) {
+	    throw new RuntimeException(e);
+	}
+	return kf.generatePublic(keySpec);
     }
 }

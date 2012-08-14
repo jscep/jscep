@@ -39,31 +39,31 @@ import org.apache.commons.lang.ArrayUtils;
  * @author David Grant
  */
 public final class TransactionId implements Serializable {
-	private static final long serialVersionUID = -5248125945726721520L;
-	private static final AtomicLong ID_SOURCE = new AtomicLong();
+    private static final long serialVersionUID = -5248125945726721520L;
+    private static final AtomicLong ID_SOURCE = new AtomicLong();
     private final byte[] id;
 
     public TransactionId(byte[] id) {
-        this.id = ArrayUtils.clone(id);
+	this.id = ArrayUtils.clone(id);
     }
 
     private TransactionId(PublicKey pubKey, String digestAlgorithm) {
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance(digestAlgorithm);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        id = new Hex().encode(digest.digest(pubKey.getEncoded()));
+	MessageDigest digest;
+	try {
+	    digest = MessageDigest.getInstance(digestAlgorithm);
+	} catch (NoSuchAlgorithmException e) {
+	    throw new RuntimeException(e);
+	}
+	id = new Hex().encode(digest.digest(pubKey.getEncoded()));
     }
 
     private TransactionId() {
-        try {
-            id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes(
-                    Charsets.US_ASCII.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+	try {
+	    id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes(
+		    Charsets.US_ASCII.name());
+	} catch (UnsupportedEncodingException e) {
+	    throw new RuntimeException(e);
+	}
     }
 
     /**
@@ -79,8 +79,8 @@ public final class TransactionId implements Serializable {
      * @return the new Transaction Id
      */
     public static TransactionId createTransactionId(PublicKey pubKey,
-            String digestAlgorithm) {
-        return new TransactionId(pubKey, digestAlgorithm);
+	    String digestAlgorithm) {
+	return new TransactionId(pubKey, digestAlgorithm);
     }
 
     /**
@@ -91,34 +91,34 @@ public final class TransactionId implements Serializable {
      * @return the new Transaction Id
      */
     public static TransactionId createTransactionId() {
-        return new TransactionId();
+	return new TransactionId();
     }
 
     @Override
     public String toString() {
-        try {
-            return new String(id, Charsets.US_ASCII.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+	try {
+	    return new String(id, Charsets.US_ASCII.name());
+	} catch (UnsupportedEncodingException e) {
+	    throw new RuntimeException(e);
+	}
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+	if (this == o)
+	    return true;
+	if (o == null || getClass() != o.getClass())
+	    return false;
 
-        TransactionId that = (TransactionId) o;
+	TransactionId that = (TransactionId) o;
 
-        return Arrays.equals(id, that.id);
+	return Arrays.equals(id, that.id);
 
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(id);
+	return Arrays.hashCode(id);
 
     }
 }

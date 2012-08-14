@@ -16,28 +16,28 @@ import java.util.List;
 public class CapabilitiesCipherTest {
     @Parameters
     public static Collection<Object[]> getParameters() {
-        List<Object[]> params = new ArrayList<Object[]>();
+	List<Object[]> params = new ArrayList<Object[]>();
 
-        Capabilities capabilities;
+	Capabilities capabilities;
 
-        capabilities = new Capabilities();
-        params.add(new Object[] {capabilities, "DES"});
-        capabilities = new Capabilities(Capability.TRIPLE_DES);
-        params.add(new Object[] {capabilities, "DESede"});
+	capabilities = new Capabilities();
+	params.add(new Object[] { capabilities, "DES" });
+	capabilities = new Capabilities(Capability.TRIPLE_DES);
+	params.add(new Object[] { capabilities, "DESede" });
 
-        return params;
+	return params;
     }
 
     private final Capabilities capabilities;
     private final String algorithm;
 
     public CapabilitiesCipherTest(Capabilities capabilities, String algorithm) {
-        this.capabilities = capabilities;
-        this.algorithm = algorithm;
+	this.capabilities = capabilities;
+	this.algorithm = algorithm;
     }
 
     @Test
     public void testStrongestCipher() {
-        Assert.assertEquals(algorithm, capabilities.getStrongestCipher());
+	Assert.assertEquals(algorithm, capabilities.getStrongestCipher());
     }
 }

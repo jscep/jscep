@@ -42,49 +42,49 @@ public class NonEnrollmentTransaction extends Transaction {
     private final PkiRequest<? extends ASN1Encodable> request;
 
     public NonEnrollmentTransaction(Transport transport,
-            PkiMessageEncoder encoder, PkiMessageDecoder decoder,
-            IssuerAndSerialNumber iasn, MessageType msgType) {
-        super(transport, encoder, decoder);
-        this.transId = TransactionId.createTransactionId();
+	    PkiMessageEncoder encoder, PkiMessageDecoder decoder,
+	    IssuerAndSerialNumber iasn, MessageType msgType) {
+	super(transport, encoder, decoder);
+	this.transId = TransactionId.createTransactionId();
 
-        if (msgType == MessageType.GET_CERT) {
-            this.request = new GetCert(transId, Nonce.nextNonce(), iasn);
-        } else if (msgType == MessageType.GET_CRL) {
-            this.request = new GetCrl(transId, Nonce.nextNonce(), iasn);
-        } else {
-            throw new IllegalArgumentException(msgType.toString());
-        }
+	if (msgType == MessageType.GET_CERT) {
+	    this.request = new GetCert(transId, Nonce.nextNonce(), iasn);
+	} else if (msgType == MessageType.GET_CRL) {
+	    this.request = new GetCrl(transId, Nonce.nextNonce(), iasn);
+	} else {
+	    throw new IllegalArgumentException(msgType.toString());
+	}
     }
 
     @Override
     public TransactionId getId() {
-        return transId;
+	return transId;
     }
 
     @Override
     public final State send() throws TransactionException {
-        final PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
-        CMSSignedData signedData;
-        try {
-            signedData = encode(request);
-        } catch (MessageEncodingException e) {
-            throw new TransactionException(e);
-        }
+	final PkiOperationResponseHandler handler = new PkiOperationResponseHandler();
+	CMSSignedData signedData;
+	try {
+	    signedData = encode(request);
+	} catch (MessageEncodingException e) {
+	    throw new TransactionException(e);
+	}
 
-        CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
-        CertRep response;
-        try {
-            response = (CertRep) decode(res);
-        } catch (MessageDecodingException e) {
-            throw new TransactionException(e);
-        }
+	CMSSignedData res = send(handler, new PkiOperationRequest(signedData));
+	CertRep response;
+	try {
+	    response = (CertRep) decode(res);
+	} catch (MessageDecodingException e) {
+	    throw new TransactionException(e);
+	}
 
-        if (response.getPkiStatus() == PkiStatus.FAILURE) {
-            return failure(response.getFailInfo());
-        } else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
-            return success(extractCertStore(response));
-        } else {
-            throw new TransactionException("Invalid Response");
-        }
+	if (response.getPkiStatus() == PkiStatus.FAILURE) {
+	    return failure(response.getFailInfo());
+	} else if (response.getPkiStatus() == PkiStatus.SUCCESS) {
+	    return success(extractCertStore(response));
+	} else {
+	    throw new TransactionException("Invalid Response");
+	}
     }
 }

@@ -23,25 +23,27 @@ import org.junit.runner.RunWith;
 public class MessageDigestCertificateVerifierTest {
     @DataPoints
     public static MessageDigest[] getMessageDigests() throws Exception {
-        List<MessageDigest> digests = new ArrayList<MessageDigest>();
-        
-        Set<String> algorithms = Security.getAlgorithms("MessageDigest");
-        for (String algorithm : algorithms) {
-            digests.add(MessageDigest.getInstance(algorithm));
-        }
-        
-        return digests.toArray(new MessageDigest[0]);
+	List<MessageDigest> digests = new ArrayList<MessageDigest>();
+
+	Set<String> algorithms = Security.getAlgorithms("MessageDigest");
+	for (String algorithm : algorithms) {
+	    digests.add(MessageDigest.getInstance(algorithm));
+	}
+
+	return digests.toArray(new MessageDigest[0]);
     }
-    
+
     @Theory
     public void testVerify(MessageDigest digest) throws Exception {
-        X500Principal subject = new X500Principal("CN=example");
-        KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate cert = X509Certificates.createEphemeral(subject, keyPair);
-        
-        byte[] expected = digest.digest(cert.getTBSCertificate());
-        
-        CertificateVerifier verifier = new MessageDigestCertificateVerifier(digest, expected);
-        assertTrue(verifier.verify(cert));
+	X500Principal subject = new X500Principal("CN=example");
+	KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+	X509Certificate cert = X509Certificates.createEphemeral(subject,
+		keyPair);
+
+	byte[] expected = digest.digest(cert.getTBSCertificate());
+
+	CertificateVerifier verifier = new MessageDigestCertificateVerifier(
+		digest, expected);
+	assertTrue(verifier.verify(cert));
     }
 }

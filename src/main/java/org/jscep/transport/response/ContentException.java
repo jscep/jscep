@@ -13,11 +13,11 @@ public class ContentException extends TransportException {
     private static final long serialVersionUID = -959127316844320818L;
 
     public ContentException(Throwable cause) {
-        super(cause);
+	super(cause);
     }
 
     public ContentException(String message) {
-        super(message);
+	super(message);
     }
 
 }

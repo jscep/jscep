@@ -60,8 +60,8 @@ public final class IssuerAndSubject extends ASN1Object {
      *            the sequence.
      */
     public IssuerAndSubject(final ASN1Sequence seq) {
-        issuer = X500Name.getInstance(seq.getObjectAt(0));
-        subject = X500Name.getInstance(seq.getObjectAt(1));
+	issuer = X500Name.getInstance(seq.getObjectAt(0));
+	subject = X500Name.getInstance(seq.getObjectAt(1));
     }
 
     /**
@@ -73,8 +73,8 @@ public final class IssuerAndSubject extends ASN1Object {
      *            the subject.
      */
     public IssuerAndSubject(final X500Name issuer, final X500Name subject) {
-        this.issuer = issuer;
-        this.subject = subject;
+	this.issuer = issuer;
+	this.subject = subject;
     }
 
     /**
@@ -84,7 +84,7 @@ public final class IssuerAndSubject extends ASN1Object {
      *            the byte array.
      */
     public IssuerAndSubject(final byte[] bytes) {
-        this(ASN1Sequence.getInstance(bytes));
+	this(ASN1Sequence.getInstance(bytes));
     }
 
     /**
@@ -93,7 +93,7 @@ public final class IssuerAndSubject extends ASN1Object {
      * @return the issuer.
      */
     public X500Name getIssuer() {
-        return issuer;
+	return issuer;
     }
 
     /**
@@ -102,16 +102,16 @@ public final class IssuerAndSubject extends ASN1Object {
      * @return the subject.
      */
     public X500Name getSubject() {
-        return subject;
+	return subject;
     }
 
     @Override
     public ASN1Primitive toASN1Primitive() {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+	ASN1EncodableVector v = new ASN1EncodableVector();
 
-        v.add(issuer);
-        v.add(subject);
+	v.add(issuer);
+	v.add(subject);
 
-        return new DERSequence(v);
+	return new DERSequence(v);
     }
 }

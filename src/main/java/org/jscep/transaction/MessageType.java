@@ -52,24 +52,24 @@ public enum MessageType {
     private final int value;
 
     private MessageType(int value) {
-        this.value = value;
+	this.value = value;
     }
 
     public int getValue() {
-        return value;
+	return value;
     }
 
     public static MessageType valueOf(int value) {
-        for (MessageType msgType : MessageType.values()) {
-            if (msgType.getValue() == value) {
-                return msgType;
-            }
-        }
-        throw new IllegalArgumentException();
+	for (MessageType msgType : MessageType.values()) {
+	    if (msgType.getValue() == value) {
+		return msgType;
+	    }
+	}
+	throw new IllegalArgumentException();
     }
 
     @Override
     public String toString() {
-        return name();
+	return name();
     }
 }

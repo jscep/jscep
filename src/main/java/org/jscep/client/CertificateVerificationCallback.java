@@ -48,7 +48,7 @@ public final class CertificateVerificationCallback implements Callback {
      *            the CA certificate
      */
     public CertificateVerificationCallback(final X509Certificate caCertificate) {
-        this.caCertificate = caCertificate;
+	this.caCertificate = caCertificate;
     }
 
     /**
@@ -57,7 +57,7 @@ public final class CertificateVerificationCallback implements Callback {
      * @return the CA certificate.
      */
     public X509Certificate getCertificate() {
-        return caCertificate;
+	return caCertificate;
     }
 
     /**
@@ -69,7 +69,7 @@ public final class CertificateVerificationCallback implements Callback {
      * @return the outcome.
      */
     public boolean isVerified() {
-        return verified;
+	return verified;
     }
 
     /**
@@ -83,6 +83,6 @@ public final class CertificateVerificationCallback implements Callback {
      *            the outcome.
      */
     public void setVerified(final boolean verified) {
-        this.verified = verified;
+	this.verified = verified;
     }
 }

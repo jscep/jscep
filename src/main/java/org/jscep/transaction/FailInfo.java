@@ -53,25 +53,25 @@ public enum FailInfo {
     private final int value;
 
     private FailInfo(int value) {
-        this.value = value;
+	this.value = value;
     }
 
     public int getValue() {
-        return value;
+	return value;
     }
 
     @Override
     public String toString() {
-        return name();
+	return name();
     }
 
     public static FailInfo valueOf(int value) {
-        for (FailInfo failInfo : FailInfo.values()) {
-            if (failInfo.getValue() == value) {
-                return failInfo;
-            }
-        }
-        // Fall back to bad request (see issue 39).
-        return FailInfo.badRequest;
+	for (FailInfo failInfo : FailInfo.values()) {
+	    if (failInfo.getValue() == value) {
+		return failInfo;
+	    }
+	}
+	// Fall back to bad request (see issue 39).
+	return FailInfo.badRequest;
     }
 }

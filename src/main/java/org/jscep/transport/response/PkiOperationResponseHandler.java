@@ -32,7 +32,7 @@ import org.bouncycastle.cms.CMSSignedData;
  * @author David Grant
  */
 public final class PkiOperationResponseHandler implements
-        ScepResponseHandler<CMSSignedData> {
+	ScepResponseHandler<CMSSignedData> {
     private static final String PKI_MESSAGE = "application/x-pki-message";
 
     /**
@@ -41,15 +41,15 @@ public final class PkiOperationResponseHandler implements
      * @throws ContentException
      */
     public CMSSignedData getResponse(byte[] content, String mimeType)
-            throws ContentException {
-        if (mimeType.startsWith(PKI_MESSAGE)) {
-            try {
-                return new CMSSignedData(content);
-            } catch (CMSException e) {
-                throw new InvalidContentException(e);
-            }
-        } else {
-            throw new InvalidContentTypeException(mimeType, PKI_MESSAGE);
-        }
+	    throws ContentException {
+	if (mimeType.startsWith(PKI_MESSAGE)) {
+	    try {
+		return new CMSSignedData(content);
+	    } catch (CMSException e) {
+		throw new InvalidContentException(e);
+	    }
+	} else {
+	    throw new InvalidContentTypeException(mimeType, PKI_MESSAGE);
+	}
     }
 }

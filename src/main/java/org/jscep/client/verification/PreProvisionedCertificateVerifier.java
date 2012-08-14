@@ -6,7 +6,7 @@ import java.security.cert.X509Certificate;
  * CertificateVerifier that uses a pre-provisioned certificate.
  */
 public final class PreProvisionedCertificateVerifier implements
-        CertificateVerifier {
+	CertificateVerifier {
     /**
      * The pre-provisioned certificate.
      */
@@ -19,14 +19,14 @@ public final class PreProvisionedCertificateVerifier implements
      *            the pre-provisioned certificate.
      */
     public PreProvisionedCertificateVerifier(X509Certificate cert) {
-        this.cert = cert;
+	this.cert = cert;
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean verify(final X509Certificate cert) {
-        return this.cert.equals(cert);
+	return this.cert.equals(cert);
     }
 
 }

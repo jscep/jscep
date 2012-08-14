@@ -32,7 +32,7 @@ import org.jscep.transaction.TransactionId;
  */
 public class GetCertInitial extends PkiRequest<IssuerAndSubject> {
     public GetCertInitial(TransactionId transId, Nonce senderNonce,
-            IssuerAndSubject messageData) {
-        super(transId, MessageType.GET_CERT_INITIAL, senderNonce, messageData);
+	    IssuerAndSubject messageData) {
+	super(transId, MessageType.GET_CERT_INITIAL, senderNonce, messageData);
     }
 }

@@ -12,12 +12,12 @@ public class InvalidNonceExceptionTest {
 
     @Before
     public void setUp() {
-        msg = "Message";
-        exception = new InvalidNonceException(msg);
+	msg = "Message";
+	exception = new InvalidNonceException(msg);
     }
 
     @Test
     public void testGetMessage() {
-        assertThat(exception.getMessage(), is(msg));
+	assertThat(exception.getMessage(), is(msg));
     }
 }

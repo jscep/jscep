@@ -35,55 +35,55 @@ abstract public class AbstractTransportTest {
 
     @Before
     public void setUp() throws Exception {
-        server = new Server(0);
-        server.start();
-        url = new URL("http://localhost:"
-                + server.getConnectors()[0].getLocalPort() + "/");
-        proxy = Proxy.NO_PROXY;
-        transport = getTransport(url);
+	server = new Server(0);
+	server.start();
+	url = new URL("http://localhost:"
+		+ server.getConnectors()[0].getLocalPort() + "/");
+	proxy = Proxy.NO_PROXY;
+	transport = getTransport(url);
     }
 
     abstract protected Transport getTransport(URL url);
 
     @After
     public void tearDown() throws Exception {
-        server.stop();
+	server.stop();
     }
 
     @Test
     public void testGetURL() {
-        Assert.assertEquals(url, transport.getUrl());
+	Assert.assertEquals(url, transport.getUrl());
     }
 
     @Test
     public void test404() throws Exception {
-        KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+	KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 
-        PkcsPkiEnvelopeEncoder envEnc = new PkcsPkiEnvelopeEncoder(
-                getCertificate(keyPair));
-        PkiMessageEncoder enc = new PkiMessageEncoder(keyPair.getPrivate(),
-                getCertificate(keyPair), envEnc);
+	PkcsPkiEnvelopeEncoder envEnc = new PkcsPkiEnvelopeEncoder(
+		getCertificate(keyPair));
+	PkiMessageEncoder enc = new PkiMessageEncoder(keyPair.getPrivate(),
+		getCertificate(keyPair), envEnc);
 
-        TransactionId transId = TransactionId.createTransactionId();
-        Nonce senderNonce = Nonce.nextNonce();
-        X500Name name = new X500Name("CN=jscep.org");
-        BigInteger serialNumber = BigInteger.ONE;
-        IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name,
-                serialNumber);
-        GetCert getCert = new GetCert(transId, senderNonce, iasn);
-        PkiOperationRequest req = new PkiOperationRequest(enc.encode(getCert));
+	TransactionId transId = TransactionId.createTransactionId();
+	Nonce senderNonce = Nonce.nextNonce();
+	X500Name name = new X500Name("CN=jscep.org");
+	BigInteger serialNumber = BigInteger.ONE;
+	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name,
+		serialNumber);
+	GetCert getCert = new GetCert(transId, senderNonce, iasn);
+	PkiOperationRequest req = new PkiOperationRequest(enc.encode(getCert));
 
-        try {
-            transport.sendRequest(req, new PkiOperationResponseHandler());
-        } catch (TransportException e) {
-            Assert.assertEquals(e.getMessage(), "404 Not Found");
-        }
+	try {
+	    transport.sendRequest(req, new PkiOperationResponseHandler());
+	} catch (TransportException e) {
+	    Assert.assertEquals(e.getMessage(), "404 Not Found");
+	}
     }
 
     private X509Certificate getCertificate(KeyPair keyPair)
-            throws GeneralSecurityException {
-        final X500Principal subject = new X500Principal("CN=example.org");
+	    throws GeneralSecurityException {
+	final X500Principal subject = new X500Principal("CN=example.org");
 
-        return X509Certificates.createEphemeral(subject, keyPair);
+	return X509Certificates.createEphemeral(subject, keyPair);
     }
 }

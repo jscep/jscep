@@ -67,164 +67,164 @@ public final class PkiMessageDecoder {
     private final X509Certificate signer;
 
     public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder,
-            X509Certificate signer) {
-        this.decoder = decoder;
-        this.signer = signer;
+	    X509Certificate signer) {
+	this.decoder = decoder;
+	this.signer = signer;
     }
 
     @SuppressWarnings("unchecked")
     public PkiMessage<?> decode(CMSSignedData signedData)
-            throws MessageDecodingException {
-        // The signed content is always an octet string
-        CMSProcessable signedContent = signedData.getSignedContent();
+	    throws MessageDecodingException {
+	// The signed content is always an octet string
+	CMSProcessable signedContent = signedData.getSignedContent();
 
-        SignerInformationStore signerStore = signedData.getSignerInfos();
-        SignerInformation signerInfo = signerStore.get(new JcaSignerId(signer));
-        Store store = signedData.getCertificates();
-        Collection<?> certColl;
-        try {
-            certColl = store.getMatches(signerInfo.getSID());
-        } catch (StoreException e) {
-            throw new MessageDecodingException(e);
-        }
-        if (certColl.size() > 0) {
-            X509CertificateHolder cert = (X509CertificateHolder) certColl
-                    .iterator().next();
-            LOGGER.debug("Verifying message using key belonging to '{}'",
-                    cert.getSubject());
-            SignerInformationVerifier verifier;
-            try {
-                verifier = new JcaSimpleSignerInfoVerifierBuilder().build(cert);
-                signerInfo.verify(verifier);
-            } catch (Exception e) {
-                throw new MessageDecodingException(e);
-            }
-        } else {
-            LOGGER.error("Unable to verify message");
-        }
+	SignerInformationStore signerStore = signedData.getSignerInfos();
+	SignerInformation signerInfo = signerStore.get(new JcaSignerId(signer));
+	Store store = signedData.getCertificates();
+	Collection<?> certColl;
+	try {
+	    certColl = store.getMatches(signerInfo.getSID());
+	} catch (StoreException e) {
+	    throw new MessageDecodingException(e);
+	}
+	if (certColl.size() > 0) {
+	    X509CertificateHolder cert = (X509CertificateHolder) certColl
+		    .iterator().next();
+	    LOGGER.debug("Verifying message using key belonging to '{}'",
+		    cert.getSubject());
+	    SignerInformationVerifier verifier;
+	    try {
+		verifier = new JcaSimpleSignerInfoVerifierBuilder().build(cert);
+		signerInfo.verify(verifier);
+	    } catch (Exception e) {
+		throw new MessageDecodingException(e);
+	    }
+	} else {
+	    LOGGER.error("Unable to verify message");
+	}
 
-        Hashtable<DERObjectIdentifier, Attribute> attrTable = signerInfo
-                .getSignedAttributes().toHashtable();
+	Hashtable<DERObjectIdentifier, Attribute> attrTable = signerInfo
+		.getSignedAttributes().toHashtable();
 
-        MessageType messageType = toMessageType(attrTable
-                .get(toOid(MESSAGE_TYPE)));
-        Nonce senderNonce = toNonce(attrTable.get(toOid(SENDER_NONCE)));
-        TransactionId transId = toTransactionId(attrTable.get(toOid(TRANS_ID)));
+	MessageType messageType = toMessageType(attrTable
+		.get(toOid(MESSAGE_TYPE)));
+	Nonce senderNonce = toNonce(attrTable.get(toOid(SENDER_NONCE)));
+	TransactionId transId = toTransactionId(attrTable.get(toOid(TRANS_ID)));
 
-        PkiMessage<?> pkiMessage;
-        if (messageType == MessageType.CERT_REP) {
-            PkiStatus pkiStatus = toPkiStatus(attrTable.get(toOid(PKI_STATUS)));
-            Nonce recipientNonce = toNonce(attrTable
-                    .get(toOid(RECIPIENT_NONCE)));
+	PkiMessage<?> pkiMessage;
+	if (messageType == MessageType.CERT_REP) {
+	    PkiStatus pkiStatus = toPkiStatus(attrTable.get(toOid(PKI_STATUS)));
+	    Nonce recipientNonce = toNonce(attrTable
+		    .get(toOid(RECIPIENT_NONCE)));
 
-            if (pkiStatus == PkiStatus.FAILURE) {
-                FailInfo failInfo = toFailInfo(attrTable.get(toOid(FAIL_INFO)));
+	    if (pkiStatus == PkiStatus.FAILURE) {
+		FailInfo failInfo = toFailInfo(attrTable.get(toOid(FAIL_INFO)));
 
-                pkiMessage = new CertRep(transId, senderNonce, recipientNonce,
-                        failInfo);
-            } else if (pkiStatus == PkiStatus.PENDING) {
+		pkiMessage = new CertRep(transId, senderNonce, recipientNonce,
+			failInfo);
+	    } else if (pkiStatus == PkiStatus.PENDING) {
 
-                pkiMessage = new CertRep(transId, senderNonce, recipientNonce);
-            } else {
-                final CMSEnvelopedData ed = getEnvelopedData(signedContent
-                        .getContent());
-                final byte[] envelopedContent = decoder.decode(ed);
-                CMSSignedData messageData;
-                try {
-                    messageData = new CMSSignedData(envelopedContent);
-                } catch (CMSException e) {
-                    throw new MessageDecodingException(e);
-                }
+		pkiMessage = new CertRep(transId, senderNonce, recipientNonce);
+	    } else {
+		final CMSEnvelopedData ed = getEnvelopedData(signedContent
+			.getContent());
+		final byte[] envelopedContent = decoder.decode(ed);
+		CMSSignedData messageData;
+		try {
+		    messageData = new CMSSignedData(envelopedContent);
+		} catch (CMSException e) {
+		    throw new MessageDecodingException(e);
+		}
 
-                pkiMessage = new CertRep(transId, senderNonce, recipientNonce,
-                        messageData);
-            }
-        } else {
-            CMSEnvelopedData ed = getEnvelopedData(signedContent.getContent());
-            byte[] decoded = decoder.decode(ed);
-            if (messageType == MessageType.GET_CERT) {
-                IssuerAndSerialNumber messageData = IssuerAndSerialNumber
-                        .getInstance(decoded);
+		pkiMessage = new CertRep(transId, senderNonce, recipientNonce,
+			messageData);
+	    }
+	} else {
+	    CMSEnvelopedData ed = getEnvelopedData(signedContent.getContent());
+	    byte[] decoded = decoder.decode(ed);
+	    if (messageType == MessageType.GET_CERT) {
+		IssuerAndSerialNumber messageData = IssuerAndSerialNumber
+			.getInstance(decoded);
 
-                pkiMessage = new GetCert(transId, senderNonce, messageData);
-            } else if (messageType == MessageType.GET_CERT_INITIAL) {
-                IssuerAndSubject messageData = new IssuerAndSubject(decoded);
+		pkiMessage = new GetCert(transId, senderNonce, messageData);
+	    } else if (messageType == MessageType.GET_CERT_INITIAL) {
+		IssuerAndSubject messageData = new IssuerAndSubject(decoded);
 
-                pkiMessage = new GetCertInitial(transId, senderNonce,
-                        messageData);
-            } else if (messageType == MessageType.GET_CRL) {
-                IssuerAndSerialNumber messageData = IssuerAndSerialNumber
-                        .getInstance(decoded);
+		pkiMessage = new GetCertInitial(transId, senderNonce,
+			messageData);
+	    } else if (messageType == MessageType.GET_CRL) {
+		IssuerAndSerialNumber messageData = IssuerAndSerialNumber
+			.getInstance(decoded);
 
-                pkiMessage = new GetCrl(transId, senderNonce, messageData);
-            } else {
-                PKCS10CertificationRequest messageData;
-                try {
-                    messageData = new PKCS10CertificationRequest(decoded);
-                } catch (IOException e) {
-                    throw new MessageDecodingException(e);
-                }
+		pkiMessage = new GetCrl(transId, senderNonce, messageData);
+	    } else {
+		PKCS10CertificationRequest messageData;
+		try {
+		    messageData = new PKCS10CertificationRequest(decoded);
+		} catch (IOException e) {
+		    throw new MessageDecodingException(e);
+		}
 
-                pkiMessage = new PkcsReq(transId, senderNonce, messageData);
-            }
-        }
+		pkiMessage = new PkcsReq(transId, senderNonce, messageData);
+	    }
+	}
 
-        LOGGER.debug("Decoded to: {}", pkiMessage);
-        return pkiMessage;
+	LOGGER.debug("Decoded to: {}", pkiMessage);
+	return pkiMessage;
     }
 
     private DERObjectIdentifier toOid(ScepObjectIdentifier oid) {
-        return new DERObjectIdentifier(oid.id());
+	return new DERObjectIdentifier(oid.id());
     }
 
     private CMSEnvelopedData getEnvelopedData(Object bytes)
-            throws MessageDecodingException {
-        // We expect the byte array to be a sequence
-        // ... and that sequence to be a ContentInfo (but might be the
-        // EnvelopedData)
-        try {
-            return new CMSEnvelopedData((byte[]) bytes);
-        } catch (CMSException e) {
-            throw new MessageDecodingException(e);
-        }
+	    throws MessageDecodingException {
+	// We expect the byte array to be a sequence
+	// ... and that sequence to be a ContentInfo (but might be the
+	// EnvelopedData)
+	try {
+	    return new CMSEnvelopedData((byte[]) bytes);
+	} catch (CMSException e) {
+	    throw new MessageDecodingException(e);
+	}
     }
 
     private Nonce toNonce(Attribute attr) {
-        // Sometimes we don't get a sender nonce.
-        if (attr == null) {
-            return null;
-        }
-        final DEROctetString octets = (DEROctetString) attr.getAttrValues()
-                .getObjectAt(0);
+	// Sometimes we don't get a sender nonce.
+	if (attr == null) {
+	    return null;
+	}
+	final DEROctetString octets = (DEROctetString) attr.getAttrValues()
+		.getObjectAt(0);
 
-        return new Nonce(octets.getOctets());
+	return new Nonce(octets.getOctets());
     }
 
     private MessageType toMessageType(Attribute attr) {
-        final DERPrintableString string = (DERPrintableString) attr
-                .getAttrValues().getObjectAt(0);
+	final DERPrintableString string = (DERPrintableString) attr
+		.getAttrValues().getObjectAt(0);
 
-        return MessageType.valueOf(Integer.valueOf(string.getString()));
+	return MessageType.valueOf(Integer.valueOf(string.getString()));
     }
 
     private TransactionId toTransactionId(Attribute attr) {
-        final DERPrintableString string = (DERPrintableString) attr
-                .getAttrValues().getObjectAt(0);
+	final DERPrintableString string = (DERPrintableString) attr
+		.getAttrValues().getObjectAt(0);
 
-        return new TransactionId(string.getOctets());
+	return new TransactionId(string.getOctets());
     }
 
     private PkiStatus toPkiStatus(Attribute attr) {
-        final DERPrintableString string = (DERPrintableString) attr
-                .getAttrValues().getObjectAt(0);
+	final DERPrintableString string = (DERPrintableString) attr
+		.getAttrValues().getObjectAt(0);
 
-        return PkiStatus.valueOf(Integer.valueOf(string.getString()));
+	return PkiStatus.valueOf(Integer.valueOf(string.getString()));
     }
 
     private FailInfo toFailInfo(Attribute attr) {
-        final DERPrintableString string = (DERPrintableString) attr
-                .getAttrValues().getObjectAt(0);
+	final DERPrintableString string = (DERPrintableString) attr
+		.getAttrValues().getObjectAt(0);
 
-        return FailInfo.valueOf(Integer.valueOf(string.getString()));
+	return FailInfo.valueOf(Integer.valueOf(string.getString()));
     }
 }

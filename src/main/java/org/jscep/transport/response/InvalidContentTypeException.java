@@ -14,16 +14,16 @@ public class InvalidContentTypeException extends ContentException {
     private static final long serialVersionUID = 8144078591967730995L;
 
     public InvalidContentTypeException(final String actual,
-            final String... expected) {
-        this(String.format("Expected %s, but was %s",
-                Arrays.toString(expected), actual));
+	    final String... expected) {
+	this(String.format("Expected %s, but was %s",
+		Arrays.toString(expected), actual));
     }
 
     public InvalidContentTypeException(Throwable cause) {
-        super(cause);
+	super(cause);
     }
 
     public InvalidContentTypeException(String message) {
-        super(message);
+	super(message);
     }
 }

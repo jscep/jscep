@@ -10,11 +10,11 @@ public class CertRepContentHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        fixture = new PkiOperationResponseHandler();
+	fixture = new PkiOperationResponseHandler();
     }
 
     @Test(expected = InvalidContentTypeException.class)
     public void testInvalidMime() throws Exception {
-        fixture.getResponse(new byte[0], "text/plain");
+	fixture.getResponse(new byte[0], "text/plain");
     }
 }

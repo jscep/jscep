@@ -14,17 +14,17 @@ public class GetNextCaCertTest {
 
     @Before
     public void setUp() {
-        caIdentifier = "id";
-        fixture = new GetNextCaCertRequest(caIdentifier);
+	caIdentifier = "id";
+	fixture = new GetNextCaCertRequest(caIdentifier);
     }
 
     @Test
     public void testGetOperation() {
-        Assert.assertSame(Operation.GET_NEXT_CA_CERT, fixture.getOperation());
+	Assert.assertSame(Operation.GET_NEXT_CA_CERT, fixture.getOperation());
     }
 
     @Test
     public void testGetMessage() throws IOException {
-        Assert.assertEquals(caIdentifier, fixture.getMessage());
+	Assert.assertEquals(caIdentifier, fixture.getMessage());
     }
 }

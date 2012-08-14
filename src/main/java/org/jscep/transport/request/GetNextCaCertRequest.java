@@ -38,30 +38,30 @@ public final class GetNextCaCertRequest extends Request {
      *            the CA identification string.
      */
     public GetNextCaCertRequest(String profile) {
-        super(Operation.GET_NEXT_CA_CERT);
-        this.profile = profile;
+	super(Operation.GET_NEXT_CA_CERT);
+	this.profile = profile;
     }
 
     public GetNextCaCertRequest() {
-        this(null);
+	this(null);
     }
 
     /**
      * {@inheritDoc}
      */
     public String getMessage() {
-        if (profile == null) {
-            return "";
-        }
-        return profile;
+	if (profile == null) {
+	    return "";
+	}
+	return profile;
     }
 
     @Override
     public String toString() {
-        if (profile != null) {
-            return "GetNextCACert(" + profile + ")";
-        } else {
-            return "GetNextCACert";
-        }
+	if (profile != null) {
+	    return "GetNextCACert(" + profile + ")";
+	} else {
+	    return "GetNextCACert";
+	}
     }
 }

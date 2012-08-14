@@ -43,24 +43,24 @@ public final class PkcsPkiEnvelopeDecoder {
      *            the key to open decrypt the envelope
      */
     public PkcsPkiEnvelopeDecoder(X509Certificate recipient, PrivateKey priKey) {
-        this.recipient = recipient;
-        this.priKey = priKey;
+	this.recipient = recipient;
+	this.priKey = priKey;
     }
 
     public byte[] decode(CMSEnvelopedData ed) throws MessageDecodingException {
-        final RecipientInformationStore recipientInfos = ed.getRecipientInfos();
-        RecipientInformation info = recipientInfos
-                .get(new JceKeyTransRecipientId(recipient));
+	final RecipientInformationStore recipientInfos = ed.getRecipientInfos();
+	RecipientInformation info = recipientInfos
+		.get(new JceKeyTransRecipientId(recipient));
 
-        if (info == null) {
-            throw new MessageDecodingException(
-                    "Missing expected key transfer recipient");
-        }
+	if (info == null) {
+	    throw new MessageDecodingException(
+		    "Missing expected key transfer recipient");
+	}
 
-        try {
-            return info.getContent(new JceKeyTransEnvelopedRecipient(priKey));
-        } catch (CMSException e) {
-            throw new MessageDecodingException(e);
-        }
+	try {
+	    return info.getContent(new JceKeyTransEnvelopedRecipient(priKey));
+	} catch (CMSException e) {
+	    throw new MessageDecodingException(e);
+	}
     }
 }

@@ -12,7 +12,7 @@ import org.apache.commons.lang.ArrayUtils;
  * certificate.
  */
 public final class MessageDigestCertificateVerifier implements
-        CertificateVerifier {
+	CertificateVerifier {
     /**
      * The digest to use.
      */
@@ -32,23 +32,23 @@ public final class MessageDigestCertificateVerifier implements
      *            the digest result
      */
     public MessageDigestCertificateVerifier(MessageDigest digest,
-            byte[] expected) {
-        this.digest = digest;
-        this.expected = ArrayUtils.clone(expected);
+	    byte[] expected) {
+	this.digest = digest;
+	this.expected = ArrayUtils.clone(expected);
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean verify(final X509Certificate cert) {
-        byte[] actual;
-        try {
-            digest.reset();
-            actual = digest.digest(cert.getTBSCertificate());
-        } catch (CertificateEncodingException e) {
-            return false;
-        }
+	byte[] actual;
+	try {
+	    digest.reset();
+	    actual = digest.digest(cert.getTBSCertificate());
+	} catch (CertificateEncodingException e) {
+	    return false;
+	}
 
-        return Arrays.equals(actual, expected);
+	return Arrays.equals(actual, expected);
     }
 }

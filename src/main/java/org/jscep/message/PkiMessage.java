@@ -42,41 +42,43 @@ public abstract class PkiMessage<T> {
     private final T messageData;
 
     public PkiMessage(TransactionId transId, MessageType messageType,
-            Nonce senderNonce, T messageData) {
-        this.transId = transId;
-        this.messageType = messageType;
-        this.senderNonce = senderNonce;
-        this.messageData = messageData;
+	    Nonce senderNonce, T messageData) {
+	this.transId = transId;
+	this.messageType = messageType;
+	this.senderNonce = senderNonce;
+	this.messageData = messageData;
     }
 
     public final TransactionId getTransactionId() {
-        return transId;
+	return transId;
     }
 
     public final MessageType getMessageType() {
-        return messageType;
+	return messageType;
     }
 
     public final Nonce getSenderNonce() {
-        return senderNonce;
+	return senderNonce;
     }
 
     public T getMessageData() {
-        return messageData;
+	return messageData;
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, new String[] {"messageData"});
+	return HashCodeBuilder.reflectionHashCode(this,
+		new String[] { "messageData" });
     }
 
     @Override
     public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj, new String[] {"messageData"});
+	return EqualsBuilder.reflectionEquals(this, obj,
+		new String[] { "messageData" });
     }
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+	return ToStringBuilder.reflectionToString(this);
     }
 }

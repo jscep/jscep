@@ -10,7 +10,7 @@ import org.junit.Test;
 public class PessimisticCertificateVerifierTest {
     @Test
     public void testVerify() {
-        CertificateVerifier verifier = new PessimisticCertificateVerifier();
-        assertFalse(verifier.verify(mock(X509Certificate.class)));
+	CertificateVerifier verifier = new PessimisticCertificateVerifier();
+	assertFalse(verifier.verify(mock(X509Certificate.class)));
     }
 }

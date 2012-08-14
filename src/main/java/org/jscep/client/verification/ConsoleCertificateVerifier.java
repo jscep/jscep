@@ -32,46 +32,47 @@ public final class ConsoleCertificateVerifier implements CertificateVerifier {
      *         otherwise.
      */
     public boolean verify(final X509Certificate cert) {
-        final List<String> algs = new ArrayList<String>(
-                getAlgorithms(MessageDigest.class.getSimpleName()));
-        Collections.sort(algs);
-        int max = 0;
-        for (final String alg : algs) {
-            if (alg.length() > max) {
-                max = alg.length();
-            }
-        }
-        for (final String alg : algs) {
-            MessageDigest digest;
-            try {
-                digest = MessageDigest.getInstance(alg);
-            } catch (NoSuchAlgorithmException e) {
-                return false;
-            }
-            byte[] hash;
-            try {
-                hash = digest.digest(cert.getEncoded());
-            } catch (CertificateEncodingException e) {
-                return false;
-            }
-            System.out.format("%" + max + "s: %s%n", alg, Hex.encodeHexString(hash));
-        }
-        final Scanner scanner = new Scanner(System.in, Charset.defaultCharset()
-                .name()).useDelimiter(String.format("%n"));
-        while (true) {
-            System.out.format("%nAccept? (Y/N): [N]%n");
-            try {
-                final String answer = scanner.next();
-                System.out.println(answer);
-                if (answer.equals("Y")) {
-                    return true;
-                } else if (answer.equals("N")) {
-                    return false;
-                }
-            } catch (final NoSuchElementException e) {
-                return false;
-            }
-        }
+	final List<String> algs = new ArrayList<String>(
+		getAlgorithms(MessageDigest.class.getSimpleName()));
+	Collections.sort(algs);
+	int max = 0;
+	for (final String alg : algs) {
+	    if (alg.length() > max) {
+		max = alg.length();
+	    }
+	}
+	for (final String alg : algs) {
+	    MessageDigest digest;
+	    try {
+		digest = MessageDigest.getInstance(alg);
+	    } catch (NoSuchAlgorithmException e) {
+		return false;
+	    }
+	    byte[] hash;
+	    try {
+		hash = digest.digest(cert.getEncoded());
+	    } catch (CertificateEncodingException e) {
+		return false;
+	    }
+	    System.out.format("%" + max + "s: %s%n", alg,
+		    Hex.encodeHexString(hash));
+	}
+	final Scanner scanner = new Scanner(System.in, Charset.defaultCharset()
+		.name()).useDelimiter(String.format("%n"));
+	while (true) {
+	    System.out.format("%nAccept? (Y/N): [N]%n");
+	    try {
+		final String answer = scanner.next();
+		System.out.println(answer);
+		if (answer.equals("Y")) {
+		    return true;
+		} else if (answer.equals("N")) {
+		    return false;
+		}
+	    } catch (final NoSuchElementException e) {
+		return false;
+	    }
+	}
     }
 
 }

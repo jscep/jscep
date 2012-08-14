@@ -28,12 +28,12 @@ import org.jscep.transaction.TransactionId;
 
 public abstract class PkiRequest<T> extends PkiMessage<T> {
     public PkiRequest(TransactionId transId, MessageType messageType,
-            Nonce senderNonce, T messageData) {
-        super(transId, messageType, senderNonce, messageData);
+	    Nonce senderNonce, T messageData) {
+	super(transId, messageType, senderNonce, messageData);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+	return EqualsBuilder.reflectionEquals(this, obj);
     }
 }

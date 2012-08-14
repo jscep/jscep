@@ -31,30 +31,30 @@ public final class GetCaCapsRequest extends Request {
     private final String profile;
 
     public GetCaCapsRequest() {
-        this(null);
+	this(null);
     }
 
     public GetCaCapsRequest(String profile) {
-        super(Operation.GET_CA_CAPS);
-        this.profile = profile;
+	super(Operation.GET_CA_CAPS);
+	this.profile = profile;
     }
 
     /**
      * {@inheritDoc}
      */
     public String getMessage() {
-        if (profile == null) {
-            return "";
-        }
-        return profile;
+	if (profile == null) {
+	    return "";
+	}
+	return profile;
     }
 
     @Override
     public String toString() {
-        if (profile != null) {
-            return "GetCACaps(" + profile + ")";
-        } else {
-            return "GetCACaps";
-        }
+	if (profile != null) {
+	    return "GetCACaps(" + profile + ")";
+	} else {
+	    return "GetCACaps";
+	}
     }
 }

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class CertStoreInspector {
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(CertStoreInspector.class);
+	    .getLogger(CertStoreInspector.class);
     private static final int KEY_USAGE_LENGTH = 9;
     private static final int DIGITAL_SIGNATURE = 0;
     private static final int KEY_ENCIPHERMENT = 2;
@@ -25,11 +25,11 @@ public final class CertStoreInspector {
     private final X509Certificate encrypter;
     private final X509Certificate issuer;
 
-    private CertStoreInspector(X509Certificate verifier, X509Certificate encrypter,
-            X509Certificate issuer) {
-        this.verifier = verifier;
-        this.encrypter = encrypter;
-        this.issuer = issuer;
+    private CertStoreInspector(X509Certificate verifier,
+	    X509Certificate encrypter, X509Certificate issuer) {
+	this.verifier = verifier;
+	this.encrypter = encrypter;
+	this.issuer = issuer;
     }
 
     /**
@@ -38,7 +38,7 @@ public final class CertStoreInspector {
      * @return the verifier certificate.
      */
     public X509Certificate getSigner() {
-        return verifier;
+	return verifier;
     }
 
     /**
@@ -47,7 +47,7 @@ public final class CertStoreInspector {
      * @return the encrypter certificate.
      */
     public X509Certificate getRecipient() {
-        return encrypter;
+	return encrypter;
     }
 
     /**
@@ -56,7 +56,7 @@ public final class CertStoreInspector {
      * @return the issuer certificate.
      */
     public X509Certificate getIssuer() {
-        return issuer;
+	return issuer;
     }
 
     /**
@@ -74,101 +74,102 @@ public final class CertStoreInspector {
      * @return the Authorities instance.
      */
     public static CertStoreInspector inspect(final CertStore store) {
-        try {
-            Collection<? extends Certificate> certs = store
-                    .getCertificates(null);
-            LOGGER.debug("CertStore contains {} certificate(s):", certs.size());
-            int i = 0;
-            for (Certificate cert : certs) {
-                X509Certificate x509 = (X509Certificate) cert;
-                LOGGER.debug("{}. '{}'", ++i, x509.getSubjectDN());
-            }
+	try {
+	    Collection<? extends Certificate> certs = store
+		    .getCertificates(null);
+	    LOGGER.debug("CertStore contains {} certificate(s):", certs.size());
+	    int i = 0;
+	    for (Certificate cert : certs) {
+		X509Certificate x509 = (X509Certificate) cert;
+		LOGGER.debug("{}. '{}'", ++i, x509.getSubjectDN());
+	    }
 
-            X509Certificate encryption = selectEncryptionCertificate(store);
-            LOGGER.debug("Using {} for message encryption",
-                    encryption.getSubjectDN());
+	    X509Certificate encryption = selectEncryptionCertificate(store);
+	    LOGGER.debug("Using {} for message encryption",
+		    encryption.getSubjectDN());
 
-            X509Certificate signing = selectSigner(store);
-            LOGGER.debug("Using {} for message verification",
-                    signing.getSubjectDN());
+	    X509Certificate signing = selectSigner(store);
+	    LOGGER.debug("Using {} for message verification",
+		    signing.getSubjectDN());
 
-            X509Certificate issuer = selectIssuer(store);
-            LOGGER.debug("Using {} for issuer", signing.getSubjectDN());
+	    X509Certificate issuer = selectIssuer(store);
+	    LOGGER.debug("Using {} for issuer", signing.getSubjectDN());
 
-            return new CertStoreInspector(signing, encryption, issuer);
-        } catch (CertStoreException e) {
-            throw new RuntimeException(e);
-        }
+	    return new CertStoreInspector(signing, encryption, issuer);
+	} catch (CertStoreException e) {
+	    throw new RuntimeException(e);
+	}
     }
 
     private static X509Certificate selectIssuer(CertStore store)
-            throws CertStoreException {
-        LOGGER.debug("Selecting issuer certificate");
+	    throws CertStoreException {
+	LOGGER.debug("Selecting issuer certificate");
 
-        LOGGER.debug("Selecting certificate with basicConstraints");
-        return getCaCertificate(store);
+	LOGGER.debug("Selecting certificate with basicConstraints");
+	return getCaCertificate(store);
     }
 
     private static X509Certificate selectSigner(CertStore store)
-            throws CertStoreException {
-        LOGGER.debug("Selecting verifier certificate");
-        X509CertSelector signingSelector = new X509CertSelector();
-        boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];
-        keyUsage[DIGITAL_SIGNATURE] = true;
-        signingSelector.setKeyUsage(keyUsage);
+	    throws CertStoreException {
+	LOGGER.debug("Selecting verifier certificate");
+	X509CertSelector signingSelector = new X509CertSelector();
+	boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];
+	keyUsage[DIGITAL_SIGNATURE] = true;
+	signingSelector.setKeyUsage(keyUsage);
 
-        LOGGER.debug("Selecting certificate with digitalSignature keyUsage");
-        Collection<? extends Certificate> certs = store
-                .getCertificates(signingSelector);
-        if (certs.size() > 0) {
-            return (X509Certificate) certs.iterator().next();
-        } else {
-            LOGGER.debug("No certificates found.  Falling back to CA certificate");
-            return getCaCertificate(store);
-        }
+	LOGGER.debug("Selecting certificate with digitalSignature keyUsage");
+	Collection<? extends Certificate> certs = store
+		.getCertificates(signingSelector);
+	if (certs.size() > 0) {
+	    return (X509Certificate) certs.iterator().next();
+	} else {
+	    LOGGER.debug("No certificates found.  Falling back to CA certificate");
+	    return getCaCertificate(store);
+	}
     }
 
     private static X509Certificate getCaCertificate(CertStore store)
-            throws CertStoreException {
-        X509CertSelector selector = new X509CertSelector();
-        selector.setKeyUsage(new boolean[KEY_USAGE_LENGTH]);
-        selector.setBasicConstraints(0);
+	    throws CertStoreException {
+	X509CertSelector selector = new X509CertSelector();
+	selector.setKeyUsage(new boolean[KEY_USAGE_LENGTH]);
+	selector.setBasicConstraints(0);
 
-        Collection<? extends Certificate> certs = store
-                .getCertificates(selector);
-        if (certs.size() > 0) {
-            return (X509Certificate) certs.iterator().next();
-        } else {
-            throw new RuntimeException(
-                    "No suitable certificate for verification");
-        }
+	Collection<? extends Certificate> certs = store
+		.getCertificates(selector);
+	if (certs.size() > 0) {
+	    return (X509Certificate) certs.iterator().next();
+	} else {
+	    throw new RuntimeException(
+		    "No suitable certificate for verification");
+	}
     }
 
-    private static X509Certificate selectEncryptionCertificate(CertStore store) throws CertStoreException {
-        LOGGER.debug("Selecting encryption certificate");
-        X509CertSelector signingSelector = new X509CertSelector();
-        boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];
-        keyUsage[KEY_ENCIPHERMENT] = true;
-        signingSelector.setKeyUsage(keyUsage);
+    private static X509Certificate selectEncryptionCertificate(CertStore store)
+	    throws CertStoreException {
+	LOGGER.debug("Selecting encryption certificate");
+	X509CertSelector signingSelector = new X509CertSelector();
+	boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];
+	keyUsage[KEY_ENCIPHERMENT] = true;
+	signingSelector.setKeyUsage(keyUsage);
 
-        LOGGER.debug("Selecting certificate with keyEncipherment keyUsage");
-        Collection<? extends Certificate> certs = store
-                .getCertificates(signingSelector);
-        if (certs.size() > 0) {
-            return (X509Certificate) certs.iterator().next();
-        }
+	LOGGER.debug("Selecting certificate with keyEncipherment keyUsage");
+	Collection<? extends Certificate> certs = store
+		.getCertificates(signingSelector);
+	if (certs.size() > 0) {
+	    return (X509Certificate) certs.iterator().next();
+	}
 
-        LOGGER.debug("No certificates found.  Selecting certificate with dataEncipherment keyUsage");
-        keyUsage = new boolean[KEY_USAGE_LENGTH];
-        keyUsage[DATA_ENCIPHERMENT] = true;
-        signingSelector.setKeyUsage(keyUsage);
+	LOGGER.debug("No certificates found.  Selecting certificate with dataEncipherment keyUsage");
+	keyUsage = new boolean[KEY_USAGE_LENGTH];
+	keyUsage[DATA_ENCIPHERMENT] = true;
+	signingSelector.setKeyUsage(keyUsage);
 
-        certs = store.getCertificates(signingSelector);
-        if (certs.size() > 0) {
-            return (X509Certificate) certs.iterator().next();
-        }
+	certs = store.getCertificates(signingSelector);
+	if (certs.size() > 0) {
+	    return (X509Certificate) certs.iterator().next();
+	}
 
-        LOGGER.debug("No certificates found.  Falling back to CA certificate");
-        return getCaCertificate(store);
+	LOGGER.debug("No certificates found.  Falling back to CA certificate");
+	return getCaCertificate(store);
     }
 }

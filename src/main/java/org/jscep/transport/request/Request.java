@@ -37,7 +37,7 @@ public abstract class Request {
     private final Operation operation;
 
     public Request(Operation operation) {
-        this.operation = operation;
+	this.operation = operation;
     }
 
     /**
@@ -46,7 +46,7 @@ public abstract class Request {
      * @return the name of this operation.
      */
     public final Operation getOperation() {
-        return operation;
+	return operation;
     }
 
     /**

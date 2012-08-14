@@ -25,43 +25,43 @@ public class DefaultCallbackHandlerTest {
 
     @Before
     public void setUp() {
-        verifier = mock(CertificateVerifier.class);
-        cert = mock(X509Certificate.class);
-        handler = new DefaultCallbackHandler(verifier);
+	verifier = mock(CertificateVerifier.class);
+	cert = mock(X509Certificate.class);
+	handler = new DefaultCallbackHandler(verifier);
     }
 
     @Test(expected = UnsupportedCallbackException.class)
     public void testHandleForUnrecognisedCallback() throws IOException,
-            UnsupportedCallbackException {
-        handler.handle(new Callback[] {new LanguageCallback()});
+	    UnsupportedCallbackException {
+	handler.handle(new Callback[] { new LanguageCallback() });
     }
 
     @Test
     public void testHandleForCertificateVerificationCallbackTrue()
-            throws IOException, UnsupportedCallbackException {
-        CertificateVerificationCallback callback = getCallback();
-        when(verifier.verify(cert)).thenReturn(true);
-        handler.handle(new Callback[] {callback});
+	    throws IOException, UnsupportedCallbackException {
+	CertificateVerificationCallback callback = getCallback();
+	when(verifier.verify(cert)).thenReturn(true);
+	handler.handle(new Callback[] { callback });
 
-        assertTrue(callback.isVerified());
-        verify(verifier).verify(cert);
+	assertTrue(callback.isVerified());
+	verify(verifier).verify(cert);
 
     }
 
     @Test
     public void testHandleForCertificateVerificationCallbackFalse()
-            throws IOException, UnsupportedCallbackException {
-        CertificateVerificationCallback callback = getCallback();
-        when(verifier.verify(cert)).thenReturn(false);
-        handler.handle(new Callback[] {callback});
+	    throws IOException, UnsupportedCallbackException {
+	CertificateVerificationCallback callback = getCallback();
+	when(verifier.verify(cert)).thenReturn(false);
+	handler.handle(new Callback[] { callback });
 
-        assertFalse(callback.isVerified());
-        verify(verifier).verify(cert);
+	assertFalse(callback.isVerified());
+	verify(verifier).verify(cert);
 
     }
 
     private CertificateVerificationCallback getCallback() {
-        return new CertificateVerificationCallback(cert);
+	return new CertificateVerificationCallback(cert);
     }
 
 }

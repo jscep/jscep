@@ -51,19 +51,19 @@ public enum ScepObjectIdentifier {
      * <code>2.16.840.1.113733.1.9.7</code>
      */
     TRANS_ID("2.16.840.1.113733.1.9.7");
-    
+
     private final String objId;
-    
+
     ScepObjectIdentifier(final String objId) {
-        this.objId = objId;
+	this.objId = objId;
     }
-    
+
     /**
      * Returns the ObjectIdentifier as a String.
      * 
      * @return the ObjectIdentifier
      */
     public String id() {
-        return objId;
+	return objId;
     }
 }

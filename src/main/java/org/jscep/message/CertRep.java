@@ -46,9 +46,9 @@ public final class CertRep extends PkiResponse<CMSSignedData> {
      *            the message data
      */
     public CertRep(TransactionId transId, Nonce senderNonce,
-            Nonce recipientNonce, CMSSignedData messageData) {
-        super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
-                PkiStatus.SUCCESS, messageData, null);
+	    Nonce recipientNonce, CMSSignedData messageData) {
+	super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
+		PkiStatus.SUCCESS, messageData, null);
     }
 
     /**
@@ -64,9 +64,9 @@ public final class CertRep extends PkiResponse<CMSSignedData> {
      *            the fail info enum
      */
     public CertRep(TransactionId transId, Nonce senderNonce,
-            Nonce recipientNonce, FailInfo failInfo) {
-        super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
-                PkiStatus.FAILURE, null, failInfo);
+	    Nonce recipientNonce, FailInfo failInfo) {
+	super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
+		PkiStatus.FAILURE, null, failInfo);
     }
 
     /**
@@ -80,8 +80,8 @@ public final class CertRep extends PkiResponse<CMSSignedData> {
      *            the recipient nonce
      */
     public CertRep(TransactionId transId, Nonce senderNonce,
-            Nonce recipientNonce) {
-        super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
-                PkiStatus.PENDING, null, null);
+	    Nonce recipientNonce) {
+	super(transId, MessageType.CERT_REP, senderNonce, recipientNonce,
+		PkiStatus.PENDING, null, null);
     }
 }

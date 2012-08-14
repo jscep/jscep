@@ -14,59 +14,59 @@ public class CaCapabilitiesContentHandlerTest {
 
     @Before
     public void setUp() {
-        fixture = new GetCaCapsResponseHandler();
+	fixture = new GetCaCapsResponseHandler();
     }
 
     @Test
     public void testContentTypeIgnored() throws ContentException {
-        final byte[] is = getBytesForCapabilities("DES3");
-        final Capabilities caps = fixture.getResponse(is, "foo/bar");
-        Assert.assertEquals("DESede", caps.getStrongestCipher());
+	final byte[] is = getBytesForCapabilities("DES3");
+	final Capabilities caps = fixture.getResponse(is, "foo/bar");
+	Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     @Test
     public void testNullContentTypeIgnored() throws ContentException {
-        final byte[] is = getBytesForCapabilities("DES3");
-        final Capabilities caps = fixture.getResponse(is, null);
-        Assert.assertEquals("DESede", caps.getStrongestCipher());
+	final byte[] is = getBytesForCapabilities("DES3");
+	final Capabilities caps = fixture.getResponse(is, null);
+	Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     @Test
     public void testCorrectContentType() throws ContentException {
-        final byte[] is = getBytesForCapabilities("DES3");
-        final Capabilities caps = fixture.getResponse(is, "text/plain");
-        Assert.assertEquals("DESede", caps.getStrongestCipher());
+	final byte[] is = getBytesForCapabilities("DES3");
+	final Capabilities caps = fixture.getResponse(is, "text/plain");
+	Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     @Test
     public void charsetIsIgnored() throws ContentException {
-        final byte[] is = getBytesForCapabilities("DES3");
-        final Capabilities caps = fixture.getResponse(is,
-                "text/plain;charset=UTF-8");
+	final byte[] is = getBytesForCapabilities("DES3");
+	final Capabilities caps = fixture.getResponse(is,
+		"text/plain;charset=UTF-8");
 
-        Assert.assertEquals("DESede", caps.getStrongestCipher());
+	Assert.assertEquals("DESede", caps.getStrongestCipher());
     }
 
     private byte[] getBytesForCapabilities(String... capabilities) {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        final BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(baos));
-        for (String capability : capabilities) {
-            try {
-                writer.write(capability);
-                writer.write('\n');
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        try {
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+	final BufferedWriter writer = new BufferedWriter(
+		new OutputStreamWriter(baos));
+	for (String capability : capabilities) {
+	    try {
+		writer.write(capability);
+		writer.write('\n');
+	    } catch (IOException e) {
+		throw new RuntimeException(e);
+	    }
+	}
+	try {
+	    writer.close();
+	} catch (IOException e) {
+	    throw new RuntimeException(e);
+	}
 
-        return baos.toByteArray();
+	return baos.toByteArray();
     }
 
 }

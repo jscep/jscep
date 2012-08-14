@@ -21,8 +21,8 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
      *            the <tt>CertificateVerifier</tt> to delegate to.
      */
     public CachingCertificateVerifier(final CertificateVerifier delegate) {
-        this.delegate = delegate;
-        this.verificationAnswers = new HashMap<Certificate, Boolean>();
+	this.delegate = delegate;
+	this.verificationAnswers = new HashMap<Certificate, Boolean>();
     }
 
     /**
@@ -38,14 +38,14 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
      *         <tt>CertificateVerifier</tt>.
      */
     public synchronized boolean verify(final X509Certificate cert) {
-        if (verificationAnswers.containsKey(cert)) {
-            return verificationAnswers.get(cert);
-        } else {
-            boolean answer = delegate.verify(cert);
-            verificationAnswers.put(cert, answer);
+	if (verificationAnswers.containsKey(cert)) {
+	    return verificationAnswers.get(cert);
+	} else {
+	    boolean answer = delegate.verify(cert);
+	    verificationAnswers.put(cert, answer);
 
-            return answer;
-        }
+	    return answer;
+	}
     }
 
 }

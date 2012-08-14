@@ -19,26 +19,26 @@ public class CertificateVerificationCallbackTest {
 
     @Before
     public void setUp() throws Exception {
-        KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
-        X500Principal subject = new X500Principal("cn=example");
+	KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
+	X500Principal subject = new X500Principal("cn=example");
 
-        certificate = X509Certificates.createEphemeral(subject, keyPair);
-        callback = new CertificateVerificationCallback(certificate);
+	certificate = X509Certificates.createEphemeral(subject, keyPair);
+	callback = new CertificateVerificationCallback(certificate);
     }
 
     @Test
     public void testInitialVerifiedStateIsFalse() {
-        assertThat(callback.isVerified(), is(false));
+	assertThat(callback.isVerified(), is(false));
     }
 
     @Test
     public void testCertificateIsSame() {
-        assertThat(callback.getCertificate(), is(certificate));
+	assertThat(callback.getCertificate(), is(certificate));
     }
 
     @Test
     public void testVerification() {
-        callback.setVerified(true);
-        assertThat(callback.isVerified(), is(true));
+	callback.setVerified(true);
+	assertThat(callback.isVerified(), is(true));
     }
 }

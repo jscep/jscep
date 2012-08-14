@@ -73,22 +73,22 @@ public enum Operation {
     private final String name;
 
     private Operation(String name) {
-        this.name = name;
+	this.name = name;
     }
 
     public String getName() {
-        return name;
+	return name;
     }
 
     public static Operation forName(String name) {
-        if (name == null) {
-            throw new NullPointerException();
-        }
-        for (Operation op : Operation.values()) {
-            if (op.name.equals(name)) {
-                return op;
-            }
-        }
-        throw new IllegalArgumentException(name + " not found");
+	if (name == null) {
+	    throw new NullPointerException();
+	}
+	for (Operation op : Operation.values()) {
+	    if (op.name.equals(name)) {
+		return op;
+	    }
+	}
+	throw new IllegalArgumentException(name + " not found");
     }
 }

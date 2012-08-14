@@ -13,19 +13,19 @@ public class NonceQueueTest {
 
     @Before
     public void setUp() {
-        nonce = Nonce.nextNonce();
-        queue = new NonceQueue(SIZE);
-        queue.add(nonce);
+	nonce = Nonce.nextNonce();
+	queue = new NonceQueue(SIZE);
+	queue.add(nonce);
     }
 
     @Test
     public void testQueueContainsOriginalNonce() {
-        assertThat(queue.contains(nonce), is(true));
+	assertThat(queue.contains(nonce), is(true));
     }
 
     @Test
     public void testQueueDoesNotContainsOriginalNonceAfterSizeExceeded() {
-        queue.add(Nonce.nextNonce());
-        assertThat(queue.contains(nonce), is(false));
+	queue.add(Nonce.nextNonce());
+	assertThat(queue.contains(nonce), is(false));
     }
 }

@@ -17,28 +17,27 @@ import org.junit.Test;
 public class HttpPostTransportTest extends AbstractTransportTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetCACert() throws Exception {
-        transport.sendRequest(new GetCaCertRequest(), null);
+	transport.sendRequest(new GetCaCertRequest(), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetCACaps() throws Exception {
-        transport.sendRequest(new GetCaCapsRequest(), null);
+	transport.sendRequest(new GetCaCapsRequest(), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetNextCACert() throws Exception {
-        X500Principal subject = new X500Principal("CN=example.org");
-        KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate cert = X509Certificates.createEphemeral(subject,
-                keyPair);
+	X500Principal subject = new X500Principal("CN=example.org");
+	KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+	X509Certificate cert = X509Certificates.createEphemeral(subject,
+		keyPair);
 
-        GetNextCaCertRequest nextCa = new GetNextCaCertRequest();
-        transport
-                .sendRequest(nextCa, new GetNextCaCertResponseHandler(cert));
+	GetNextCaCertRequest nextCa = new GetNextCaCertRequest();
+	transport.sendRequest(nextCa, new GetNextCaCertResponseHandler(cert));
     }
 
     @Override
     protected Transport getTransport(URL url) {
-        return new HttpPostTransport(url);
+	return new HttpPostTransport(url);
     }
 }

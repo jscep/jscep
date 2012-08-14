@@ -44,24 +44,24 @@ public enum PkiStatus {
     private final int value;
 
     private PkiStatus(int value) {
-        this.value = value;
+	this.value = value;
     }
 
     public int getValue() {
-        return value;
+	return value;
     }
 
     public static PkiStatus valueOf(int value) {
-        for (PkiStatus status : PkiStatus.values()) {
-            if (status.getValue() == value) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException();
+	for (PkiStatus status : PkiStatus.values()) {
+	    if (status.getValue() == value) {
+		return status;
+	    }
+	}
+	throw new IllegalArgumentException();
     }
 
     @Override
     public String toString() {
-        return name();
+	return name();
     }
 }
