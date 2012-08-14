@@ -22,33 +22,34 @@
 package org.jscep.asn1;
 
 /**
- * Object Identifiers used by SCEP.
+ * ASN.1 Object Identifiers used by SCEP.
  * 
  * @author David Grant
  */
 public enum ScepObjectIdentifier {
     /**
-     * <code>2.16.840.1.113733.1.9.2</code>
+     * 
+     * <code>messageType</code> attribute identifier.
      */
     MESSAGE_TYPE("2.16.840.1.113733.1.9.2"),
     /**
-     * <code>2.16.840.1.113733.1.9.3</code>
+     * <code>pkiStatus</code> attribute identifier.
      */
     PKI_STATUS("2.16.840.1.113733.1.9.3"),
     /**
-     * <code>2.16.840.1.113733.1.9.4</code>
+     * <code>failInfo</code> attribute identifier.
      */
     FAIL_INFO("2.16.840.1.113733.1.9.4"),
     /**
-     * <code>2.16.840.1.113733.1.9.5</code>
+     * <code>senderNonce</code> attribute identifier.
      */
     SENDER_NONCE("2.16.840.1.113733.1.9.5"),
     /**
-     * <code>2.16.840.1.113733.1.9.6</code>
+     * <code>recipientNonce</code> attribute identifier.
      */
     RECIPIENT_NONCE("2.16.840.1.113733.1.9.6"),
     /**
-     * <code>2.16.840.1.113733.1.9.7</code>
+     * <code>transactionId</code> attribute identifier.
      */
     TRANS_ID("2.16.840.1.113733.1.9.7");
 
