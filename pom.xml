@@ -4,7 +4,7 @@
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep</artifactId>
 	<packaging>jar</packaging>
-	<version>2.0-beta-1</version>
+	<version>2.0-beta-2-SNAPSHOT</version>
 	<name>jscep</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://jscep.org/</url>
@@ -28,9 +28,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://jscep.googlecode.com/svn/tags/jscep-2.0-beta-1</connection>
-		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/tags/jscep-2.0-beta-1</developerConnection>
-		<url>http://code.google.com/p/jscep/source/browse/tags/jscep-2.0-beta-1</url>
+		<connection>scm:svn:http://jscep.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/trunk/</developerConnection>
+		<url>http://code.google.com/p/jscep/source/browse/</url>
 	</scm>
 	<mailingLists>
 		<mailingList>
