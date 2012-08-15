@@ -59,8 +59,8 @@ public final class PkcsPkiEnvelopeEncoder {
 	    throw new MessageEncodingException(e);
 	}
 	edGenerator.addRecipientInfoGenerator(recipientGenerator);
-	LOGGER.debug("Encrypting session key using key belonging to '{}'",
-		recipient.getSubjectDN());
+	LOGGER.debug("Encrypting session key using key belonging to [issuer={}; serial={}]",
+		recipient.getIssuerDN(), recipient.getSerialNumber());
 
 	OutputEncryptor encryptor;
 	try {

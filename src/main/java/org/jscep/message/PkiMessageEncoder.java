@@ -108,8 +108,8 @@ public final class PkiMessageEncoder {
 	}
 
 	CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
-	LOGGER.debug("Signing message using key belonging to '{}'",
-		signerId.getSubjectDN());
+	LOGGER.debug("Signing message using key belonging to [issuer={}; serial={}]",
+		signerId.getIssuerDN(), signerId.getSerialNumber());
 	try {
 	    sdGenerator.addSignerInfoGenerator(getSignerInfo(message));
 	} catch (CertificateEncodingException e) {
