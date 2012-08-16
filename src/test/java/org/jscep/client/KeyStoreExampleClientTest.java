@@ -61,7 +61,7 @@ public class KeyStoreExampleClientTest extends ScepServerSupport {
 
 		// The following variables are used to represent the SCEP client
 		KeyPair idPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
-		X500Name issuer = new X500Name("CN=client");
+		X500Name issuer = new X500Name("CN=entity");
 		BigInteger serial = new BigInteger(16, new SecureRandom());
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
