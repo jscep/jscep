@@ -559,6 +559,7 @@ public final class Client {
 	    final PKCS10CertificationRequest csr, String profile)
 	    throws ClientException, TransactionException {
 	LOGGER.debug("Enrolling certificate with CA");
+	
 	// TRANSACTIONAL
 	// Certificate enrollment
 	final Transport transport = createTransport(profile);
@@ -652,14 +653,11 @@ public final class Client {
      *             if any I/O error occurs.
      */
     private Transport createTransport(final String profile) {
-	final Transport t;
 	if (getCaCapabilities(profile).isPostSupported()) {
-	    t = new HttpPostTransport(url);
+	    return new HttpPostTransport(url);
 	} else {
-	    t = new HttpGetTransport(url);
+	    return new HttpGetTransport(url);
 	}
-
-	return t;
     }
 
     private void verifyCA(X509Certificate cert) throws ClientException {
@@ -667,8 +665,7 @@ public final class Client {
 		cert);
 	try {
 	    LOGGER.debug("Requesting certificate verification.");
-	    Callback[] callbacks = new Callback[1];
-	    callbacks[0] = callback;
+	    Callback[] callbacks = new Callback[] { callback };
 	    handler.handle(callbacks);
 	} catch (UnsupportedCallbackException e) {
 	    LOGGER.debug("Certificate verification failed.");
