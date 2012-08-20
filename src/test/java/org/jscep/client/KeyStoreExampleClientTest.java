@@ -3,7 +3,6 @@ package org.jscep.client;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
-import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -40,13 +39,12 @@ import org.junit.Test;
 public class KeyStoreExampleClientTest extends ScepServerSupport {
 	@Test
 	public void testExample() throws Exception {
-		URL url = new URL("http://ec2-50-17-85-189.compute-1.amazonaws.com:80/VEDSCEP");
 		// For the sake of simplicity, we use an optimistic verifier. This has
 		// no
 		// place in production code.
 		DefaultCallbackHandler handler = new DefaultCallbackHandler(
 				new OptimisticCertificateVerifier());
-		Client client = new Client(url, handler);
+		Client client = new Client(getUrl(), handler);
 		// Get the capabilities of the SCEP server
 		Capabilities caps = client.getCaCapabilities();
 
