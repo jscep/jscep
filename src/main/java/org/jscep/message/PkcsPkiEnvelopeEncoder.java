@@ -1,27 +1,5 @@
-/*
- * Copyright (c) 2010 ThruPoint Ltd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.jscep.message;
 
-import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
@@ -39,18 +17,41 @@ import org.bouncycastle.operator.OutputEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class is used for enveloping and encrypting a <tt>messageData</tt> to
+ * produce the <tt>pkcsPkiEnvelope</tt> part of a SCEP secure message object.
+ * 
+ * @see PkcsPkiEnvelopeDecoder
+ */
 public final class PkcsPkiEnvelopeEncoder {
     private static final Logger LOGGER = LoggerFactory
 	    .getLogger(PkcsPkiEnvelopeEncoder.class);
     private final X509Certificate recipient;
 
+    /**
+     * Creates a new <tt>PkcsPkiEnvelopeEncoder</tt> for the entity identified
+     * by the provided certificate.
+     * 
+     * @param recipient
+     *            the entity for whom the <tt>pkcsPkiEnvelope</tt> is intended.
+     */
     public PkcsPkiEnvelopeEncoder(X509Certificate recipient) {
 	this.recipient = recipient;
     }
 
-    public byte[] encode(byte[] payload) throws MessageEncodingException {
+    /**
+     * Encrypts and envelops the provided messageData.
+     * 
+     * @param messageData
+     *            the message data to encrypt and envelop.
+     * @return the enveloped data.
+     * @throws MessageEncodingException
+     *             if there are any problems encoding the message.
+     */
+    public CMSEnvelopedData encode(byte[] messageData)
+	    throws MessageEncodingException {
 	CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
-	CMSTypedData envelopable = new CMSProcessableByteArray(payload);
+	CMSTypedData envelopable = new CMSProcessableByteArray(messageData);
 	RecipientInfoGenerator recipientGenerator;
 	try {
 	    recipientGenerator = new JceKeyTransRecipientInfoGenerator(
@@ -59,25 +60,21 @@ public final class PkcsPkiEnvelopeEncoder {
 	    throw new MessageEncodingException(e);
 	}
 	edGenerator.addRecipientInfoGenerator(recipientGenerator);
-	LOGGER.debug("Encrypting session key using key belonging to [issuer={}; serial={}]",
+	LOGGER.debug(
+		"Encrypting session key using key belonging to [issuer={}; serial={}]",
 		recipient.getIssuerDN(), recipient.getSerialNumber());
 
 	OutputEncryptor encryptor;
 	try {
+	    // TODO: Don't rely on using Triple DES
 	    encryptor = new JceCRMFEncryptorBuilder(
 		    PKCSObjectIdentifiers.des_EDE3_CBC).build();
 	} catch (CRMFException e) {
 	    throw new MessageEncodingException(e);
 	}
-	CMSEnvelopedData data;
 	try {
-	    data = edGenerator.generate(envelopable, encryptor);
+	    return edGenerator.generate(envelopable, encryptor);
 	} catch (CMSException e) {
-	    throw new MessageEncodingException(e);
-	}
-	try {
-	    return data.getEncoded();
-	} catch (IOException e) {
 	    throw new MessageEncodingException(e);
 	}
     }

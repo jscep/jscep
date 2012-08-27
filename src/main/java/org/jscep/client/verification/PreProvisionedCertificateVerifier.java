@@ -3,7 +3,12 @@ package org.jscep.client.verification;
 import java.security.cert.X509Certificate;
 
 /**
- * CertificateVerifier that uses a pre-provisioned certificate.
+ * This <tt>CertificateVerifier</tt> uses a pre-provisioned certificate for
+ * verification.
+ * <p>
+ * The certificate passed to {@link #verify(X509Certificate)} is deemed to be
+ * verified if it is equal to the certificate passed in the constructor, as
+ * determined by the {@link X509Certificate#equals(Object)} method.
  */
 public final class PreProvisionedCertificateVerifier implements
 	CertificateVerifier {

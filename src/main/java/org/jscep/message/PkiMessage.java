@@ -41,6 +41,14 @@ public abstract class PkiMessage<T> {
     private final Nonce senderNonce;
     private final T messageData;
 
+    /**
+     * Creates a new <tt>PkiMessage</tt> instance.
+     * 
+     * @param transId the request transaction ID.
+     * @param messageType the type of message represented by this instance.
+     * @param senderNonce the request nonce.
+     * @param messageData the data carried by this message.
+     */
     public PkiMessage(TransactionId transId, MessageType messageType,
 	    Nonce senderNonce, T messageData) {
 	this.transId = transId;
@@ -49,34 +57,63 @@ public abstract class PkiMessage<T> {
 	this.messageData = messageData;
     }
 
+    /**
+     * The request transaction ID.
+     * 
+     * @return the transaction ID.
+     */
     public final TransactionId getTransactionId() {
 	return transId;
     }
 
+    /**
+     * The SCEP message type of this message.
+     * 
+     * @return the message type.
+     */
     public final MessageType getMessageType() {
 	return messageType;
     }
 
+    /**
+     * The nonce of the original request.
+     * 
+     * @return the nonce.
+     */
     public final Nonce getSenderNonce() {
 	return senderNonce;
     }
 
+    /**
+     * The message data contained in this message.
+     * 
+     * @return the message data.
+     */
     public T getMessageData() {
 	return messageData;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
 	return HashCodeBuilder.reflectionHashCode(this,
 		new String[] { "messageData" });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
 	return EqualsBuilder.reflectionEquals(this, obj,
 		new String[] { "messageData" });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
 	return ToStringBuilder.reflectionToString(this);

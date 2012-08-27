@@ -28,9 +28,8 @@ class AttributeTableFactory {
 	Hashtable<ASN1ObjectIdentifier, Attribute> table = new Hashtable<ASN1ObjectIdentifier, Attribute>();
 
 	List<Attribute> attributes = getMessageAttributes(message);
-	if (message instanceof PkiResponse) {
-	    attributes
-		    .addAll(getResponseAttributes((PkiResponse<?>) (message)));
+	if (message instanceof CertRep) {
+	    attributes.addAll(getResponseAttributes((CertRep) message));
 	}
 
 	for (Attribute attribute : attributes) {
@@ -51,7 +50,7 @@ class AttributeTableFactory {
 	return attributes;
     }
 
-    private List<Attribute> getResponseAttributes(PkiResponse<?> message) {
+    private List<Attribute> getResponseAttributes(CertRep message) {
 	List<Attribute> attributes = new ArrayList<Attribute>();
 
 	attributes.add(getAttribute(message.getPkiStatus()));

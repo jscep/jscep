@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This <tt>CertificateVerifier</tt> implementation delegates verification to
- * the provided <tt>CertificateVerifier</tt> and caches the answer.
+ * This <tt>CertificateVerifier</tt> delegates verification to the provided
+ * <tt>CertificateVerifier</tt> and caches the answer.
  */
 public final class CachingCertificateVerifier implements CertificateVerifier {
     private final Map<Certificate, Boolean> verificationAnswers;
@@ -26,11 +26,11 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
     }
 
     /**
-     * This implementation will forward the provided certificate to the delegate
-     * provider in the constructor, and cache the delegate's response.
+     * This implementation will forward the given certificate to the delegate
+     * provided in the constructor, and cache the delegate's response.
      * <p>
-     * On every subsequent invocation, the initial response from the delegate
-     * will be returned.
+     * On every subsequent invocation with the same certificate, the initial
+     * response from the delegate will be returned.
      * 
      * @param cert
      *            the certificate to verify.

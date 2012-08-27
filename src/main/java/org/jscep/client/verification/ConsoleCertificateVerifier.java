@@ -16,7 +16,8 @@ import java.util.Scanner;
 import org.apache.commons.codec.binary.Hex;
 
 /**
- * This class is a console-focused implementation of CertificateVerifier.
+ * This <tt>CertificateVerifier</tt> uses the system console to determine
+ * verification.
  * <p>
  * Implementors should use this if they require interactive certificate
  * verification in a command line application.

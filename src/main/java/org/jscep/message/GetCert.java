@@ -28,9 +28,16 @@ import org.jscep.transaction.TransactionId;
 
 /**
  * This class represents a <tt>GetCert</tt> <tt>pkiMessage</tt>, which wraps an
- * IssuerAndSerialNumber object.
+ * <tt>IssuerAndSerialNumber</tt> object.
  */
 public class GetCert extends PkiRequest<IssuerAndSerialNumber> {
+    /**
+     * Creates a new <tt>GetCert</tt> instance.
+     * 
+     * @param transId the transaction ID for this request.
+     * @param senderNonce the nonce for this request.
+     * @param messageData the <tt>IssuerAndSerialNumber</tt> of the certificate to retrieve.
+     */
     public GetCert(TransactionId transId, Nonce senderNonce,
 	    IssuerAndSerialNumber messageData) {
 	super(transId, MessageType.GET_CERT, senderNonce, messageData);

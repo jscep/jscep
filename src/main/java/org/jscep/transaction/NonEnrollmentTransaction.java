@@ -1,25 +1,3 @@
-/*
- * Copyright (c) 2009-2012 David Grant
- * Copyright (c) 2010 ThruPoint Ltd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.jscep.transaction;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -37,10 +15,33 @@ import org.jscep.transport.Transport;
 import org.jscep.transport.request.PkiOperationRequest;
 import org.jscep.transport.response.PkiOperationResponseHandler;
 
-public class NonEnrollmentTransaction extends Transaction {
+/**
+ * This class represents a SCEP non-enrollment <tt>Transaction</tt>
+ * 
+ * @see GetCert
+ * @see GetCrl
+ */
+public final class NonEnrollmentTransaction extends Transaction {
     private final TransactionId transId;
     private final PkiRequest<? extends ASN1Encodable> request;
 
+    /**
+     * Creates a new <tt>NonEnrollmentTransaction</tt> for the provided message.
+     * <p>
+     * This constructor will throw a {@link IllegalArgumentException} if invoked
+     * with an inappropriate message type.
+     * 
+     * @param transport
+     *            the transport method to use.
+     * @param encoder
+     *            the request encoder.
+     * @param decoder
+     *            the response decoder.
+     * @param iasn
+     *            the message to send.
+     * @param msgType
+     *            the type of message.
+     */
     public NonEnrollmentTransaction(Transport transport,
 	    PkiMessageEncoder encoder, PkiMessageDecoder decoder,
 	    IssuerAndSerialNumber iasn, MessageType msgType) {
@@ -56,11 +57,24 @@ public class NonEnrollmentTransaction extends Transaction {
 	}
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransactionId getId() {
 	return transId;
     }
 
+    /**
+     * Sends the request and processes the server response.
+     * <p>
+     * If the server returns a pending response, this method will throw a
+     * <tt>TransactionException</tt>, since this is unexpected behaviour.
+     * 
+     * @return the state as returned by the SCEP server.
+     * @throws TransactionException
+     *             if an error was encountered when sending this transaction.
+     */
     @Override
     public final State send() throws TransactionException {
 	final PkiOperationResponseHandler handler = new PkiOperationResponseHandler();

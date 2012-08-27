@@ -30,10 +30,19 @@ package org.jscep.transport.request;
 public final class GetCaCapsRequest extends Request {
     private final String profile;
 
+    /**
+     * Creates a new <tt>GetCaCapsRequest</tt> without a CA profile.
+     */
     public GetCaCapsRequest() {
 	this(null);
     }
 
+    /**
+     * Creates a new <tt>GetCaCapsRequest</tt> with the given CA profile.
+     * 
+     * @param profile
+     *            the CA profile to use.
+     */
     public GetCaCapsRequest(String profile) {
 	super(Operation.GET_CA_CAPS);
 	this.profile = profile;
@@ -49,6 +58,9 @@ public final class GetCaCapsRequest extends Request {
 	return profile;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
 	if (profile != null) {

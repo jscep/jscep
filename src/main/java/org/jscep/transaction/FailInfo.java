@@ -56,15 +56,32 @@ public enum FailInfo {
 	this.value = value;
     }
 
+    /**
+     * Returns the protocol-specific value for this <tt>failInfo</tt>
+     * 
+     * @return the protocol-specific value.
+     */
     public int getValue() {
 	return value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
 	return name();
     }
 
+    /**
+     * Returns the <tt>failInfo</tt> for the given value.
+     * <p>
+     * If the provided value is not 0-4 inclusive, this method throws an
+     * {@link IllegalArgumentException}
+     * 
+     * @param value the <tt>failInfo</tt> value.
+     * @return the corresponding <tt>failInfo</tt>
+     */
     public static FailInfo valueOf(int value) {
 	for (FailInfo failInfo : FailInfo.values()) {
 	    if (failInfo.getValue() == value) {

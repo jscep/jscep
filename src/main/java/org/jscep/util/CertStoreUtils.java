@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used for performing utility operations for cert stores.
+ * This class is used for performing utility operations for <tt>CertStore</tt>s.
  */
 public final class CertStoreUtils {
     private static final Logger LOGGER = LoggerFactory
@@ -31,8 +31,21 @@ public final class CertStoreUtils {
     private CertStoreUtils() {
     }
 
+    /**
+     * Converts a Bouncy Castle <tt>signedData</tt> object into a
+     * <tt>CertStore</tt>.
+     * <p>
+     * This method will extract all certificates and CRLs from the
+     * <tt>signedData</tt>. It makes <strong>no</strong> attempt to verify the
+     * integrity of the <tt>signedData</tt>.
+     * 
+     * @param signedData
+     *            the <tt>signedData</tt> to etract.
+     * @return the extracted certificates and CRLs.
+     */
     @SuppressWarnings("unchecked")
     public static CertStore fromSignedData(CMSSignedData signedData) {
+	// TODO: Move to SignedDataUtil.
 	CertificateFactory factory;
 	try {
 	    factory = CertificateFactory.getInstance("X509");

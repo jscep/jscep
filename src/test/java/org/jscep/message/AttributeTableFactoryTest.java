@@ -26,8 +26,8 @@ import org.junit.Test;
 public class AttributeTableFactoryTest {
     private AttributeTableFactory factory;
     private PkiMessage<?> pkiMessage;
-    private PkiResponse<?> pkiFailureResponse;
-    private PkiResponse<?> pkiPendingResponse;
+    private CertRep pkiFailureResponse;
+    private CertRep pkiPendingResponse;
 
     @Before
     public void setUp() {

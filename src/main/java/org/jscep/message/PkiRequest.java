@@ -26,12 +26,20 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
+/**
+ * This class represents an abstract SCEP <tt>pkiMessage</tt> request.
+ *
+ * @param <T> the <tt>messageData</tt> for this request.
+ */
 public abstract class PkiRequest<T> extends PkiMessage<T> {
     public PkiRequest(TransactionId transId, MessageType messageType,
 	    Nonce senderNonce, T messageData) {
 	super(transId, messageType, senderNonce, messageData);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
 	return EqualsBuilder.reflectionEquals(this, obj);

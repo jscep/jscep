@@ -1,25 +1,3 @@
-/*
- * Copyright (c) 2009-2010 David Grant
- * Copyright (c) 2010 ThruPoint Ltd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.jscep.transaction;
 
 import java.security.cert.CertStore;
@@ -37,6 +15,9 @@ import org.jscep.transport.request.Request;
 import org.jscep.transport.response.PkiOperationResponseHandler;
 import org.jscep.util.CertStoreUtils;
 
+/**
+ * This class represents an abstract SCEP transaction.
+ */
 public abstract class Transaction {
     private final PkiMessageEncoder encoder;
     private final PkiMessageDecoder decoder;
@@ -46,6 +27,16 @@ public abstract class Transaction {
     private FailInfo failInfo;
     private CertStore certStore;
 
+    /**
+     * Constructs a new <tt>Transaction</tt>.
+     * 
+     * @param transport
+     *            the transport used to conduct the transaction.
+     * @param encoder
+     *            the encoder used to encode the request.
+     * @param decoder
+     *            the decoder used to decode the response.
+     */
     public Transaction(Transport transport, PkiMessageEncoder encoder,
 	    PkiMessageDecoder decoder) {
 	this.transport = transport;
@@ -55,6 +46,9 @@ public abstract class Transaction {
 
     /**
      * Retrieve the reason for failure.
+     * <p>
+     * If the transaction did not fail, this method throws an
+     * {@link IllegalStateException}.
      * 
      * @return the reason for failure.
      */
@@ -66,6 +60,14 @@ public abstract class Transaction {
 	return failInfo;
     }
 
+    /**
+     * Retrieve the <tt>CertStore</tt> sent by the SCEP server.
+     * <p>
+     * If the transaction did not succeed, this method throws an
+     * {@link IllegalStateException}
+     * 
+     * @return the <tt>CertStore</tt>
+     */
     public CertStore getCertStore() {
 	if (state != State.CERT_ISSUED) {
 	    throw new IllegalStateException(
@@ -74,11 +76,23 @@ public abstract class Transaction {
 	return certStore;
     }
 
+    /**
+     * Sends the request and processes the server response.
+     * 
+     * @return the state as return by the SCEP server.
+     * @throws TransactionException
+     *             if an error was encountered when sending this transaction.
+     */
     public abstract State send() throws TransactionException;
 
+    /**
+     * Returns the ID of this transaction.
+     * 
+     * @return the ID of this transaction.
+     */
     public abstract TransactionId getId();
 
-    protected CMSSignedData send(final PkiOperationResponseHandler handler,
+    CMSSignedData send(final PkiOperationResponseHandler handler,
 	    final Request req) throws TransactionException {
 	try {
 	    return transport.sendRequest(req, handler);
@@ -87,36 +101,36 @@ public abstract class Transaction {
 	}
     }
 
-    protected PkiMessage<?> decode(CMSSignedData res)
+    PkiMessage<?> decode(CMSSignedData res)
 	    throws MessageDecodingException {
 	return decoder.decode(res);
     }
 
-    protected CMSSignedData encode(final PkiMessage<?> message)
+    CMSSignedData encode(final PkiMessage<?> message)
 	    throws MessageEncodingException {
 	return encoder.encode(message);
     }
 
-    protected State pending() {
+    State pending() {
 	this.state = State.CERT_REQ_PENDING;
 	return state;
     }
 
-    protected State failure(FailInfo failInfo) {
+    State failure(FailInfo failInfo) {
 	this.failInfo = failInfo;
 	this.state = State.CERT_NON_EXISTANT;
 
 	return state;
     }
 
-    protected State success(CertStore certStore) {
+    State success(CertStore certStore) {
 	this.certStore = certStore;
 	this.state = State.CERT_ISSUED;
 
 	return state;
     }
 
-    protected CertStore extractCertStore(CertRep response) {
+    CertStore extractCertStore(CertRep response) {
 	CMSSignedData signedData = response.getMessageData();
 
 	return CertStoreUtils.fromSignedData(signedData);
@@ -124,8 +138,6 @@ public abstract class Transaction {
 
     /**
      * This class represents the state of a transaction.
-     * 
-     * @author David Grant
      */
     public static enum State {
 	/**

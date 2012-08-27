@@ -51,11 +51,6 @@ abstract public class AbstractTransportTest {
     }
 
     @Test
-    public void testGetURL() {
-	Assert.assertEquals(url, transport.getUrl());
-    }
-
-    @Test
     public void test404() throws Exception {
 	KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 

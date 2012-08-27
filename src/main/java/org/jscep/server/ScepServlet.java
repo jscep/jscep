@@ -214,8 +214,8 @@ public abstract class ScepServlet extends HttpServlet {
 	    try {
 		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
 			getRecipient(), getRecipientKey());
-		PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
-			reqCert);
+		PkiMessageDecoder decoder = new PkiMessageDecoder(reqCert,
+			envDecoder);
 		msg = decoder.decode(sd);
 	    } catch (MessageDecodingException e) {
 		LOGGER.error("Error decoding request", e);

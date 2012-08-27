@@ -22,13 +22,4 @@ public class TransactionExceptionTest {
 
 	assertEquals(message, e.getMessage());
     }
-
-    @Test
-    public void testTransactionException() {
-	TransactionException e = new TransactionException();
-
-	assertNull(e.getCause());
-	assertNull(e.getMessage());
-    }
-
 }

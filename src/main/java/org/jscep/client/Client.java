@@ -628,7 +628,7 @@ public final class Client {
 	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
 		identity, key);
 
-	return new PkiMessageDecoder(envDecoder, signer);
+	return new PkiMessageDecoder(signer, envDecoder);
     }
 
     /**

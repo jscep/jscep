@@ -1,24 +1,3 @@
-/*
- * Copyright (c) 2009-2010 David Grant
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.jscep.transaction;
 
 import java.io.Serializable;
@@ -34,15 +13,19 @@ import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
- * This class represents the SCEP <code>transactionID</code> attribute.
- * 
- * @author David Grant
+ * This class represents a SCEP <code>transactionID</code> attribute.
  */
 public final class TransactionId implements Serializable {
     private static final long serialVersionUID = -5248125945726721520L;
     private static final AtomicLong ID_SOURCE = new AtomicLong();
     private final byte[] id;
 
+    /**
+     * Creates a new <tt>TransactionId</tt> from the provided byte array.
+     * 
+     * @param id
+     *            the ID to copy.
+     */
     public TransactionId(byte[] id) {
 	this.id = ArrayUtils.clone(id);
     }
@@ -67,16 +50,16 @@ public final class TransactionId implements Serializable {
     }
 
     /**
-     * Creates a new Transaction Id
-     * <p/>
-     * Each call to this method will return the same transaction ID for the same
-     * parameters.
+     * Creates a new Transaction ID
+     * <p>
+     * Each call to this method will return the same transaction ID given the
+     * same parameters.
      * 
      * @param pubKey
-     *            public key
+     *            the key on which to base the transaction ID.
      * @param digestAlgorithm
-     *            digest algorithm
-     * @return the new Transaction Id
+     *            the algorithm to use to digest the key
+     * @return the new <tt>TransactionID</tt>
      */
     public static TransactionId createTransactionId(PublicKey pubKey,
 	    String digestAlgorithm) {
@@ -85,15 +68,18 @@ public final class TransactionId implements Serializable {
 
     /**
      * Creates a new Transaction Id
-     * <p/>
+     * <p>
      * Each call to this method will return a different transaction ID.
      * 
-     * @return the new Transaction Id
+     * @return the new <tt>TransactionID</tt>
      */
     public static TransactionId createTransactionId() {
 	return new TransactionId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
 	try {
@@ -103,6 +89,9 @@ public final class TransactionId implements Serializable {
 	}
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
 	if (this == o)
@@ -116,6 +105,9 @@ public final class TransactionId implements Serializable {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
 	return Arrays.hashCode(id);

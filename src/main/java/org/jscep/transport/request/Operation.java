@@ -76,10 +76,31 @@ public enum Operation {
 	this.name = name;
     }
 
+    /**
+     * Returns the protocol-specific name for this operation.
+     * 
+     * @return the protocol-specific name for this operation.
+     */
     public String getName() {
 	return name;
     }
 
+    /**
+     * Returns the corresponding <tt>Operation</tt> instance for the provided
+     * name.
+     * <p>
+     * If the provided name is not one of:
+     * <ul>
+     * <li><tt>GetCACaps</tt>;</li>
+     * <li><tt>GetCACert</tt>;</li>
+     * <li><tt>GetNextCACert</tt>; or</li>
+     * <li><tt>PKIOperation</tt></li>
+     * </ul>
+     * then this method will throw an {@link IllegalArgumentException}.
+     * 
+     * @param name the protocol-specific name.
+     * @return the corresponding <tt>Operation</tt>
+     */
     public static Operation forName(String name) {
 	if (name == null) {
 	    throw new NullPointerException();

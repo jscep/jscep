@@ -24,6 +24,7 @@ package org.jscep.client;
 
 import javax.security.auth.callback.Callback;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class is used to obtain verification of a CA certificate.
@@ -38,51 +39,49 @@ public final class CertificateVerificationCallback implements Callback {
     /**
      * The verification status.
      */
-    private boolean verified;
+    private AtomicBoolean verified = new AtomicBoolean(false);
 
     /**
      * Construct a <code>CertificateVerificationCallback</code> with the CA
      * certificate.
      * 
      * @param caCertificate
-     *            the CA certificate
+     *            the CA certificate to verify.
      */
     public CertificateVerificationCallback(final X509Certificate caCertificate) {
 	this.caCertificate = caCertificate;
     }
 
     /**
-     * Returns the CA certificate.
+     * Returns the CA certificate to verify.
      * 
-     * @return the CA certificate.
+     * @return the CA certificate to verify.
      */
     public X509Certificate getCertificate() {
 	return caCertificate;
     }
 
     /**
-     * Returns the outcome of the callback.
-     * <p/>
-     * If the CA certificate was verified, this method returns <code>true</code>
-     * ; and <code>false</code> if the certificate could not be verified.
+     * Returns the outcome of the verification process.
      * 
-     * @return the outcome.
+     * @return <tt>true</tt> if the certificate was verified, <tt>false</tt>
+     *         otherwise.
      */
     public boolean isVerified() {
-	return verified;
+	return verified.get();
     }
 
     /**
      * Sets the outcome of the callback.
      * <p/>
-     * If the CA certificate was verified, this method should be called with an
-     * argument of <code>true</code>. If the certificate can not be verified,
-     * the argument should be <code>false</code>.
+     * {@link #isVerified()} returns <tt>false</tt> by default, so this method
+     * only needs to be called if the CA certificate can be successfully
+     * verified.
      * 
      * @param verified
      *            the outcome.
      */
     public void setVerified(final boolean verified) {
-	this.verified = verified;
+	this.verified.set(verified);
     }
 }

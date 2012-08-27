@@ -3,7 +3,10 @@ package org.jscep.client.verification;
 import java.security.cert.X509Certificate;
 
 /**
- * This certificate verifier always returns <tt>true</tt>.
+ * This <tt>CertificateVerifier</tt> always returns <tt>true</tt>.
+ * <p>
+ * This implementation should only be used if you have no need to verify the
+ * CA certificate.  This is not recommended.
  */
 public final class OptimisticCertificateVerifier implements CertificateVerifier {
     /**

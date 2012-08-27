@@ -37,8 +37,6 @@ public final class PkiOperationResponseHandler implements
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws ContentException
      */
     public CMSSignedData getResponse(byte[] content, String mimeType)
 	    throws ContentException {

@@ -21,6 +21,9 @@
  */
 package org.jscep.transport.response;
 
+import org.jscep.transport.request.GetNextCaCertRequest;
+import org.jscep.transport.request.PkiOperationRequest;
+
 /**
  * This class represents a single SCEP server capability.
  * 
@@ -91,6 +94,13 @@ public enum Capability {
 	return capability;
     }
 
+    /**
+     * Returns the textual description of a this capability.
+     * <p>
+     * The value returned by this method is useful for using in logging messages.
+     * 
+     * @return thet textual description of this capability.
+     */
     public String getDescription() {
 	return description;
     }

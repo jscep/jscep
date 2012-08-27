@@ -1,24 +1,3 @@
-/*
- * Copyright (c) 2009-2010 David Grant
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.jscep.transaction;
 
 import java.security.SecureRandom;
@@ -31,8 +10,6 @@ import org.apache.commons.lang.ArrayUtils;
 /**
  * This class represents the <code>senderNonce</code> and
  * <code>recipientNonce</code> types.
- * 
- * @author David Grant
  */
 public final class Nonce {
     private static final int NONCE_LENGTH = 16;
@@ -40,7 +17,7 @@ public final class Nonce {
     private final byte[] nonce;
 
     /**
-     * Creates a new nonce with the given byte array.
+     * Creates a new <tt>Nonce</tt> with the given byte array.
      * 
      * @param nonce
      *            the byte array.
@@ -50,7 +27,7 @@ public final class Nonce {
     }
 
     /**
-     * Returns the nonce byte array.
+     * Returns the <ttNonce</tt> byte array.
      * 
      * @return the byte array.
      */
@@ -58,20 +35,21 @@ public final class Nonce {
 	return ArrayUtils.clone(nonce);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
 	return "Nonce [" + Hex.encodeHexString(nonce) + "]";
     }
 
     /**
-     * Generates a new random Nonce.
+     * Generates a new random <tt>Nonce</tt>.
      * <p/>
-     * This method does not guarantee that multiple invocations will produce a
-     * different nonce, as the byte generation is provided by a SecureRandom
-     * instance.
+     * This method uses a static {@link SecureRandom} instance as the source of
+     * randomness, and can therefore make no guarantee of true uniqueness.
      * 
-     * @return the generated nonce.
-     * @see java.security.SecureRandom
+     * @return the generated <tt>Nonce</tt>.
      */
     public static Nonce nextNonce() {
 	byte[] bytes = new byte[NONCE_LENGTH];
@@ -97,6 +75,9 @@ public final class Nonce {
 	return Arrays.equals(nonce, nonce1.nonce);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
 	return Arrays.hashCode(nonce);

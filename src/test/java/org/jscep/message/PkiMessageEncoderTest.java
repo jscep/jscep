@@ -113,7 +113,7 @@ public class PkiMessageEncoderTest {
 
 	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
 		caPair.getPrivate());
-	PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder, client);
+	PkiMessageDecoder decoder = new PkiMessageDecoder(client, envDecoder);
 
 	PkiMessage<?> actual = decoder.decode(encoder.encode(message));
 

@@ -1,25 +1,3 @@
-/*
- * Copyright (c) 2009-2010 David Grant
- * Copyright (c) 2010 ThruPoint Ltd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.jscep.transport;
 
 import java.net.MalformedURLException;
@@ -30,62 +8,52 @@ import org.jscep.transport.request.Request;
 import org.jscep.transport.response.ScepResponseHandler;
 
 /**
- * This class represents a transport for sending a message to the SCEP server.
- * <p/>
- * Example usage:
- * 
- * <pre>
- * Request&lt;?&gt; req = ...;
- * URL url = new URL("http://www.example.org/scep/pki-client.exe");
- * Proxy proxy = Proxy.NO_PROXY;
- * Transport trans = Transport.createTransport(Transport.Method.POST, url, proxy);
- * Object res = trans.setMessage(req);
- * </pre>
- * 
- * @author David Grant
+ * This class represents an abstract transport method for sending a message to a
+ * SCEP server.
  */
 public abstract class Transport {
     private final URL url;
 
+    /**
+     * Creates a new <tt>Transport</tt> for the given URL.
+     * 
+     * @param url
+     *            the <tt>URL</tt> used for sending requests.
+     */
     Transport(URL url) {
 	this.url = url;
     }
 
     /**
-     * Returns the URL configured for use by this transport.
-     * 
-     * @return the URL.
-     */
-    public final URL getUrl() {
-	return url;
-    }
-
-    /**
-     * Sends the given request to the URL provided in the constructor and uses
-     * the {@link Request}'s content handler to parse the response.
+     * Sends the provided request to the <tt>URL</tt> provided in the
+     * constructor.
+     * <p>
+     * This method will use the provided <tt>ScepResponseHandler</tt> to parse
+     * the SCEP server response. If the response can be correctly parsed, this
+     * method will return the response. Otherwise, this method will throw a
+     * <tt>TransportException</tt>
      * 
      * @param <T>
      *            the response type.
      * @param msg
      *            the message to send.
      * @param handler
-     *            the response handler
-     * @return the response of type T.
+     *            the handler used to parse the response.
+     * @return the SCEP server response.
      * @throws TransportException
-     * @throws InvalidContentTypeException
-     * @throws InvalidContentException
+     *             if any transport error occurs.
      */
     public abstract <T> T sendRequest(Request msg,
 	    ScepResponseHandler<T> handler) throws TransportException;
 
     /**
-     * Returns the URL for the given operation.
+     * Returns the <tt>URL</tt> for the given operation.
      * 
      * @param op
      *            the operation.
-     * @return the URL for the given operation.
+     * @return the <tt>URL</tt> for the given operation.
      * @throws TransportException
-     *             if the generated URL is malformed.
+     *             if the generated <tt>URL</tt> is malformed.
      */
     final URL getUrl(final Operation op) throws TransportException {
 	try {

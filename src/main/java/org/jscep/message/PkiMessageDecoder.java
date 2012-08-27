@@ -1,24 +1,3 @@
-/*
- * Copyright (c) 2010 ThruPoint Ltd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.jscep.message;
 
 import static org.jscep.asn1.ScepObjectIdentifier.FAIL_INFO;
@@ -61,17 +40,35 @@ import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
 import org.slf4j.Logger;
 
+/**
+ * This class is used to decode a PKCS #7 signedData object into a <tt>pkiMessage</tt>.
+ * 
+ * @see PkiMessageEncoder
+ */
 public final class PkiMessageDecoder {
 	private static final Logger LOGGER = getLogger(PkiMessageDecoder.class);
 	private final PkcsPkiEnvelopeDecoder decoder;
 	private final X509Certificate signer;
 
-	public PkiMessageDecoder(PkcsPkiEnvelopeDecoder decoder,
-			X509Certificate signer) {
+	/**
+	 * Creates a new <tt>PkiMessageDecoder</tt>.
+	 * 
+	 * @param signer the certificate used for verifying the <tt>signedData</tt> signature.
+	 * @param decoder the decoder used for extracting the <tt>pkiMessage</tt>.
+	 */
+	public PkiMessageDecoder(X509Certificate signer,
+			PkcsPkiEnvelopeDecoder decoder) {
 		this.decoder = decoder;
 		this.signer = signer;
 	}
 
+	/**
+	 * Decodes the provided PKCS #7 <tt>signedData</tt> into a <tt>PkiMessage</tt>
+	 * 
+	 * @param signedData the <tt>signedData</tt> to decode.
+	 * @return the decoded <tt>PkiMessage</tt>
+	 * @throws MessageDecodingException if there is a problem decoding the <tt>signedData</tt>
+	 */
 	@SuppressWarnings("unchecked")
 	public PkiMessage<?> decode(CMSSignedData signedData)
 			throws MessageDecodingException {

@@ -182,8 +182,8 @@ public class ScepServletTest {
 
 	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
 		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
-		getRecipient());
+	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+		envDecoder);
 
 	Transport transport = new HttpGetTransport(getURL());
 	Transaction t = new NonEnrollmentTransaction(transport, encoder,
@@ -203,8 +203,8 @@ public class ScepServletTest {
 
 	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
 		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
-		getRecipient());
+	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+		envDecoder);
 
 	Transport transport = new HttpGetTransport(getURL());
 	Transaction t = new NonEnrollmentTransaction(transport, encoder,
@@ -226,8 +226,8 @@ public class ScepServletTest {
 
 	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
 		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
-		getRecipient());
+	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+		envDecoder);
 
 	Transport transport = new HttpGetTransport(getURL());
 	Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
@@ -249,8 +249,8 @@ public class ScepServletTest {
 
 	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
 		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
-		getRecipient());
+	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+		envDecoder);
 
 	Transport transport = new HttpGetTransport(getURL());
 	Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
@@ -272,8 +272,8 @@ public class ScepServletTest {
 
 	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
 		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(envDecoder,
-		getRecipient());
+	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+		envDecoder);
 
 	Transport transport = new HttpGetTransport(getURL());
 	EnrollmentTransaction trans = new EnrollmentTransaction(transport,

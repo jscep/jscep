@@ -33,6 +33,7 @@ import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSAttributeTableGenerator;
+import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
@@ -50,6 +51,11 @@ import org.jscep.transaction.PkiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class is used to encode a <tt>pkiMessage</tt> into a PKCS #7 signedData object.
+ *
+ * @see PkiMessageDecoder
+ */
 public final class PkiMessageEncoder {
     private static final Logger LOGGER = LoggerFactory
 	    .getLogger(PkiMessageEncoder.class);
@@ -57,6 +63,13 @@ public final class PkiMessageEncoder {
     private final X509Certificate signerId;
     private final PkcsPkiEnvelopeEncoder enveloper;
 
+    /**
+     * Creates a new <tt>PkiMessageEncoder</tt> instance.
+     * 
+     * @param signerKey the key to use to sign the <tt>signedData</tt>.
+     * @param signerId the certificate to use to identify the signer.
+     * @param enveloper the enveloper used for encoding the <tt>messageData</tt>
+     */
     public PkiMessageEncoder(PrivateKey signerKey, X509Certificate signerId,
 	    PkcsPkiEnvelopeEncoder enveloper) {
 	this.signerKey = signerKey;
@@ -64,20 +77,27 @@ public final class PkiMessageEncoder {
 	this.enveloper = enveloper;
     }
 
+    /**
+     * Encodes the provided <tt>PkiMessage</tt> into a PKCS #7 <tt>signedData</tt>.
+     * 
+     * @param message the <tt>PkiMessage</tt> to encode.
+     * @return the encoded <tt>signedData</tt>
+     * @throws MessageEncodingException if there is a problem encoding the <tt>PkiMessage</tt>
+     */
     public CMSSignedData encode(PkiMessage<?> message)
 	    throws MessageEncodingException {
 	LOGGER.debug("Encoding message: {}", message);
 	CMSProcessableByteArray signable;
 
 	boolean hasMessageData = true;
-	if (message instanceof PkiResponse<?>) {
-	    PkiResponse<?> response = (PkiResponse<?>) message;
+	if (message instanceof CertRep) {
+	    CertRep response = (CertRep) message;
 	    if (response.getPkiStatus() != PkiStatus.SUCCESS) {
 		hasMessageData = false;
 	    }
 	}
 	if (hasMessageData) {
-	    byte[] ed;
+	    CMSEnvelopedData ed;
 	    if (message.getMessageData() instanceof byte[]) {
 		ed = enveloper.encode((byte[]) message.getMessageData());
 	    } else if (message.getMessageData() instanceof PKCS10CertificationRequest) {
@@ -102,7 +122,11 @@ public final class PkiMessageEncoder {
 		    throw new MessageEncodingException(e);
 		}
 	    }
-	    signable = new CMSProcessableByteArray(ed);
+	    try {
+		signable = new CMSProcessableByteArray(ed.getEncoded());
+	    } catch (IOException e) {
+		throw new MessageEncodingException(e);
+	    }
 	} else {
 	    signable = null;
 	}

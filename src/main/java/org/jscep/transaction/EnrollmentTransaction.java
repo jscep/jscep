@@ -1,25 +1,3 @@
-/*
- * Copyright (c) 2009-2010 David Grant
- * Copyright (c) 2010 ThruPoint Ltd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.jscep.transaction;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -46,15 +24,10 @@ import org.jscep.x509.X509Util;
 import org.slf4j.Logger;
 
 /**
- * This class represents a SCEP transaction, and provides a framework for
- * performing operations.
- * <p/>
- * The behaviour of this class changes in accordance with the possible valid
- * states for each transaction operation. For enrollment operations, clients
- * should inspect the {@link State} returned by the {@link #send()} or
- * {@link #poll()}.
+ * This class represents a SCEP enrollment <tt>Transaction</tt>.
  * 
- * @author David Grant
+ * @see PkcsReq
+ * @see GetCertInitial
  */
 public class EnrollmentTransaction extends Transaction {
     private static final Logger LOGGER = getLogger(EnrollmentTransaction.class);
@@ -63,7 +36,7 @@ public class EnrollmentTransaction extends Transaction {
     private final PkiRequest<?> request;
 
     /**
-     * Constructs a new enrollment transaction.
+     * Constructs a new transaction for enrollment request.
      * 
      * @param transport
      *            the transport to use to send the transaction request.
@@ -92,7 +65,7 @@ public class EnrollmentTransaction extends Transaction {
     }
 
     /**
-     * Constructs a new enrollment transaction for polling.
+     * Constructs a new transaction for a enrollment poll request.
      * 
      * @param transport
      *            the transport to use to send the transaction request.
@@ -123,11 +96,11 @@ public class EnrollmentTransaction extends Transaction {
     }
 
     /**
-     * Sends the request to the SCEP server.
+     * Sends the request to the SCEP server and processes the response..
      * 
-     * @return the resulting transaction state.
+     * @return the transaction state as returned by the SCEP server.
      * @throws TransactionException
-     *             if any error occurs.
+     *             if any transaction-related error occurs.
      */
     @Override
     public State send() throws TransactionException {

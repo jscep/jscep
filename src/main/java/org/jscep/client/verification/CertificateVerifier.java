@@ -2,8 +2,12 @@ package org.jscep.client.verification;
 
 import java.security.cert.X509Certificate;
 
+import org.jscep.client.CertificateVerificationCallback;
+
 /**
  * Interface for verifying the identity of a given certificate.
+ * 
+ * @see CertificateVerificationCallback
  */
 public interface CertificateVerifier {
     /**

@@ -1,25 +1,3 @@
-/*
- * Copyright (c) 2009-2010 David Grant
- * Copyright (c) 2010 ThruPoint Ltd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.jscep.x509;
 
 import java.io.IOException;
@@ -39,18 +17,19 @@ import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 
 /**
- * This is a utility class for performing various operations pertaining to X.509
- * certificates.
- * 
- * @author David Grant
+ * This is a utility class for performing various operations pertaining to X.500
+ * objects.
  */
 public final class X509Util {
+    // TODO: Consider moving this to the org.jscep.util package.
+    // TODO: Consider renaming this class too. There are no certificate
+    // operations.
     private X509Util() {
 	// This constructor will never be invoked.
     }
 
     /**
-     * Converts a Java SE X500Principal to a Bouncy Castle X509Name.
+     * Converts a Java SE X500Principal to a Bouncy Castle X500Name.
      * 
      * @param principal
      *            the principal to convert.
@@ -61,6 +40,21 @@ public final class X509Util {
 	return X500Name.getInstance(bytes);
     }
 
+    /**
+     * Extracts the <tt>PublicKey</tt> from the provided CSR.
+     * <p>
+     * This method will throw a {@link RuntimeException} if the JRE is missing
+     * the RSA algorithm, which is a required algorithm as defined by the JCA.
+     * 
+     * @param csr
+     *            the CSR to extract from.
+     * @return the extracted <tt>PublicKey</tt>
+     * @throws InvalidKeySpecException
+     *             if the CSR is not using an RSA key.
+     * @throws IOException
+     *             if there is an error extracting the <tt>PublicKey</tt>
+     *             parameters.
+     */
     public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
 	    throws InvalidKeySpecException, IOException {
 	SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();
