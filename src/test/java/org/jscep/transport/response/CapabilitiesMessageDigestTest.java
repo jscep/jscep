@@ -49,7 +49,7 @@ public class CapabilitiesMessageDigestTest {
     @Test
     public void testStrongestMessageDigest() {
 	Assume.assumeTrue(algorithmExists(algorithm));
-	Assert.assertEquals(algorithm, capabilities.getStrongestMessageDigest());
+	Assert.assertEquals(algorithm, capabilities.getStrongestMessageDigest().getAlgorithm());
     }
 
     private boolean algorithmExists(String algorithm) {

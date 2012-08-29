@@ -1,5 +1,7 @@
 package org.jscep.transport.response;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Provider.Service;
 import java.security.Security;
@@ -123,30 +125,37 @@ public final class Capabilities {
      * <li>SHA-1</li>
      * <li>MD5</li>
      * </ol>
+     * If none of the above algorithms are supported, this method returns null.
      * 
      * @return the strongest message digest algorithm supported by the server
      *         and client.
      */
-    public String getStrongestMessageDigest() {
-	final String digest;
+    public MessageDigest getStrongestMessageDigest() {
 	if (digestExists("SHA-512")
 		&& capabilities.contains(Capability.SHA_512)) {
-	    digest = "SHA-512";
+	    return getDigest("SHA-512");
 	} else if (digestExists("SHA-256")
 		&& capabilities.contains(Capability.SHA_256)) {
-	    digest = "SHA-256";
+	    return getDigest("SHA-256");
 	} else if (digestExists("SHA-1")
 		&& capabilities.contains(Capability.SHA_1)) {
-	    digest = "SHA-1";
-	} else {
-	    digest = "MD5";
+	    return getDigest("SHA-1");
+	} else if (digestExists("MD5")) {
+	   return getDigest("MD5");
 	}
-
-	return digest;
+	return null;
     }
 
     private boolean digestExists(String digest) {
 	return algorithmExists("MessageDigest", digest);
+    }
+    
+    private MessageDigest getDigest(String algorithm) {
+	try {
+	    return MessageDigest.getInstance(algorithm);
+	} catch (NoSuchAlgorithmException e) {
+	    throw new RuntimeException(e);
+	}
     }
 
     /**

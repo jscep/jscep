@@ -26,6 +26,7 @@ package org.jscep.client;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
@@ -38,6 +39,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 
+import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.X509Extension;
@@ -67,7 +69,7 @@ import org.jscep.transport.response.Capabilities;
 import org.jscep.transport.response.GetCaCapsResponseHandler;
 import org.jscep.transport.response.GetCaCertResponseHandler;
 import org.jscep.transport.response.GetNextCaCertResponseHandler;
-import org.jscep.x509.X509Util;
+import org.jscep.util.X500Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -255,7 +257,7 @@ public final class Client {
      */
     public CertStore getCaCertificate(final String profile)
 	    throws ClientException {
-	LOGGER.debug("Retriving current CA certificate");
+	LOGGER.debug("Retrieving current CA certificate");
 	// NON-TRANSACTIONAL
 	// CA and RA public key distribution
 	final GetCaCertRequest req = new GetCaCertRequest(profile);
@@ -267,7 +269,9 @@ public final class Client {
 	} catch (TransportException e) {
 	    throw new ClientException(e);
 	}
-	verifyCA(selectIssuerCertificate(store));
+	CertStoreInspector certs = CertStoreInspector.inspect(store);
+	X509Certificate selectIssuerCertificate = certs.getIssuer();
+	verifyCA(selectIssuerCertificate);
 
 	return store;
     }
@@ -309,7 +313,10 @@ public final class Client {
 	if (!getCaCapabilities(profile).isRolloverSupported()) {
 	    throw new UnsupportedOperationException();
 	}
-	final X509Certificate signer = getSignerCertificate(profile);
+	final CertStore store = getCaCertificate(profile);
+	// The CA or RA
+	CertStoreInspector certs = CertStoreInspector.inspect(store);
+	final X509Certificate signer = certs.getSigner();
 
 	final Transport trans = new HttpGetTransport(url);
 	final GetNextCaCertRequest req = new GetNextCaCertRequest(profile);
@@ -383,8 +390,9 @@ public final class Client {
 	// TRANSACTIONAL
 	// CRL query
 	final CertStore store = getCaCertificate(profile);
-	final X509Certificate ca = selectIssuerCertificate(store);
-	final X509Certificate signer = selectSignerCertificate(store);
+	CertStoreInspector certs = CertStoreInspector.inspect(store);
+	final X509Certificate ca = certs.getIssuer();
+	final X509Certificate signer = certs.getSigner();
 	if (supportsDistributionPoints(ca)) {
 	    throw new RuntimeException("Unimplemented");
 	}
@@ -475,8 +483,9 @@ public final class Client {
 	// TRANSACTIONAL
 	// Certificate query
 	final CertStore store = getCaCertificate(profile);
-	final X509Certificate ca = selectIssuerCertificate(store);
-	final X509Certificate signer = selectSignerCertificate(store);
+	CertStoreInspector certs = CertStoreInspector.inspect(store);
+	final X509Certificate ca = certs.getIssuer();
+	final X509Certificate signer = certs.getSigner();
 
 	X500Name name = new X500Name(ca.getIssuerX500Principal().toString());
 	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
@@ -559,19 +568,32 @@ public final class Client {
 	    final PKCS10CertificationRequest csr, String profile)
 	    throws ClientException, TransactionException {
 	LOGGER.debug("Enrolling certificate with CA");
-	
+
 	// TRANSACTIONAL
 	// Certificate enrollment
 	final Transport transport = createTransport(profile);
 	CertStore store = getCaCertificate(profile);
-	X509Certificate rcpt = selectRecipientCertificate(store);
-	X509Certificate signer = selectSignerCertificate(store);
+	CertStoreInspector certs = CertStoreInspector.inspect(store);
+	X509Certificate rcpt = certs.getRecipient();
+	X509Certificate signer = certs.getSigner();
 	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(rcpt);
 	PkiMessageEncoder encoder = new PkiMessageEncoder(key, identity,
 		envEncoder);
 	PkiMessageDecoder decoder = getDecoder(identity, key, signer);
 	final EnrollmentTransaction trans = new EnrollmentTransaction(
 		transport, encoder, decoder, csr);
+
+	try {
+	    MessageDigest digest = getCaCapabilities(profile)
+		    .getStrongestMessageDigest();
+	    byte[] hash = digest.digest(csr.getEncoded());
+
+	    LOGGER.info("{} PKCS#10 Fingerprint: [{}]", digest.getAlgorithm(),
+		    Hex.encodeHexString(hash));
+	} catch (IOException e) {
+	    LOGGER.error("Error getting encoded CSR", e);
+	}
+
 	return send(trans);
     }
 
@@ -587,15 +609,16 @@ public final class Client {
 	    TransactionException {
 	final Transport transport = createTransport(profile);
 	CertStore store = getCaCertificate(profile);
-	X509Certificate rcpt = selectRecipientCertificate(store);
-	X509Certificate issuer = selectIssuerCertificate(store);
-	X509Certificate signer = selectSignerCertificate(store);
+	CertStoreInspector certStore = CertStoreInspector.inspect(store);
+	X509Certificate rcpt = certStore.getRecipient();
+	X509Certificate issuer = certStore.getIssuer();
+	X509Certificate signer = certStore.getSigner();
 	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(rcpt);
 	PkiMessageEncoder encoder = new PkiMessageEncoder(identityKey,
 		identity, envEncoder);
 	PkiMessageDecoder decoder = getDecoder(identity, identityKey, signer);
-	IssuerAndSubject ias = new IssuerAndSubject(X509Util.toX509Name(issuer
-		.getIssuerX500Principal()), X509Util.toX509Name(subject));
+	IssuerAndSubject ias = new IssuerAndSubject(X500Utils.toX500Name(issuer
+		.getIssuerX500Principal()), X500Utils.toX500Name(subject));
 
 	final EnrollmentTransaction trans = new EnrollmentTransaction(
 		transport, encoder, decoder, ias, transId);
@@ -617,8 +640,11 @@ public final class Client {
 
     private PkiMessageEncoder getEncoder(X509Certificate identity,
 	    PrivateKey priKey, String profile) throws ClientException {
+	final CertStore store = getCaCertificate(profile);
+	CertStoreInspector certs = CertStoreInspector.inspect(store);
+	X509Certificate recipientCertificate = certs.getRecipient();
 	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-		getRecipientCertificate(profile));
+		recipientCertificate);
 
 	return new PkiMessageEncoder(priKey, identity, envEncoder);
     }
@@ -680,37 +706,5 @@ public final class Client {
 	} else {
 	    LOGGER.debug("Certificate verification passed.");
 	}
-    }
-
-    private X509Certificate getRecipientCertificate(String profile)
-	    throws ClientException {
-	final CertStore store = getCaCertificate(profile);
-	// The CA or RA
-	return selectRecipientCertificate(store);
-    }
-
-    private X509Certificate getSignerCertificate(String profile)
-	    throws ClientException {
-	final CertStore store = getCaCertificate(profile);
-	// The CA or RA
-	return selectSignerCertificate(store);
-    }
-
-    private X509Certificate selectRecipientCertificate(CertStore store) {
-	CertStoreInspector certPair = CertStoreInspector.inspect(store);
-
-	return certPair.getRecipient();
-    }
-
-    private X509Certificate selectSignerCertificate(CertStore store) {
-	CertStoreInspector certPair = CertStoreInspector.inspect(store);
-
-	return certPair.getSigner();
-    }
-
-    private X509Certificate selectIssuerCertificate(CertStore store) {
-	CertStoreInspector certPair = CertStoreInspector.inspect(store);
-
-	return certPair.getIssuer();
     }
 }

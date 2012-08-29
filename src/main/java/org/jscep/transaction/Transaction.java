@@ -13,7 +13,7 @@ import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
 import org.jscep.transport.request.Request;
 import org.jscep.transport.response.PkiOperationResponseHandler;
-import org.jscep.util.CertStoreUtils;
+import org.jscep.util.SignedDataUtils;
 
 /**
  * This class represents an abstract SCEP transaction.
@@ -133,7 +133,7 @@ public abstract class Transaction {
     CertStore extractCertStore(CertRep response) {
 	CMSSignedData signedData = response.getMessageData();
 
-	return CertStoreUtils.fromSignedData(signedData);
+	return SignedDataUtils.fromSignedData(signedData);
     }
 
     /**

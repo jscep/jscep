@@ -20,7 +20,7 @@ import org.jscep.message.PkiRequest;
 import org.jscep.transport.Transport;
 import org.jscep.transport.request.PkiOperationRequest;
 import org.jscep.transport.response.PkiOperationResponseHandler;
-import org.jscep.x509.X509Util;
+import org.jscep.util.CertificationRequestUtils;
 import org.slf4j.Logger;
 
 /**
@@ -55,7 +55,7 @@ public class EnrollmentTransaction extends Transaction {
 	super(transport, encoder, decoder);
 	try {
 	    this.transId = TransactionId.createTransactionId(
-		    X509Util.getPublicKey(csr), "SHA-1");
+		    CertificationRequestUtils.getPublicKey(csr), "SHA-1");
 	} catch (IOException e) {
 	    throw new TransactionException(e);
 	} catch (InvalidKeySpecException e) {
@@ -147,8 +147,7 @@ public class EnrollmentTransaction extends Transaction {
 	// The requester SHOULD verify that the recipientNonce of the reply
 	// matches the senderNonce it sent in the request.
 	if (!res.getRecipientNonce().equals(req.getSenderNonce())) {
-	    throw new InvalidNonceException(
-		    "Response recipient nonce and request sender nonce are not equal");
+	    throw new InvalidNonceException(req.getSenderNonce(), res.getRecipientNonce());
 	} else {
 	    LOGGER.debug("Matched request senderNonce and response recipientNonce");
 	}
@@ -161,8 +160,7 @@ public class EnrollmentTransaction extends Transaction {
 	// http://tools.ietf.org/html/draft-nourse-scep-20#section-8.5
 	// Check that the nonce has not been encountered before.
 	if (QUEUE.contains(res.getSenderNonce())) {
-	    throw new InvalidNonceException(
-		    "This nonce has been encountered before.  Possible replay attack?");
+	    throw new InvalidNonceException(res.getSenderNonce());
 	} else {
 	    QUEUE.add(res.getSenderNonce());
 	    LOGGER.debug("{} has not been encountered before",

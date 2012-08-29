@@ -7,8 +7,7 @@ import java.security.cert.X509Certificate;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.util.CertStoreUtils;
-import org.jscep.util.SignedDataUtil;
+import org.jscep.util.SignedDataUtils;
 
 /**
  * This class handles responses to <code>GetNextCACert</code> requests.
@@ -43,7 +42,7 @@ public class GetNextCaCertResponseHandler implements
 			.getInstance(cmsMessageData.getEncoded());
 
 		final CMSSignedData sd = new CMSSignedData(cmsContentInfo);
-		if (!SignedDataUtil.isSignedBy(sd, signer)) {
+		if (!SignedDataUtils.isSignedBy(sd, signer)) {
 		    throw new InvalidContentException("Invalid Signer");
 		}
 		// The content of the SignedData PKCS#7 [RFC2315] is a
@@ -53,7 +52,7 @@ public class GetNextCaCertResponseHandler implements
 		// new CA certificate and any new RA certificates, as defined in
 		// Section 5.2.1.1.2, to be used when the current CA certificate
 		// expires.
-		return CertStoreUtils.fromSignedData(sd);
+		return SignedDataUtils.fromSignedData(sd);
 	    } catch (IOException e) {
 		throw new InvalidContentTypeException(e);
 	    } catch (CMSException e) {

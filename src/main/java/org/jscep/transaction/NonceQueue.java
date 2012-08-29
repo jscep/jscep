@@ -40,24 +40,22 @@ public final class NonceQueue {
     }
 
     /**
-     * Inserts the specified <tt>Nonce</tt> into this queue if possible.
+     * Inserts the specified <tt>Nonce</tt> into this queue.
      * <p/>
-     * This queue will maintain a fixed size, pushing out the oldest nonce
-     * first, so this method will always return true.
+     * This queue will maintain a fixed size, pushing out the oldest <tt>Nonce</tt>
+     * first.
      * 
      * @param nonce
      *            the nonce to add.
-     * @return <tt>true</tt> if the nonce is added, <tt>false</tt> otherwise.
      */
-    public synchronized boolean add(final Nonce nonce) {
+    public synchronized void add(final Nonce nonce) {
 	if (backingQueue.size() == size) {
 	    Nonce removedNonce = backingQueue.poll();
 	    if (LOGGER.isTraceEnabled()) {
 		LOGGER.trace("Removed {} from head of queue.", removedNonce);
 	    }
 	}
-	// TODO: If this method always returns true, why return anything?
-	return backingQueue.offer(nonce);
+	backingQueue.offer(nonce);
     }
 
     /**

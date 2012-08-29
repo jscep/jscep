@@ -1,6 +1,7 @@
 package org.jscep.transport.response;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -76,7 +77,7 @@ public class CapabilitiesTest {
 	    Security.removeProvider(provider.getName());
 	}
 	Capabilities caps = new Capabilities(Capability.SHA_512);
-	assertThat(caps.getStrongestMessageDigest(), is("MD5"));
+	assertThat(caps.getStrongestMessageDigest(), is(nullValue()));
 
 	for (Provider provider : providers) {
 	    Security.addProvider(provider);

@@ -13,7 +13,7 @@ import java.util.Collections;
 
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
-import org.jscep.util.CertStoreUtils;
+import org.jscep.util.SignedDataUtils;
 
 /**
  * This class handles responses to <code>GetCACert</code> requests.
@@ -65,7 +65,7 @@ public final class GetCaCertResponseHandler implements
 			} catch (CMSException e) {
 				throw new InvalidContentException(e);
 			}
-			return CertStoreUtils.fromSignedData(sd);
+			return SignedDataUtils.fromSignedData(sd);
 		} else {
 			throw new InvalidContentTypeException(mimeType, CA_CERT, RA_CERT);
 		}

@@ -40,7 +40,7 @@ import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.OperationFailureException;
 import org.jscep.transaction.TransactionId;
 import org.jscep.transport.response.Capability;
-import org.jscep.x509.X509Util;
+import org.jscep.util.CertificationRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +121,7 @@ public class ScepServletImpl extends ScepServlet {
 		LOGGER.debug("Invalid password");
 		throw new OperationFailureException(FailInfo.badRequest);
 	    }
-	    PublicKey pubKey = X509Util.getPublicKey(csr);
+	    PublicKey pubKey = CertificationRequestUtils.getPublicKey(csr);
 	    X509Certificate issued = generateCertificate(pubKey, subject, name,
 		    getSerial());
 
@@ -168,7 +168,8 @@ public class ScepServletImpl extends ScepServlet {
 
     @Override
     protected Set<Capability> doCapabilities(String identifier) {
-	return EnumSet.of(Capability.SHA_1, Capability.POST_PKI_OPERATION);
+	return EnumSet.of(Capability.SHA_1, Capability.SHA_256,
+		Capability.SHA_512, Capability.POST_PKI_OPERATION);
     }
 
     @Override

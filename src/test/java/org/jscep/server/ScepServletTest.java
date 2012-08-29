@@ -55,7 +55,7 @@ import org.jscep.transport.response.Capabilities;
 import org.jscep.transport.response.GetCaCapsResponseHandler;
 import org.jscep.transport.response.GetCaCertResponseHandler;
 import org.jscep.transport.response.GetNextCaCertResponseHandler;
-import org.jscep.x509.X509Util;
+import org.jscep.util.X500Utils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -281,7 +281,7 @@ public class ScepServletTest {
 	State state = trans.send();
 	assertThat(state, is(State.CERT_REQ_PENDING));
 
-	IssuerAndSubject ias = new IssuerAndSubject(X509Util.toX509Name(sender
+	IssuerAndSubject ias = new IssuerAndSubject(X500Utils.toX500Name(sender
 		.getIssuerX500Principal()), pollName);
 	trans = new EnrollmentTransaction(transport, encoder, decoder, ias,
 		trans.getId());
