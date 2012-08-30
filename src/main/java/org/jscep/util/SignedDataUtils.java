@@ -8,27 +8,84 @@ import java.security.cert.CertStore;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignatureAlgorithmNameGenerator;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.jcajce.JcaSignerId;
+import org.bouncycastle.operator.ContentVerifierProvider;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.SignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used for performing utility operations for <tt>CertStore</tt>s.
+ * This class contains utility methods for manipulating SignedData objects.
  */
-public final class CertStoreUtils {
+public final class SignedDataUtils {
     private static final Logger LOGGER = LoggerFactory
-	    .getLogger(CertStoreUtils.class);
+	    .getLogger(SignedDataUtils.class);
 
     /**
-     * Disallow instance creation.
+     * Private constructor to prevent instantiation.
      */
-    private CertStoreUtils() {
+    private SignedDataUtils() {
+    }
+
+    /**
+     * Checks if the provided signedData was signed by the entity represented by
+     * the provided certificate.
+     * 
+     * @param sd
+     *            the signedData to verify.
+     * @param signer
+     *            the signing entity.
+     * @return <code>true</code> if the signedData was signed by the entity,
+     *         <code>false</code> otherwise.
+     */
+    public static boolean isSignedBy(CMSSignedData sd, X509Certificate signer) {
+	SignerInformationStore store = sd.getSignerInfos();
+	SignerInformation signerInfo = store.get(new JcaSignerId(signer));
+	if (signerInfo == null) {
+	    return false;
+	}
+	CMSSignatureAlgorithmNameGenerator sigNameGenerator = new DefaultCMSSignatureAlgorithmNameGenerator();
+	SignatureAlgorithmIdentifierFinder sigAlgorithmFinder = new DefaultSignatureAlgorithmIdentifierFinder();
+	ContentVerifierProvider verifierProvider;
+	try {
+	    verifierProvider = new JcaContentVerifierProviderBuilder()
+		    .build(signer);
+	} catch (OperatorCreationException e) {
+	    throw new RuntimeException(e);
+	}
+	DigestCalculatorProvider digestProvider;
+	try {
+	    digestProvider = new JcaDigestCalculatorProviderBuilder().build();
+	} catch (OperatorCreationException e1) {
+	    throw new RuntimeException(e1);
+	}
+	SignerInformationVerifier verifier = new SignerInformationVerifier(
+		sigNameGenerator, sigAlgorithmFinder, verifierProvider,
+		digestProvider);
+	try {
+	    return signerInfo.verify(verifier);
+	} catch (CMSException e) {
+	    return false;
+	}
     }
 
     /**
@@ -45,7 +102,6 @@ public final class CertStoreUtils {
      */
     @SuppressWarnings("unchecked")
     public static CertStore fromSignedData(CMSSignedData signedData) {
-	// TODO: Move to SignedDataUtil.
 	CertificateFactory factory;
 	try {
 	    factory = CertificateFactory.getInstance("X509");
