@@ -52,8 +52,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used to encode a <tt>pkiMessage</tt> into a PKCS #7 signedData object.
- *
+ * This class is used to encode a <tt>pkiMessage</tt> into a PKCS #7 signedData
+ * object.
+ * 
  * @see PkiMessageDecoder
  */
 public final class PkiMessageEncoder {
@@ -66,9 +67,12 @@ public final class PkiMessageEncoder {
     /**
      * Creates a new <tt>PkiMessageEncoder</tt> instance.
      * 
-     * @param signerKey the key to use to sign the <tt>signedData</tt>.
-     * @param signerId the certificate to use to identify the signer.
-     * @param enveloper the enveloper used for encoding the <tt>messageData</tt>
+     * @param signerKey
+     *            the key to use to sign the <tt>signedData</tt>.
+     * @param signerId
+     *            the certificate to use to identify the signer.
+     * @param enveloper
+     *            the enveloper used for encoding the <tt>messageData</tt>
      */
     public PkiMessageEncoder(PrivateKey signerKey, X509Certificate signerId,
 	    PkcsPkiEnvelopeEncoder enveloper) {
@@ -78,14 +82,18 @@ public final class PkiMessageEncoder {
     }
 
     /**
-     * Encodes the provided <tt>PkiMessage</tt> into a PKCS #7 <tt>signedData</tt>.
+     * Encodes the provided <tt>PkiMessage</tt> into a PKCS #7
+     * <tt>signedData</tt>.
      * 
-     * @param message the <tt>PkiMessage</tt> to encode.
+     * @param message
+     *            the <tt>PkiMessage</tt> to encode.
      * @return the encoded <tt>signedData</tt>
-     * @throws MessageEncodingException if there is a problem encoding the <tt>PkiMessage</tt>
+     * @throws MessageEncodingException
+     *             if there is a problem encoding the <tt>PkiMessage</tt>
      */
     public CMSSignedData encode(PkiMessage<?> message)
 	    throws MessageEncodingException {
+	LOGGER.debug("Encoding pkiMessage");
 	LOGGER.debug("Encoding message: {}", message);
 	CMSProcessableByteArray signable;
 
@@ -132,7 +140,8 @@ public final class PkiMessageEncoder {
 	}
 
 	CMSSignedDataGenerator sdGenerator = new CMSSignedDataGenerator();
-	LOGGER.debug("Signing message using key belonging to [issuer={}; serial={}]",
+	LOGGER.debug(
+		"Signing pkiMessage using key belonging to [issuer={}; serial={}]",
 		signerId.getIssuerDN(), signerId.getSerialNumber());
 	try {
 	    sdGenerator.addSignerInfoGenerator(getSignerInfo(message));
@@ -152,8 +161,11 @@ public final class PkiMessageEncoder {
 	}
 	LOGGER.debug("Signing {} content", signable);
 	try {
-	    return sdGenerator.generate("1.2.840.113549.1.7.1", signable, true,
-		    (Provider) null, true);
+	    CMSSignedData pkiMessage = sdGenerator.generate(
+		    "1.2.840.113549.1.7.1", signable, true, (Provider) null,
+		    true);
+	    LOGGER.debug("Finished encoding pkiMessage");
+	    return pkiMessage;
 	} catch (Exception e) {
 	    throw new MessageEncodingException(e);
 	}

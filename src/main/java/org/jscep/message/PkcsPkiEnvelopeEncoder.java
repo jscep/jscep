@@ -4,8 +4,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.cert.crmf.CRMFException;
-import org.bouncycastle.cert.crmf.jcajce.JceCRMFEncryptorBuilder;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSException;
@@ -51,6 +49,7 @@ public final class PkcsPkiEnvelopeEncoder {
      */
     public CMSEnvelopedData encode(byte[] messageData)
 	    throws MessageEncodingException {
+	LOGGER.debug("Encoding pkcsPkiEnvelope");
 	CMSEnvelopedDataGenerator edGenerator = new CMSEnvelopedDataGenerator();
 	CMSTypedData envelopable = new CMSProcessableByteArray(messageData);
 	RecipientInfoGenerator recipientGenerator;
@@ -62,7 +61,7 @@ public final class PkcsPkiEnvelopeEncoder {
 	}
 	edGenerator.addRecipientInfoGenerator(recipientGenerator);
 	LOGGER.debug(
-		"Encrypting session key using key belonging to [issuer={}; serial={}]",
+		"Encrypting pkcsPkiEnvelope using key belonging to [issuer={}; serial={}]",
 		recipient.getIssuerDN(), recipient.getSerialNumber());
 
 	OutputEncryptor encryptor;
@@ -74,7 +73,10 @@ public final class PkcsPkiEnvelopeEncoder {
 	    throw new MessageEncodingException(e);
 	}
 	try {
-	    return edGenerator.generate(envelopable, encryptor);
+	    CMSEnvelopedData pkcsPkiEnvelope = edGenerator.generate(envelopable, encryptor);
+	    
+	    LOGGER.debug("Finished encoding pkcsPkiEnvelope");
+	    return pkcsPkiEnvelope;
 	} catch (CMSException e) {
 	    throw new MessageEncodingException(e);
 	}
