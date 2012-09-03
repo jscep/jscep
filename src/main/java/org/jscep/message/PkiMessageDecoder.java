@@ -92,6 +92,12 @@ public final class PkiMessageDecoder {
 	    throw new MessageDecodingException("Could not for signerInfo for "
 		    + signer.getIssuerDN());
 	}
+
+	LOGGER.debug("pkiMessage digest algorithm: {}",
+		signerInfo.getDigestAlgorithmID().getAlgorithm());
+	LOGGER.debug("pkiMessage encryption algorithm: {}",
+		signerInfo.getEncryptionAlgOID());
+
 	Store store = pkiMessage.getCertificates();
 	Collection<?> certColl;
 	try {

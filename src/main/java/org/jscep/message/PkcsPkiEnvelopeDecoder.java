@@ -70,8 +70,12 @@ public final class PkcsPkiEnvelopeDecoder {
 		    "Missing expected key transfer recipient");
 	}
 
+	LOGGER.debug("pkcsPkiEnvelope encryption algorithm: {}",
+		info.getKeyEncryptionAlgorithm().getAlgorithm());
+
 	try {
-	    byte[] messageData = info.getContent(new JceKeyTransEnvelopedRecipient(priKey));
+	    byte[] messageData = info
+		    .getContent(new JceKeyTransEnvelopedRecipient(priKey));
 	    LOGGER.debug("Finished decoding pkcsPkiEnvelope");
 	    return messageData;
 	} catch (CMSException e) {
