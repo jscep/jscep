@@ -1,0 +1,74 @@
+Constructing a Client
+
+  In order to construct a client, we need two objects:
+  
+  * a URL
+  
+  * a Callback Handler
+  
+  []
+  
+* Determining the URL
+
+  The URL should be obtained from your system administrator.
+
+* Creating a Callback Handler
+
+  The callback handler is used to verify the CA certificate being sent by the SCEP server.
+  
++-----------------+
+  CertificateVerifier verifier = new ConsoleCertificateVerifier();
+  CallbackHandler handler = new DefaultCallbackHandler(verifier);
++-----------------+
+
+Profiles
+
+  Microsoft NDES requires a profile.
+
+Enrollment Operations
+
+* Enrolling a Certificate
+
++---+
+client.enrol();
++---+
+
+* Polling for a Pending Enrollment
+
++---+
+client.poll();
++---+
+
+Non-Enrollment Operations
+
+* Retrieving a CRL
+
+* Retrieving a Certificate
+
+* Determining SCEP Server Capabilities
+
++---+
+client.getCaCapabilities();
++---+
+
+  Digest Algorithms:
+
+  * MD5
+  
+  * SHA-1
+  
+  * SHA-256
+  
+  * SHA-512
+  
+  []
+  
+  Ciphers:
+  
+  * DES
+  
+  * Triple DES
+
+* Next CA Certificate Access
+
+* CA Certificate Access

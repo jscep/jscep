@@ -1,0 +1,9 @@
+<project xmlns="http://maven.apache.org/DECORATION/1.3.0" >
+	<googleAnalyticsAccountId>1234</googleAnalyticsAccountId>
+	<body>
+		<menu name="Documentation">
+			<item name="Client" href="documentation.html"/>
+		</menu>
+		<menu ref="reports"/>
+	</body>
+</project>
