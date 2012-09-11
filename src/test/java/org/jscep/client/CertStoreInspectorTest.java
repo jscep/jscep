@@ -17,10 +17,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class AuthoritiesTest {
+public class CertStoreInspectorTest {
     @Parameterized.Parameters
     public static Collection<Object[]> setUp() throws Exception {
-	InputStream keyStoreIn = AuthoritiesTest.class.getClassLoader()
+	InputStream keyStoreIn = CertStoreInspectorTest.class.getClassLoader()
 		.getResourceAsStream("store.jks");
 	KeyStore testStore = KeyStore.getInstance("JKS");
 	testStore.load(keyStoreIn, "password".toCharArray());
@@ -60,7 +60,7 @@ public class AuthoritiesTest {
     private final String signing;
     private final String issuer;
 
-    public AuthoritiesTest(CertStore store, String encryption, String signing,
+    public CertStoreInspectorTest(CertStore store, String encryption, String signing,
 	    String issuer) {
 	this.store = store;
 	this.encryption = encryption;
