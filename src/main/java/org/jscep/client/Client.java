@@ -282,7 +282,7 @@ public final class Client {
 		} catch (TransportException e) {
 			throw new ClientException(e);
 		}
-		CertStoreInspector certs = CertStoreInspector.inspect(store);
+		CertStoreInspector certs = CertStoreInspector.getInstance(store);
 		verifyCA(certs.getIssuer());
 		verifyRA(certs.getIssuer(), certs.getRecipient());
 		verifyRA(certs.getIssuer(), certs.getSigner());
@@ -353,7 +353,7 @@ public final class Client {
 		}
 		final CertStore store = getCaCertificate(profile);
 		// The CA or RA
-		CertStoreInspector certs = CertStoreInspector.inspect(store);
+		CertStoreInspector certs = CertStoreInspector.getInstance(store);
 		final X509Certificate signer = certs.getSigner();
 
 		final Transport trans = new HttpGetTransport(url);
@@ -428,7 +428,7 @@ public final class Client {
 		// TRANSACTIONAL
 		// CRL query
 		final CertStore store = getCaCertificate(profile);
-		CertStoreInspector certs = CertStoreInspector.inspect(store);
+		CertStoreInspector certs = CertStoreInspector.getInstance(store);
 		final X509Certificate ca = certs.getIssuer();
 		final X509Certificate signer = certs.getSigner();
 		if (supportsDistributionPoints(ca)) {
@@ -521,7 +521,7 @@ public final class Client {
 		// TRANSACTIONAL
 		// Certificate query
 		final CertStore store = getCaCertificate(profile);
-		CertStoreInspector certs = CertStoreInspector.inspect(store);
+		CertStoreInspector certs = CertStoreInspector.getInstance(store);
 		final X509Certificate ca = certs.getIssuer();
 		final X509Certificate signer = certs.getSigner();
 
@@ -621,7 +621,7 @@ public final class Client {
 		// Certificate enrollment
 		final Transport transport = createTransport(profile);
 		CertStore store = getCaCertificate(profile);
-		CertStoreInspector certs = CertStoreInspector.inspect(store);
+		CertStoreInspector certs = CertStoreInspector.getInstance(store);
 		X509Certificate rcpt = certs.getRecipient();
 		X509Certificate signer = certs.getSigner();
 		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(rcpt);
@@ -669,7 +669,7 @@ public final class Client {
 			TransactionException {
 		final Transport transport = createTransport(profile);
 		CertStore store = getCaCertificate(profile);
-		CertStoreInspector certStore = CertStoreInspector.inspect(store);
+		CertStoreInspector certStore = CertStoreInspector.getInstance(store);
 		X509Certificate rcpt = certStore.getRecipient();
 		X509Certificate issuer = certStore.getIssuer();
 		X509Certificate signer = certStore.getSigner();
@@ -701,7 +701,7 @@ public final class Client {
 	private PkiMessageEncoder getEncoder(X509Certificate identity,
 			PrivateKey priKey, String profile) throws ClientException {
 		final CertStore store = getCaCertificate(profile);
-		CertStoreInspector certs = CertStoreInspector.inspect(store);
+		CertStoreInspector certs = CertStoreInspector.getInstance(store);
 		X509Certificate recipientCertificate = certs.getRecipient();
 		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
 				recipientCertificate);
