@@ -1,6 +1,5 @@
 package org.jscep.util;
 
-
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -10,18 +9,18 @@ import org.bouncycastle.asn1.x500.X500Name;
  * objects.
  */
 public final class X500Utils {
-    private X500Utils() {
-    }
+	private X500Utils() {
+	}
 
-    /**
-     * Converts a Java SE X500Principal to a Bouncy Castle X500Name.
-     * 
-     * @param principal
-     *            the principal to convert.
-     * @return the converted name.
-     */
-    public static X500Name toX500Name(X500Principal principal) {
-	byte[] bytes = principal.getEncoded();
-	return X500Name.getInstance(bytes);
-    }
+	/**
+	 * Converts a Java SE X500Principal to a Bouncy Castle X500Name.
+	 * 
+	 * @param principal
+	 *            the principal to convert.
+	 * @return the converted name.
+	 */
+	public static X500Name toX500Name(X500Principal principal) {
+		byte[] bytes = principal.getEncoded();
+		return X500Name.getInstance(bytes);
+	}
 }

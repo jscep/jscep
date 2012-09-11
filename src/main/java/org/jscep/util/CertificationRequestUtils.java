@@ -18,39 +18,39 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
  * <tt>CertificationRequest</tt> instances.
  */
 public class CertificationRequestUtils {
-    private CertificationRequestUtils() {
-    }
-
-    /**
-     * Extracts the <tt>PublicKey</tt> from the provided CSR.
-     * <p>
-     * This method will throw a {@link RuntimeException} if the JRE is missing
-     * the RSA algorithm, which is a required algorithm as defined by the JCA.
-     * 
-     * @param csr
-     *            the CSR to extract from.
-     * @return the extracted <tt>PublicKey</tt>
-     * @throws InvalidKeySpecException
-     *             if the CSR is not using an RSA key.
-     * @throws IOException
-     *             if there is an error extracting the <tt>PublicKey</tt>
-     *             parameters.
-     */
-    public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
-	    throws InvalidKeySpecException, IOException {
-	SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();
-	RSAKeyParameters keyParams = (RSAKeyParameters) PublicKeyFactory
-		.createKey(pubKeyInfo);
-	KeySpec keySpec = new RSAPublicKeySpec(keyParams.getModulus(),
-		keyParams.getExponent());
-
-	KeyFactory kf;
-	try {
-	    kf = KeyFactory.getInstance("RSA");
-	} catch (NoSuchAlgorithmException e) {
-	    throw new RuntimeException(e);
+	private CertificationRequestUtils() {
 	}
-	return kf.generatePublic(keySpec);
-    }
+
+	/**
+	 * Extracts the <tt>PublicKey</tt> from the provided CSR.
+	 * <p>
+	 * This method will throw a {@link RuntimeException} if the JRE is missing
+	 * the RSA algorithm, which is a required algorithm as defined by the JCA.
+	 * 
+	 * @param csr
+	 *            the CSR to extract from.
+	 * @return the extracted <tt>PublicKey</tt>
+	 * @throws InvalidKeySpecException
+	 *             if the CSR is not using an RSA key.
+	 * @throws IOException
+	 *             if there is an error extracting the <tt>PublicKey</tt>
+	 *             parameters.
+	 */
+	public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
+			throws InvalidKeySpecException, IOException {
+		SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();
+		RSAKeyParameters keyParams = (RSAKeyParameters) PublicKeyFactory
+				.createKey(pubKeyInfo);
+		KeySpec keySpec = new RSAPublicKeySpec(keyParams.getModulus(),
+				keyParams.getExponent());
+
+		KeyFactory kf;
+		try {
+			kf = KeyFactory.getInstance("RSA");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		return kf.generatePublic(keySpec);
+	}
 
 }
