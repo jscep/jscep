@@ -35,6 +35,8 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -52,6 +54,7 @@ import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.operator.ContentVerifier;
 import org.bouncycastle.operator.ContentVerifierProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.asn1.IssuerAndSubject;
@@ -280,10 +283,35 @@ public final class Client {
 			throw new ClientException(e);
 		}
 		CertStoreInspector certs = CertStoreInspector.inspect(store);
-		X509Certificate selectIssuerCertificate = certs.getIssuer();
-		verifyCA(selectIssuerCertificate);
+		verifyCA(certs.getIssuer());
+		verifyRA(certs.getIssuer(), certs.getRecipient());
+		verifyRA(certs.getIssuer(), certs.getSigner());
 
 		return store;
+	}
+
+	private void verifyRA(X509Certificate ca, X509Certificate ra) throws ClientException {
+		LOGGER.debug("Verifying signature of RA certificate");
+		if (ca.equals(ra)) {
+			LOGGER.debug("RA and CA are identical");
+			
+			return;
+		}
+		try {
+			JcaX509CertificateHolder raHolder = new JcaX509CertificateHolder(ra);
+			
+			ContentVerifierProvider verifierProvider = new JcaContentVerifierProviderBuilder()
+			.build(ca);
+			
+			if (!raHolder.isSignatureValid(verifierProvider)) {
+				LOGGER.debug("Signature verification failed for RA.");
+				throw new ClientException("RA not issued by CA");
+			} else {
+				LOGGER.debug("Signature verification passed for RA.");
+			}
+		} catch (Exception e) {
+			throw new ClientException(e);
+		}
 	}
 
 	/**
