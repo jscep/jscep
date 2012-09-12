@@ -4,7 +4,7 @@
     
 About jscep
 
-  Java implementation of the Simple Certificate Enrollment Protocol
+  jscep is a Java implementation of the {{{http://tools.ietf.org/html/draft-nourse-scep}Simple Certificate Enrollment Protocol}}.
   
 Learning about jscep
 

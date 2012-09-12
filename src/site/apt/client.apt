@@ -11,19 +11,59 @@ Constructing a Client
 * Determining the URL
 
   The URL should be obtained from your system administrator.
+  
+** Using HTTPS
+
+  jscep uses {{{http://docs.oracle.com/javase/6/docs/api/java/net/HttpURLConnection.html}HttpURLConnection}} under the hood, and offers
+  full support for HTTPS-enabled SCEP servers - although HTTPS is unnecessary.
+   
+  If your SCEP server requires the use of SSL to establish a connection, you may wish to configure {{{http://docs.oracle.com/javase/6/docs/api/javax/net/ssl/HttpsURLConnection.html}HttpsURLConnection}}
+  by using the static {{{http://docs.oracle.com/javase/6/docs/api/javax/net/ssl/HttpsURLConnection.html#setDefaultHostnameVerifier(javax.net.ssl.HostnameVerifier)}setDefaultHostnameVerifier}}
+  and {{{http://docs.oracle.com/javase/6/docs/api/javax/net/ssl/HttpsURLConnection.html#setDefaultSSLSocketFactory(javax.net.ssl.SSLSocketFactory)}setDefaultSSLSocketFactory}} methods.
+  You'll only need to specify a <<<HostnameVerifier>>> if your SSL server provides a certificate that doesn't match the hostname in the SCEP URL.
+  
+  By default, <<<HttpsURLConnection>>> will use the <<<SSLSocketFactory>>> as specified by JSSE, so there should be no need to configure it directly.  For more information, read the {{{http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html}JSSE Reference Guide}},
+  particularly the section on {{{http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#Customization}customization}}.
 
 * Creating a Callback Handler
 
-  The callback handler is used to verify the CA certificate being sent by the SCEP server.
+  The callback handler is used to verify the CA certificate being sent by the SCEP server is the certificate you expect.  With jscep, you can choose to use
+  either the default callback mechanism with a choice of certificate verifiers, or to provide your own callback handler.
+  
+** Default Callback Mechanism
+
+  The default callback mechanism provides a <<<DefaultCallbackHandler>>> which delegates verification to a <<<CertificateVerifier>>> implementation.  jscep supports several strategies for verifying a certificate,
+  including pre-provisioned certificates or digests, and an interactive console verifier.
+  
+  The following example shows the steps necessary to configure the console verifier:
   
 +-----------------+
   CertificateVerifier verifier = new ConsoleCertificateVerifier();
   CallbackHandler handler = new DefaultCallbackHandler(verifier);
 +-----------------+
 
+  By default, jscep will request verification before each operation.  If you are performing a number of operations against the same SCEP server, you
+  may wish to cache the users response by decorating the certificate verifier, like so:
+  
++-----------------+
+  CertificateVerifier consoleVerifier = new ConsoleCertificateVerifier();
+  CertificateVerifier verifier = new CachingCertificateVerifier(consoleVerifier);
+  CallbackHandler handler = new DefaultCallbackHandler(verifier);
++-----------------+    
+
+** Providing Your Own Callback Handler
+
+  If you wish to use your own <<<CallbackHandler>>>, you must handle the <<<CertificateVerificationCallback>>>. 
+
 Profiles
 
-  Each client operation can be called with a profile.  Microsoft NDES requires a profile.
+  If your SCEP server supports multiple CAs, your CA administrator must provide a string to identify the issuer to use.
+  Each of the operations supported by jscep accepts an optional profile parameter in the form of a <<<String>>>.
+  
+  Because the jscep client is thread-safe, your application can invoke operations against multiple CA profiles <without>
+  having to construct a new SCEP client.
+  
+  <<Note:>> Microsoft NDES always requires a profile.
 
 Certificate Enrollment
 
