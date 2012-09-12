@@ -36,6 +36,8 @@
 		<mailingList>
 			<name>jscep Support</name>
 			<post>jscep-support@googlegroups.com</post>
+			<subscribe>jscep-support+subscribe@googlegroups.com</subscribe>
+			<unsubscribe>jscep-support+unsubscribe@googlegroups.com</unsubscribe>
 			<archive>http://groups.google.com/group/jscep-support</archive>
 		</mailingList>
 	</mailingLists>
