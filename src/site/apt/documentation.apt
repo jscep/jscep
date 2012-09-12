@@ -30,13 +30,13 @@ Certificate Enrollment
 * Enrolling a Certificate
 
 +---+
-client.enrol();
+CertStore store = client.enrol();
 +---+
 
 * Polling for a Pending Enrollment
 
 +---+
-client.poll();
+CertStore store = client.poll();
 +---+
 
 Non-Enrollment Operations
@@ -72,6 +72,8 @@ Capabilities capabilities = client.getCaCapabilities();
     []
   
   * Use of HTTP POST
+  
+  []
   
   See: {http://tools.ietf.org/html/draft-nourse-scep-23#appendix-C}
 

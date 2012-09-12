@@ -46,6 +46,11 @@
 			<id>david@grant.org.uk</id>
 			<email>david@grant.org.uk</email>
 			<name>David Grant</name>
+			<roles>
+				<role>Owner</role>
+			</roles>
+			<organization>-</organization>
+			<timezone>Europe/London</timezone>
 		</developer>
 	</developers>
 	<reporting>
@@ -153,8 +158,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.5.1</version>
 					<configuration>
-						<source>1.5</source>
-						<target>1.5</target>
+						<source>1.6</source>
+						<target>1.6</target>
 					</configuration>
 				</plugin>
 			</plugins>

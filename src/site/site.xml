@@ -1,8 +1,15 @@
 <project xmlns="http://maven.apache.org/DECORATION/1.3.0" >
 	<googleAnalyticsAccountId>1234</googleAnalyticsAccountId>
 	<body>
+		<menu name="Main">
+			<item name="Welcome" href="index.html"/>
+		</menu>
+		<menu name="Get jscep">
+			<item name="Download" href="download.html"/>
+			<item name="License" href="license.html"/>
+		</menu>
 		<menu name="Documentation">
-			<item name="Client" href="documentation.html"/>
+			<item name="Client" href="client.html"/>
 		</menu>
 		<menu ref="reports"/>
 	</body>
