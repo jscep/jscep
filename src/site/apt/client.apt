@@ -10,7 +10,13 @@ Constructing a Client
   
 * Determining the URL
 
-  The URL should be obtained from your system administrator.
+  The URL should be obtained from your system administrator.  In the case of Microsoft NDES, the URL will look like so:
+  
+  <<<http://[host]/certsrv/mscep_admin/mscep.dll>>>
+  
+  In the case of EJBCA, it will look like so:
+  
+  <<<http://[host]/ejbca/publicweb/apply/scep/pkiclient.exe>>>
   
 ** Using HTTPS
 
