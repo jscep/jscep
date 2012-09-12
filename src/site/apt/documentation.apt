@@ -23,9 +23,9 @@ Constructing a Client
 
 Profiles
 
-  Microsoft NDES requires a profile.
+  Each client operation can be called with a profile.  Microsoft NDES requires a profile.
 
-Enrollment Operations
+Certificate Enrollment
 
 * Enrolling a Certificate
 
@@ -41,34 +41,46 @@ client.poll();
 
 Non-Enrollment Operations
 
-* Retrieving a CRL
+* CRL Access
 
-* Retrieving a Certificate
+* Certificate Access
 
-* Determining SCEP Server Capabilities
+* CA Capabilities
 
 +---+
-client.getCaCapabilities();
+Capabilities capabilities = client.getCaCapabilities();
 +---+
 
-  Digest Algorithms:
+  * Digest Algorithms:
 
-  * MD5
+    * MD5
   
-  * SHA-1
+    * SHA-1
   
-  * SHA-256
+    * SHA-256
   
-  * SHA-512
+    * SHA-512
   
-  []
+    []
   
-  Ciphers:
+  * Ciphers:
   
-  * DES
+    * DES
   
-  * Triple DES
+    * Triple DES
+  
+    []
+  
+  * Use of HTTP POST
+  
+  See: {http://tools.ietf.org/html/draft-nourse-scep-23#appendix-C}
 
-* Next CA Certificate Access
+* CA Key Rollover
 
-* CA Certificate Access
++---+
+CertStore store = client.getRolloverCertificate();
++---+
+
+  See: {http://tools.ietf.org/html/draft-nourse-scep-23#appendix-E}
+
+* RA/CA Certificate Distribution
