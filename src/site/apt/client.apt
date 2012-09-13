@@ -1,3 +1,7 @@
+  ---
+  Client
+  ---
+
 Constructing a Client
 
   In order to construct a client, we need two objects:
@@ -70,6 +74,23 @@ Profiles
   having to construct a new SCEP client.
   
   <<Note:>> Microsoft NDES always requires a profile.
+
+Client Certificate
+
+  In order to participate in a SCEP transaction, a SCEP client must have a certificate and key pair.  Unless you have
+  been issued with a certificate by your CA -- or by a CA trusted by your CA -- you must use a self-signed certificate.
+  
+* Generating a Self-Signed Certificate and Key Pair
+
+  The first step is the generation of an RSA key pair.  SCEP has no reported support for DSA or EC key pairs.
+  
+  <<Note:>> Implementations of the Java platform are <<required>> to support key sizes of 1,024 and 2,048 bits for RSA key pairs.
+
++---+
+KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+keyPairGenerator.initialize(1024);
+KeyPair keyPair = keyPairGenerator.genKeyPair();
++---+
 
 Certificate Enrollment
 
