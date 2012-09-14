@@ -80,7 +80,7 @@ Client Certificate
   In order to participate in a SCEP transaction, a SCEP client must have a certificate and key pair.  Unless you have
   been issued with a certificate by your CA -- or by a CA trusted by your CA -- you must use a self-signed certificate.
   
-* Generating a Self-Signed Certificate and Key Pair
+* Generating a Key Pair
 
   The first step is the generation of an RSA key pair.  SCEP has no reported support for DSA or EC key pairs.
   
@@ -90,6 +90,65 @@ Client Certificate
 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
 keyPairGenerator.initialize(1024);
 KeyPair keyPair = keyPairGenerator.genKeyPair();
++---+
+
+* Generating a Self-Signed Certificate
+
+  The second step is the generation of an X509 Certificate.  JCA doesn't provide a mechanism for generating certificates.  However, you can
+  use Bouncy Castle to do it, using either the {{{http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/cert/jcajce/JcaX509v1CertificateBuilder.html}JcaX509v1CertificateBuilder}}
+  or the {{{http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/cert/jcajce/JcaX509v3CertificateBuilder.html}JcaX509v3CertificateBuilder}}.
+  
+  The following example uses <<<JcaX509v3CertificateBuilder>>> for its X509 extension support.  Bouncy Castle provides classes and interfaces to 
+  simplify the usage of extensions through the {{{http://www.bouncycastle.org/docs/docs1.5on/org/bouncycastle/asn1/x509/package-summary.html}org.bouncycastle.asn1.x509}} 
+  package.
+  
+  If you don't require extensions, you can use <<<JcaX509v1CertificateBuilder>>>, which takes the same arguments as <<<JcaX509v3CertificateBuilder>>>
+  in its JCA-compatible constructor.  In either case, you will need to provide a <<<ContentSigner>>>, which can be 
+  built using {{{http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/operator/jcajce/JcaContentSignerBuilder.html}JcaContentSignerBuilder}}.
+  SCEP supports the following signature algorithms:
+  
+  * MD5withRSA
+  
+  * SHA1withRSA
+  
+  * SHA256withRSA
+  
+  * SHA512withRSA
+  
+  []
+  
+  You can find out what algorithms are supported by your SCEP server by following the "CA Capabilities" section below.
+  
+  <<Note>>: if you're using a self-signed certificate, your certificate subject X500 name <must> be the same as the subject in your certificate-signing request.  
+ 
++---+
+// Mandatory
+X500Principal issuer = new X500Principal("CN=jscep.org, L=Cardiff, ST=Wales, C=UK");
+BigInteger serial = BigInteger.ONE;
+Calendar calendar = Calendar.getInstance();
+calendar.add(Calendar.DATE, -1); // yesterday
+Date notBefore = calendar.getTime();
+calendar.add(Calendar.DATE, +2); // tomorrow
+Date notAfter = calendar.getTime();
+X500Principal subject = new X500Principal("CN=jscep.org, L=Cardiff, ST=Wales, C=UK"); // doesn't need to be the same as issuer
+PublicKey publicKey = keyPair.getPublic(); // from generated key pair
+JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(issuer, serial, notBefore, notAfter, subject, publicKey);
+
+// Optional extensions
+certBuilder.addExtension(X509Extension.keyUsage, false, new KeyUsage(KeyUsage.digitalSignature));
+
+// Signing
+JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA1withRSA");
+ContentSigner signer = signerBuilder.build(keyPair.getPrivate()); // from generated key pair
+
+X509CertificateHolder certHolder = certBuilder.build(signer);
++---+
+
+  You can extract a JCA-compatible certificate by using the {{{http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/cert/jcajce/JcaX509CertificateConverter.html}JcaX509CertificateConverter}}:
+
++---+
+JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
+X509Certificate cert = converter.getCertificate(certHolder);
 +---+
 
 Certificate Enrollment
@@ -153,3 +212,13 @@ CertStore store = client.getRolloverCertificate();
   See: {http://tools.ietf.org/html/draft-nourse-scep-23#appendix-E}
 
 * RA/CA Certificate Distribution
+
+References
+
+  * {{{http://www.bouncycastle.org/docs/pkixdocs1.5on/index.html}Bouncy Castle PKIX and CMS Documentation}}
+  
+  * {{{http://www.bouncycastle.org/docs/docs1.5on/index.html}Bouncy Castle Provider and Main Documentation}}
+  
+  * {{{http://docs.oracle.com/javase/6/docs/technotes/guides/security/}Java 6 Security}}
+  
+  []
