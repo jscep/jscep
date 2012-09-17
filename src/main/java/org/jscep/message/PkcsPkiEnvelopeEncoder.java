@@ -12,7 +12,6 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.RecipientInfoGenerator;
 import org.bouncycastle.cms.jcajce.JceCMSContentEncryptorBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipientInfoGenerator;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OutputEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +68,7 @@ public final class PkcsPkiEnvelopeEncoder {
 		try {
 			// TODO: Don't rely on using Triple DES
 			encryptor = new JceCMSContentEncryptorBuilder(
-					PKCSObjectIdentifiers.des_EDE3_CBC).setProvider(
-					new BouncyCastleProvider()).build();
+					PKCSObjectIdentifiers.des_EDE3_CBC).build();
 		} catch (CMSException e) {
 			throw new MessageEncodingException(e);
 		}

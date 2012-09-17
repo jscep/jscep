@@ -13,7 +13,6 @@ import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipientId;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 
 /**
@@ -77,7 +76,6 @@ public final class PkcsPkiEnvelopeDecoder {
 
 		try {
 			JceKeyTransRecipient recipient = new JceKeyTransEnvelopedRecipient(priKey);
-			recipient.setProvider(new BouncyCastleProvider());
 			
 			byte[] messageData = info.getContent(recipient);
 			LOGGER.debug("Finished decoding pkcsPkiEnvelope");
