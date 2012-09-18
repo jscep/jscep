@@ -280,19 +280,20 @@ public final class Client {
 		return store;
 	}
 
-	private void verifyRA(X509Certificate ca, X509Certificate ra) throws ClientException {
+	private void verifyRA(X509Certificate ca, X509Certificate ra)
+			throws ClientException {
 		LOGGER.debug("Verifying signature of RA certificate");
 		if (ca.equals(ra)) {
 			LOGGER.debug("RA and CA are identical");
-			
+
 			return;
 		}
 		try {
 			JcaX509CertificateHolder raHolder = new JcaX509CertificateHolder(ra);
-			
+
 			ContentVerifierProvider verifierProvider = new JcaContentVerifierProviderBuilder()
-			.build(ca);
-			
+					.build(ca);
+
 			if (!raHolder.isSignatureValid(verifierProvider)) {
 				LOGGER.debug("Signature verification failed for RA.");
 				throw new ClientException("RA not issued by CA");
@@ -417,20 +418,14 @@ public final class Client {
 		LOGGER.debug("Retriving CRL from CA");
 		// TRANSACTIONAL
 		// CRL query
-		final CertStore store = getCaCertificate(profile);
-		CertStoreInspector certs = CertStoreInspector.getInstance(store);
-		final X509Certificate ca = certs.getIssuer();
-		final X509Certificate signer = certs.getSigner();
-		if (supportsDistributionPoints(ca)) {
-			throw new RuntimeException("Unimplemented");
-		}
+		checkDistributionPoints(profile);
 
 		X500Name name = new X500Name(issuer.getName());
 		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
 		Transport transport = createTransport(profile);
 		final Transaction t = new NonEnrollmentTransaction(transport,
 				getEncoder(identity, key, profile), getDecoder(identity, key,
-						signer), iasn, MessageType.GET_CRL);
+						profile), iasn, MessageType.GET_CRL);
 		State state;
 		try {
 			state = t.send();
@@ -453,6 +448,16 @@ public final class Client {
 			throw new IllegalStateException();
 		} else {
 			throw new OperationFailureException(t.getFailInfo());
+		}
+	}
+
+	private void checkDistributionPoints(final String profile)
+			throws ClientException {
+		CertStore store = getCaCertificate(profile);
+		CertStoreInspector certs = CertStoreInspector.getInstance(store);
+		final X509Certificate ca = certs.getIssuer();
+		if (ca.getExtensionValue(X509Extension.cRLDistributionPoints.getId()) != null) {
+			LOGGER.warn("CA supports distribution points");
 		}
 	}
 
@@ -513,14 +518,13 @@ public final class Client {
 		final CertStore store = getCaCertificate(profile);
 		CertStoreInspector certs = CertStoreInspector.getInstance(store);
 		final X509Certificate ca = certs.getIssuer();
-		final X509Certificate signer = certs.getSigner();
 
 		X500Name name = new X500Name(ca.getIssuerX500Principal().toString());
 		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
 		Transport transport = createTransport(profile);
 		final Transaction t = new NonEnrollmentTransaction(transport,
 				getEncoder(identity, key, profile), getDecoder(identity, key,
-						signer), iasn, MessageType.GET_CERT);
+						profile), iasn, MessageType.GET_CERT);
 
 		State state;
 		try {
@@ -610,14 +614,8 @@ public final class Client {
 		// TRANSACTIONAL
 		// Certificate enrollment
 		final Transport transport = createTransport(profile);
-		CertStore store = getCaCertificate(profile);
-		CertStoreInspector certs = CertStoreInspector.getInstance(store);
-		X509Certificate rcpt = certs.getRecipient();
-		X509Certificate signer = certs.getSigner();
-		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(rcpt);
-		PkiMessageEncoder encoder = new PkiMessageEncoder(key, identity,
-				envEncoder);
-		PkiMessageDecoder decoder = getDecoder(identity, key, signer);
+		PkiMessageEncoder encoder = getEncoder(identity, key, profile);
+		PkiMessageDecoder decoder = getDecoder(identity, key, profile);
 		final EnrollmentTransaction trans = new EnrollmentTransaction(
 				transport, encoder, decoder, csr);
 
@@ -660,13 +658,11 @@ public final class Client {
 		final Transport transport = createTransport(profile);
 		CertStore store = getCaCertificate(profile);
 		CertStoreInspector certStore = CertStoreInspector.getInstance(store);
-		X509Certificate rcpt = certStore.getRecipient();
 		X509Certificate issuer = certStore.getIssuer();
-		X509Certificate signer = certStore.getSigner();
-		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(rcpt);
-		PkiMessageEncoder encoder = new PkiMessageEncoder(identityKey,
-				identity, envEncoder);
-		PkiMessageDecoder decoder = getDecoder(identity, identityKey, signer);
+
+		PkiMessageEncoder encoder = getEncoder(identity, identityKey, profile);
+		PkiMessageDecoder decoder = getDecoder(identity, identityKey, profile);
+
 		IssuerAndSubject ias = new IssuerAndSubject(X500Utils.toX500Name(issuer
 				.getIssuerX500Principal()), X500Utils.toX500Name(subject));
 
@@ -690,33 +686,26 @@ public final class Client {
 
 	private PkiMessageEncoder getEncoder(X509Certificate identity,
 			PrivateKey priKey, String profile) throws ClientException {
-		final CertStore store = getCaCertificate(profile);
+		CertStore store = getCaCertificate(profile);
+		Capabilities caps = getCaCapabilities(profile);
 		CertStoreInspector certs = CertStoreInspector.getInstance(store);
 		X509Certificate recipientCertificate = certs.getRecipient();
 		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
 				recipientCertificate);
 
-		return new PkiMessageEncoder(priKey, identity, envEncoder);
+		String sigAlg = caps.getStrongestSignatureAlgorithm();
+		return new PkiMessageEncoder(priKey, identity, envEncoder, sigAlg);
 	}
 
 	private PkiMessageDecoder getDecoder(X509Certificate identity,
-			PrivateKey key, X509Certificate signer) {
+			PrivateKey key, String profile) throws ClientException {
+		final CertStore store = getCaCertificate(profile);
+		CertStoreInspector certs = CertStoreInspector.getInstance(store);
+		X509Certificate signer = certs.getSigner();
 		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
 				identity, key);
 
 		return new PkiMessageDecoder(signer, envDecoder);
-	}
-
-	/**
-	 * @param issuerCertificate
-	 *            certificate to test
-	 * @return true if the certificate supports distribution points, false
-	 *         otherwise
-	 * @link http://tools.ietf.org/html/draft-nourse-scep-19#section-2.2.4
-	 */
-	private boolean supportsDistributionPoints(X509Certificate issuerCertificate) {
-		return issuerCertificate
-				.getExtensionValue(X509Extension.cRLDistributionPoints.getId()) != null;
 	}
 
 	/**
