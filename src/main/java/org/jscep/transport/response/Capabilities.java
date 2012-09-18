@@ -15,7 +15,7 @@ import net.jcip.annotations.Immutable;
  */
 @Immutable
 public final class Capabilities {
-	private final EnumSet<Capability> capabilities;
+	private final EnumSet<Capability> caps;
 
 	/**
 	 * Constructs a new instance of this class with the specified capabilities.
@@ -24,8 +24,8 @@ public final class Capabilities {
 	 *            the capabilities.
 	 */
 	public Capabilities(Capability... capabilities) {
-		this.capabilities = EnumSet.noneOf(Capability.class);
-		Collections.addAll(this.capabilities, capabilities);
+		this.caps = EnumSet.noneOf(Capability.class);
+		Collections.addAll(this.caps, capabilities);
 	}
 
 	/**
@@ -38,7 +38,7 @@ public final class Capabilities {
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean contains(Capability capability) {
-		return capabilities.contains(capability);
+		return caps.contains(capability);
 	}
 
 	/**
@@ -47,7 +47,7 @@ public final class Capabilities {
 	 * @return <tt>true</tt> if POST is supported, <tt>false</tt> otherwise.
 	 */
 	public boolean isPostSupported() {
-		return capabilities.contains(Capability.POST_PKI_OPERATION);
+		return caps.contains(Capability.POST_PKI_OPERATION);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public final class Capabilities {
 	 *         <tt>false</tt> otherwise.
 	 */
 	public boolean isRolloverSupported() {
-		return capabilities.contains(Capability.GET_NEXT_CA_CERT);
+		return caps.contains(Capability.GET_NEXT_CA_CERT);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public final class Capabilities {
 	 *         otherwise.
 	 */
 	public boolean isRenewalSupported() {
-		return capabilities.contains(Capability.RENEWAL);
+		return caps.contains(Capability.RENEWAL);
 	}
 
 	/**
@@ -87,8 +87,7 @@ public final class Capabilities {
 	 */
 	public String getStrongestCipher() {
 		final String cipher;
-		if (cipherExists("DESede")
-				&& capabilities.contains(Capability.TRIPLE_DES)) {
+		if (cipherExists("DESede") && caps.contains(Capability.TRIPLE_DES)) {
 			cipher = "DESede";
 		} else {
 			cipher = "DES";
@@ -131,36 +130,34 @@ public final class Capabilities {
 	 *         and client.
 	 */
 	public MessageDigest getStrongestMessageDigest() {
-		if (digestExists("SHA-512")
-				&& capabilities.contains(Capability.SHA_512)) {
+		if (digestExists("SHA-512") && caps.contains(Capability.SHA_512)) {
 			return getDigest("SHA-512");
-		} else if (digestExists("SHA-256")
-				&& capabilities.contains(Capability.SHA_256)) {
+		} else if (digestExists("SHA-256") && caps.contains(Capability.SHA_256)) {
 			return getDigest("SHA-256");
-		} else if (digestExists("SHA-1")
-				&& capabilities.contains(Capability.SHA_1)) {
+		} else if (digestExists("SHA-1") && caps.contains(Capability.SHA_1)) {
 			return getDigest("SHA-1");
 		} else if (digestExists("MD5")) {
 			return getDigest("MD5");
 		}
 		return null;
 	}
-	
+
 	public String getStrongestSignatureAlgorithm() {
-		if (sigExists("SHA512withRSA") && capabilities.contains(Capability.SHA_512)) {
+		if (sigExists("SHA512") && caps.contains(Capability.SHA_512)) {
 			return "SHA512withRSA";
-		} else if (sigExists("SHA256withRSA") && capabilities.contains(Capability.SHA_256)) {
+		} else if (sigExists("SHA256") && caps.contains(Capability.SHA_256)) {
 			return "SHA256withRSA";
-		} else if (sigExists("SHA1withRSA") && capabilities.contains(Capability.SHA_1)) {
+		} else if (sigExists("SHA1") && caps.contains(Capability.SHA_1)) {
 			return "SHA1withRSA";
-		} else if (sigExists("MD5withRSA")) {
+		} else if (sigExists("MD5")) {
 			return "MD5withRSA";
 		}
 		return null;
 	}
 
 	private boolean sigExists(String sig) {
-		return algorithmExists("Signature", sig);
+		return algorithmExists("Signature", sig + "withRSA")
+				&& digestExists(sig);
 	}
 
 	private boolean digestExists(String digest) {
@@ -180,6 +177,6 @@ public final class Capabilities {
 	 */
 	@Override
 	public String toString() {
-		return capabilities.toString();
+		return caps.toString();
 	}
 }
