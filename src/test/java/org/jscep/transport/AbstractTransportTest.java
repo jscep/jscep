@@ -55,7 +55,7 @@ abstract public class AbstractTransportTest {
 	KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 
 	PkcsPkiEnvelopeEncoder envEnc = new PkcsPkiEnvelopeEncoder(
-		getCertificate(keyPair));
+		getCertificate(keyPair), "DES");
 	PkiMessageEncoder enc = new PkiMessageEncoder(keyPair.getPrivate(),
 		getCertificate(keyPair), envEnc);
 

@@ -1,9 +1,10 @@
 package org.jscep.message;
 
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.des_EDE3_CBC;
+
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSException;
@@ -26,6 +27,7 @@ public final class PkcsPkiEnvelopeEncoder {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(PkcsPkiEnvelopeEncoder.class);
 	private final X509Certificate recipient;
+	private final String encAlg;
 
 	/**
 	 * Creates a new <tt>PkcsPkiEnvelopeEncoder</tt> for the entity identified
@@ -34,8 +36,23 @@ public final class PkcsPkiEnvelopeEncoder {
 	 * @param recipient
 	 *            the entity for whom the <tt>pkcsPkiEnvelope</tt> is intended.
 	 */
+	@Deprecated
 	public PkcsPkiEnvelopeEncoder(X509Certificate recipient) {
+		this(recipient, "DES");
+	}
+
+	/**
+	 * Creates a new <tt>PkcsPkiEnvelopeEncoder</tt> for the entity identified
+	 * by the provided certificate.
+	 * 
+	 * @param recipient
+	 *            the entity for whom the <tt>pkcsPkiEnvelope</tt> is intended.
+	 * @param encAlg
+	 *            the encryption algorithm to use.
+	 */
+	public PkcsPkiEnvelopeEncoder(X509Certificate recipient, String encAlg) {
 		this.recipient = recipient;
+		this.encAlg = encAlg;
 	}
 
 	/**
@@ -66,9 +83,7 @@ public final class PkcsPkiEnvelopeEncoder {
 
 		OutputEncryptor encryptor;
 		try {
-			// TODO: Don't rely on using Triple DES
-			encryptor = new JceCMSContentEncryptorBuilder(
-					PKCSObjectIdentifiers.des_EDE3_CBC).build();
+			encryptor = getEncryptor();
 		} catch (CMSException e) {
 			throw new MessageEncodingException(e);
 		}
@@ -80,6 +95,14 @@ public final class PkcsPkiEnvelopeEncoder {
 			return pkcsPkiEnvelope;
 		} catch (CMSException e) {
 			throw new MessageEncodingException(e);
+		}
+	}
+
+	private OutputEncryptor getEncryptor() throws CMSException {
+		if ("DES".equals(encAlg)) {
+			return new DesOutputEncryptor();
+		} else {
+			return new JceCMSContentEncryptorBuilder(des_EDE3_CBC).build();
 		}
 	}
 }

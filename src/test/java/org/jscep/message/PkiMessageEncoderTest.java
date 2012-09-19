@@ -107,7 +107,7 @@ public class PkiMessageEncoderTest {
 		new X500Principal("CN=Client"), clientPair);
 
 	// Everything below this line only available to client
-	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca);
+	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca, "DES");
 	PkiMessageEncoder encoder = new PkiMessageEncoder(
 		clientPair.getPrivate(), client, envEncoder);
 

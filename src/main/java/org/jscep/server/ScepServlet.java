@@ -326,7 +326,7 @@ public abstract class ScepServlet extends HttpServlet {
 	    }
 
 	    PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-		    reqCert);
+		    reqCert, "DESede");
 	    PkiMessageEncoder encoder = new PkiMessageEncoder(getSignerKey(),
 		    getSigner(), envEncoder);
 	    CMSSignedData signedData;

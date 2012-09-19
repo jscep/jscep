@@ -691,7 +691,7 @@ public final class Client {
 		CertStoreInspector certs = CertStoreInspector.getInstance(store);
 		X509Certificate recipientCertificate = certs.getRecipient();
 		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-				recipientCertificate);
+				recipientCertificate, caps.getStrongestCipher());
 
 		String sigAlg = caps.getStrongestSignatureAlgorithm();
 		return new PkiMessageEncoder(priKey, identity, envEncoder, sigAlg);

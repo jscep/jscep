@@ -61,257 +61,257 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ScepServletTest {
-    private static String PATH = "/scep/pkiclient.exe";
-    private BigInteger goodSerial;
-    private BigInteger badSerial;
-    private X500Name name;
-    private X500Name pollName;
-    private PrivateKey priKey;
-    private PublicKey pubKey;
-    private X509Certificate sender;
-    private Server server;
-    private int port;
-    private String goodIdentifier;
-    private String badIdentifier;
+	private static String PATH = "/scep/pkiclient.exe";
+	private BigInteger goodSerial;
+	private BigInteger badSerial;
+	private X500Name name;
+	private X500Name pollName;
+	private PrivateKey priKey;
+	private PublicKey pubKey;
+	private X509Certificate sender;
+	private Server server;
+	private int port;
+	private String goodIdentifier;
+	private String badIdentifier;
 
-    @Before
-    public void configureFixtures() throws Exception {
-	name = new X500Name("CN=Example");
-	pollName = new X500Name("CN=Poll");
-	goodSerial = BigInteger.ONE;
-	badSerial = BigInteger.ZERO;
-	goodIdentifier = null;
-	badIdentifier = "bad";
-	KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
-	priKey = keyPair.getPrivate();
-	pubKey = keyPair.getPublic();
-	sender = generateCertificate();
-    }
-
-    private X509Certificate generateCertificate() throws Exception {
-	ContentSigner signer;
-	try {
-	    signer = new JcaContentSignerBuilder("SHA1withRSA").build(priKey);
-	} catch (OperatorCreationException e) {
-	    throw new Exception(e);
-	}
-	Calendar cal = GregorianCalendar.getInstance();
-	cal.add(Calendar.YEAR, -1);
-	Date notBefore = cal.getTime();
-	cal.add(Calendar.YEAR, 2);
-	Date notAfter = cal.getTime();
-	JcaX509v1CertificateBuilder builder = new JcaX509v1CertificateBuilder(
-		name, BigInteger.ONE, notBefore, notAfter, name, pubKey);
-	X509CertificateHolder holder = builder.build(signer);
-	return new JcaX509CertificateConverter().getCertificate(holder);
-    }
-
-    @Before
-    public void startUp() throws Exception {
-	final ServletHandler handler = new ServletHandler();
-	handler.addServletWithMapping(ScepServletImpl.class, PATH);
-
-	server = new Server(0);
-	server.setHandler(handler);
-	server.start();
-
-	port = server.getConnectors()[0].getLocalPort();
-    }
-
-    @After
-    public void shutDown() throws Exception {
-	server.stop();
-    }
-
-    private URL getURL() throws MalformedURLException {
-	return new URL("http", "localhost", port, PATH);
-    }
-
-    private X509Certificate getRecipient() throws Exception {
-	GetCaCertRequest req = new GetCaCertRequest();
-	Transport transport = new HttpGetTransport(getURL());
-
-	CertStore store = transport.sendRequest(req,
-		new GetCaCertResponseHandler());
-	Collection<? extends Certificate> certs = store.getCertificates(null);
-
-	if (certs.size() > 0) {
-	    return (X509Certificate) certs.iterator().next();
-	} else {
-	    return null;
-	}
-    }
-
-    @Test
-    public void testGetCaCaps() throws Exception {
-	GetCaCapsRequest req = new GetCaCapsRequest();
-	Transport transport = new HttpGetTransport(getURL());
-	Capabilities caps = transport.sendRequest(req,
-		new GetCaCapsResponseHandler());
-
-	System.out.println(caps);
-    }
-
-    @Test
-    public void getNextCaCertificateGood() throws Exception {
-	GetNextCaCertRequest req = new GetNextCaCertRequest(goodIdentifier);
-	Transport transport = new HttpGetTransport(getURL());
-	CertStore certs = transport.sendRequest(req,
-		new GetNextCaCertResponseHandler(getRecipient()));
-
-	assertThat(certs.getCertificates(null).size(), is(1));
-    }
-
-    @Test(expected = TransportException.class)
-    public void getNextCaCertificateBad() throws Exception {
-	GetNextCaCertRequest req = new GetNextCaCertRequest(badIdentifier);
-	Transport transport = new HttpGetTransport(getURL());
-	CertStore certs = transport.sendRequest(req,
-		new GetNextCaCertResponseHandler(getRecipient()));
-
-	assertThat(certs.getCertificates(null).size(), is(1));
-    }
-
-    @Test
-    public void testGetCRL() throws Exception {
-	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, goodSerial);
-	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-		getRecipient());
-	PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
-		envEncoder);
-
-	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
-		envDecoder);
-
-	Transport transport = new HttpGetTransport(getURL());
-	Transaction t = new NonEnrollmentTransaction(transport, encoder,
-		decoder, iasn, MessageType.GET_CRL);
-	State s = t.send();
-
-	assertThat(s, is(State.CERT_ISSUED));
-    }
-
-    @Test
-    public void testGetCertBad() throws Exception {
-	IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, badSerial);
-	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-		getRecipient());
-	PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
-		envEncoder);
-
-	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
-		envDecoder);
-
-	Transport transport = new HttpGetTransport(getURL());
-	Transaction t = new NonEnrollmentTransaction(transport, encoder,
-		decoder, iasn, MessageType.GET_CERT);
-	State s = t.send();
-
-	assertThat(s, is(State.CERT_NON_EXISTANT));
-    }
-
-    @Test
-    public void testEnrollmentGet() throws Exception {
-	PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey,
-		"password".toCharArray());
-
-	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-		getRecipient());
-	PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
-		envEncoder);
-
-	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
-		envDecoder);
-
-	Transport transport = new HttpGetTransport(getURL());
-	Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
-		csr);
-
-	State s = t.send();
-	assertThat(s, is(State.CERT_ISSUED));
-    }
-
-    @Test
-    public void testEnrollmentPost() throws Exception {
-	PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey,
-		"password".toCharArray());
-
-	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-		getRecipient());
-	PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
-		envEncoder);
-
-	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
-		envDecoder);
-
-	Transport transport = new HttpGetTransport(getURL());
-	Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
-		csr);
-
-	State s = t.send();
-	assertThat(s, is(State.CERT_ISSUED));
-    }
-
-    @Test
-    public void testEnrollmentWithPoll() throws Exception {
-	PKCS10CertificationRequest csr = getCsr(pollName, pubKey, priKey,
-		"password".toCharArray());
-
-	PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-		getRecipient());
-	PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
-		envEncoder);
-
-	PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-		priKey);
-	PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
-		envDecoder);
-
-	Transport transport = new HttpGetTransport(getURL());
-	EnrollmentTransaction trans = new EnrollmentTransaction(transport,
-		encoder, decoder, csr);
-	State state = trans.send();
-	assertThat(state, is(State.CERT_REQ_PENDING));
-
-	IssuerAndSubject ias = new IssuerAndSubject(X500Utils.toX500Name(sender
-		.getIssuerX500Principal()), pollName);
-	trans = new EnrollmentTransaction(transport, encoder, decoder, ias,
-		trans.getId());
-	state = trans.send();
-	assertThat(state, is(State.CERT_REQ_PENDING));
-    }
-
-    private PKCS10CertificationRequest getCsr(X500Name subject,
-	    PublicKey pubKey, PrivateKey priKey, char[] password)
-	    throws GeneralSecurityException, IOException {
-	SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
-		.getEncoded());
-
-	JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(
-		"SHA1withRSA");
-	ContentSigner signer;
-	try {
-	    signer = signerBuilder.build(priKey);
-	} catch (OperatorCreationException e) {
-	    IOException ioe = new IOException();
-	    ioe.initCause(e);
-
-	    throw ioe;
+	@Before
+	public void configureFixtures() throws Exception {
+		name = new X500Name("CN=Example");
+		pollName = new X500Name("CN=Poll");
+		goodSerial = BigInteger.ONE;
+		badSerial = BigInteger.ZERO;
+		goodIdentifier = null;
+		badIdentifier = "bad";
+		KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
+		priKey = keyPair.getPrivate();
+		pubKey = keyPair.getPublic();
+		sender = generateCertificate();
 	}
 
-	PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(
-		subject, pkInfo);
-	builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword,
-		new DERPrintableString(new String(password)));
+	private X509Certificate generateCertificate() throws Exception {
+		ContentSigner signer;
+		try {
+			signer = new JcaContentSignerBuilder("SHA1withRSA").build(priKey);
+		} catch (OperatorCreationException e) {
+			throw new Exception(e);
+		}
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.add(Calendar.YEAR, -1);
+		Date notBefore = cal.getTime();
+		cal.add(Calendar.YEAR, 2);
+		Date notAfter = cal.getTime();
+		JcaX509v1CertificateBuilder builder = new JcaX509v1CertificateBuilder(
+				name, BigInteger.ONE, notBefore, notAfter, name, pubKey);
+		X509CertificateHolder holder = builder.build(signer);
+		return new JcaX509CertificateConverter().getCertificate(holder);
+	}
 
-	return builder.build(signer);
-    }
+	@Before
+	public void startUp() throws Exception {
+		final ServletHandler handler = new ServletHandler();
+		handler.addServletWithMapping(ScepServletImpl.class, PATH);
+
+		server = new Server(0);
+		server.setHandler(handler);
+		server.start();
+
+		port = server.getConnectors()[0].getLocalPort();
+	}
+
+	@After
+	public void shutDown() throws Exception {
+		server.stop();
+	}
+
+	private URL getURL() throws MalformedURLException {
+		return new URL("http", "localhost", port, PATH);
+	}
+
+	private X509Certificate getRecipient() throws Exception {
+		GetCaCertRequest req = new GetCaCertRequest();
+		Transport transport = new HttpGetTransport(getURL());
+
+		CertStore store = transport.sendRequest(req,
+				new GetCaCertResponseHandler());
+		Collection<? extends Certificate> certs = store.getCertificates(null);
+
+		if (certs.size() > 0) {
+			return (X509Certificate) certs.iterator().next();
+		} else {
+			return null;
+		}
+	}
+
+	@Test
+	public void testGetCaCaps() throws Exception {
+		GetCaCapsRequest req = new GetCaCapsRequest();
+		Transport transport = new HttpGetTransport(getURL());
+		Capabilities caps = transport.sendRequest(req,
+				new GetCaCapsResponseHandler());
+
+		System.out.println(caps);
+	}
+
+	@Test
+	public void getNextCaCertificateGood() throws Exception {
+		GetNextCaCertRequest req = new GetNextCaCertRequest(goodIdentifier);
+		Transport transport = new HttpGetTransport(getURL());
+		CertStore certs = transport.sendRequest(req,
+				new GetNextCaCertResponseHandler(getRecipient()));
+
+		assertThat(certs.getCertificates(null).size(), is(1));
+	}
+
+	@Test(expected = TransportException.class)
+	public void getNextCaCertificateBad() throws Exception {
+		GetNextCaCertRequest req = new GetNextCaCertRequest(badIdentifier);
+		Transport transport = new HttpGetTransport(getURL());
+		CertStore certs = transport.sendRequest(req,
+				new GetNextCaCertResponseHandler(getRecipient()));
+
+		assertThat(certs.getCertificates(null).size(), is(1));
+	}
+
+	@Test
+	public void testGetCRL() throws Exception {
+		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, goodSerial);
+		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+				getRecipient(), "DESede");
+		PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+				envEncoder);
+
+		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+				priKey);
+		PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+				envDecoder);
+
+		Transport transport = new HttpGetTransport(getURL());
+		Transaction t = new NonEnrollmentTransaction(transport, encoder,
+				decoder, iasn, MessageType.GET_CRL);
+		State s = t.send();
+
+		assertThat(s, is(State.CERT_ISSUED));
+	}
+
+	@Test
+	public void testGetCertBad() throws Exception {
+		IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, badSerial);
+		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+				getRecipient(), "DES");
+		PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+				envEncoder);
+
+		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+				priKey);
+		PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+				envDecoder);
+
+		Transport transport = new HttpGetTransport(getURL());
+		Transaction t = new NonEnrollmentTransaction(transport, encoder,
+				decoder, iasn, MessageType.GET_CERT);
+		State s = t.send();
+
+		assertThat(s, is(State.CERT_NON_EXISTANT));
+	}
+
+	@Test
+	public void testEnrollmentGet() throws Exception {
+		PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey,
+				"password".toCharArray());
+
+		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+				getRecipient(), "DESede");
+		PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+				envEncoder);
+
+		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+				priKey);
+		PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+				envDecoder);
+
+		Transport transport = new HttpGetTransport(getURL());
+		Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
+				csr);
+
+		State s = t.send();
+		assertThat(s, is(State.CERT_ISSUED));
+	}
+
+	@Test
+	public void testEnrollmentPost() throws Exception {
+		PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey,
+				"password".toCharArray());
+
+		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+				getRecipient(), "DES");
+		PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+				envEncoder);
+
+		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+				priKey);
+		PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+				envDecoder);
+
+		Transport transport = new HttpGetTransport(getURL());
+		Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
+				csr);
+
+		State s = t.send();
+		assertThat(s, is(State.CERT_ISSUED));
+	}
+
+	@Test
+	public void testEnrollmentWithPoll() throws Exception {
+		PKCS10CertificationRequest csr = getCsr(pollName, pubKey, priKey,
+				"password".toCharArray());
+
+		PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+				getRecipient(), "DES");
+		PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+				envEncoder);
+
+		PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+				priKey);
+		PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+				envDecoder);
+
+		Transport transport = new HttpGetTransport(getURL());
+		EnrollmentTransaction trans = new EnrollmentTransaction(transport,
+				encoder, decoder, csr);
+		State state = trans.send();
+		assertThat(state, is(State.CERT_REQ_PENDING));
+
+		IssuerAndSubject ias = new IssuerAndSubject(X500Utils.toX500Name(sender
+				.getIssuerX500Principal()), pollName);
+		trans = new EnrollmentTransaction(transport, encoder, decoder, ias,
+				trans.getId());
+		state = trans.send();
+		assertThat(state, is(State.CERT_REQ_PENDING));
+	}
+
+	private PKCS10CertificationRequest getCsr(X500Name subject,
+			PublicKey pubKey, PrivateKey priKey, char[] password)
+			throws GeneralSecurityException, IOException {
+		SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
+				.getEncoded());
+
+		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(
+				"SHA1withRSA");
+		ContentSigner signer;
+		try {
+			signer = signerBuilder.build(priKey);
+		} catch (OperatorCreationException e) {
+			IOException ioe = new IOException();
+			ioe.initCause(e);
+
+			throw ioe;
+		}
+
+		PKCS10CertificationRequestBuilder builder = new PKCS10CertificationRequestBuilder(
+				subject, pkInfo);
+		builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword,
+				new DERPrintableString(new String(password)));
+
+		return builder.build(signer);
+	}
 }
