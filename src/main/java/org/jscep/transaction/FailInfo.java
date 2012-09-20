@@ -28,67 +28,68 @@ package org.jscep.transaction;
  * @author David Grant
  */
 public enum FailInfo {
-    /**
-     * Unrecognized or unsupported algorithm identifier
-     */
-    badAlg(0),
-    /**
-     * Integrity check failed
-     */
-    badMessageCheck(1),
-    /**
-     * Transaction not permitted or supported
-     */
-    badRequest(2),
-    /**
-     * The signingTime attribute from the PKCS#7 SignedAttributes was not
-     * sufficiently close to the system time
-     */
-    badTime(3),
-    /**
-     * No certificate could be identified matching the provided criteria
-     */
-    badCertId(4);
+	/**
+	 * Unrecognized or unsupported algorithm identifier
+	 */
+	badAlg(0),
+	/**
+	 * Integrity check failed
+	 */
+	badMessageCheck(1),
+	/**
+	 * Transaction not permitted or supported
+	 */
+	badRequest(2),
+	/**
+	 * The signingTime attribute from the PKCS#7 SignedAttributes was not
+	 * sufficiently close to the system time
+	 */
+	badTime(3),
+	/**
+	 * No certificate could be identified matching the provided criteria
+	 */
+	badCertId(4);
 
-    private final int value;
+	private final int value;
 
-    private FailInfo(int value) {
-	this.value = value;
-    }
-
-    /**
-     * Returns the protocol-specific value for this <tt>failInfo</tt>
-     * 
-     * @return the protocol-specific value.
-     */
-    public int getValue() {
-	return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-	return name();
-    }
-
-    /**
-     * Returns the <tt>failInfo</tt> for the given value.
-     * <p>
-     * If the provided value is not 0-4 inclusive, this method throws an
-     * {@link IllegalArgumentException}
-     * 
-     * @param value the <tt>failInfo</tt> value.
-     * @return the corresponding <tt>failInfo</tt>
-     */
-    public static FailInfo valueOf(int value) {
-	for (FailInfo failInfo : FailInfo.values()) {
-	    if (failInfo.getValue() == value) {
-		return failInfo;
-	    }
+	private FailInfo(int value) {
+		this.value = value;
 	}
-	// Fall back to bad request (see issue 39).
-	return FailInfo.badRequest;
-    }
+
+	/**
+	 * Returns the protocol-specific value for this <tt>failInfo</tt>
+	 * 
+	 * @return the protocol-specific value.
+	 */
+	public int getValue() {
+		return value;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return name();
+	}
+
+	/**
+	 * Returns the <tt>failInfo</tt> for the given value.
+	 * <p>
+	 * If the provided value is not 0-4 inclusive, this method throws an
+	 * {@link IllegalArgumentException}
+	 * 
+	 * @param value
+	 *            the <tt>failInfo</tt> value.
+	 * @return the corresponding <tt>failInfo</tt>
+	 */
+	public static FailInfo valueOf(int value) {
+		for (FailInfo failInfo : FailInfo.values()) {
+			if (failInfo.getValue() == value) {
+				return failInfo;
+			}
+		}
+		// Fall back to bad request (see issue 39).
+		return FailInfo.badRequest;
+	}
 }

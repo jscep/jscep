@@ -24,6 +24,7 @@
 	import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 	import org.bouncycastle.cert.X509CertificateHolder;
 	import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.eac.jcajce.JcaPublicKeyConverter;
 	import org.bouncycastle.operator.ContentSigner;
 	import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 	import org.bouncycastle.pkcs.PKCS10CertificationRequest;
@@ -31,7 +32,7 @@
 	import org.jscep.client.verification.OptimisticCertificateVerifier;
 	import org.jscep.transport.response.Capabilities;
 	import org.jscep.transport.response.Capability;
-	import org.junit.Test;
+import org.junit.Test;
 	
 	/**
 	 * This isn't really a test, but it shows how to use the API.
