@@ -13,6 +13,7 @@
 		</menu>
 		<menu name="Documentation">
 			<item name="Client" href="client.html" />
+			<item name="Test" href="test.html" />
 		</menu>
 		<menu ref="reports" />
 	</body>
