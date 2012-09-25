@@ -27,6 +27,26 @@ URL url = new URL("http://[host]/certsrv/mscep_admin/mscep.dll");
 +---+
 URL url = new URL("http://[host]/ejbca/publicweb/apply/scep/pkiclient.exe");
 +---+
+
+** Using a HTTP Proxy
+
+  jscep doesn't directly support using a proxy to access your SCEP server, as it doesn't really make sense for SCEP.  However, if 
+  you need to use a proxy, you can use the mechanism provided by {{{http://docs.oracle.com/javase/6/docs/api/java/net/ProxySelector.html}ProxySelector}}, like so:
+  
++---+
+ProxySelector.setDefault(new ProxySelector() {
+    @Override
+    public List<Proxy> select(URI uri) {
+    	Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("squid", 3128);
+    	return Collections.singletonList(proxy);
+    }
+    
+    @Override
+    public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+    	// Do nothing
+    } 
+});
++---+
   
 ** Using HTTPS
 
@@ -284,9 +304,15 @@ store.store(bOut, "secret".toCharArray());
 
 * Polling for a Pending Enrollment
 
+  If your application has previously received a <pending> response, your application should poll the SCEP server to determine the
+  current state of the enrollment.  The <<<poll()>>> method returns the same type as the <<<enrol()>>> method, so applications
+  should follow the same steps to determine the <current> state of the enrollment.
+
 +---+
 EnrollmentResponse res = client.poll(requesterCert, requesterPrivKey, subject, transId);
 +---+
+
+  Since issuing a certificate may involve a lengthy manual process, your application may have to make numerous polling requests.
 
 Non-Enrollment Operations
 
