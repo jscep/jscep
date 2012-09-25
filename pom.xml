@@ -29,9 +29,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://jscep.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://jscep.googlecode.com/svn/trunk/</developerConnection>
-		<url>http://code.google.com/p/jscep/source/browse/</url>
+		<connection>scm:git:git://github.com/seize-the-dave/jscep.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:seize-the-dave/jscep.git</developerConnection>
+		<url>https://github.com/seize-the-dave/jscep</url>
 	</scm>
 	<mailingLists>
 		<mailingList>
