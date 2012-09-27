@@ -13,26 +13,26 @@ public final class GetCaCertRequest extends Request {
      *            the CA profile to use.
      */
     public GetCaCertRequest(String profile) {
-	super(Operation.GET_CA_CERT);
+        super(Operation.GET_CA_CERT);
 
-	this.profile = profile;
+        this.profile = profile;
     }
 
     /**
      * Creates a new <tt>GetCaCertRequest</tt> without a CA profile.
      */
     public GetCaCertRequest() {
-	this(null);
+        this(null);
     }
 
     /**
      * {@inheritDoc}
      */
     public String getMessage() {
-	if (profile == null) {
-	    return "";
-	}
-	return profile;
+        if (profile == null) {
+            return "";
+        }
+        return profile;
     }
 
     /**
@@ -40,10 +40,10 @@ public final class GetCaCertRequest extends Request {
      */
     @Override
     public String toString() {
-	if (profile != null) {
-	    return "GetCACert(" + profile + ")";
-	} else {
-	    return "GetCACert";
-	}
+        if (profile != null) {
+            return "GetCACert(" + profile + ")";
+        } else {
+            return "GetCACert";
+        }
     }
 }

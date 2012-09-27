@@ -13,30 +13,30 @@ public class TransportExceptionTest {
 
     @Before
     public void setUp() {
-	message = "message";
-	cause = new Exception();
+        message = "message";
+        cause = new Exception();
     }
 
     @Test
     public void testTransportExceptionMessageCause() {
-	TransportException e = new TransportException(message, cause);
+        TransportException e = new TransportException(message, cause);
 
-	assertThat(e.getMessage(), is(message));
-	assertThat(e.getCause(), is(cause));
+        assertThat(e.getMessage(), is(message));
+        assertThat(e.getCause(), is(cause));
     }
 
     @Test
     public void testTransportExceptionCause() {
-	TransportException e = new TransportException(cause);
+        TransportException e = new TransportException(cause);
 
-	assertThat(e.getCause(), is(cause));
+        assertThat(e.getCause(), is(cause));
     }
 
     @Test
     public void testTransportExceptionMessage() {
-	TransportException e = new TransportException(message);
+        TransportException e = new TransportException(message);
 
-	assertThat(e.getMessage(), is(message));
+        assertThat(e.getMessage(), is(message));
     }
 
 }

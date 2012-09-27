@@ -80,8 +80,8 @@ public enum Capability {
      *            description of the capability
      */
     private Capability(String capability, String description) {
-	this.capability = capability;
-	this.description = description;
+        this.capability = capability;
+        this.description = description;
     }
 
     /**
@@ -91,17 +91,18 @@ public enum Capability {
      */
     @Override
     public String toString() {
-	return capability;
+        return capability;
     }
 
     /**
      * Returns the textual description of a this capability.
      * <p>
-     * The value returned by this method is useful for using in logging messages.
+     * The value returned by this method is useful for using in logging
+     * messages.
      * 
      * @return thet textual description of this capability.
      */
     public String getDescription() {
-	return description;
+        return description;
     }
 }

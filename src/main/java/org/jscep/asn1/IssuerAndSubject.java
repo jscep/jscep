@@ -33,14 +33,14 @@ import org.bouncycastle.asn1.x500.X500Name;
  * This class represents the SCEP <code>IssuerAndSubject</code> ASN.1 object.
  * <p/>
  * This object is defined by the following ASN.1 notation:
- * 
+ *
  * <pre>
  * IssuerAndSubject ::= SEQUENCE {
  *     issuer Name,
  *     subject Name,
  * }
  * </pre>
- * 
+ *
  * @author David Grant
  */
 public final class IssuerAndSubject extends ASN1Object {
@@ -55,63 +55,63 @@ public final class IssuerAndSubject extends ASN1Object {
 
     /**
      * Creates a new instance of this class from the given sequence.
-     * 
+     *
      * @param seq
      *            the sequence.
      */
     public IssuerAndSubject(final ASN1Sequence seq) {
-	issuer = X500Name.getInstance(seq.getObjectAt(0));
-	subject = X500Name.getInstance(seq.getObjectAt(1));
+        issuer = X500Name.getInstance(seq.getObjectAt(0));
+        subject = X500Name.getInstance(seq.getObjectAt(1));
     }
 
     /**
      * Creates a new instance of this class using the given issuer and subject.
-     * 
+     *
      * @param issuer
      *            the issuer.
      * @param subject
      *            the subject.
      */
     public IssuerAndSubject(final X500Name issuer, final X500Name subject) {
-	this.issuer = issuer;
-	this.subject = subject;
+        this.issuer = issuer;
+        this.subject = subject;
     }
 
     /**
      * Creates a new instance of this class using the given byte array.
-     * 
+     *
      * @param bytes
      *            the byte array.
      */
     public IssuerAndSubject(final byte[] bytes) {
-	this(ASN1Sequence.getInstance(bytes));
+        this(ASN1Sequence.getInstance(bytes));
     }
 
     /**
      * Returns the issuer.
-     * 
+     *
      * @return the issuer.
      */
     public X500Name getIssuer() {
-	return issuer;
+        return issuer;
     }
 
     /**
      * Returns the subject.
-     * 
+     *
      * @return the subject.
      */
     public X500Name getSubject() {
-	return subject;
+        return subject;
     }
 
     @Override
     public ASN1Primitive toASN1Primitive() {
-	ASN1EncodableVector v = new ASN1EncodableVector();
+        ASN1EncodableVector v = new ASN1EncodableVector();
 
-	v.add(issuer);
-	v.add(subject);
+        v.add(issuer);
+        v.add(subject);
 
-	return new DERSequence(v);
+        return new DERSequence(v);
     }
 }

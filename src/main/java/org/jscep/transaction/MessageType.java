@@ -28,7 +28,7 @@ public enum MessageType {
     private final int value;
 
     private MessageType(int value) {
-	this.value = value;
+        this.value = value;
     }
 
     /**
@@ -37,7 +37,7 @@ public enum MessageType {
      * @return the protocol-specific value of this <tt>messageType</tt>
      */
     public int getValue() {
-	return value;
+        return value;
     }
 
     /**
@@ -51,12 +51,12 @@ public enum MessageType {
      * @return the corresponding <tt>messageType</tt>
      */
     public static MessageType valueOf(int value) {
-	for (MessageType msgType : MessageType.values()) {
-	    if (msgType.getValue() == value) {
-		return msgType;
-	    }
-	}
-	throw new IllegalArgumentException();
+        for (MessageType msgType : MessageType.values()) {
+            if (msgType.getValue() == value) {
+                return msgType;
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -64,6 +64,6 @@ public enum MessageType {
      */
     @Override
     public String toString() {
-	return name();
+        return name();
     }
 }

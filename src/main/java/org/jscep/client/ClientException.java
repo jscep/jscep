@@ -9,21 +9,21 @@ public class ClientException extends Exception {
 
     /**
      * Constructs a new <tt>ClientException</tt> with the given cause.
-     * 
+     *
      * @param cause
      *            the cause of this exception.
      */
-    public ClientException(Throwable cause) {
-	super(cause);
+    public ClientException(final Throwable cause) {
+        super(cause);
     }
 
     /**
      * Constructs a new <tt>ClientException</tt> with the given message.
-     * 
+     *
      * @param message
      *            a description of the error condition.
      */
-    public ClientException(String message) {
-	super(message);
+    public ClientException(final String message) {
+        super(message);
     }
 }

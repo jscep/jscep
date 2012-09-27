@@ -44,17 +44,21 @@ public abstract class PkiMessage<T> {
     /**
      * Creates a new <tt>PkiMessage</tt> instance.
      * 
-     * @param transId the request transaction ID.
-     * @param messageType the type of message represented by this instance.
-     * @param senderNonce the request nonce.
-     * @param messageData the data carried by this message.
+     * @param transId
+     *            the request transaction ID.
+     * @param messageType
+     *            the type of message represented by this instance.
+     * @param senderNonce
+     *            the request nonce.
+     * @param messageData
+     *            the data carried by this message.
      */
     public PkiMessage(TransactionId transId, MessageType messageType,
-	    Nonce senderNonce, T messageData) {
-	this.transId = transId;
-	this.messageType = messageType;
-	this.senderNonce = senderNonce;
-	this.messageData = messageData;
+            Nonce senderNonce, T messageData) {
+        this.transId = transId;
+        this.messageType = messageType;
+        this.senderNonce = senderNonce;
+        this.messageData = messageData;
     }
 
     /**
@@ -63,7 +67,7 @@ public abstract class PkiMessage<T> {
      * @return the transaction ID.
      */
     public final TransactionId getTransactionId() {
-	return transId;
+        return transId;
     }
 
     /**
@@ -72,7 +76,7 @@ public abstract class PkiMessage<T> {
      * @return the message type.
      */
     public final MessageType getMessageType() {
-	return messageType;
+        return messageType;
     }
 
     /**
@@ -81,7 +85,7 @@ public abstract class PkiMessage<T> {
      * @return the nonce.
      */
     public final Nonce getSenderNonce() {
-	return senderNonce;
+        return senderNonce;
     }
 
     /**
@@ -90,7 +94,7 @@ public abstract class PkiMessage<T> {
      * @return the message data.
      */
     public T getMessageData() {
-	return messageData;
+        return messageData;
     }
 
     /**
@@ -98,8 +102,8 @@ public abstract class PkiMessage<T> {
      */
     @Override
     public int hashCode() {
-	return HashCodeBuilder.reflectionHashCode(this,
-		new String[] { "messageData" });
+        return HashCodeBuilder.reflectionHashCode(this,
+                new String[] { "messageData" });
     }
 
     /**
@@ -107,8 +111,8 @@ public abstract class PkiMessage<T> {
      */
     @Override
     public boolean equals(Object obj) {
-	return EqualsBuilder.reflectionEquals(this, obj,
-		new String[] { "messageData" });
+        return EqualsBuilder.reflectionEquals(this, obj,
+                new String[] { "messageData" });
     }
 
     /**
@@ -116,6 +120,6 @@ public abstract class PkiMessage<T> {
      */
     @Override
     public String toString() {
-	return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this);
     }
 }

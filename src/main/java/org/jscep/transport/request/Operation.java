@@ -73,7 +73,7 @@ public enum Operation {
     private final String name;
 
     private Operation(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     /**
@@ -82,7 +82,7 @@ public enum Operation {
      * @return the protocol-specific name for this operation.
      */
     public String getName() {
-	return name;
+        return name;
     }
 
     /**
@@ -98,18 +98,19 @@ public enum Operation {
      * </ul>
      * then this method will throw an {@link IllegalArgumentException}.
      * 
-     * @param name the protocol-specific name.
+     * @param name
+     *            the protocol-specific name.
      * @return the corresponding <tt>Operation</tt>
      */
     public static Operation forName(String name) {
-	if (name == null) {
-	    throw new NullPointerException();
-	}
-	for (Operation op : Operation.values()) {
-	    if (op.name.equals(name)) {
-		return op;
-	    }
-	}
-	throw new IllegalArgumentException(name + " not found");
+        if (name == null) {
+            throw new NullPointerException();
+        }
+        for (Operation op : Operation.values()) {
+            if (op.name.equals(name)) {
+                return op;
+            }
+        }
+        throw new IllegalArgumentException(name + " not found");
     }
 }

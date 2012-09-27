@@ -8,18 +8,18 @@ public class TransactionExceptionTest {
 
     @Test
     public void testTransactionExceptionThrowable() {
-	Throwable cause = new Exception();
-	TransactionException e = new TransactionException(cause);
+        Throwable cause = new Exception();
+        TransactionException e = new TransactionException(cause);
 
-	assertEquals(cause, e.getCause());
+        assertEquals(cause, e.getCause());
 
     }
 
     @Test
     public void testTransactionExceptionString() {
-	String message = "message";
-	TransactionException e = new TransactionException(message);
+        String message = "message";
+        TransactionException e = new TransactionException(message);
 
-	assertEquals(message, e.getMessage());
+        assertEquals(message, e.getMessage());
     }
 }

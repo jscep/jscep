@@ -18,36 +18,39 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DesOutputEncryptorTest {
-	private OutputEncryptor encryptor;
-	
-	@Before
-	public void setUp() {
-		encryptor = new DesOutputEncryptor();
-	}
-	
-	@Test
-	public void getKeyShouldReturnSameKey() {
-		assertSame(encryptor.getKey().getRepresentation(), encryptor.getKey().getRepresentation());
-	}
-	
-	@Test
-	public void getKeyShouldReturnKey() {
-		assertThat(encryptor.getKey().getRepresentation(), instanceOf(Key.class));
-	}
-	
-	@Test
-	public void getAlgorithmIdentifierShouldReturnDes() {
-		assertEquals(new ASN1ObjectIdentifier("1.3.14.3.2.7"), encryptor.getAlgorithmIdentifier().getAlgorithm());
-	}
-	
-	@Test
-	public void getOutputStreamShouldEncrypt() throws IOException {
-		byte[] bytes = "cafebabe".getBytes("UTF-8");
-		
-		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-		OutputStream encOut = encryptor.getOutputStream(bOut);
-		encOut.write(bytes);
-		
-		assertFalse(Arrays.equals(bytes, bOut.toByteArray()));
-	}
+    private OutputEncryptor encryptor;
+
+    @Before
+    public void setUp() {
+        encryptor = new DesOutputEncryptor();
+    }
+
+    @Test
+    public void getKeyShouldReturnSameKey() {
+        assertSame(encryptor.getKey().getRepresentation(), encryptor.getKey()
+                .getRepresentation());
+    }
+
+    @Test
+    public void getKeyShouldReturnKey() {
+        assertThat(encryptor.getKey().getRepresentation(),
+                instanceOf(Key.class));
+    }
+
+    @Test
+    public void getAlgorithmIdentifierShouldReturnDes() {
+        assertEquals(new ASN1ObjectIdentifier("1.3.14.3.2.7"), encryptor
+                .getAlgorithmIdentifier().getAlgorithm());
+    }
+
+    @Test
+    public void getOutputStreamShouldEncrypt() throws IOException {
+        byte[] bytes = "cafebabe".getBytes("UTF-8");
+
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        OutputStream encOut = encryptor.getOutputStream(bOut);
+        encOut.write(bytes);
+
+        assertFalse(Arrays.equals(bytes, bOut.toByteArray()));
+    }
 }

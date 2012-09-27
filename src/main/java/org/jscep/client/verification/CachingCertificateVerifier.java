@@ -16,13 +16,13 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
     /**
      * Constructs a <tt>CachingCertificateVerifier</tt> which delegates to the
      * specified <tt>CertificateVerifier</tt>.
-     * 
+     *
      * @param delegate
      *            the <tt>CertificateVerifier</tt> to delegate to.
      */
     public CachingCertificateVerifier(final CertificateVerifier delegate) {
-	this.delegate = delegate;
-	this.verificationAnswers = new HashMap<Certificate, Boolean>();
+        this.delegate = delegate;
+        this.verificationAnswers = new HashMap<Certificate, Boolean>();
     }
 
     /**
@@ -31,21 +31,22 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
      * <p>
      * On every subsequent invocation with the same certificate, the initial
      * response from the delegate will be returned.
-     * 
+     *
      * @param cert
      *            the certificate to verify.
      * @return the result of calling <tt>verify</tt> on the delegate
      *         <tt>CertificateVerifier</tt>.
      */
+    @Override
     public synchronized boolean verify(final X509Certificate cert) {
-	if (verificationAnswers.containsKey(cert)) {
-	    return verificationAnswers.get(cert);
-	} else {
-	    boolean answer = delegate.verify(cert);
-	    verificationAnswers.put(cert, answer);
+        if (verificationAnswers.containsKey(cert)) {
+            return verificationAnswers.get(cert);
+        } else {
+            boolean answer = delegate.verify(cert);
+            verificationAnswers.put(cert, answer);
 
-	    return answer;
-	}
+            return answer;
+        }
     }
 
 }

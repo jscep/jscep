@@ -20,39 +20,39 @@ import org.junit.runners.Parameterized;
 public class CertStoreInspectorTest {
     @Parameterized.Parameters
     public static Collection<Object[]> setUp() throws Exception {
-	InputStream keyStoreIn = CertStoreInspectorTest.class.getClassLoader()
-		.getResourceAsStream("store.jks");
-	KeyStore testStore = KeyStore.getInstance("JKS");
-	testStore.load(keyStoreIn, "password".toCharArray());
+        InputStream keyStoreIn = CertStoreInspectorTest.class.getClassLoader()
+                .getResourceAsStream("store.jks");
+        KeyStore testStore = KeyStore.getInstance("JKS");
+        testStore.load(keyStoreIn, "password".toCharArray());
 
-	List<Object[]> configs = new ArrayList<Object[]>();
+        List<Object[]> configs = new ArrayList<Object[]>();
 
-	configs.add(new Object[] { "ca", "ca", "ca", "ca" });
-	configs.add(new Object[] { "ca_ra", "ca_ra", "ca_ra", "ca" });
-	configs.add(new Object[] { "ca_ra-de", "ca_ra-de", "ca", "ca" });
-	configs.add(new Object[] { "ca_ra-ds", "ca", "ca_ra-ds", "ca" });
-	configs.add(new Object[] { "ca_ca", "ca_ca", "ca_ca", "ca_ca" });
-	configs.add(new Object[] { "ca_ca_ra", "ca_ca_ra", "ca_ca_ra", "ca_ca" });
-	configs.add(new Object[] { "ca_ca_ra-de", "ca_ca_ra-de", "ca_ca",
-		"ca_ca" });
-	configs.add(new Object[] { "ca_ca_ra-ds", "ca_ca", "ca_ca_ra-ds",
-		"ca_ca" });
+        configs.add(new Object[] { "ca", "ca", "ca", "ca" });
+        configs.add(new Object[] { "ca_ra", "ca_ra", "ca_ra", "ca" });
+        configs.add(new Object[] { "ca_ra-de", "ca_ra-de", "ca", "ca" });
+        configs.add(new Object[] { "ca_ra-ds", "ca", "ca_ra-ds", "ca" });
+        configs.add(new Object[] { "ca_ca", "ca_ca", "ca_ca", "ca_ca" });
+        configs.add(new Object[] { "ca_ca_ra", "ca_ca_ra", "ca_ca_ra", "ca_ca" });
+        configs.add(new Object[] { "ca_ca_ra-de", "ca_ca_ra-de", "ca_ca",
+                "ca_ca" });
+        configs.add(new Object[] { "ca_ca_ra-ds", "ca_ca", "ca_ca_ra-ds",
+                "ca_ca" });
 
-	for (Object[] config : configs) {
-	    Certificate[] chain = testStore
-		    .getCertificateChain((String) config[0]);
-	    List<Certificate> certList = Arrays.asList(chain);
-	    CertStoreParameters storeParams = new CollectionCertStoreParameters(
-		    certList);
-	    CertStore store = CertStore.getInstance("Collection", storeParams);
+        for (Object[] config : configs) {
+            Certificate[] chain = testStore
+                    .getCertificateChain((String) config[0]);
+            List<Certificate> certList = Arrays.asList(chain);
+            CertStoreParameters storeParams = new CollectionCertStoreParameters(
+                    certList);
+            CertStore store = CertStore.getInstance("Collection", storeParams);
 
-	    config[0] = store;
-	    config[1] = "CN=" + config[1];
-	    config[2] = "CN=" + config[2];
-	    config[3] = "CN=" + config[3];
-	}
+            config[0] = store;
+            config[1] = "CN=" + config[1];
+            config[2] = "CN=" + config[2];
+            config[3] = "CN=" + config[3];
+        }
 
-	return configs;
+        return configs;
     }
 
     private final CertStore store;
@@ -60,21 +60,21 @@ public class CertStoreInspectorTest {
     private final String signing;
     private final String issuer;
 
-    public CertStoreInspectorTest(CertStore store, String encryption, String signing,
-	    String issuer) {
-	this.store = store;
-	this.encryption = encryption;
-	this.signing = signing;
-	this.issuer = issuer;
+    public CertStoreInspectorTest(CertStore store, String encryption,
+            String signing, String issuer) {
+        this.store = store;
+        this.encryption = encryption;
+        this.signing = signing;
+        this.issuer = issuer;
     }
 
     @Test
     public void example() {
-	CertStoreInspector auths = CertStoreInspector.getInstance(store);
+        CertStoreInspector auths = CertStoreInspector.getInstance(store);
 
-	Assert.assertEquals(encryption, auths.getRecipient().getSubjectDN()
-		.getName());
-	Assert.assertEquals(signing, auths.getSigner().getSubjectDN().getName());
-	Assert.assertEquals(issuer, auths.getIssuer().getSubjectDN().getName());
+        Assert.assertEquals(encryption, auths.getRecipient().getSubjectDN()
+                .getName());
+        Assert.assertEquals(signing, auths.getSigner().getSubjectDN().getName());
+        Assert.assertEquals(issuer, auths.getIssuer().getSubjectDN().getName());
     }
 }

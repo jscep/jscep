@@ -38,8 +38,9 @@ public final class CertRep extends PkiMessage<CMSSignedData> {
     private final FailInfo failInfo;
 
     /**
-     * Creates a new CertRep to indicate  the original request is in a <em>success</em> state.
-     * 
+     * Creates a new CertRep to indicate the original request is in a
+     * <em>success</em> state.
+     *
      * @param transId
      *            the transaction ID of the original request.
      * @param senderNonce
@@ -49,17 +50,18 @@ public final class CertRep extends PkiMessage<CMSSignedData> {
      * @param messageData
      *            the message data
      */
-    public CertRep(TransactionId transId, Nonce senderNonce,
-	    Nonce recipientNonce, CMSSignedData messageData) {
-	super(transId, MessageType.CERT_REP, senderNonce, messageData);
-	this.recipientNonce = recipientNonce;
-	this.pkiStatus = PkiStatus.SUCCESS;
-	this.failInfo = null;
+    public CertRep(final TransactionId transId, final Nonce senderNonce,
+            final Nonce recipientNonce, final CMSSignedData messageData) {
+        super(transId, MessageType.CERT_REP, senderNonce, messageData);
+        this.recipientNonce = recipientNonce;
+        this.pkiStatus = PkiStatus.SUCCESS;
+        this.failInfo = null;
     }
 
     /**
-     * Creates a new CertRep to indicate the original request is in a <em>failure</em> state.
-     * 
+     * Creates a new CertRep to indicate the original request is in a
+     * <em>failure</em> state.
+     *
      * @param transId
      *            the transaction ID of the original request.
      * @param senderNonce
@@ -69,17 +71,18 @@ public final class CertRep extends PkiMessage<CMSSignedData> {
      * @param failInfo
      *            the fail info enum
      */
-    public CertRep(TransactionId transId, Nonce senderNonce,
-	    Nonce recipientNonce, FailInfo failInfo) {
-	super(transId, MessageType.CERT_REP, senderNonce, null);
-	this.recipientNonce = recipientNonce;
-	this.pkiStatus = PkiStatus.FAILURE;
-	this.failInfo = failInfo;
+    public CertRep(final TransactionId transId, final Nonce senderNonce,
+            final Nonce recipientNonce, final FailInfo failInfo) {
+        super(transId, MessageType.CERT_REP, senderNonce, null);
+        this.recipientNonce = recipientNonce;
+        this.pkiStatus = PkiStatus.FAILURE;
+        this.failInfo = failInfo;
     }
 
     /**
-     * Creates a new CertRep to indicate the original request is in a <em>pending</em> state.
-     * 
+     * Creates a new CertRep to indicate the original request is in a
+     * <em>pending</em> state.
+     *
      * @param transId
      *            the transaction ID of the original request.
      * @param senderNonce
@@ -87,12 +90,12 @@ public final class CertRep extends PkiMessage<CMSSignedData> {
      * @param recipientNonce
      *            the nonce of the response.
      */
-    public CertRep(TransactionId transId, Nonce senderNonce,
-	    Nonce recipientNonce) {
-	super(transId, MessageType.CERT_REP, senderNonce, null);
-	this.recipientNonce = recipientNonce;
-	this.pkiStatus = PkiStatus.PENDING;
-	this.failInfo = null;
+    public CertRep(final TransactionId transId, final Nonce senderNonce,
+            final Nonce recipientNonce) {
+        super(transId, MessageType.CERT_REP, senderNonce, null);
+        this.recipientNonce = recipientNonce;
+        this.pkiStatus = PkiStatus.PENDING;
+        this.failInfo = null;
     }
 
     public Nonce getRecipientNonce() {
@@ -111,7 +114,7 @@ public final class CertRep extends PkiMessage<CMSSignedData> {
     }
 
     @Override
-    public final CMSSignedData getMessageData() {
+    public CMSSignedData getMessageData() {
         if (pkiStatus != PkiStatus.SUCCESS) {
             throw new IllegalStateException();
         }

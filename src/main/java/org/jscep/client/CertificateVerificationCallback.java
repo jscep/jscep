@@ -22,13 +22,14 @@
  */
 package org.jscep.client;
 
-import javax.security.auth.callback.Callback;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.security.auth.callback.Callback;
+
 /**
  * This class is used to obtain verification of a CA certificate.
- * 
+ *
  * @author David Grant
  */
 public final class CertificateVerificationCallback implements Callback {
@@ -39,36 +40,36 @@ public final class CertificateVerificationCallback implements Callback {
     /**
      * The verification status.
      */
-    private AtomicBoolean verified = new AtomicBoolean(false);
+    private final AtomicBoolean verified = new AtomicBoolean(false);
 
     /**
      * Construct a <code>CertificateVerificationCallback</code> with the CA
      * certificate.
-     * 
+     *
      * @param caCertificate
      *            the CA certificate to verify.
      */
     public CertificateVerificationCallback(final X509Certificate caCertificate) {
-	this.caCertificate = caCertificate;
+        this.caCertificate = caCertificate;
     }
 
     /**
      * Returns the CA certificate to verify.
-     * 
+     *
      * @return the CA certificate to verify.
      */
     public X509Certificate getCertificate() {
-	return caCertificate;
+        return caCertificate;
     }
 
     /**
      * Returns the outcome of the verification process.
-     * 
+     *
      * @return <tt>true</tt> if the certificate was verified, <tt>false</tt>
      *         otherwise.
      */
     public boolean isVerified() {
-	return verified.get();
+        return verified.get();
     }
 
     /**
@@ -77,11 +78,11 @@ public final class CertificateVerificationCallback implements Callback {
      * {@link #isVerified()} returns <tt>false</tt> by default, so this method
      * only needs to be called if the CA certificate can be successfully
      * verified.
-     * 
+     *
      * @param verified
      *            the outcome.
      */
     public void setVerified(final boolean verified) {
-	this.verified.set(verified);
+        this.verified.set(verified);
     }
 }

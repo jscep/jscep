@@ -12,13 +12,17 @@ import org.jscep.transaction.TransactionId;
 public class GetCrl extends PkiRequest<IssuerAndSerialNumber> {
     /**
      * Creates a new <tt>GetCrl</tt> instance.
-     * 
-     * @param transId the transaction ID for this request.
-     * @param senderNonce the nonce for this request.
-     * @param messageData the <tt>IssuerAndSerialNumber</tt> of the certificate referenced by the CRL.
+     *
+     * @param transId
+     *            the transaction ID for this request.
+     * @param senderNonce
+     *            the nonce for this request.
+     * @param messageData
+     *            the <tt>IssuerAndSerialNumber</tt> of the certificate
+     *            referenced by the CRL.
      */
-    public GetCrl(TransactionId transId, Nonce senderNonce,
-	    IssuerAndSerialNumber messageData) {
-	super(transId, MessageType.GET_CRL, senderNonce, messageData);
+    public GetCrl(final TransactionId transId, final Nonce senderNonce,
+            final IssuerAndSerialNumber messageData) {
+        super(transId, MessageType.GET_CRL, senderNonce, messageData);
     }
 }

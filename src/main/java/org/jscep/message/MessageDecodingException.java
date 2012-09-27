@@ -12,22 +12,22 @@ public class MessageDecodingException extends Exception {
 
     /**
      * Creates a new <tt>MessageDecodingException</tt> with the provided cause.
-     * 
+     *
      * @param cause
      *            the initial cause of the decoding exception.
      */
-    public MessageDecodingException(Throwable cause) {
-	super(cause);
+    public MessageDecodingException(final Throwable cause) {
+        super(cause);
     }
 
     /**
      * Creates a new <tt>MessageDecodingException</tt> with the provided error
      * message.
-     * 
+     *
      * @param message
      *            the description of the decoding exception.
      */
-    public MessageDecodingException(String message) {
-	super(message);
+    public MessageDecodingException(final String message) {
+        super(message);
     }
 }

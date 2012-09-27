@@ -1,0 +1,10 @@
+org.jscep.asn1
+org.jscep.client
+org.jscep.client.verification
+org.jscep.message
+org.jscep.server
+org.jscep.transaction
+org.jscep.transport
+org.jscep.transport.request
+org.jscep.transport.response
+org.jscep.util

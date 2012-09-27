@@ -34,7 +34,7 @@ public final class GetCaCapsRequest extends Request {
      * Creates a new <tt>GetCaCapsRequest</tt> without a CA profile.
      */
     public GetCaCapsRequest() {
-	this(null);
+        this(null);
     }
 
     /**
@@ -44,18 +44,18 @@ public final class GetCaCapsRequest extends Request {
      *            the CA profile to use.
      */
     public GetCaCapsRequest(String profile) {
-	super(Operation.GET_CA_CAPS);
-	this.profile = profile;
+        super(Operation.GET_CA_CAPS);
+        this.profile = profile;
     }
 
     /**
      * {@inheritDoc}
      */
     public String getMessage() {
-	if (profile == null) {
-	    return "";
-	}
-	return profile;
+        if (profile == null) {
+            return "";
+        }
+        return profile;
     }
 
     /**
@@ -63,10 +63,10 @@ public final class GetCaCapsRequest extends Request {
      */
     @Override
     public String toString() {
-	if (profile != null) {
-	    return "GetCACaps(" + profile + ")";
-	} else {
-	    return "GetCACaps";
-	}
+        if (profile != null) {
+            return "GetCACaps(" + profile + ")";
+        } else {
+            return "GetCACaps";
+        }
     }
 }

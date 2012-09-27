@@ -9,18 +9,19 @@ import org.junit.Test;
 public class InvalidNonceExceptionTest {
     @Test
     public void testTwoNonceConstructor() {
-	Nonce sender = Nonce.nextNonce();
-	Nonce recipient = Nonce.nextNonce();
-	InvalidNonceException exception = new InvalidNonceException(sender, recipient);
-	
-	assertThat(exception.getMessage(), is(notNullValue()));
+        Nonce sender = Nonce.nextNonce();
+        Nonce recipient = Nonce.nextNonce();
+        InvalidNonceException exception = new InvalidNonceException(sender,
+                recipient);
+
+        assertThat(exception.getMessage(), is(notNullValue()));
     }
-    
+
     @Test
     public void testSingleNonceConstructor() {
-	Nonce sender = Nonce.nextNonce();
-	InvalidNonceException exception = new InvalidNonceException(sender);
-	
-	assertThat(exception.getMessage(), is(notNullValue()));
+        Nonce sender = Nonce.nextNonce();
+        InvalidNonceException exception = new InvalidNonceException(sender);
+
+        assertThat(exception.getMessage(), is(notNullValue()));
     }
 }

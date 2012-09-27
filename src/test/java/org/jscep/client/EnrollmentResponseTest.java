@@ -19,81 +19,81 @@ public class EnrollmentResponseTest {
 
     @Before
     public void setUp() {
-	transId = TransactionId.createTransactionId();
-	failInfo = FailInfo.badAlg;
-	certStore = mock(CertStore.class);
+        transId = TransactionId.createTransactionId();
+        failInfo = FailInfo.badAlg;
+        certStore = mock(CertStore.class);
     }
 
     @Test
     public void testIsPendingReturnsTrueForPendingResponse() {
-	assertTrue(pending().isPending());
+        assertTrue(pending().isPending());
     }
 
     @Test
     public void testIsPendingReturnsFalseForFailureResponse() {
-	assertFalse(failure().isPending());
+        assertFalse(failure().isPending());
     }
 
     @Test
     public void testIsPendingReturnsFalseForSuccessResponse() {
-	assertFalse(success().isPending());
+        assertFalse(success().isPending());
     }
 
     @Test
     public void testIsFailureReturnsFalseForNonFailureResponse() {
-	assertFalse(pending().isFailure());
+        assertFalse(pending().isFailure());
     }
 
     @Test
     public void testIsFailureReturnsTrueForFailureResponse() {
-	assertTrue(failure().isFailure());
+        assertTrue(failure().isFailure());
     }
 
     @Test
     public void testIsSuccessReturnsTrueForSuccessResponse() {
-	assertTrue(success().isSuccess());
+        assertTrue(success().isSuccess());
     }
 
     @Test
     public void testIsSuccessReturnsFalseForNonSuccessResponse() {
-	assertFalse(pending().isSuccess());
+        assertFalse(pending().isSuccess());
     }
 
     @Test
     public void testGetTransactionIdReturnsConstructorArgument() {
-	assertSame(transId, pending().getTransactionId());
+        assertSame(transId, pending().getTransactionId());
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGetCertStoreForNonSuccessResponseThrowsException() {
-	pending().getCertStore();
+        pending().getCertStore();
     }
 
     @Test
     public void testGetCertStoreForSuccessResponseReturnsConstructorArgument() {
-	assertSame(certStore, success().getCertStore());
+        assertSame(certStore, success().getCertStore());
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGetFailInfoForNonFailureResponseThrowsException() {
-	pending().getFailInfo();
+        pending().getFailInfo();
     }
 
     @Test
     public void testGetFailInfoForFailureResponseReturnsConstructorArgument() {
-	assertSame(failInfo, failure().getFailInfo());
+        assertSame(failInfo, failure().getFailInfo());
     }
 
     private EnrollmentResponse success() {
-	return new EnrollmentResponse(transId, certStore);
+        return new EnrollmentResponse(transId, certStore);
     }
 
     private EnrollmentResponse pending() {
-	return new EnrollmentResponse(transId);
+        return new EnrollmentResponse(transId);
     }
 
     private EnrollmentResponse failure() {
-	EnrollmentResponse response = new EnrollmentResponse(transId, failInfo);
-	return response;
+        EnrollmentResponse response = new EnrollmentResponse(transId, failInfo);
+        return response;
     }
 }

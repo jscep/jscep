@@ -22,7 +22,7 @@ public enum PkiStatus {
     private final int value;
 
     private PkiStatus(int value) {
-	this.value = value;
+        this.value = value;
     }
 
     /**
@@ -31,7 +31,7 @@ public enum PkiStatus {
      * @return the numeric identifier for this <tt>pkiStatus</tt>
      */
     public int getValue() {
-	return value;
+        return value;
     }
 
     /**
@@ -45,12 +45,12 @@ public enum PkiStatus {
      * @return the corresponding <tt>pkiStatus</tt>
      */
     public static PkiStatus valueOf(int value) {
-	for (PkiStatus status : PkiStatus.values()) {
-	    if (status.getValue() == value) {
-		return status;
-	    }
-	}
-	throw new IllegalArgumentException();
+        for (PkiStatus status : PkiStatus.values()) {
+            if (status.getValue() == value) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -58,6 +58,6 @@ public enum PkiStatus {
      */
     @Override
     public String toString() {
-	return name();
+        return name();
     }
 }

@@ -16,10 +16,11 @@ public abstract class Request {
     /**
      * Constructs a new <tt>Request</tt> for the given SCEP <tt>Operation</tt>
      * 
-     * @param operation the operation to carry out.
+     * @param operation
+     *            the operation to carry out.
      */
     public Request(Operation operation) {
-	this.operation = operation;
+        this.operation = operation;
     }
 
     /**
@@ -28,7 +29,7 @@ public abstract class Request {
      * @return the name of this operation.
      */
     public final Operation getOperation() {
-	return operation;
+        return operation;
     }
 
     /**

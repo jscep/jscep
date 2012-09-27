@@ -17,7 +17,7 @@ public class InvalidContentException extends ContentException {
      *            the cause of the error.
      */
     public InvalidContentException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 
     /**
@@ -27,6 +27,6 @@ public class InvalidContentException extends ContentException {
      *            a description of the error condition.
      */
     public InvalidContentException(String message) {
-	super(message);
+        super(message);
     }
 }

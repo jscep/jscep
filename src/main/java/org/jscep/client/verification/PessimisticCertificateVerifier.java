@@ -9,12 +9,13 @@ import java.security.cert.X509Certificate;
  * used for disabling your SCEP client.
  */
 public final class PessimisticCertificateVerifier implements
-	CertificateVerifier {
+        CertificateVerifier {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean verify(final X509Certificate cert) {
-	return false;
+        return false;
     }
 
 }

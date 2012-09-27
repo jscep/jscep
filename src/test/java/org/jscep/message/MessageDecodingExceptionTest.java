@@ -8,15 +8,15 @@ public class MessageDecodingExceptionTest {
 
     @Test
     public void testMessageDecodingExceptionThrowable() {
-	Throwable t = new Exception();
-	MessageDecodingException e = new MessageDecodingException(t);
-	assertSame(t, e.getCause());
+        Throwable t = new Exception();
+        MessageDecodingException e = new MessageDecodingException(t);
+        assertSame(t, e.getCause());
     }
 
     @Test
     public void testMessageDecodingExceptionString() {
-	String m = "message";
-	MessageDecodingException e = new MessageDecodingException(m);
-	assertSame(m, e.getMessage());
+        String m = "message";
+        MessageDecodingException e = new MessageDecodingException(m);
+        assertSame(m, e.getMessage());
     }
 }

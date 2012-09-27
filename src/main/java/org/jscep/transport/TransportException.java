@@ -14,28 +14,32 @@ public class TransportException extends Exception {
      * Constructs a new <tt>TransportException</tt> for the provided message and
      * cause.
      * 
-     * @param message a description of the error condition.
-     * @param cause the cause of the error.
+     * @param message
+     *            a description of the error condition.
+     * @param cause
+     *            the cause of the error.
      */
     public TransportException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 
     /**
      * Constructs a new <tt>TransportException</tt> for the provided cause.
      * 
-     * @param cause the cause of the error.
+     * @param cause
+     *            the cause of the error.
      */
     public TransportException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 
     /**
      * Constructs a new <tt>TransportException</tt> for the provided message.
      * 
-     * @param message a description of the error condition.
+     * @param message
+     *            a description of the error condition.
      */
     public TransportException(String message) {
-	super(message);
+        super(message);
     }
 }

@@ -29,115 +29,123 @@ import org.slf4j.Logger;
 /**
  * This class is used to decrypt the <tt>pkcsPkiEnvelope</tt> of a SCEP secure
  * message object and extract the <tt>messageData</tt> from within.
- * 
+ *
  * @see PkcsPkiEnvelopeEncoder
  */
 public final class PkcsPkiEnvelopeDecoder {
-	private static final Logger LOGGER = getLogger(PkcsPkiEnvelopeDecoder.class);
-	private final X509Certificate recipient;
-	private final PrivateKey priKey;
+    private static final Logger LOGGER = getLogger(PkcsPkiEnvelopeDecoder.class);
+    private final X509Certificate recipient;
+    private final PrivateKey privKey;
 
-	/**
-	 * Creates a <tt>PkcsPkiEnveloperDecoder</tt> for the provided certificate
-	 * and key.
-	 * <p>
-	 * The provided certificate is used to identify the envelope recipient info,
-	 * which is then used with the key unwrapped using the provided key.
-	 * 
-	 * @param recipient
-	 *            the entity for whom the message was enveloped.
-	 * @param priKey
-	 *            the key to unwrap the symmetric encrypting key.
-	 */
-	public PkcsPkiEnvelopeDecoder(X509Certificate recipient, PrivateKey priKey) {
-		this.recipient = recipient;
-		this.priKey = priKey;
-	}
+    /**
+     * Creates a <tt>PkcsPkiEnveloperDecoder</tt> for the provided certificate
+     * and key.
+     * <p>
+     * The provided certificate is used to identify the envelope recipient info,
+     * which is then used with the key unwrapped using the provided key.
+     *
+     * @param recipient
+     *            the entity for whom the message was enveloped.
+     * @param privKey
+     *            the key to unwrap the symmetric encrypting key.
+     */
+    public PkcsPkiEnvelopeDecoder(final X509Certificate recipient,
+            final PrivateKey privKey) {
+        this.recipient = recipient;
+        this.privKey = privKey;
+    }
 
-	/**
-	 * Decrypts the provided <tt>pkcsPkiEnvelope</tt>, and extracts the content.
-	 * 
-	 * @param pkcsPkiEnvelope
-	 *            the envelope to decrypt and open.
-	 * @return the content of the <tt>pkcsPkiEnvelope</tt>, the SCEP
-	 *         <tt>messageData</tt>.
-	 * @throws MessageDecodingException
-	 *             if the envelope cannot be decoded.
-	 */
-	public byte[] decode(CMSEnvelopedData pkcsPkiEnvelope)
-			throws MessageDecodingException {
-		LOGGER.debug("Decoding pkcsPkiEnvelope");
-		validate(pkcsPkiEnvelope);
+    /**
+     * Decrypts the provided <tt>pkcsPkiEnvelope</tt>, and extracts the content.
+     *
+     * @param pkcsPkiEnvelope
+     *            the envelope to decrypt and open.
+     * @return the content of the <tt>pkcsPkiEnvelope</tt>, the SCEP
+     *         <tt>messageData</tt>.
+     * @throws MessageDecodingException
+     *             if the envelope cannot be decoded.
+     */
+    public byte[] decode(final CMSEnvelopedData pkcsPkiEnvelope)
+            throws MessageDecodingException {
+        LOGGER.debug("Decoding pkcsPkiEnvelope");
+        validate(pkcsPkiEnvelope);
 
-		LOGGER.debug(
-				"Decrypting pkcsPkiEnvelope using key belonging to [issuer={}; serial={}]",
-				recipient.getIssuerDN(), recipient.getSerialNumber());
-		final RecipientInformationStore recipientInfos = pkcsPkiEnvelope
-				.getRecipientInfos();
-		RecipientInformation info = recipientInfos
-				.get(new JceKeyTransRecipientId(recipient));
+        LOGGER.debug(
+                "Decrypting pkcsPkiEnvelope using key belonging to [issuer={}; serial={}]",
+                recipient.getIssuerDN(), recipient.getSerialNumber());
+        final RecipientInformationStore recipientInfos = pkcsPkiEnvelope
+                .getRecipientInfos();
+        RecipientInformation info = recipientInfos
+                .get(new JceKeyTransRecipientId(recipient));
 
-		if (info == null) {
-			throw new MessageDecodingException(
-					"Missing expected key transfer recipient");
-		}
+        if (info == null) {
+            throw new MessageDecodingException(
+                    "Missing expected key transfer recipient");
+        }
 
-		LOGGER.debug("pkcsPkiEnvelope encryption algorithm: {}", info
-				.getKeyEncryptionAlgorithm().getAlgorithm());
+        LOGGER.debug("pkcsPkiEnvelope encryption algorithm: {}", info
+                .getKeyEncryptionAlgorithm().getAlgorithm());
 
-		try {
-			byte[] messageData = info.getContent(getKeyTransRecipient());
-			LOGGER.debug("Finished decoding pkcsPkiEnvelope");
-			return messageData;
-		} catch (CMSException e) {
-			throw new MessageDecodingException(e);
-		}
-	}
+        try {
+            byte[] messageData = info.getContent(getKeyTransRecipient());
+            LOGGER.debug("Finished decoding pkcsPkiEnvelope");
+            return messageData;
+        } catch (CMSException e) {
+            throw new MessageDecodingException(e);
+        }
+    }
 
-	private JceKeyTransEnvelopedRecipient getKeyTransRecipient() {
-		return new JceKeyTransEnvelopedRecipient(priKey) {
-			public RecipientOperator getRecipientOperator(
-					AlgorithmIdentifier keyEncryptionAlgorithm,
-					final AlgorithmIdentifier contentEncryptionAlgorithm,
-					byte[] encryptedContentEncryptionKey) throws CMSException {
-				if ("1.3.14.3.2.7".equals(contentEncryptionAlgorithm
-						.getAlgorithm().getId())) {
-					final Cipher dataCipher;
-					try {
-						Cipher unwrapper = Cipher.getInstance("RSA");
-						unwrapper.init(Cipher.UNWRAP_MODE, priKey);
-						Key encKey = unwrapper.unwrap(encryptedContentEncryptionKey, "DES", Cipher.SECRET_KEY);
-						ASN1Encodable sParams = contentEncryptionAlgorithm.getParameters();
-						
-						dataCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
-						dataCipher.init(Cipher.DECRYPT_MODE, encKey, new IvParameterSpec(
-                                ASN1OctetString.getInstance(sParams).getOctets()));
-					} catch (GeneralSecurityException e) {
-						throw new CMSException("Could not create DES cipher", e);
-					}
+    private JceKeyTransEnvelopedRecipient getKeyTransRecipient() {
+        return new JceKeyTransEnvelopedRecipient(privKey) {
+            @Override
+            public RecipientOperator getRecipientOperator(
+                    final AlgorithmIdentifier keyEncryptionAlgorithm,
+                    final AlgorithmIdentifier contentEncryptionAlgorithm,
+                    final byte[] encryptedContentEncryptionKey) throws CMSException {
+                if ("1.3.14.3.2.7".equals(contentEncryptionAlgorithm
+                        .getAlgorithm().getId())) {
+                    final Cipher dataCipher;
+                    try {
+                        Cipher unwrapper = Cipher.getInstance("RSA");
+                        unwrapper.init(Cipher.UNWRAP_MODE, privKey);
+                        Key encKey = unwrapper.unwrap(
+                                encryptedContentEncryptionKey, "DES",
+                                Cipher.SECRET_KEY);
+                        ASN1Encodable sParams = contentEncryptionAlgorithm
+                                .getParameters();
 
-					return new RecipientOperator(new InputDecryptor() {
-						public AlgorithmIdentifier getAlgorithmIdentifier() {
-							return contentEncryptionAlgorithm;
-						}
+                        dataCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
+                        dataCipher.init(Cipher.DECRYPT_MODE, encKey,
+                                new IvParameterSpec(ASN1OctetString
+                                        .getInstance(sParams).getOctets()));
+                    } catch (GeneralSecurityException e) {
+                        throw new CMSException("Could not create DES cipher", e);
+                    }
 
-						public InputStream getInputStream(InputStream dataIn) {
-							return new CipherInputStream(dataIn, dataCipher);
-						}
-					});
-				}
-				return super.getRecipientOperator(keyEncryptionAlgorithm,
-						contentEncryptionAlgorithm,
-						encryptedContentEncryptionKey);
-			}
-		};
-	}
+                    return new RecipientOperator(new InputDecryptor() {
+                        @Override
+                        public AlgorithmIdentifier getAlgorithmIdentifier() {
+                            return contentEncryptionAlgorithm;
+                        }
 
-	private void validate(CMSEnvelopedData pkcsPkiEnvelope) {
-		EnvelopedData ed = EnvelopedData.getInstance(pkcsPkiEnvelope
-				.toASN1Structure().getContent());
-		LOGGER.debug("pkcsPkiEnvelope version: {}", ed.getVersion());
-		LOGGER.debug("pkcsPkiEnvelope encryptedContentInfo contentType: {}", ed
-				.getEncryptedContentInfo().getContentType());
-	}
+                        @Override
+                        public InputStream getInputStream(InputStream dataIn) {
+                            return new CipherInputStream(dataIn, dataCipher);
+                        }
+                    });
+                }
+                return super.getRecipientOperator(keyEncryptionAlgorithm,
+                        contentEncryptionAlgorithm,
+                        encryptedContentEncryptionKey);
+            }
+        };
+    }
+
+    private void validate(final CMSEnvelopedData pkcsPkiEnvelope) {
+        EnvelopedData ed = EnvelopedData.getInstance(pkcsPkiEnvelope
+                .toASN1Structure().getContent());
+        LOGGER.debug("pkcsPkiEnvelope version: {}", ed.getVersion());
+        LOGGER.debug("pkcsPkiEnvelope encryptedContentInfo contentType: {}", ed
+                .getEncryptedContentInfo().getContentType());
+    }
 }

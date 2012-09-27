@@ -34,12 +34,15 @@ public class PkcsReq extends PkiRequest<PKCS10CertificationRequest> {
     /**
      * Creates a new <tt>PkcsReq</tt> instance.
      * 
-     * @param transId the transaction ID for this request.
-     * @param senderNonce the nonce for this request.
-     * @param messageData the <tt>CertificationRequest</tt> to use in enrollment.
+     * @param transId
+     *            the transaction ID for this request.
+     * @param senderNonce
+     *            the nonce for this request.
+     * @param messageData
+     *            the <tt>CertificationRequest</tt> to use in enrollment.
      */
     public PkcsReq(TransactionId transId, Nonce senderNonce,
-	    PKCS10CertificationRequest messageData) {
-	super(transId, MessageType.PKCS_REQ, senderNonce, messageData);
+            PKCS10CertificationRequest messageData) {
+        super(transId, MessageType.PKCS_REQ, senderNonce, messageData);
     }
 }

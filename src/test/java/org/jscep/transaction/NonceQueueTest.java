@@ -12,13 +12,13 @@ public class NonceQueueTest {
 
     @Before
     public void setUp() {
-	nonce = Nonce.nextNonce();
-	queue = new NonceQueue();
-	queue.add(nonce);
+        nonce = Nonce.nextNonce();
+        queue = new NonceQueue();
+        queue.add(nonce);
     }
 
     @Test
     public void testQueueContainsOriginalNonce() {
-	assertThat(queue.contains(nonce), is(true));
+        assertThat(queue.contains(nonce), is(true));
     }
 }

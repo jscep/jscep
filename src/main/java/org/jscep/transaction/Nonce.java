@@ -23,7 +23,7 @@ public final class Nonce {
      *            the byte array.
      */
     public Nonce(final byte[] nonce) {
-	this.nonce = ArrayUtils.clone(nonce);
+        this.nonce = ArrayUtils.clone(nonce);
     }
 
     /**
@@ -32,7 +32,7 @@ public final class Nonce {
      * @return the byte array.
      */
     public byte[] getBytes() {
-	return ArrayUtils.clone(nonce);
+        return ArrayUtils.clone(nonce);
     }
 
     /**
@@ -40,7 +40,7 @@ public final class Nonce {
      */
     @Override
     public String toString() {
-	return "Nonce [" + Hex.encodeHexString(nonce) + "]";
+        return "Nonce [" + Hex.encodeHexString(nonce) + "]";
     }
 
     /**
@@ -52,10 +52,10 @@ public final class Nonce {
      * @return the generated <tt>Nonce</tt>.
      */
     public static Nonce nextNonce() {
-	byte[] bytes = new byte[NONCE_LENGTH];
-	RND.nextBytes(bytes);
+        byte[] bytes = new byte[NONCE_LENGTH];
+        RND.nextBytes(bytes);
 
-	return new Nonce(bytes);
+        return new Nonce(bytes);
     }
 
     /**
@@ -63,16 +63,16 @@ public final class Nonce {
      */
     @Override
     public boolean equals(final Object o) {
-	if (this == o) {
-	    return true;
-	}
-	if (o == null || getClass() != o.getClass()) {
-	    return false;
-	}
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-	Nonce nonce1 = (Nonce) o;
+        Nonce nonce1 = (Nonce) o;
 
-	return Arrays.equals(nonce, nonce1.nonce);
+        return Arrays.equals(nonce, nonce1.nonce);
     }
 
     /**
@@ -80,6 +80,6 @@ public final class Nonce {
      */
     @Override
     public int hashCode() {
-	return Arrays.hashCode(nonce);
+        return Arrays.hashCode(nonce);
     }
 }

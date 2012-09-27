@@ -11,7 +11,7 @@ import java.security.cert.X509Certificate;
  * determined by the {@link X509Certificate#equals(Object)} method.
  */
 public final class PreProvisionedCertificateVerifier implements
-	CertificateVerifier {
+        CertificateVerifier {
     /**
      * The pre-provisioned certificate.
      */
@@ -19,19 +19,20 @@ public final class PreProvisionedCertificateVerifier implements
 
     /**
      * Creates a new instance of this class with a pre-provisioned certificate.
-     * 
+     *
      * @param cert
      *            the pre-provisioned certificate.
      */
-    public PreProvisionedCertificateVerifier(X509Certificate cert) {
-	this.cert = cert;
+    public PreProvisionedCertificateVerifier(final X509Certificate cert) {
+        this.cert = cert;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean verify(final X509Certificate cert) {
-	return this.cert.equals(cert);
+        return this.cert.equals(cert);
     }
 
 }

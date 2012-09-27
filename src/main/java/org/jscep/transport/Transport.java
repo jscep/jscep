@@ -21,7 +21,7 @@ public abstract class Transport {
      *            the <tt>URL</tt> used for sending requests.
      */
     Transport(URL url) {
-	this.url = url;
+        this.url = url;
     }
 
     /**
@@ -44,7 +44,7 @@ public abstract class Transport {
      *             if any transport error occurs.
      */
     public abstract <T> T sendRequest(Request msg,
-	    ScepResponseHandler<T> handler) throws TransportException;
+            ScepResponseHandler<T> handler) throws TransportException;
 
     /**
      * Returns the <tt>URL</tt> for the given operation.
@@ -56,11 +56,11 @@ public abstract class Transport {
      *             if the generated <tt>URL</tt> is malformed.
      */
     final URL getUrl(final Operation op) throws TransportException {
-	try {
-	    return new URL(url.toExternalForm() + "?operation=" + op.getName());
-	} catch (MalformedURLException e) {
-	    throw new TransportException(e);
-	}
+        try {
+            return new URL(url.toExternalForm() + "?operation=" + op.getName());
+        } catch (MalformedURLException e) {
+            throw new TransportException(e);
+        }
     }
 
     /**
@@ -71,6 +71,6 @@ public abstract class Transport {
      * @return the object array.
      */
     protected final Object[] varargs(final Object... objects) {
-	return objects;
+        return objects;
     }
 }

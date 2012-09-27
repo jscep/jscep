@@ -19,8 +19,9 @@ public class InvalidContentTypeException extends ContentException {
      * This constructor is useful for capturing the content type (or types)
      * expected by the <tt>ScepResponseHandler</tt>, and the content type that
      * the SCEP server specified. For example:
+     * 
      * <pre>
-     * new InvalidContentTypeException("text/plain", "application/x-x509-ca-cert");
+     * new InvalidContentTypeException(&quot;text/plain&quot;, &quot;application/x-x509-ca-cert&quot;);
      * </pre>
      * 
      * @param actual
@@ -29,9 +30,9 @@ public class InvalidContentTypeException extends ContentException {
      *            the content types expected by the <tt>ScepResponseHandler</tt>
      */
     public InvalidContentTypeException(final String actual,
-	    final String... expected) {
-	this(String.format("Expected %s, but was %s",
-		Arrays.toString(expected), actual));
+            final String... expected) {
+        this(String.format("Expected %s, but was %s",
+                Arrays.toString(expected), actual));
     }
 
     /**
@@ -42,10 +43,10 @@ public class InvalidContentTypeException extends ContentException {
      *            the cause of this error.
      */
     public InvalidContentTypeException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 
     private InvalidContentTypeException(String message) {
-	super(message);
+        super(message);
     }
 }

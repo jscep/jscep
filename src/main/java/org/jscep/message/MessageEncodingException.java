@@ -12,22 +12,22 @@ public class MessageEncodingException extends Exception {
 
     /**
      * Creates a new <tt>MessageEncodingException</tt> with the provided cause.
-     * 
+     *
      * @param cause
      *            the initial cause of the encoding exception.
      */
-    public MessageEncodingException(Throwable cause) {
-	super(cause);
+    public MessageEncodingException(final Throwable cause) {
+        super(cause);
     }
 
     /**
      * Creates a new <tt>MessageEncodingException</tt> with the provided error
      * message.
-     * 
+     *
      * @param message
      *            the description of the encoding exception.
      */
-    public MessageEncodingException(String message) {
-	super(message);
+    public MessageEncodingException(final String message) {
+        super(message);
     }
 }

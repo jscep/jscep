@@ -8,14 +8,14 @@ import org.jscep.server.ScepServletImpl;
 
 public abstract class ScepServerSupport {
     public URL getUrl() throws Exception {
-	final String path = "/scep/pkiclient.exe";
-	final ServletHandler handler = new ServletHandler();
-	handler.addServletWithMapping(ScepServletImpl.class, path);
-	final Server server = new Server(0);
-	server.setHandler(handler);
-	server.start();
+        final String path = "/scep/pkiclient.exe";
+        final ServletHandler handler = new ServletHandler();
+        handler.addServletWithMapping(ScepServletImpl.class, path);
+        final Server server = new Server(0);
+        server.setHandler(handler);
+        server.start();
 
-	final int port = server.getConnectors()[0].getLocalPort();
-	return new URL("http", "localhost", port, path);
+        final int port = server.getConnectors()[0].getLocalPort();
+        return new URL("http", "localhost", port, path);
     }
 }

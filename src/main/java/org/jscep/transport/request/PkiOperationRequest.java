@@ -13,26 +13,27 @@ public final class PkiOperationRequest extends Request {
     private final CMSSignedData msgData;
 
     /**
-     * Creates a new <tt>PkiOperationRequest</tt> for the given <tt>signedData</tt>
+     * Creates a new <tt>PkiOperationRequest</tt> for the given
+     * <tt>signedData</tt>
      * 
      * @param msgData
      *            the pkiMessage to use.
      */
     public PkiOperationRequest(CMSSignedData msgData) {
-	super(Operation.PKI_OPERATION);
+        super(Operation.PKI_OPERATION);
 
-	this.msgData = msgData;
+        this.msgData = msgData;
     }
 
     /**
      * {@inheritDoc}
      */
     public String getMessage() {
-	try {
-	    return Base64.encodeBase64String(msgData.getEncoded());
-	} catch (IOException e) {
-	    throw new RuntimeException(e);
-	}
+        try {
+            return Base64.encodeBase64String(msgData.getEncoded());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -40,6 +41,6 @@ public final class PkiOperationRequest extends Request {
      */
     @Override
     public String toString() {
-	return msgData.toString();
+        return msgData.toString();
     }
 }

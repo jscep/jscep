@@ -19,16 +19,16 @@ public class OperationFailureException extends TransactionException {
      *            the reason for failure.
      */
     public OperationFailureException(FailInfo failInfo) {
-	super("Operation failed due to " + failInfo);
-	this.failInfo = failInfo;
+        super("Operation failed due to " + failInfo);
+        this.failInfo = failInfo;
     }
-    
+
     /**
      * Returns the <tt>failInfo</tt> that caused this exception.
      * 
      * @return the <tt>failInfo</tt>
      */
     public FailInfo getFailInfo() {
-	return failInfo;
+        return failInfo;
     }
 }

@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class SignedDataUtils {
     private static final Logger LOGGER = LoggerFactory
-	    .getLogger(SignedDataUtils.class);
+            .getLogger(SignedDataUtils.class);
 
     /**
      * Private constructor to prevent instantiation.
@@ -58,34 +58,34 @@ public final class SignedDataUtils {
      *         <code>false</code> otherwise.
      */
     public static boolean isSignedBy(CMSSignedData sd, X509Certificate signer) {
-	SignerInformationStore store = sd.getSignerInfos();
-	SignerInformation signerInfo = store.get(new JcaSignerId(signer));
-	if (signerInfo == null) {
-	    return false;
-	}
-	CMSSignatureAlgorithmNameGenerator sigNameGenerator = new DefaultCMSSignatureAlgorithmNameGenerator();
-	SignatureAlgorithmIdentifierFinder sigAlgorithmFinder = new DefaultSignatureAlgorithmIdentifierFinder();
-	ContentVerifierProvider verifierProvider;
-	try {
-	    verifierProvider = new JcaContentVerifierProviderBuilder()
-		    .build(signer);
-	} catch (OperatorCreationException e) {
-	    throw new RuntimeException(e);
-	}
-	DigestCalculatorProvider digestProvider;
-	try {
-	    digestProvider = new JcaDigestCalculatorProviderBuilder().build();
-	} catch (OperatorCreationException e1) {
-	    throw new RuntimeException(e1);
-	}
-	SignerInformationVerifier verifier = new SignerInformationVerifier(
-		sigNameGenerator, sigAlgorithmFinder, verifierProvider,
-		digestProvider);
-	try {
-	    return signerInfo.verify(verifier);
-	} catch (CMSException e) {
-	    return false;
-	}
+        SignerInformationStore store = sd.getSignerInfos();
+        SignerInformation signerInfo = store.get(new JcaSignerId(signer));
+        if (signerInfo == null) {
+            return false;
+        }
+        CMSSignatureAlgorithmNameGenerator sigNameGenerator = new DefaultCMSSignatureAlgorithmNameGenerator();
+        SignatureAlgorithmIdentifierFinder sigAlgorithmFinder = new DefaultSignatureAlgorithmIdentifierFinder();
+        ContentVerifierProvider verifierProvider;
+        try {
+            verifierProvider = new JcaContentVerifierProviderBuilder()
+                    .build(signer);
+        } catch (OperatorCreationException e) {
+            throw new RuntimeException(e);
+        }
+        DigestCalculatorProvider digestProvider;
+        try {
+            digestProvider = new JcaDigestCalculatorProviderBuilder().build();
+        } catch (OperatorCreationException e1) {
+            throw new RuntimeException(e1);
+        }
+        SignerInformationVerifier verifier = new SignerInformationVerifier(
+                sigNameGenerator, sigAlgorithmFinder, verifierProvider,
+                digestProvider);
+        try {
+            return signerInfo.verify(verifier);
+        } catch (CMSException e) {
+            return false;
+        }
     }
 
     /**
@@ -102,58 +102,58 @@ public final class SignedDataUtils {
      */
     @SuppressWarnings("unchecked")
     public static CertStore fromSignedData(CMSSignedData signedData) {
-	CertificateFactory factory;
-	try {
-	    factory = CertificateFactory.getInstance("X509");
-	} catch (CertificateException e) {
-	    throw new RuntimeException(e);
-	}
+        CertificateFactory factory;
+        try {
+            factory = CertificateFactory.getInstance("X509");
+        } catch (CertificateException e) {
+            throw new RuntimeException(e);
+        }
 
-	Store certStore = signedData.getCertificates();
-	Store crlStore = signedData.getCRLs();
+        Store certStore = signedData.getCertificates();
+        Store crlStore = signedData.getCRLs();
 
-	Collection<X509CertificateHolder> certs = certStore.getMatches(null);
-	Collection<X509CRLHolder> crls = crlStore.getMatches(null);
+        Collection<X509CertificateHolder> certs = certStore.getMatches(null);
+        Collection<X509CRLHolder> crls = crlStore.getMatches(null);
 
-	Collection<Object> certsAndCrls = new ArrayList<Object>();
+        Collection<Object> certsAndCrls = new ArrayList<Object>();
 
-	for (X509CertificateHolder cert : certs) {
-	    ByteArrayInputStream byteIn;
-	    try {
-		byteIn = new ByteArrayInputStream(cert.getEncoded());
-	    } catch (IOException e) {
-		LOGGER.error("Error encoding certificate", e);
+        for (X509CertificateHolder cert : certs) {
+            ByteArrayInputStream byteIn;
+            try {
+                byteIn = new ByteArrayInputStream(cert.getEncoded());
+            } catch (IOException e) {
+                LOGGER.error("Error encoding certificate", e);
 
-		continue;
-	    }
-	    try {
-		certsAndCrls.add(factory.generateCertificate(byteIn));
-	    } catch (CertificateException e) {
-		LOGGER.error("Error generating certificate", e);
-	    }
-	}
+                continue;
+            }
+            try {
+                certsAndCrls.add(factory.generateCertificate(byteIn));
+            } catch (CertificateException e) {
+                LOGGER.error("Error generating certificate", e);
+            }
+        }
 
-	for (X509CRLHolder crl : crls) {
-	    ByteArrayInputStream byteIn;
-	    try {
-		byteIn = new ByteArrayInputStream(crl.getEncoded());
-	    } catch (IOException e) {
-		LOGGER.error("Error encoding crl", e);
+        for (X509CRLHolder crl : crls) {
+            ByteArrayInputStream byteIn;
+            try {
+                byteIn = new ByteArrayInputStream(crl.getEncoded());
+            } catch (IOException e) {
+                LOGGER.error("Error encoding crl", e);
 
-		continue;
-	    }
-	    try {
-		certsAndCrls.add(factory.generateCRL(byteIn));
-	    } catch (CRLException e) {
-		LOGGER.error("Error generating certificate", e);
-	    }
-	}
+                continue;
+            }
+            try {
+                certsAndCrls.add(factory.generateCRL(byteIn));
+            } catch (CRLException e) {
+                LOGGER.error("Error generating certificate", e);
+            }
+        }
 
-	try {
-	    return CertStore.getInstance("Collection",
-		    new CollectionCertStoreParameters(certsAndCrls));
-	} catch (GeneralSecurityException e) {
-	    throw new RuntimeException(e);
-	}
+        try {
+            return CertStore.getInstance("Collection",
+                    new CollectionCertStoreParameters(certsAndCrls));
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
