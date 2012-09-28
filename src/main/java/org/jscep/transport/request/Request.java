@@ -14,12 +14,12 @@ public abstract class Request {
     private final Operation operation;
 
     /**
-     * Constructs a new <tt>Request</tt> for the given SCEP <tt>Operation</tt>
+     * Constructs a new <tt>Request</tt> for the given SCEP <tt>Operation</tt>.
      * 
      * @param operation
      *            the operation to carry out.
      */
-    public Request(Operation operation) {
+    public Request(final Operation operation) {
         this.operation = operation;
     }
 

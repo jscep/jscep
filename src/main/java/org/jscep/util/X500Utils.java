@@ -19,7 +19,7 @@ public final class X500Utils {
      *            the principal to convert.
      * @return the converted name.
      */
-    public static X500Name toX500Name(X500Principal principal) {
+    public static X500Name toX500Name(final X500Principal principal) {
         byte[] bytes = principal.getEncoded();
         return X500Name.getInstance(bytes);
     }

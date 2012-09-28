@@ -42,11 +42,11 @@ public class InvalidContentTypeException extends ContentException {
      * @param cause
      *            the cause of this error.
      */
-    public InvalidContentTypeException(Throwable cause) {
+    public InvalidContentTypeException(final Throwable cause) {
         super(cause);
     }
 
-    private InvalidContentTypeException(String message) {
+    private InvalidContentTypeException(final String message) {
         super(message);
     }
 }

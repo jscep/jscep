@@ -12,7 +12,7 @@ import org.jscep.transaction.TransactionId;
 public class GetCertInitial extends PkiRequest<IssuerAndSubject> {
     /**
      * Creates a new <tt>GetCertInitial</tt> request.
-     *
+     * 
      * @param transId
      *            the transaction ID for this request.
      * @param senderNonce

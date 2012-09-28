@@ -15,7 +15,7 @@ public final class EnrollmentResponse {
 
     /**
      * Constructs a new instance of this class to represent a pending response.
-     *
+     * 
      * @param transId
      *            the transaction ID
      */
@@ -25,7 +25,7 @@ public final class EnrollmentResponse {
 
     /**
      * Constructs a new instance of this class to represent a failure response.
-     *
+     * 
      * @param transId
      *            the transaction ID
      * @param failInfo
@@ -38,7 +38,7 @@ public final class EnrollmentResponse {
 
     /**
      * Constructs a new instance of this class to represent a success response.
-     *
+     * 
      * @param transId
      *            the transaction ID
      * @param certStore
@@ -58,7 +58,7 @@ public final class EnrollmentResponse {
 
     /**
      * Returns <tt>true</tt> for a pending response, <tt>false</tt> otherwise.
-     *
+     * 
      * @return <tt>true</tt> for a pending response, <tt>false</tt> otherwise.
      */
     public boolean isPending() {
@@ -67,7 +67,7 @@ public final class EnrollmentResponse {
 
     /**
      * Returns <tt>true</tt> for a failure response, <tt>false</tt> otherwise.
-     *
+     * 
      * @return <tt>true</tt> for a failure response, <tt>false</tt> otherwise.
      */
     public boolean isFailure() {
@@ -76,7 +76,7 @@ public final class EnrollmentResponse {
 
     /**
      * Returns <tt>true</tt> for a success response, <tt>false</tt> otherwise.
-     *
+     * 
      * @return <tt>true</tt> for a success response, <tt>false</tt> otherwise.
      */
     public boolean isSuccess() {
@@ -85,7 +85,7 @@ public final class EnrollmentResponse {
 
     /**
      * Returns the transaction ID for the enrollment operation.
-     *
+     * 
      * @return the transaction ID.
      */
     public TransactionId getTransactionId() {
@@ -97,7 +97,7 @@ public final class EnrollmentResponse {
      * <p>
      * If this method is invoked on a non-success response, this method will
      * throw an {@link IllegalStateException}
-     *
+     * 
      * @return the CertStore.
      */
     public CertStore getCertStore() {
@@ -112,7 +112,7 @@ public final class EnrollmentResponse {
      * <p>
      * If this method is invoked on a non-failure response, this method will
      * throw an {@link IllegalStateException}
-     *
+     * 
      * @return the failure reason.
      */
     public FailInfo getFailInfo() {

@@ -19,7 +19,7 @@ public final class DefaultCallbackHandler implements CallbackHandler {
 
     /**
      * Default callback handler that delegates verification to a verifier.
-     *
+     * 
      * @param verifier
      *            the verifier to use.
      */
@@ -44,7 +44,7 @@ public final class DefaultCallbackHandler implements CallbackHandler {
 
     /**
      * Verify the callback certificate.
-     *
+     * 
      * @param callback
      *            the callback to verify.
      */

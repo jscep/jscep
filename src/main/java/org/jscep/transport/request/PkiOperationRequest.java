@@ -19,7 +19,7 @@ public final class PkiOperationRequest extends Request {
      * @param msgData
      *            the pkiMessage to use.
      */
-    public PkiOperationRequest(CMSSignedData msgData) {
+    public PkiOperationRequest(final CMSSignedData msgData) {
         super(Operation.PKI_OPERATION);
 
         this.msgData = msgData;
@@ -28,6 +28,7 @@ public final class PkiOperationRequest extends Request {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getMessage() {
         try {
             return Base64.encodeBase64String(msgData.getEncoded());

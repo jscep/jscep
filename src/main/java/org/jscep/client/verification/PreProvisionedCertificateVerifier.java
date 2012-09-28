@@ -19,7 +19,7 @@ public final class PreProvisionedCertificateVerifier implements
 
     /**
      * Creates a new instance of this class with a pre-provisioned certificate.
-     *
+     * 
      * @param cert
      *            the pre-provisioned certificate.
      */

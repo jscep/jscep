@@ -29,7 +29,7 @@ import org.slf4j.Logger;
  * @see PkcsReq
  * @see GetCertInitial
  */
-public class EnrollmentTransaction extends Transaction {
+public final class EnrollmentTransaction extends Transaction {
     private static final Logger LOGGER = getLogger(EnrollmentTransaction.class);
     private static final NonceQueue QUEUE = new NonceQueue();
     private final TransactionId transId;
@@ -49,9 +49,9 @@ public class EnrollmentTransaction extends Transaction {
      * @throws TransactionException
      *             if there is a problem creating the transaction ID.
      */
-    public EnrollmentTransaction(Transport transport,
-            PkiMessageEncoder encoder, PkiMessageDecoder decoder,
-            PKCS10CertificationRequest csr) throws TransactionException {
+    public EnrollmentTransaction(final Transport transport,
+            final PkiMessageEncoder encoder, final PkiMessageDecoder decoder,
+            final PKCS10CertificationRequest csr) throws TransactionException {
         super(transport, encoder, decoder);
         try {
             this.transId = TransactionId.createTransactionId(
@@ -78,9 +78,9 @@ public class EnrollmentTransaction extends Transaction {
      * @param transId
      *            the transaction ID to use.
      */
-    public EnrollmentTransaction(Transport transport,
-            PkiMessageEncoder encoder, PkiMessageDecoder decoder,
-            IssuerAndSubject ias, TransactionId transId) {
+    public EnrollmentTransaction(final Transport transport,
+            final PkiMessageEncoder encoder, final PkiMessageDecoder decoder,
+            final IssuerAndSubject ias, final TransactionId transId) {
         super(transport, encoder, decoder);
 
         this.transId = transId;
@@ -134,7 +134,7 @@ public class EnrollmentTransaction extends Transaction {
         }
     }
 
-    private void validateExchange(PkiMessage<?> req, CertRep res)
+    private void validateExchange(final PkiMessage<?> req, final CertRep res)
             throws TransactionException {
         LOGGER.debug("Validating SCEP message exchange");
 

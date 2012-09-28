@@ -12,7 +12,7 @@ import org.jscep.transaction.TransactionId;
 public class GetCrl extends PkiRequest<IssuerAndSerialNumber> {
     /**
      * Creates a new <tt>GetCrl</tt> instance.
-     *
+     * 
      * @param transId
      *            the transaction ID for this request.
      * @param senderNonce

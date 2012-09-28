@@ -6,9 +6,9 @@ import java.security.cert.Certificate;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Map;
 import java.util.WeakHashMap;
 
-import org.bouncycastle.asn1.x509.KeyUsage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,17 +16,38 @@ import org.slf4j.LoggerFactory;
  * This class is used for storing CA and RA certificates.
  */
 public final class CertStoreInspector {
+    /**
+     * The length of the minimum certificate path for an issuer.
+     */
     private static final int CA_PATH_LENGTH = 0;
+    /**
+     * Retrieve only end entities.
+     */
     private static final int ONLY_END_ENTITIES = -2;
+    /**
+     * Logger
+     */
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CertStoreInspector.class);
+    /**
+     * Length of the key usage array.
+     */
     private static final int KEY_USAGE_LENGTH = 9;
-    private static final WeakHashMap<CertStore, CertStoreInspector> INSTANCES = new WeakHashMap<CertStore, CertStoreInspector>();
+    private static final Map<CertStore, CertStoreInspector> INSTANCES = new WeakHashMap<CertStore, CertStoreInspector>();
 
     private final X509Certificate signer;
     private final X509Certificate recipient;
     private final X509Certificate issuer;
 
+    /**
+     * 
+     * @param signer
+     *            the certificate of the message signing authority
+     * @param recipient
+     *            the certificate of the message recipient.
+     * @param issuer
+     *            the certificate of the certificate issuer.
+     */
     private CertStoreInspector(final X509Certificate signer,
             final X509Certificate recipient, final X509Certificate issuer) {
         this.signer = signer;
@@ -36,7 +57,7 @@ public final class CertStoreInspector {
 
     /**
      * Returns the verifier certificate.
-     *
+     * 
      * @return the verifier certificate.
      */
     public X509Certificate getSigner() {
@@ -45,7 +66,7 @@ public final class CertStoreInspector {
 
     /**
      * Returns the encrypter certificate.
-     *
+     * 
      * @return the encrypter certificate.
      */
     public X509Certificate getRecipient() {
@@ -54,7 +75,7 @@ public final class CertStoreInspector {
 
     /**
      * Returns the issuer certificate.
-     *
+     * 
      * @return the issuer certificate.
      */
     public X509Certificate getIssuer() {
@@ -70,7 +91,7 @@ public final class CertStoreInspector {
      * <p>
      * If the CertStore only contains a single CA certificate, that certificate
      * will be used for all three roles.
-     *
+     * 
      * @param store
      *            the store to inspect.
      * @return the Authorities instance.

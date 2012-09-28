@@ -23,7 +23,7 @@ public final class Capabilities {
      * @param capabilities
      *            the capabilities.
      */
-    public Capabilities(Capability... capabilities) {
+    public Capabilities(final Capability... capabilities) {
         this.caps = EnumSet.noneOf(Capability.class);
         Collections.addAll(this.caps, capabilities);
     }
@@ -37,7 +37,7 @@ public final class Capabilities {
      * @return <code>true</code> if the server supports the provided Capability,
      *         <code>false</code> otherwise.
      */
-    public boolean contains(Capability capability) {
+    public boolean contains(final Capability capability) {
         return caps.contains(capability);
     }
 
@@ -96,11 +96,12 @@ public final class Capabilities {
         return cipher;
     }
 
-    private boolean cipherExists(String algorithm) {
+    private boolean cipherExists(final String algorithm) {
         return algorithmExists("Cipher", algorithm);
     }
 
-    private boolean algorithmExists(String serviceType, String algorithm) {
+    private boolean algorithmExists(final String serviceType,
+            final String algorithm) {
         for (Provider provider : Security.getProviders()) {
             for (Service service : provider.getServices()) {
                 if (service.getType().equals(serviceType)
@@ -155,16 +156,16 @@ public final class Capabilities {
         return null;
     }
 
-    private boolean sigExists(String sig) {
+    private boolean sigExists(final String sig) {
         return algorithmExists("Signature", sig + "withRSA")
                 && digestExists(sig);
     }
 
-    private boolean digestExists(String digest) {
+    private boolean digestExists(final String digest) {
         return algorithmExists("MessageDigest", digest);
     }
 
-    private MessageDigest getDigest(String algorithm) {
+    private MessageDigest getDigest(final String algorithm) {
         try {
             return MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {

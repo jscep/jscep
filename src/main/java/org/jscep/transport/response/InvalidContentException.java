@@ -16,7 +16,7 @@ public class InvalidContentException extends ContentException {
      * @param cause
      *            the cause of the error.
      */
-    public InvalidContentException(Throwable cause) {
+    public InvalidContentException(final Throwable cause) {
         super(cause);
     }
 
@@ -26,7 +26,7 @@ public class InvalidContentException extends ContentException {
      * @param message
      *            a description of the error condition.
      */
-    public InvalidContentException(String message) {
+    public InvalidContentException(final String message) {
         super(message);
     }
 }

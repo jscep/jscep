@@ -5,29 +5,29 @@ package org.jscep.transaction;
  */
 public enum MessageType {
     /**
-     * Response to certificate or CRL request
+     * Response to certificate or CRL request.
      */
     CERT_REP(3),
     /**
-     * PKCS #10 certificate request
+     * PKCS #10 certificate request.
      */
     PKCS_REQ(19),
     /**
-     * Certificate polling in manual enrollment
+     * Certificate polling in manual enrollment.
      */
     GET_CERT_INITIAL(20),
     /**
-     * Retrieve a certificate
+     * Retrieve a certificate.
      */
     GET_CERT(21),
     /**
-     * Retrieve a CRL
+     * Retrieve a CRL.
      */
     GET_CRL(22);
 
     private final int value;
 
-    private MessageType(int value) {
+    private MessageType(final int value) {
         this.value = value;
     }
 
@@ -50,7 +50,7 @@ public enum MessageType {
      *            the protocol-specific value.
      * @return the corresponding <tt>messageType</tt>
      */
-    public static MessageType valueOf(int value) {
+    public static MessageType valueOf(final int value) {
         for (MessageType msgType : MessageType.values()) {
             if (msgType.getValue() == value) {
                 return msgType;

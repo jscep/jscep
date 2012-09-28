@@ -78,8 +78,9 @@ public final class PkiMessageEncoder {
      * @param enveloper
      *            the enveloper used for encoding the <tt>messageData</tt>
      */
-    public PkiMessageEncoder(PrivateKey signerKey, X509Certificate signerId,
-            PkcsPkiEnvelopeEncoder enveloper) {
+    public PkiMessageEncoder(final PrivateKey signerKey,
+            final X509Certificate signerId,
+            final PkcsPkiEnvelopeEncoder enveloper) {
         this.signerKey = signerKey;
         this.signerId = signerId;
         this.enveloper = enveloper;
@@ -96,8 +97,10 @@ public final class PkiMessageEncoder {
      * @param enveloper
      *            the enveloper used for encoding the <tt>messageData</tt>
      */
-    public PkiMessageEncoder(PrivateKey signerKey, X509Certificate signerId,
-            PkcsPkiEnvelopeEncoder enveloper, String signatureAlgorithm) {
+    public PkiMessageEncoder(final PrivateKey signerKey,
+            final X509Certificate signerId,
+            final PkcsPkiEnvelopeEncoder enveloper,
+            final String signatureAlgorithm) {
         this.signerKey = signerKey;
         this.signerId = signerId;
         this.enveloper = enveloper;
@@ -114,7 +117,7 @@ public final class PkiMessageEncoder {
      * @throws MessageEncodingException
      *             if there is a problem encoding the <tt>PkiMessage</tt>
      */
-    public CMSSignedData encode(PkiMessage<?> message)
+    public CMSSignedData encode(final PkiMessage<?> message)
             throws MessageEncodingException {
         LOGGER.debug("Encoding pkiMessage");
         LOGGER.debug("Encoding message: {}", message);
@@ -140,7 +143,7 @@ public final class PkiMessageEncoder {
         }
     }
 
-    private CMSProcessable getContent(PkiMessage<?> message)
+    private CMSProcessable getContent(final PkiMessage<?> message)
             throws MessageEncodingException {
         CMSProcessable signable;
 
@@ -164,7 +167,7 @@ public final class PkiMessageEncoder {
         return signable;
     }
 
-    private CMSEnvelopedData encodeMessage(PkiMessage<?> message)
+    private CMSEnvelopedData encodeMessage(final PkiMessage<?> message)
             throws MessageEncodingException {
         Object messageData = message.getMessageData();
         byte[] bytes;
@@ -203,7 +206,7 @@ public final class PkiMessageEncoder {
         return certStore;
     }
 
-    private SignerInfoGenerator getSignerInfo(PkiMessage<?> message)
+    private SignerInfoGenerator getSignerInfo(final PkiMessage<?> message)
             throws MessageEncodingException {
         JcaSignerInfoGeneratorBuilder signerInfoBuilder = new JcaSignerInfoGeneratorBuilder(
                 getDigestCalculator());
@@ -218,7 +221,8 @@ public final class PkiMessageEncoder {
         return signerInfo;
     }
 
-    private CMSAttributeTableGenerator getTableGenerator(PkiMessage<?> message) {
+    private CMSAttributeTableGenerator getTableGenerator(
+            final PkiMessage<?> message) {
         AttributeTableFactory attrFactory = new AttributeTableFactory();
         AttributeTable signedAttrs = attrFactory.fromPkiMessage(message);
         CMSAttributeTableGenerator atGen = new DefaultSignedAttributeTableGenerator(

@@ -9,7 +9,7 @@ public class ClientException extends Exception {
 
     /**
      * Constructs a new <tt>ClientException</tt> with the given cause.
-     *
+     * 
      * @param cause
      *            the cause of this exception.
      */
@@ -19,7 +19,7 @@ public class ClientException extends Exception {
 
     /**
      * Constructs a new <tt>ClientException</tt> with the given message.
-     *
+     * 
      * @param message
      *            a description of the error condition.
      */

@@ -43,7 +43,7 @@ public final class GetCaCapsRequest extends Request {
      * @param profile
      *            the CA profile to use.
      */
-    public GetCaCapsRequest(String profile) {
+    public GetCaCapsRequest(final String profile) {
         super(Operation.GET_CA_CAPS);
         this.profile = profile;
     }
@@ -51,6 +51,7 @@ public final class GetCaCapsRequest extends Request {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getMessage() {
         if (profile == null) {
             return "";

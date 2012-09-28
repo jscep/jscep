@@ -11,6 +11,8 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.jscep.util.SignedDataUtils;
@@ -18,6 +20,7 @@ import org.jscep.util.SignedDataUtils;
 /**
  * This class handles responses to <code>GetCACert</code> requests.
  */
+@ThreadSafe
 public final class GetCaCertResponseHandler implements
         ScepResponseHandler<CertStore> {
     private static final String RA_CERT = "application/x-x509-ca-ra-cert";
@@ -26,7 +29,8 @@ public final class GetCaCertResponseHandler implements
     /**
      * {@inheritDoc}
      */
-    public CertStore getResponse(byte[] content, String mimeType)
+    @Override
+    public CertStore getResponse(final byte[] content, final String mimeType)
             throws ContentException {
         if (mimeType != null && mimeType.startsWith(CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.1.1.1

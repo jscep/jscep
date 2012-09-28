@@ -12,7 +12,7 @@ public class MessageEncodingException extends Exception {
 
     /**
      * Creates a new <tt>MessageEncodingException</tt> with the provided cause.
-     *
+     * 
      * @param cause
      *            the initial cause of the encoding exception.
      */
@@ -23,7 +23,7 @@ public class MessageEncodingException extends Exception {
     /**
      * Creates a new <tt>MessageEncodingException</tt> with the provided error
      * message.
-     *
+     * 
      * @param message
      *            the description of the encoding exception.
      */

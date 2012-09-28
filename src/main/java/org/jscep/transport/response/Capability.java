@@ -79,7 +79,7 @@ public enum Capability {
      * @param description
      *            description of the capability
      */
-    private Capability(String capability, String description) {
+    private Capability(final String capability, final String description) {
         this.capability = capability;
         this.description = description;
     }

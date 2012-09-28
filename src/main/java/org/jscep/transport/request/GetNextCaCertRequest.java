@@ -12,7 +12,7 @@ public final class GetNextCaCertRequest extends Request {
      * @param profile
      *            the CA profile to use.
      */
-    public GetNextCaCertRequest(String profile) {
+    public GetNextCaCertRequest(final String profile) {
         super(Operation.GET_NEXT_CA_CERT);
         this.profile = profile;
     }
@@ -27,6 +27,7 @@ public final class GetNextCaCertRequest extends Request {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getMessage() {
         if (profile == null) {
             return "";

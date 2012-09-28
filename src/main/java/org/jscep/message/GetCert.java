@@ -33,7 +33,7 @@ import org.jscep.transaction.TransactionId;
 public class GetCert extends PkiRequest<IssuerAndSerialNumber> {
     /**
      * Creates a new <tt>GetCert</tt> instance.
-     *
+     * 
      * @param transId
      *            the transaction ID for this request.
      * @param senderNonce

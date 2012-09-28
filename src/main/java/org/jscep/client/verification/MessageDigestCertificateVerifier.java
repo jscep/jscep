@@ -13,11 +13,11 @@ import org.apache.commons.lang.ArrayUtils;
  * <p>
  * Typically, we expect the hash to be provided out of band, often as a
  * hexadecimal string.
- *
+ * 
  * <pre>
  * MessageDigest digest = MessageDigest.getInstance(&quot;MD5&quot;);
  * byte[] expected = Hex.decode(&quot;835f179febba96f32a47610a679de400&quot;.toCharArray());
- *
+ * 
  * new MessageDigestCertificateVerifier(digest, expected);
  * </pre>
  */
@@ -35,7 +35,7 @@ public final class MessageDigestCertificateVerifier implements
     /**
      * Creates a new instance with a digest algorithm, and the expected digest
      * result.
-     *
+     * 
      * @param digest
      *            the digest algorithm to for verification.
      * @param expected

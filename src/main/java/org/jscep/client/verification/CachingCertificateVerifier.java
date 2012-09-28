@@ -16,7 +16,7 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
     /**
      * Constructs a <tt>CachingCertificateVerifier</tt> which delegates to the
      * specified <tt>CertificateVerifier</tt>.
-     *
+     * 
      * @param delegate
      *            the <tt>CertificateVerifier</tt> to delegate to.
      */
@@ -31,7 +31,7 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
      * <p>
      * On every subsequent invocation with the same certificate, the initial
      * response from the delegate will be returned.
-     *
+     * 
      * @param cert
      *            the certificate to verify.
      * @return the result of calling <tt>verify</tt> on the delegate

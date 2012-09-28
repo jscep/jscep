@@ -103,8 +103,8 @@ public abstract class ScepServlet extends HttpServlet {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public final void service(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
+    public final void service(final HttpServletRequest req,
+            final HttpServletResponse res) throws ServletException, IOException {
         byte[] body = getMessageBytes(req);
 
         final Operation op;
@@ -345,7 +345,7 @@ public abstract class ScepServlet extends HttpServlet {
         }
     }
 
-    private CMSSignedData getMessageData(List<X509Certificate> certs)
+    private CMSSignedData getMessageData(final List<X509Certificate> certs)
             throws IOException, CMSException, GeneralSecurityException {
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
         JcaCertStore store;
@@ -361,7 +361,7 @@ public abstract class ScepServlet extends HttpServlet {
         return generator.generate(new CMSAbsentContent());
     }
 
-    private CMSSignedData getMessageData(X509CRL crl) throws IOException,
+    private CMSSignedData getMessageData(final X509CRL crl) throws IOException,
             CMSException, GeneralSecurityException {
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
         JcaCRLStore store;
@@ -374,8 +374,8 @@ public abstract class ScepServlet extends HttpServlet {
         return generator.generate(new CMSAbsentContent());
     }
 
-    private void doGetNextCaCert(HttpServletRequest req, HttpServletResponse res)
-            throws Exception {
+    private void doGetNextCaCert(final HttpServletRequest req,
+            final HttpServletResponse res) throws Exception {
         res.setHeader("Content-Type", "application/x-x509-next-ca-cert");
 
         List<X509Certificate> certs = getNextCaCertificate(req
@@ -417,8 +417,8 @@ public abstract class ScepServlet extends HttpServlet {
         }
     }
 
-    private void doGetCaCert(HttpServletRequest req, HttpServletResponse res)
-            throws Exception {
+    private void doGetCaCert(final HttpServletRequest req,
+            final HttpServletResponse res) throws Exception {
         final List<X509Certificate> certs = doGetCaCertificate(req
                 .getParameter(MSG_PARAM));
         final byte[] bytes;
@@ -451,7 +451,7 @@ public abstract class ScepServlet extends HttpServlet {
         res.getOutputStream().close();
     }
 
-    private Operation getOperation(HttpServletRequest req) {
+    private Operation getOperation(final HttpServletRequest req) {
         String op = req.getParameter(OP_PARAM);
         if (op == null) {
             return null;
@@ -459,8 +459,8 @@ public abstract class ScepServlet extends HttpServlet {
         return Operation.forName(req.getParameter(OP_PARAM));
     }
 
-    private void doGetCaCaps(HttpServletRequest req, HttpServletResponse res)
-            throws Exception {
+    private void doGetCaCaps(final HttpServletRequest req,
+            final HttpServletResponse res) throws Exception {
         res.setHeader("Content-Type", "text/plain");
         final Set<Capability> caps = doCapabilities(req.getParameter("message"));
         for (Capability cap : caps) {
@@ -479,7 +479,7 @@ public abstract class ScepServlet extends HttpServlet {
      * @throws Exception
      *             if any problem occurs
      */
-    protected abstract Set<Capability> doCapabilities(String identifier)
+    protected abstract Set<Capability> doCapabilities(final String identifier)
             throws Exception;
 
     /**
@@ -520,8 +520,8 @@ public abstract class ScepServlet extends HttpServlet {
      * @throws Exception
      *             if any problem occurs
      */
-    protected abstract List<X509Certificate> doGetCert(X500Name issuer,
-            BigInteger serial) throws OperationFailureException, Exception;
+    protected abstract List<X509Certificate> doGetCert(final X500Name issuer,
+            final BigInteger serial) throws Exception;
 
     /**
      * Checks to see if a previously-requested certificate has been issued. If
@@ -541,9 +541,9 @@ public abstract class ScepServlet extends HttpServlet {
      * @throws Exception
      *             if any problem occurs
      */
-    protected abstract List<X509Certificate> doGetCertInitial(X500Name issuer,
-            X500Name subject, TransactionId transId)
-            throws OperationFailureException, Exception;
+    protected abstract List<X509Certificate> doGetCertInitial(
+            final X500Name issuer, final X500Name subject,
+            final TransactionId transId) throws Exception;
 
     /**
      * Retrieve the CRL covering the given certificate identifiers.
@@ -558,8 +558,8 @@ public abstract class ScepServlet extends HttpServlet {
      * @throws Exception
      *             if any problem occurs
      */
-    protected abstract X509CRL doGetCrl(X500Name issuer, BigInteger serial)
-            throws OperationFailureException, Exception;
+    protected abstract X509CRL doGetCrl(final X500Name issuer,
+            final BigInteger serial) throws Exception;
 
     /**
      * Enrols a certificate into the PKI represented by this SCEP interface. If
@@ -578,8 +578,8 @@ public abstract class ScepServlet extends HttpServlet {
      *             if any problem occurs
      */
     protected abstract List<X509Certificate> doEnrol(
-            PKCS10CertificationRequest certificationRequest,
-            TransactionId transId) throws OperationFailureException, Exception;
+            final PKCS10CertificationRequest certificationRequest,
+            final TransactionId transId) throws Exception;
 
     /**
      * Returns the private key of the recipient entity represented by this SCEP
@@ -610,7 +610,8 @@ public abstract class ScepServlet extends HttpServlet {
      */
     protected abstract X509Certificate getSigner();
 
-    private byte[] getMessageBytes(HttpServletRequest req) throws IOException {
+    private byte[] getMessageBytes(final HttpServletRequest req)
+            throws IOException {
         if (req.getMethod().equals(POST)) {
             return IOUtils.toByteArray(req.getInputStream());
         } else {

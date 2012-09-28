@@ -17,7 +17,7 @@ public class TransactionException extends Exception {
      * @param cause
      *            the <tt>Throwable</tt> that caused the error.
      */
-    public TransactionException(Throwable cause) {
+    public TransactionException(final Throwable cause) {
         super(cause);
     }
 
@@ -28,7 +28,7 @@ public class TransactionException extends Exception {
      * @param message
      *            a description of the error condition.
      */
-    public TransactionException(String message) {
+    public TransactionException(final String message) {
         super(message);
     }
 }

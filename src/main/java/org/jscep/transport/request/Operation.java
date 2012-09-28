@@ -28,7 +28,7 @@ package org.jscep.transport.request;
  */
 public enum Operation {
     /**
-     * The operation for <tt>GetCACaps</tt>
+     * The operation for <tt>GetCACaps</tt>.
      * 
      * @see <a
      *      href="http://tools.ietf.org/html/draft-nourse-scep-20#appendix-C.1">SCEP
@@ -36,7 +36,7 @@ public enum Operation {
      */
     GET_CA_CAPS("GetCACaps"),
     /**
-     * The operation for <tt>GetCACert</tt>
+     * The operation for <tt>GetCACert</tt>.
      * 
      * @see <a
      *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.1">SCEP
@@ -44,7 +44,7 @@ public enum Operation {
      */
     GET_CA_CERT("GetCACert"),
     /**
-     * The operation for <tt>GetNextCACert</tt>
+     * The operation for <tt>GetNextCACert</tt>.
      * 
      * @see <a
      *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.6">SCEP
@@ -53,7 +53,7 @@ public enum Operation {
     GET_NEXT_CA_CERT("GetNextCACert"),
     /**
      * The operation for <tt>PKCSReq</tt>, <tt>GetCertInitial</tt>,
-     * <tt>GetCert</tt> and <tt>GetCRL</tt>
+     * <tt>GetCert</tt> and <tt>GetCRL</tt>.
      * 
      * @see <a
      *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.2">SCEP
@@ -72,7 +72,7 @@ public enum Operation {
 
     private final String name;
 
-    private Operation(String name) {
+    private Operation(final String name) {
         this.name = name;
     }
 
@@ -102,7 +102,7 @@ public enum Operation {
      *            the protocol-specific name.
      * @return the corresponding <tt>Operation</tt>
      */
-    public static Operation forName(String name) {
+    public static Operation forName(final String name) {
         if (name == null) {
             throw new NullPointerException();
         }

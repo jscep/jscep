@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transport representing the <code>HTTP POST</code> method
+ * Transport representing the <code>HTTP POST</code> method.
  */
 @ThreadSafe
 public final class HttpPostTransport extends Transport {
@@ -32,7 +32,7 @@ public final class HttpPostTransport extends Transport {
      * @param url
      *            the <tt>URL</tt> to send <tt>POST</tt> requests to.
      */
-    public HttpPostTransport(URL url) {
+    public HttpPostTransport(final URL url) {
         super(url);
     }
 
@@ -40,8 +40,8 @@ public final class HttpPostTransport extends Transport {
      * {@inheritDoc}
      */
     @Override
-    public <T> T sendRequest(Request msg, ScepResponseHandler<T> handler)
-            throws TransportException {
+    public <T> T sendRequest(final Request msg,
+            final ScepResponseHandler<T> handler) throws TransportException {
         if (!PkiOperationRequest.class.isAssignableFrom(msg.getClass())) {
             throw new IllegalArgumentException(
                     "POST transport may not be used for " + msg.getOperation()

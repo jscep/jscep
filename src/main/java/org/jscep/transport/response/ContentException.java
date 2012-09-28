@@ -12,11 +12,11 @@ import org.jscep.transport.TransportException;
 public class ContentException extends TransportException {
     private static final long serialVersionUID = -959127316844320818L;
 
-    public ContentException(Throwable cause) {
+    public ContentException(final Throwable cause) {
         super(cause);
     }
 
-    public ContentException(String message) {
+    public ContentException(final String message) {
         super(message);
     }
 

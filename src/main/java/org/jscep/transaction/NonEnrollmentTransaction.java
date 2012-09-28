@@ -16,7 +16,7 @@ import org.jscep.transport.request.PkiOperationRequest;
 import org.jscep.transport.response.PkiOperationResponseHandler;
 
 /**
- * This class represents a SCEP non-enrollment <tt>Transaction</tt>
+ * This class represents a SCEP non-enrollment <tt>Transaction</tt>.
  * 
  * @see GetCert
  * @see GetCrl
@@ -42,9 +42,9 @@ public final class NonEnrollmentTransaction extends Transaction {
      * @param msgType
      *            the type of message.
      */
-    public NonEnrollmentTransaction(Transport transport,
-            PkiMessageEncoder encoder, PkiMessageDecoder decoder,
-            IssuerAndSerialNumber iasn, MessageType msgType) {
+    public NonEnrollmentTransaction(final Transport transport,
+            final PkiMessageEncoder encoder, final PkiMessageDecoder decoder,
+            final IssuerAndSerialNumber iasn, final MessageType msgType) {
         super(transport, encoder, decoder);
         this.transId = TransactionId.createTransactionId();
 

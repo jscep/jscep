@@ -38,7 +38,8 @@ public final class PkiOperationResponseHandler implements
     /**
      * {@inheritDoc}
      */
-    public CMSSignedData getResponse(byte[] content, String mimeType)
+    @Override
+    public CMSSignedData getResponse(final byte[] content, final String mimeType)
             throws ContentException {
         if (mimeType.startsWith(PKI_MESSAGE)) {
             try {

@@ -41,8 +41,8 @@ public class PkcsReq extends PkiRequest<PKCS10CertificationRequest> {
      * @param messageData
      *            the <tt>CertificationRequest</tt> to use in enrollment.
      */
-    public PkcsReq(TransactionId transId, Nonce senderNonce,
-            PKCS10CertificationRequest messageData) {
+    public PkcsReq(final TransactionId transId, final Nonce senderNonce,
+            final PKCS10CertificationRequest messageData) {
         super(transId, MessageType.PKCS_REQ, senderNonce, messageData);
     }
 }

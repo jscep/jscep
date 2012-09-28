@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.jscep.client;
 
 import java.io.IOException;
@@ -83,17 +82,17 @@ import org.slf4j.LoggerFactory;
  * The <tt>Client</tt> class is used for interacting with a SCEP server.
  * <p>
  * Typical usage might look like so:
- *
+ * 
  * <pre>
  * // Create the client
  * URL server = new URL(&quot;http://jscep.org/scep/pkiclient.exe&quot;);
  * CertificateVerifier verifier = new ConsoleCertificateVerifier();
  * Client client = new Client(server, verifier);
- *
+ * 
  * // Invoke operations on the client.
  * client.getCaCapabilities();
  * </pre>
- *
+ * 
  * Each of the operations of this class is overloaded with a profile argument to
  * support SCEP servers with multiple (or mandatory) profile names.
  */
@@ -127,7 +126,7 @@ public final class Client {
      * <tt>CallbackHandler</tt> will be used to handle additional
      * <tt>Callback</tt>s, users of this class are recommended to use the
      * {@link #Client(URL, CertificateVerifier)} constructor instead.
-     *
+     * 
      * @param url
      *            the URL of the SCEP server.
      * @param handler
@@ -146,7 +145,7 @@ public final class Client {
      * <p/>
      * The provided <tt>CertificateVerifier</tt> is used to verify that the
      * identity of the SCEP server matches what the client expects.
-     *
+     * 
      * @param url
      *            the URL of the SCEP server.
      * @param verifier
@@ -189,7 +188,7 @@ public final class Client {
 
     /**
      * Retrieves the set of SCEP capabilities from the CA.
-     *
+     * 
      * @return the capabilities of the server.
      */
     public Capabilities getCaCapabilities() {
@@ -201,7 +200,7 @@ public final class Client {
      * Retrieves the capabilities of the SCEP server.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     *
+     * 
      * @param profile
      *            the SCEP server profile.
      * @return the capabilities of the server.
@@ -227,7 +226,7 @@ public final class Client {
      * single CA certificate will be returned. If the SCEP server supports
      * multiple entities (for example, if it uses a separate entity for signing
      * SCEP messages), additional RA certificates will also be returned.
-     *
+     * 
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
@@ -247,7 +246,7 @@ public final class Client {
      * SCEP messages), additional RA certificates will also be returned.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     *
+     * 
      * @param profile
      *            the SCEP server profile.
      * @return the certificate store.
@@ -311,7 +310,7 @@ public final class Client {
      * <p>
      * This method will query the SCEP server to determine if the CA is
      * scheduled to start using a new certificate for issuing.
-     *
+     * 
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
@@ -328,7 +327,7 @@ public final class Client {
      * scheduled to start using a new certificate for issuing.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     *
+     * 
      * @param profile
      *            the SCEP server profile.
      * @return the certificate store.
@@ -366,7 +365,7 @@ public final class Client {
      * <p>
      * This method requests a CRL for a certificate as identified by the issuer
      * name and the certificate serial number.
-     *
+     * 
      * @param identity
      *            the identity of the client.
      * @param key
@@ -395,7 +394,7 @@ public final class Client {
      * name and the certificate serial number.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     *
+     * 
      * @param identity
      *            the identity of the client.
      * @param key
@@ -469,7 +468,7 @@ public final class Client {
      * This request relates only to the current CA certificate. If the CA
      * certificate has changed since the requested certificate was issued, this
      * operation will fail.
-     *
+     * 
      * @param identity
      *            the identity of the client.
      * @param key
@@ -496,7 +495,7 @@ public final class Client {
      * operation will fail.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     *
+     * 
      * @param identity
      *            the identity of the client.
      * @param key
@@ -549,7 +548,7 @@ public final class Client {
      * <p>
      * This method enrols the provider <tt>CertificationRequest</tt> into the
      * PKI represented by the SCEP server.
-     *
+     * 
      * @param identity
      *            the identity of the client.
      * @param key
@@ -574,7 +573,7 @@ public final class Client {
      * <p>
      * This method enrols the provider <tt>CertificationRequest</tt> into the
      * PKI represented by the SCEP server.
-     *
+     * 
      * @param identity
      *            the identity of the client.
      * @param key
@@ -592,7 +591,7 @@ public final class Client {
      */
     public EnrollmentResponse enrol(final X509Certificate identity,
             final PrivateKey key, final PKCS10CertificationRequest csr,
-            String profile) throws ClientException, TransactionException {
+            final String profile) throws ClientException, TransactionException {
         LOGGER.debug("Enrolling certificate with CA");
 
         if (isSelfSigned(identity)) {
@@ -707,7 +706,7 @@ public final class Client {
 
     /**
      * Creates a new transport based on the capabilities of the server.
-     *
+     * 
      * @param profile
      *            profile to use for determining if HTTP POST is supported
      * @return the new transport.

@@ -40,7 +40,7 @@ public final class CertRep extends PkiMessage<CMSSignedData> {
     /**
      * Creates a new CertRep to indicate the original request is in a
      * <em>success</em> state.
-     *
+     * 
      * @param transId
      *            the transaction ID of the original request.
      * @param senderNonce
@@ -61,7 +61,7 @@ public final class CertRep extends PkiMessage<CMSSignedData> {
     /**
      * Creates a new CertRep to indicate the original request is in a
      * <em>failure</em> state.
-     *
+     * 
      * @param transId
      *            the transaction ID of the original request.
      * @param senderNonce
@@ -82,7 +82,7 @@ public final class CertRep extends PkiMessage<CMSSignedData> {
     /**
      * Creates a new CertRep to indicate the original request is in a
      * <em>pending</em> state.
-     *
+     * 
      * @param transId
      *            the transaction ID of the original request.
      * @param senderNonce

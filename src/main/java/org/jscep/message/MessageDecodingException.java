@@ -12,7 +12,7 @@ public class MessageDecodingException extends Exception {
 
     /**
      * Creates a new <tt>MessageDecodingException</tt> with the provided cause.
-     *
+     * 
      * @param cause
      *            the initial cause of the decoding exception.
      */
@@ -23,7 +23,7 @@ public class MessageDecodingException extends Exception {
     /**
      * Creates a new <tt>MessageDecodingException</tt> with the provided error
      * message.
-     *
+     * 
      * @param message
      *            the description of the decoding exception.
      */

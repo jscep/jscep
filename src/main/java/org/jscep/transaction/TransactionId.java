@@ -26,11 +26,11 @@ public final class TransactionId implements Serializable {
      * @param id
      *            the ID to copy.
      */
-    public TransactionId(byte[] id) {
+    public TransactionId(final byte[] id) {
         this.id = ArrayUtils.clone(id);
     }
 
-    private TransactionId(PublicKey pubKey, String digestAlgorithm) {
+    private TransactionId(final PublicKey pubKey, final String digestAlgorithm) {
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance(digestAlgorithm);
@@ -61,8 +61,8 @@ public final class TransactionId implements Serializable {
      *            the algorithm to use to digest the key
      * @return the new <tt>TransactionID</tt>
      */
-    public static TransactionId createTransactionId(PublicKey pubKey,
-            String digestAlgorithm) {
+    public static TransactionId createTransactionId(final PublicKey pubKey,
+            final String digestAlgorithm) {
         return new TransactionId(pubKey, digestAlgorithm);
     }
 
@@ -93,11 +93,13 @@ public final class TransactionId implements Serializable {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         TransactionId that = (TransactionId) o;
 

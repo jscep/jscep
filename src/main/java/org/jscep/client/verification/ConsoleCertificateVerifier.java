@@ -26,7 +26,7 @@ public final class ConsoleCertificateVerifier implements CertificateVerifier {
 
     /**
      * Use the system console to prompt the user with each available hash.
-     *
+     * 
      * @param cert
      *            the certificate to verify
      * @return <tt>true</tt> if the certificate is verified, <tt>false</tt>

@@ -30,7 +30,7 @@ public final class HttpGetTransport extends Transport {
      * @param url
      *            the <tt>URL</tt> to send <tt>GET</tt> requests to.
      */
-    public HttpGetTransport(URL url) {
+    public HttpGetTransport(final URL url) {
         super(url);
     }
 
@@ -38,8 +38,8 @@ public final class HttpGetTransport extends Transport {
      * {@inheritDoc}
      */
     @Override
-    public <T> T sendRequest(Request msg, ScepResponseHandler<T> handler)
-            throws TransportException {
+    public <T> T sendRequest(final Request msg,
+            final ScepResponseHandler<T> handler) throws TransportException {
         URL url = getUrl(msg.getOperation(), msg.getMessage());
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Sending {} to {}", msg, url);
@@ -75,7 +75,8 @@ public final class HttpGetTransport extends Transport {
         return handler.getResponse(response, conn.getContentType());
     }
 
-    private URL getUrl(Operation op, String message) throws TransportException {
+    private URL getUrl(final Operation op, final String message)
+            throws TransportException {
         try {
             return new URL(getUrl(op).toExternalForm() + "&message="
                     + URLEncoder.encode(message, "UTF-8"));

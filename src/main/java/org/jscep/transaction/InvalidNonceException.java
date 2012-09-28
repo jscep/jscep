@@ -24,7 +24,7 @@ public class InvalidNonceException extends TransactionException {
      * @param recd
      *            the received <tt>Nonce</tt>
      */
-    public InvalidNonceException(Nonce sent, Nonce recd) {
+    public InvalidNonceException(final Nonce sent, final Nonce recd) {
         super(String.format(MISMATCH, sent, recd));
     }
 
@@ -35,7 +35,7 @@ public class InvalidNonceException extends TransactionException {
      * @param nonce
      *            the replayed <tt>Nonce</tt>.
      */
-    public InvalidNonceException(Nonce nonce) {
+    public InvalidNonceException(final Nonce nonce) {
         super(String.format(REPLAY, nonce));
     }
 }

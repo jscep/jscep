@@ -29,7 +29,7 @@ import javax.security.auth.callback.Callback;
 
 /**
  * This class is used to obtain verification of a CA certificate.
- *
+ * 
  * @author David Grant
  */
 public final class CertificateVerificationCallback implements Callback {
@@ -45,7 +45,7 @@ public final class CertificateVerificationCallback implements Callback {
     /**
      * Construct a <code>CertificateVerificationCallback</code> with the CA
      * certificate.
-     *
+     * 
      * @param caCertificate
      *            the CA certificate to verify.
      */
@@ -55,7 +55,7 @@ public final class CertificateVerificationCallback implements Callback {
 
     /**
      * Returns the CA certificate to verify.
-     *
+     * 
      * @return the CA certificate to verify.
      */
     public X509Certificate getCertificate() {
@@ -64,7 +64,7 @@ public final class CertificateVerificationCallback implements Callback {
 
     /**
      * Returns the outcome of the verification process.
-     *
+     * 
      * @return <tt>true</tt> if the certificate was verified, <tt>false</tt>
      *         otherwise.
      */
@@ -78,7 +78,7 @@ public final class CertificateVerificationCallback implements Callback {
      * {@link #isVerified()} returns <tt>false</tt> by default, so this method
      * only needs to be called if the CA certificate can be successfully
      * verified.
-     *
+     * 
      * @param verified
      *            the outcome.
      */

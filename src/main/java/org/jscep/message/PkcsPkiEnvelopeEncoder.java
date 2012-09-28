@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is used for enveloping and encrypting a <tt>messageData</tt> to
  * produce the <tt>pkcsPkiEnvelope</tt> part of a SCEP secure message object.
- *
+ * 
  * @see PkcsPkiEnvelopeDecoder
  */
 public final class PkcsPkiEnvelopeEncoder {
@@ -32,7 +32,7 @@ public final class PkcsPkiEnvelopeEncoder {
     /**
      * Creates a new <tt>PkcsPkiEnvelopeEncoder</tt> for the entity identified
      * by the provided certificate.
-     *
+     * 
      * @param recipient
      *            the entity for whom the <tt>pkcsPkiEnvelope</tt> is intended.
      */
@@ -44,7 +44,7 @@ public final class PkcsPkiEnvelopeEncoder {
     /**
      * Creates a new <tt>PkcsPkiEnvelopeEncoder</tt> for the entity identified
      * by the provided certificate.
-     *
+     * 
      * @param recipient
      *            the entity for whom the <tt>pkcsPkiEnvelope</tt> is intended.
      * @param encAlg
@@ -58,7 +58,7 @@ public final class PkcsPkiEnvelopeEncoder {
 
     /**
      * Encrypts and envelops the provided messageData.
-     *
+     * 
      * @param messageData
      *            the message data to encrypt and envelop.
      * @return the enveloped data.

@@ -19,7 +19,7 @@ public class TransportException extends Exception {
      * @param cause
      *            the cause of the error.
      */
-    public TransportException(String message, Throwable cause) {
+    public TransportException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
@@ -29,7 +29,7 @@ public class TransportException extends Exception {
      * @param cause
      *            the cause of the error.
      */
-    public TransportException(Throwable cause) {
+    public TransportException(final Throwable cause) {
         super(cause);
     }
 
@@ -39,7 +39,7 @@ public class TransportException extends Exception {
      * @param message
      *            a description of the error condition.
      */
-    public TransportException(String message) {
+    public TransportException(final String message) {
         super(message);
     }
 }

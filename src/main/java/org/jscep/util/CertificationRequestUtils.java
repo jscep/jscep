@@ -17,7 +17,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
  * This class is used for performing utility operations on
  * <tt>CertificationRequest</tt> instances.
  */
-public class CertificationRequestUtils {
+public final class CertificationRequestUtils {
     private CertificationRequestUtils() {
     }
 
@@ -36,7 +36,7 @@ public class CertificationRequestUtils {
      *             if there is an error extracting the <tt>PublicKey</tt>
      *             parameters.
      */
-    public static PublicKey getPublicKey(PKCS10CertificationRequest csr)
+    public static PublicKey getPublicKey(final PKCS10CertificationRequest csr)
             throws InvalidKeySpecException, IOException {
         SubjectPublicKeyInfo pubKeyInfo = csr.getSubjectPublicKeyInfo();
         RSAKeyParameters keyParams = (RSAKeyParameters) PublicKeyFactory

@@ -7,7 +7,7 @@ import net.jcip.annotations.Immutable;
  * perform a SCEP operation.
  */
 @Immutable
-public class OperationFailureException extends TransactionException {
+public final class OperationFailureException extends TransactionException {
     private static final long serialVersionUID = 326478648151473741L;
     private final FailInfo failInfo;
 
@@ -18,7 +18,7 @@ public class OperationFailureException extends TransactionException {
      * @param failInfo
      *            the reason for failure.
      */
-    public OperationFailureException(FailInfo failInfo) {
+    public OperationFailureException(final FailInfo failInfo) {
         super("Operation failed due to " + failInfo);
         this.failInfo = failInfo;
     }

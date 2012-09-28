@@ -23,12 +23,12 @@ package org.jscep.asn1;
 
 /**
  * ASN.1 Object Identifiers used by SCEP.
- *
+ * 
  * @author David Grant
  */
 public enum ScepObjectIdentifier {
     /**
-     *
+     * 
      * <code>messageType</code> attribute identifier.
      */
     MESSAGE_TYPE("2.16.840.1.113733.1.9.2"),
@@ -60,8 +60,9 @@ public enum ScepObjectIdentifier {
 
     /**
      * Creates a new {@code ScepObjectIdentifier} with the given OID.
-     *
-     * @param objId the OID to use.
+     * 
+     * @param objId
+     *            the OID to use.
      */
     private ScepObjectIdentifier(final String objId) {
         this.objId = objId;
@@ -69,7 +70,7 @@ public enum ScepObjectIdentifier {
 
     /**
      * Returns the ObjectIdentifier as a String.
-     *
+     * 
      * @return the ObjectIdentifier
      */
     public String id() {

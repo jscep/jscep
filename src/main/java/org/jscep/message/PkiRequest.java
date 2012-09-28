@@ -33,8 +33,20 @@ import org.jscep.transaction.TransactionId;
  *            the <tt>messageData</tt> for this request.
  */
 public abstract class PkiRequest<T> extends PkiMessage<T> {
-    public PkiRequest(TransactionId transId, MessageType messageType,
-            Nonce senderNonce, T messageData) {
+    /**
+     * 
+     * @param transId
+     *            the transaction ID.
+     * @param messageType
+     *            the type of message.
+     * @param senderNonce
+     *            the sender nonce.
+     * @param messageData
+     *            the message data.
+     */
+    public PkiRequest(final TransactionId transId,
+            final MessageType messageType, final Nonce senderNonce,
+            final T messageData) {
         super(transId, messageType, senderNonce, messageData);
     }
 
@@ -42,7 +54,7 @@ public abstract class PkiRequest<T> extends PkiMessage<T> {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
 }

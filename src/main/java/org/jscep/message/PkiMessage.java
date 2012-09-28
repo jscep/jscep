@@ -53,8 +53,9 @@ public abstract class PkiMessage<T> {
      * @param messageData
      *            the data carried by this message.
      */
-    public PkiMessage(TransactionId transId, MessageType messageType,
-            Nonce senderNonce, T messageData) {
+    public PkiMessage(final TransactionId transId,
+            final MessageType messageType, final Nonce senderNonce,
+            final T messageData) {
         this.transId = transId;
         this.messageType = messageType;
         this.senderNonce = senderNonce;
@@ -110,7 +111,7 @@ public abstract class PkiMessage<T> {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj,
                 new String[] { "messageData" });
     }

@@ -7,21 +7,21 @@ package org.jscep.transaction;
  */
 public enum PkiStatus {
     /**
-     * Request granted
+     * Request granted.
      */
     SUCCESS(0),
     /**
-     * Request rejected
+     * Request rejected.
      */
     FAILURE(2),
     /**
-     * Request pending for manual approval
+     * Request pending for manual approval.
      */
     PENDING(3);
 
     private final int value;
 
-    private PkiStatus(int value) {
+    private PkiStatus(final int value) {
         this.value = value;
     }
 
@@ -44,7 +44,7 @@ public enum PkiStatus {
      *            the <tt>pkiStatus</tt> value.
      * @return the corresponding <tt>pkiStatus</tt>
      */
-    public static PkiStatus valueOf(int value) {
+    public static PkiStatus valueOf(final int value) {
         for (PkiStatus status : PkiStatus.values()) {
             if (status.getValue() == value) {
                 return status;

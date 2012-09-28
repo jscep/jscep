@@ -33,14 +33,14 @@ import org.bouncycastle.asn1.x500.X500Name;
  * This class represents the SCEP <code>IssuerAndSubject</code> ASN.1 object.
  * <p/>
  * This object is defined by the following ASN.1 notation:
- *
+ * 
  * <pre>
  * IssuerAndSubject ::= SEQUENCE {
  *     issuer Name,
  *     subject Name,
  * }
  * </pre>
- *
+ * 
  * @author David Grant
  */
 public final class IssuerAndSubject extends ASN1Object {
@@ -55,7 +55,7 @@ public final class IssuerAndSubject extends ASN1Object {
 
     /**
      * Creates a new instance of this class from the given sequence.
-     *
+     * 
      * @param seq
      *            the sequence.
      */
@@ -66,7 +66,7 @@ public final class IssuerAndSubject extends ASN1Object {
 
     /**
      * Creates a new instance of this class using the given issuer and subject.
-     *
+     * 
      * @param issuer
      *            the issuer.
      * @param subject
@@ -79,7 +79,7 @@ public final class IssuerAndSubject extends ASN1Object {
 
     /**
      * Creates a new instance of this class using the given byte array.
-     *
+     * 
      * @param bytes
      *            the byte array.
      */
@@ -89,7 +89,7 @@ public final class IssuerAndSubject extends ASN1Object {
 
     /**
      * Returns the issuer.
-     *
+     * 
      * @return the issuer.
      */
     public X500Name getIssuer() {
@@ -98,7 +98,7 @@ public final class IssuerAndSubject extends ASN1Object {
 
     /**
      * Returns the subject.
-     *
+     * 
      * @return the subject.
      */
     public X500Name getSubject() {

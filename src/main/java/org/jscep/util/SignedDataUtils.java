@@ -57,7 +57,8 @@ public final class SignedDataUtils {
      * @return <code>true</code> if the signedData was signed by the entity,
      *         <code>false</code> otherwise.
      */
-    public static boolean isSignedBy(CMSSignedData sd, X509Certificate signer) {
+    public static boolean isSignedBy(final CMSSignedData sd,
+            final X509Certificate signer) {
         SignerInformationStore store = sd.getSignerInfos();
         SignerInformation signerInfo = store.get(new JcaSignerId(signer));
         if (signerInfo == null) {
@@ -100,8 +101,7 @@ public final class SignedDataUtils {
      *            the <tt>signedData</tt> to etract.
      * @return the extracted certificates and CRLs.
      */
-    @SuppressWarnings("unchecked")
-    public static CertStore fromSignedData(CMSSignedData signedData) {
+    public static CertStore fromSignedData(final CMSSignedData signedData) {
         CertificateFactory factory;
         try {
             factory = CertificateFactory.getInstance("X509");
@@ -112,7 +112,9 @@ public final class SignedDataUtils {
         Store certStore = signedData.getCertificates();
         Store crlStore = signedData.getCRLs();
 
+        @SuppressWarnings("unchecked")
         Collection<X509CertificateHolder> certs = certStore.getMatches(null);
+        @SuppressWarnings("unchecked")
         Collection<X509CRLHolder> crls = crlStore.getMatches(null);
 
         Collection<Object> certsAndCrls = new ArrayList<Object>();

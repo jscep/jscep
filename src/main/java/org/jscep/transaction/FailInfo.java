@@ -29,30 +29,30 @@ package org.jscep.transaction;
  */
 public enum FailInfo {
     /**
-     * Unrecognized or unsupported algorithm identifier
+     * Unrecognized or unsupported algorithm identifier.
      */
     badAlg(0),
     /**
-     * Integrity check failed
+     * Integrity check failed.
      */
     badMessageCheck(1),
     /**
-     * Transaction not permitted or supported
+     * Transaction not permitted or supported.
      */
     badRequest(2),
     /**
      * The signingTime attribute from the PKCS#7 SignedAttributes was not
-     * sufficiently close to the system time
+     * sufficiently close to the system time.
      */
     badTime(3),
     /**
-     * No certificate could be identified matching the provided criteria
+     * No certificate could be identified matching the provided criteria.
      */
     badCertId(4);
 
     private final int value;
 
-    private FailInfo(int value) {
+    private FailInfo(final int value) {
         this.value = value;
     }
 
@@ -83,7 +83,7 @@ public enum FailInfo {
      *            the <tt>failInfo</tt> value.
      * @return the corresponding <tt>failInfo</tt>
      */
-    public static FailInfo valueOf(int value) {
+    public static FailInfo valueOf(final int value) {
         for (FailInfo failInfo : FailInfo.values()) {
             if (failInfo.getValue() == value) {
                 return failInfo;

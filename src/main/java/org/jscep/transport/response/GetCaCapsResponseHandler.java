@@ -30,6 +30,8 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.apache.commons.io.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author David Grant
  */
+@ThreadSafe
 public final class GetCaCapsResponseHandler implements
         ScepResponseHandler<Capabilities> {
     private static final String TEXT_PLAIN = "text/plain";
@@ -50,7 +53,8 @@ public final class GetCaCapsResponseHandler implements
      * 
      * @throws InvalidContentTypeException
      */
-    public Capabilities getResponse(byte[] content, String mimeType)
+    @Override
+    public Capabilities getResponse(final byte[] content, final String mimeType)
             throws ContentException {
         if (mimeType == null || !mimeType.startsWith(TEXT_PLAIN)) {
             LOGGER.warn(

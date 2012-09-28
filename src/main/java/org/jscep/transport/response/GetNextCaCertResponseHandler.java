@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.cert.CertStore;
 import java.security.cert.X509Certificate;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
@@ -12,7 +14,8 @@ import org.jscep.util.SignedDataUtils;
 /**
  * This class handles responses to <code>GetNextCACert</code> requests.
  */
-public class GetNextCaCertResponseHandler implements
+@ThreadSafe
+public final class GetNextCaCertResponseHandler implements
         ScepResponseHandler<CertStore> {
     private static final String NEXT_CA_CERT = "application/x-x509-next-ca-cert";
     private final X509Certificate signer;
@@ -24,15 +27,16 @@ public class GetNextCaCertResponseHandler implements
      * @param signer
      *            the signer of the <tt>signedData</tt> response.
      */
-    public GetNextCaCertResponseHandler(X509Certificate signer) {
+    public GetNextCaCertResponseHandler(final X509Certificate signer) {
         this.signer = signer;
     }
 
     /**
      * {@inheritDoc}
      */
-    public CertStore getResponse(byte[] content, String mimeType)
-            throws ContentException {
+    @Override
+    public final CertStore getResponse(final byte[] content,
+            final String mimeType) throws ContentException {
         if (mimeType.startsWith(NEXT_CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1
 

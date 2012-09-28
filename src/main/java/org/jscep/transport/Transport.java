@@ -20,7 +20,7 @@ public abstract class Transport {
      * @param url
      *            the <tt>URL</tt> used for sending requests.
      */
-    Transport(URL url) {
+    Transport(final URL url) {
         this.url = url;
     }
 
@@ -43,8 +43,8 @@ public abstract class Transport {
      * @throws TransportException
      *             if any transport error occurs.
      */
-    public abstract <T> T sendRequest(Request msg,
-            ScepResponseHandler<T> handler) throws TransportException;
+    public abstract <T> T sendRequest(final Request msg,
+            final ScepResponseHandler<T> handler) throws TransportException;
 
     /**
      * Returns the <tt>URL</tt> for the given operation.

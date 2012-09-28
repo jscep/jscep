@@ -64,8 +64,8 @@ public final class PkiMessageDecoder {
      * @param decoder
      *            the decoder used for extracting the <tt>pkiMessage</tt>.
      */
-    public PkiMessageDecoder(X509Certificate signer,
-            PkcsPkiEnvelopeDecoder decoder) {
+    public PkiMessageDecoder(final X509Certificate signer,
+            final PkcsPkiEnvelopeDecoder decoder) {
         this.decoder = decoder;
         this.signer = signer;
     }
@@ -81,7 +81,7 @@ public final class PkiMessageDecoder {
      *             if there is a problem decoding the <tt>signedData</tt>
      */
     @SuppressWarnings("unchecked")
-    public PkiMessage<?> decode(CMSSignedData pkiMessage)
+    public PkiMessage<?> decode(final CMSSignedData pkiMessage)
             throws MessageDecodingException {
         LOGGER.debug("Decoding pkiMessage");
         validate(pkiMessage);
@@ -206,7 +206,7 @@ public final class PkiMessageDecoder {
         }
     }
 
-    private void validate(CMSSignedData pkiMessage) {
+    private void validate(final CMSSignedData pkiMessage) {
         SignedData sd = SignedData.getInstance(pkiMessage.toASN1Structure()
                 .getContent());
         LOGGER.debug("pkiMessage version: {}", sd.getVersion());
@@ -214,11 +214,11 @@ public final class PkiMessageDecoder {
                 .getEncapContentInfo().getContentType());
     }
 
-    private DERObjectIdentifier toOid(ScepObjectIdentifier oid) {
+    private DERObjectIdentifier toOid(final ScepObjectIdentifier oid) {
         return new DERObjectIdentifier(oid.id());
     }
 
-    private CMSEnvelopedData getEnvelopedData(Object bytes)
+    private CMSEnvelopedData getEnvelopedData(final Object bytes)
             throws MessageDecodingException {
         // We expect the byte array to be a sequence
         // ... and that sequence to be a ContentInfo (but might be the
@@ -230,7 +230,7 @@ public final class PkiMessageDecoder {
         }
     }
 
-    private Nonce toNonce(Attribute attr) {
+    private Nonce toNonce(final Attribute attr) {
         // Sometimes we don't get a sender nonce.
         if (attr == null) {
             return null;
@@ -241,28 +241,28 @@ public final class PkiMessageDecoder {
         return new Nonce(octets.getOctets());
     }
 
-    private MessageType toMessageType(Attribute attr) {
+    private MessageType toMessageType(final Attribute attr) {
         final DERPrintableString string = (DERPrintableString) attr
                 .getAttrValues().getObjectAt(0);
 
         return MessageType.valueOf(Integer.valueOf(string.getString()));
     }
 
-    private TransactionId toTransactionId(Attribute attr) {
+    private TransactionId toTransactionId(final Attribute attr) {
         final DERPrintableString string = (DERPrintableString) attr
                 .getAttrValues().getObjectAt(0);
 
         return new TransactionId(string.getOctets());
     }
 
-    private PkiStatus toPkiStatus(Attribute attr) {
+    private PkiStatus toPkiStatus(final Attribute attr) {
         final DERPrintableString string = (DERPrintableString) attr
                 .getAttrValues().getObjectAt(0);
 
         return PkiStatus.valueOf(Integer.valueOf(string.getString()));
     }
 
-    private FailInfo toFailInfo(Attribute attr) {
+    private FailInfo toFailInfo(final Attribute attr) {
         final DERPrintableString string = (DERPrintableString) attr
                 .getAttrValues().getObjectAt(0);
 

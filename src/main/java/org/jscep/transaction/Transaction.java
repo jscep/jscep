@@ -37,8 +37,8 @@ public abstract class Transaction {
      * @param decoder
      *            the decoder used to decode the response.
      */
-    public Transaction(Transport transport, PkiMessageEncoder encoder,
-            PkiMessageDecoder decoder) {
+    public Transaction(final Transport transport,
+            final PkiMessageEncoder encoder, final PkiMessageDecoder decoder) {
         this.transport = transport;
         this.encoder = encoder;
         this.decoder = decoder;
@@ -52,7 +52,7 @@ public abstract class Transaction {
      * 
      * @return the reason for failure.
      */
-    public FailInfo getFailInfo() {
+    public final FailInfo getFailInfo() {
         if (state != State.CERT_NON_EXISTANT) {
             throw new IllegalStateException(
                     "No failure has been received.  Check state!");
@@ -68,7 +68,7 @@ public abstract class Transaction {
      * 
      * @return the <tt>CertStore</tt>
      */
-    public CertStore getCertStore() {
+    public final CertStore getCertStore() {
         if (state != State.CERT_ISSUED) {
             throw new IllegalStateException(
                     "No certstore has been received.  Check state!");
@@ -92,7 +92,7 @@ public abstract class Transaction {
      */
     public abstract TransactionId getId();
 
-    CMSSignedData send(final PkiOperationResponseHandler handler,
+    final CMSSignedData send(final PkiOperationResponseHandler handler,
             final Request req) throws TransactionException {
         try {
             return transport.sendRequest(req, handler);
@@ -101,35 +101,36 @@ public abstract class Transaction {
         }
     }
 
-    PkiMessage<?> decode(CMSSignedData res) throws MessageDecodingException {
+    final PkiMessage<?> decode(final CMSSignedData res)
+            throws MessageDecodingException {
         return decoder.decode(res);
     }
 
-    CMSSignedData encode(final PkiMessage<?> message)
+    final CMSSignedData encode(final PkiMessage<?> message)
             throws MessageEncodingException {
         return encoder.encode(message);
     }
 
-    State pending() {
+    final State pending() {
         this.state = State.CERT_REQ_PENDING;
         return state;
     }
 
-    State failure(FailInfo failInfo) {
+    final State failure(final FailInfo failInfo) {
         this.failInfo = failInfo;
         this.state = State.CERT_NON_EXISTANT;
 
         return state;
     }
 
-    State success(CertStore certStore) {
+    final State success(final CertStore certStore) {
         this.certStore = certStore;
         this.state = State.CERT_ISSUED;
 
         return state;
     }
 
-    CertStore extractCertStore(CertRep response) {
+    final CertStore extractCertStore(final CertRep response) {
         CMSSignedData signedData = response.getMessageData();
 
         return SignedDataUtils.fromSignedData(signedData);
