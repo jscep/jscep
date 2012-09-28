@@ -137,7 +137,7 @@ public final class CertStoreInspector {
     private static X509Certificate findSigner(final CertStore store)
             throws CertStoreException {
         boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];
-        keyUsage[KeyUsage.digitalSignature] = true;
+        keyUsage[0] = true;
         X509CertSelector signingSelector = new X509CertSelector();
         signingSelector.setBasicConstraints(ONLY_END_ENTITIES);
         signingSelector.setKeyUsage(keyUsage);
@@ -159,7 +159,7 @@ public final class CertStoreInspector {
     private static X509Certificate findRecipient(final CertStore store)
             throws CertStoreException {
         boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];
-        keyUsage[KeyUsage.keyEncipherment] = true;
+        keyUsage[2] = true;
         X509CertSelector signingSelector = new X509CertSelector();
         signingSelector.setBasicConstraints(ONLY_END_ENTITIES);
         signingSelector.setKeyUsage(keyUsage);
@@ -178,7 +178,7 @@ public final class CertStoreInspector {
 
         LOGGER.debug("Selecting certificate with keyUsage:dataEncipherment");
         keyUsage = new boolean[KEY_USAGE_LENGTH];
-        keyUsage[KeyUsage.dataEncipherment] = true;
+        keyUsage[3] = true;
         signingSelector.setKeyUsage(keyUsage);
 
         certs = store.getCertificates(signingSelector);
