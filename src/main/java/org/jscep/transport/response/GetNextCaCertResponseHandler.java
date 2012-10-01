@@ -23,7 +23,7 @@ public final class GetNextCaCertResponseHandler implements
     /**
      * Creates a new <tt>GetNextCaCertResponseHandler</tt> using the provided
      * certificate.
-     * 
+     *
      * @param signer
      *            the signer of the <tt>signedData</tt> response.
      */
@@ -35,7 +35,7 @@ public final class GetNextCaCertResponseHandler implements
      * {@inheritDoc}
      */
     @Override
-    public final CertStore getResponse(final byte[] content,
+    public CertStore getResponse(final byte[] content,
             final String mimeType) throws ContentException {
         if (mimeType.startsWith(NEXT_CA_CERT)) {
             // http://tools.ietf.org/html/draft-nourse-scep-20#section-4.6.1

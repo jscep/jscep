@@ -1,11 +1,6 @@
 package org.jscep.message;
 
-import static org.jscep.asn1.ScepObjectIdentifier.FAIL_INFO;
-import static org.jscep.asn1.ScepObjectIdentifier.MESSAGE_TYPE;
-import static org.jscep.asn1.ScepObjectIdentifier.PKI_STATUS;
-import static org.jscep.asn1.ScepObjectIdentifier.RECIPIENT_NONCE;
-import static org.jscep.asn1.ScepObjectIdentifier.SENDER_NONCE;
-import static org.jscep.asn1.ScepObjectIdentifier.TRANS_ID;
+import static org.jscep.asn1.ScepObjectIdentifier.*;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
@@ -47,7 +42,7 @@ import org.slf4j.Logger;
 /**
  * This class is used to decode a PKCS #7 signedData object into a
  * <tt>pkiMessage</tt>.
- * 
+ *
  * @see PkiMessageEncoder
  */
 public final class PkiMessageDecoder {
@@ -57,7 +52,7 @@ public final class PkiMessageDecoder {
 
     /**
      * Creates a new <tt>PkiMessageDecoder</tt>.
-     * 
+     *
      * @param signer
      *            the certificate used for verifying the <tt>signedData</tt>
      *            signature.
@@ -73,7 +68,7 @@ public final class PkiMessageDecoder {
     /**
      * Decodes the provided PKCS #7 <tt>signedData</tt> into a
      * <tt>PkiMessage</tt>
-     * 
+     *
      * @param pkiMessage
      *            the <tt>signedData</tt> to decode.
      * @return the decoded <tt>PkiMessage</tt>

@@ -1,11 +1,6 @@
 package org.jscep.message;
 
-import static org.jscep.asn1.ScepObjectIdentifier.FAIL_INFO;
-import static org.jscep.asn1.ScepObjectIdentifier.MESSAGE_TYPE;
-import static org.jscep.asn1.ScepObjectIdentifier.PKI_STATUS;
-import static org.jscep.asn1.ScepObjectIdentifier.RECIPIENT_NONCE;
-import static org.jscep.asn1.ScepObjectIdentifier.SENDER_NONCE;
-import static org.jscep.asn1.ScepObjectIdentifier.TRANS_ID;
+import static org.jscep.asn1.ScepObjectIdentifier.*;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -26,7 +21,7 @@ import org.jscep.transaction.TransactionId;
 class AttributeTableFactory {
     /**
      * Creates a new {@code AttributeTable} for the given {@code PkiMessage}.
-     * 
+     *
      * @param message
      *            the message to parse.
      * @return the attributes from the message.
@@ -130,7 +125,7 @@ class AttributeTableFactory {
     }
 
     /**
-     * 
+     *
      * @param transId
      *            the transaction ID
      * @return the converted attribute.
