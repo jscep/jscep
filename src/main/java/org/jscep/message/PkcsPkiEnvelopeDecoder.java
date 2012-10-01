@@ -24,14 +24,12 @@ import org.bouncycastle.cms.RecipientOperator;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipientId;
 import org.bouncycastle.operator.InputDecryptor;
-import org.jscep.message.MessageDecodingException;
-import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.slf4j.Logger;
 
 /**
  * This class is used to decrypt the <tt>pkcsPkiEnvelope</tt> of a SCEP secure
  * message object and extract the <tt>messageData</tt> from within.
- * 
+ *
  * @see PkcsPkiEnvelopeEncoder
  */
 public final class PkcsPkiEnvelopeDecoder {
@@ -45,7 +43,7 @@ public final class PkcsPkiEnvelopeDecoder {
      * <p>
      * The provided certificate is used to identify the envelope recipient info,
      * which is then used with the key unwrapped using the provided key.
-     * 
+     *
      * @param recipient
      *            the entity for whom the message was enveloped.
      * @param privKey
@@ -59,7 +57,7 @@ public final class PkcsPkiEnvelopeDecoder {
 
     /**
      * Decrypts the provided <tt>pkcsPkiEnvelope</tt>, and extracts the content.
-     * 
+     *
      * @param pkcsPkiEnvelope
      *            the envelope to decrypt and open.
      * @return the content of the <tt>pkcsPkiEnvelope</tt>, the SCEP

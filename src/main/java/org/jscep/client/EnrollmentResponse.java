@@ -9,8 +9,17 @@ import org.jscep.transaction.TransactionId;
  * This class represents an enrollment response from a SCEP server.
  */
 public final class EnrollmentResponse {
+    /**
+     * The failure info for failed responses.
+     */
     private final FailInfo failInfo;
+    /**
+     * The CertStore for successful responses.
+     */
     private final CertStore certStore;
+    /**
+     * The transaction ID for the current exchange.
+     */
     private final TransactionId transId;
 
     /**
@@ -49,6 +58,16 @@ public final class EnrollmentResponse {
         this(transId, certStore, null);
     }
 
+    /**
+     * Constructs a new {@code EnrollmentResponse} for all cases.
+     * 
+     * @param transId
+     *            the transactionID.
+     * @param certStore
+     *            the certificate response.
+     * @param failInfo
+     *            the failure reason.
+     */
     private EnrollmentResponse(final TransactionId transId,
             final CertStore certStore, final FailInfo failInfo) {
         this.transId = transId;

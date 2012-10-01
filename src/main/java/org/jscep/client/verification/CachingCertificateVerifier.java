@@ -10,7 +10,13 @@ import java.util.Map;
  * <tt>CertificateVerifier</tt> and caches the answer.
  */
 public final class CachingCertificateVerifier implements CertificateVerifier {
+    /**
+     * Previously received verification answers.
+     */
     private final Map<Certificate, Boolean> verificationAnswers;
+    /**
+     * The verifier to delegate to.
+     */
     private final CertificateVerifier delegate;
 
     /**

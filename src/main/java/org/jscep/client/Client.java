@@ -97,6 +97,9 @@ import org.slf4j.LoggerFactory;
  * support SCEP servers with multiple (or mandatory) profile names.
  */
 public final class Client {
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
 
     // A requester MUST have the following information locally configured:

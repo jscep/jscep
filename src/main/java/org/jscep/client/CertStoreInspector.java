@@ -25,7 +25,7 @@ public final class CertStoreInspector {
      */
     private static final int ONLY_END_ENTITIES = -2;
     /**
-     * Logger
+     * Logger.
      */
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CertStoreInspector.class);
@@ -40,7 +40,6 @@ public final class CertStoreInspector {
     private final X509Certificate issuer;
 
     /**
-     * 
      * @param signer
      *            the certificate of the message signing authority
      * @param recipient
@@ -137,6 +136,15 @@ public final class CertStoreInspector {
         }
     }
 
+    /**
+     * Finds the certificate of the certificate issuer.
+     * 
+     * @param store
+     *            the certificate store to inspect.
+     * @return the certificate issuer's certificate.
+     * @throws CertStoreException
+     *             if the CertStore cannot be inspected
+     */
     private static X509Certificate findIssuer(final CertStore store)
             throws CertStoreException {
         X509CertSelector selector = new X509CertSelector();
@@ -155,6 +163,15 @@ public final class CertStoreInspector {
         }
     }
 
+    /**
+     * Finds the certificate of the SCEP message object signer.
+     * 
+     * @param store
+     *            the certificate store to inspect.
+     * @return the signer's certificate.
+     * @throws CertStoreException
+     *             if the CertStore cannot be inspected
+     */
     private static X509Certificate findSigner(final CertStore store)
             throws CertStoreException {
         boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];
@@ -177,6 +194,15 @@ public final class CertStoreInspector {
         return findIssuer(store);
     }
 
+    /**
+     * Finds the certificate of the SCEP message object recipient.
+     * 
+     * @param store
+     *            the certificate store to inspect.
+     * @return the recipient's certificate.
+     * @throws CertStoreException
+     *             if the CertStore cannot be inspected
+     */
     private static X509Certificate findRecipient(final CertStore store)
             throws CertStoreException {
         boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];

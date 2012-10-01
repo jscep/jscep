@@ -33,8 +33,17 @@ import org.jscep.transaction.TransactionId;
  * This class represents a <tt>CertRep</tt> <tt>pkiMessage</tt>.
  */
 public final class CertRep extends PkiMessage<CMSSignedData> {
+    /**
+     * The recipient nonce.
+     */
     private final Nonce recipientNonce;
+    /**
+     * The PKI status.
+     */
     private final PkiStatus pkiStatus;
+    /**
+     * The failure reason.
+     */
     private final FailInfo failInfo;
 
     /**
@@ -98,14 +107,23 @@ public final class CertRep extends PkiMessage<CMSSignedData> {
         this.failInfo = null;
     }
 
+    /**
+     * @return the recipient nonce.
+     */
     public Nonce getRecipientNonce() {
         return recipientNonce;
     }
 
+    /**
+     * @return the PKI status.
+     */
     public PkiStatus getPkiStatus() {
         return pkiStatus;
     }
 
+    /**
+     * @return the failure reason.
+     */
     public FailInfo getFailInfo() {
         if (pkiStatus != PkiStatus.FAILURE) {
             throw new IllegalStateException();

@@ -5,6 +5,9 @@ package org.jscep.client;
  * client request.
  */
 public class ClientException extends Exception {
+    /**
+     * Serialization ID.
+     */
     private static final long serialVersionUID = 1L;
 
     /**

@@ -8,6 +8,9 @@ import net.jcip.annotations.Immutable;
  */
 @Immutable
 public class MessageEncodingException extends Exception {
+    /**
+     * Serialization ID.
+     */
     private static final long serialVersionUID = -6111956271602335933L;
 
     /**

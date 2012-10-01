@@ -18,15 +18,39 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.operator.GenericKey;
 import org.bouncycastle.operator.OutputEncryptor;
 
+/**
+ * {@link OutputEncrypter} that uses a DES cipher.
+ */
 public final class DesOutputEncryptor implements OutputEncryptor {
+    /**
+     * The JCA cipher name.
+     */
     private static final String CIPHER = "DES";
+    /**
+     * The JCA cipher transformation name.
+     */
     private static final String TRANSFORMATION = "DES/CBC/PKCS5Padding";
+    /**
+     * The OID corresponding to the transformation.
+     */
     private static final ASN1ObjectIdentifier DES_OID = new ASN1ObjectIdentifier(
             "1.3.14.3.2.7");
+    /**
+     * The generated key.
+     */
     private final SecretKey key;
+    /**
+     * The algorithm identifier for the transformation.
+     */
     private final AlgorithmIdentifier algId;
+    /**
+     * The generated cipher.
+     */
     private final Cipher cipher;
 
+    /**
+     * Creates a new {@code OutputEncryptor}.
+     */
     public DesOutputEncryptor() {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance(CIPHER);
@@ -52,16 +76,25 @@ public final class DesOutputEncryptor implements OutputEncryptor {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AlgorithmIdentifier getAlgorithmIdentifier() {
         return algId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public OutputStream getOutputStream(final OutputStream encOut) {
         return new CipherOutputStream(encOut, cipher);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GenericKey getKey() {
         return new GenericKey(key);
