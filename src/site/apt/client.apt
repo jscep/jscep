@@ -225,7 +225,7 @@ PublicKey entityPubKey = entityPair.getPublic();
 PKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(entitySubject, entityPubKey); 
 +---+
 
-  We can now use the <<<PKCS10CertificationRequestBuilder>>> to add extensions.  Depending on your SCEP server, you may need to provide
+  We can now use the <<<PKCS10CertificationRequestBuilder>>> to add attributes.  Depending on your SCEP server, you may need to provide
   additional extensions, but in <most> cases, you'll add a PKCS#9 <<<challengePassword>>>:
 
 +---+
@@ -241,7 +241,34 @@ DERPrintableString password = new DERPrintableString("");
 csrBuilder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, password);
 +---+
 
-  When you've finished adding your extensions, you must then sign your CSR with your entity's private key.
+** Extensions
+
+  If you wish to add extensions to your CSR, add an extensionRequest OID.  BC provides an <<ExtensionsGenerator>> to simplify common use cases:
+  
++---+
+ExtensionsGenerator extGen = new ExtensionsGenerator();
+extGen.addExtension(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_eapOverLAN));
+csrBuilder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest, extGen.generate());
++---+
+
+  In some cases, BC won't provide a specific object, so you'll have to build it yourself:
+  
++---+
+ASN1EncodableVector otherName = new ASN1EncodableVector(); 
+otherName.add(new DERObjectIdentifier("1.3.6.1.4.1.311.20.2.3")); 
+otherName.add(new DERTaggedObject(true, 0, new DERUTF8String( "devuser@dvam.local"))); 
+ASN1Object genName = new DERTaggedObject(false, 0, new DERSequence(otherName)); 
+
+ASN1EncodableVector genNames = new ASN1EncodableVector();
+genNames.add(genName);
+
+ExtensionsGenerator extGen = new ExtensionsGenerator();
+extGen.addExtension(Extension.subjectAlternativeName, true, new DERSequence(genNames));
++---+
+
+** Signing the CSR
+
+  When you've finished adding your attributes, you must then sign your CSR with your entity's private key.
 
 +---+
 PrivateKey entityPrivKey = entityPair.getPrivate();
@@ -386,6 +413,10 @@ CertStore store = client.getRolloverCertificate();
 +---+
 CertStore store = client.getCaCertificate();
 +---+
+
+* Credits
+
+  Thanks to Ryan Schipper and Danny deSousa for contributions to this manual.
 
 References
 
