@@ -414,7 +414,7 @@ CertStore store = client.getRolloverCertificate();
 CertStore store = client.getCaCertificate();
 +---+
 
-* Credits
+Credits
 
   Thanks to Ryan Schipper and Danny deSousa for contributions to this manual.
 
