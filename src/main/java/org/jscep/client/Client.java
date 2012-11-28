@@ -50,6 +50,9 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.asn1.IssuerAndSubject;
+import org.jscep.client.inspect.CertStoreInspector;
+import org.jscep.client.inspect.CertStoreInspectorFactory;
+import org.jscep.client.inspect.DefaultCertStoreInspectorFactory;
 import org.jscep.client.verification.CertificateVerifier;
 import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
@@ -82,17 +85,17 @@ import org.slf4j.LoggerFactory;
  * The <tt>Client</tt> class is used for interacting with a SCEP server.
  * <p>
  * Typical usage might look like so:
- * 
+ *
  * <pre>
  * // Create the client
  * URL server = new URL(&quot;http://jscep.org/scep/pkiclient.exe&quot;);
  * CertificateVerifier verifier = new ConsoleCertificateVerifier();
  * Client client = new Client(server, verifier);
- * 
+ *
  * // Invoke operations on the client.
  * client.getCaCapabilities();
  * </pre>
- * 
+ *
  * Each of the operations of this class is overloaded with a profile argument to
  * support SCEP servers with multiple (or mandatory) profile names.
  */
@@ -119,6 +122,7 @@ public final class Client {
     //
     // We use a callback handler for this.
     private final CallbackHandler handler;
+    private CertStoreInspectorFactory inspectorFactory = new DefaultCertStoreInspectorFactory();
 
     /**
      * Constructs a new <tt>Client</tt> instance using the provided
@@ -129,7 +133,7 @@ public final class Client {
      * <tt>CallbackHandler</tt> will be used to handle additional
      * <tt>Callback</tt>s, users of this class are recommended to use the
      * {@link #Client(URL, CertificateVerifier)} constructor instead.
-     * 
+     *
      * @param url
      *            the URL of the SCEP server.
      * @param handler
@@ -148,7 +152,7 @@ public final class Client {
      * <p/>
      * The provided <tt>CertificateVerifier</tt> is used to verify that the
      * identity of the SCEP server matches what the client expects.
-     * 
+     *
      * @param url
      *            the URL of the SCEP server.
      * @param verifier
@@ -191,7 +195,7 @@ public final class Client {
 
     /**
      * Retrieves the set of SCEP capabilities from the CA.
-     * 
+     *
      * @return the capabilities of the server.
      */
     public Capabilities getCaCapabilities() {
@@ -203,7 +207,7 @@ public final class Client {
      * Retrieves the capabilities of the SCEP server.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     * 
+     *
      * @param profile
      *            the SCEP server profile.
      * @return the capabilities of the server.
@@ -229,11 +233,11 @@ public final class Client {
      * single CA certificate will be returned. If the SCEP server supports
      * multiple entities (for example, if it uses a separate entity for signing
      * SCEP messages), additional RA certificates will also be returned.
-     * 
+     *
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
-     * @see CertStoreInspector
+     * @see DefaultCertStoreInspector
      */
     public CertStore getCaCertificate() throws ClientException {
         return getCaCertificate(null);
@@ -249,13 +253,13 @@ public final class Client {
      * SCEP messages), additional RA certificates will also be returned.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     * 
+     *
      * @param profile
      *            the SCEP server profile.
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
-     * @see CertStoreInspector
+     * @see DefaultCertStoreInspector
      */
     public CertStore getCaCertificate(final String profile)
             throws ClientException {
@@ -271,7 +275,7 @@ public final class Client {
         } catch (TransportException e) {
             throw new ClientException(e);
         }
-        CertStoreInspector certs = CertStoreInspector.getInstance(store);
+        CertStoreInspector certs = inspectorFactory.getInstance(store);
         verifyCA(certs.getIssuer());
         verifyRA(certs.getIssuer(), certs.getRecipient());
         verifyRA(certs.getIssuer(), certs.getSigner());
@@ -313,11 +317,11 @@ public final class Client {
      * <p>
      * This method will query the SCEP server to determine if the CA is
      * scheduled to start using a new certificate for issuing.
-     * 
+     *
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
-     * @see CertStoreInspector
+     * @see DefaultCertStoreInspector
      */
     public CertStore getRolloverCertificate() throws ClientException {
         return getRolloverCertificate(null);
@@ -330,13 +334,13 @@ public final class Client {
      * scheduled to start using a new certificate for issuing.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     * 
+     *
      * @param profile
      *            the SCEP server profile.
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
-     * @see CertStoreInspector
+     * @see DefaultCertStoreInspector
      */
     public CertStore getRolloverCertificate(final String profile)
             throws ClientException {
@@ -347,7 +351,7 @@ public final class Client {
         }
         final CertStore store = getCaCertificate(profile);
         // The CA or RA
-        CertStoreInspector certs = CertStoreInspector.getInstance(store);
+        CertStoreInspector certs = inspectorFactory.getInstance(store);
         final X509Certificate signer = certs.getSigner();
 
         final Transport trans = new HttpGetTransport(url);
@@ -368,7 +372,7 @@ public final class Client {
      * <p>
      * This method requests a CRL for a certificate as identified by the issuer
      * name and the certificate serial number.
-     * 
+     *
      * @param identity
      *            the identity of the client.
      * @param key
@@ -397,7 +401,7 @@ public final class Client {
      * name and the certificate serial number.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     * 
+     *
      * @param identity
      *            the identity of the client.
      * @param key
@@ -458,7 +462,7 @@ public final class Client {
     private void checkDistributionPoints(final String profile)
             throws ClientException {
         CertStore store = getCaCertificate(profile);
-        CertStoreInspector certs = CertStoreInspector.getInstance(store);
+        CertStoreInspector certs = inspectorFactory.getInstance(store);
         final X509Certificate ca = certs.getIssuer();
         if (ca.getExtensionValue(X509Extension.cRLDistributionPoints.getId()) != null) {
             LOGGER.warn("CA supports distribution points");
@@ -471,7 +475,7 @@ public final class Client {
      * This request relates only to the current CA certificate. If the CA
      * certificate has changed since the requested certificate was issued, this
      * operation will fail.
-     * 
+     *
      * @param identity
      *            the identity of the client.
      * @param key
@@ -498,7 +502,7 @@ public final class Client {
      * operation will fail.
      * <p>
      * This method provides support for SCEP servers with multiple profiles.
-     * 
+     *
      * @param identity
      *            the identity of the client.
      * @param key
@@ -520,7 +524,7 @@ public final class Client {
         // TRANSACTIONAL
         // Certificate query
         final CertStore store = getCaCertificate(profile);
-        CertStoreInspector certs = CertStoreInspector.getInstance(store);
+        CertStoreInspector certs = inspectorFactory.getInstance(store);
         final X509Certificate ca = certs.getIssuer();
 
         X500Name name = new X500Name(ca.getIssuerX500Principal().toString());
@@ -551,7 +555,7 @@ public final class Client {
      * <p>
      * This method enrols the provider <tt>CertificationRequest</tt> into the
      * PKI represented by the SCEP server.
-     * 
+     *
      * @param identity
      *            the identity of the client.
      * @param key
@@ -563,7 +567,7 @@ public final class Client {
      *             if any client error occurs.
      * @throws TransactionException
      *             if there is a problem with the SCEP transaction.
-     * @see CertStoreInspector
+     * @see DefaultCertStoreInspector
      */
     public EnrollmentResponse enrol(final X509Certificate identity,
             final PrivateKey key, final PKCS10CertificationRequest csr)
@@ -576,7 +580,7 @@ public final class Client {
      * <p>
      * This method enrols the provider <tt>CertificationRequest</tt> into the
      * PKI represented by the SCEP server.
-     * 
+     *
      * @param identity
      *            the identity of the client.
      * @param key
@@ -590,7 +594,7 @@ public final class Client {
      *             if any client error occurs.
      * @throws TransactionException
      *             if there is a problem with the SCEP transaction.
-     * @see CertStoreInspector
+     * @see DefaultCertStoreInspector
      */
     public EnrollmentResponse enrol(final X509Certificate identity,
             final PrivateKey key, final PKCS10CertificationRequest csr,
@@ -655,7 +659,7 @@ public final class Client {
             throws ClientException, TransactionException {
         final Transport transport = createTransport(profile);
         CertStore store = getCaCertificate(profile);
-        CertStoreInspector certStore = CertStoreInspector.getInstance(store);
+        CertStoreInspector certStore = inspectorFactory.getInstance(store);
         X509Certificate issuer = certStore.getIssuer();
 
         PkiMessageEncoder encoder = getEncoder(identity, identityKey, profile);
@@ -687,7 +691,7 @@ public final class Client {
             throws ClientException {
         CertStore store = getCaCertificate(profile);
         Capabilities caps = getCaCapabilities(profile);
-        CertStoreInspector certs = CertStoreInspector.getInstance(store);
+        CertStoreInspector certs = inspectorFactory.getInstance(store);
         X509Certificate recipientCertificate = certs.getRecipient();
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
                 recipientCertificate, caps.getStrongestCipher());
@@ -699,7 +703,7 @@ public final class Client {
     private PkiMessageDecoder getDecoder(final X509Certificate identity,
             final PrivateKey key, final String profile) throws ClientException {
         final CertStore store = getCaCertificate(profile);
-        CertStoreInspector certs = CertStoreInspector.getInstance(store);
+        CertStoreInspector certs = inspectorFactory.getInstance(store);
         X509Certificate signer = certs.getSigner();
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
                 identity, key);
@@ -709,7 +713,7 @@ public final class Client {
 
     /**
      * Creates a new transport based on the capabilities of the server.
-     * 
+     *
      * @param profile
      *            profile to use for determining if HTTP POST is supported
      * @return the new transport.
@@ -743,5 +747,10 @@ public final class Client {
         } else {
             LOGGER.debug("Certificate verification passed.");
         }
+    }
+
+    public synchronized void setCertStoreInspectorFactory(
+            final CertStoreInspectorFactory inspectorFactory) {
+        this.inspectorFactory = inspectorFactory;
     }
 }

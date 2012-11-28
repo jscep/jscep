@@ -1,4 +1,4 @@
-package org.jscep.client;
+package org.jscep.client.inspect;
 
 import java.security.cert.CertStore;
 import java.security.cert.CertStoreException;
@@ -6,16 +6,13 @@ import java.security.cert.Certificate;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-import java.util.Map;
-import java.util.WeakHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used for storing CA and RA certificates.
+ * Default implementation of the <code>CertStoreInspector</code>
  */
-public final class CertStoreInspector {
+final class DefaultCertStoreInspector implements CertStoreInspector {
     /**
      * The length of the minimum certificate path for an issuer.
      */
@@ -27,17 +24,17 @@ public final class CertStoreInspector {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(CertStoreInspector.class);
+    static final Logger LOGGER = LoggerFactory
+            .getLogger(DefaultCertStoreInspector.class);
     /**
      * Length of the key usage array.
      */
     private static final int KEY_USAGE_LENGTH = 9;
-    private static final Map<CertStore, CertStoreInspector> INSTANCES = new WeakHashMap<CertStore, CertStoreInspector>();
 
-    private final X509Certificate signer;
-    private final X509Certificate recipient;
-    private final X509Certificate issuer;
+    private final CertStore store;
+    private X509Certificate signer;
+    private X509Certificate recipient;
+    private X509Certificate issuer;
 
     /**
      * @param signer
@@ -47,105 +44,79 @@ public final class CertStoreInspector {
      * @param issuer
      *            the certificate of the certificate issuer.
      */
-    private CertStoreInspector(final X509Certificate signer,
-            final X509Certificate recipient, final X509Certificate issuer) {
-        this.signer = signer;
-        this.recipient = recipient;
-        this.issuer = issuer;
-    }
+    DefaultCertStoreInspector(final CertStore store) {
+        this.store = store;
 
-    /**
-     * Returns the verifier certificate.
-     * 
-     * @return the verifier certificate.
-     */
-    public X509Certificate getSigner() {
-        return signer;
-    }
-
-    /**
-     * Returns the encrypter certificate.
-     * 
-     * @return the encrypter certificate.
-     */
-    public X509Certificate getRecipient() {
-        return recipient;
-    }
-
-    /**
-     * Returns the issuer certificate.
-     * 
-     * @return the issuer certificate.
-     */
-    public X509Certificate getIssuer() {
-        return issuer;
-    }
-
-    /**
-     * Inspects the given CertStore to extract an Authorities instance.
-     * <p>
-     * This method will inspect the given CertStore with pre-configured
-     * selectors to match RA certificates for encryption and verification, plus
-     * the issuing CA certificate.
-     * <p>
-     * If the CertStore only contains a single CA certificate, that certificate
-     * will be used for all three roles.
-     * 
-     * @param store
-     *            the store to inspect.
-     * @return the Authorities instance.
-     */
-    public static CertStoreInspector getInstance(final CertStore store) {
-        CertStoreInspector instance = INSTANCES.get(store);
-        if (instance != null) {
-            return instance;
-        }
         try {
-            Collection<? extends Certificate> certs = store
-                    .getCertificates(null);
-            LOGGER.debug("CertStore contains {} certificate(s):", certs.size());
-            int i = 0;
-            for (Certificate cert : certs) {
-                X509Certificate x509 = (X509Certificate) cert;
-                LOGGER.debug("{}. '[issuer={}; serial={}]'", new Object[] {
-                        ++i, x509.getIssuerDN(), x509.getSerialNumber() });
-            }
-
-            LOGGER.debug("Looking for recipient entity");
-            X509Certificate recipient = findRecipient(store);
-            LOGGER.debug("Using [issuer={}; serial={}] for recipient entity",
-                    recipient.getIssuerDN(), recipient.getSerialNumber());
-
-            LOGGER.debug("Looking for message signing entity");
-            X509Certificate signer = findSigner(store);
-            LOGGER.debug(
-                    "Using [issuer={}; serial={}] for message signing entity",
-                    signer.getIssuerDN(), signer.getSerialNumber());
-
-            LOGGER.debug("Looking for issuing entity");
-            X509Certificate issuer = findIssuer(store);
-            LOGGER.debug("Using [issuer={}; serial={}] for issuing entity",
-                    issuer.getIssuerDN(), issuer.getSerialNumber());
-
-            instance = new CertStoreInspector(signer, recipient, issuer);
-            INSTANCES.put(store, instance);
-
-            return instance;
+            inspect();
         } catch (CertStoreException e) {
             throw new RuntimeException(e);
         }
     }
 
+    private void inspect() throws CertStoreException {
+        Collection<? extends Certificate> certs = store.getCertificates(null);
+        LOGGER.debug("CertStore contains {} certificate(s):", certs.size());
+        int i = 0;
+        for (Certificate cert : certs) {
+            X509Certificate x509 = (X509Certificate) cert;
+            LOGGER.debug("{}. '[issuer={}; serial={}]'", new Object[] { ++i,
+                    x509.getIssuerDN(), x509.getSerialNumber() });
+        }
+
+        LOGGER.debug("Looking for recipient entity");
+        recipient = findRecipient(store);
+        LOGGER.debug("Using [issuer={}; serial={}] for recipient entity",
+                recipient.getIssuerDN(), recipient.getSerialNumber());
+
+        LOGGER.debug("Looking for message signing entity");
+        signer = findSigner(store);
+        LOGGER.debug("Using [issuer={}; serial={}] for message signing entity",
+                signer.getIssuerDN(), signer.getSerialNumber());
+
+        LOGGER.debug("Looking for issuing entity");
+        issuer = findIssuer(store);
+        LOGGER.debug("Using [issuer={}; serial={}] for issuing entity",
+                issuer.getIssuerDN(), issuer.getSerialNumber());
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.jscep.client.inspect.CertStoreInspector#getSigner()
+     */
+    @Override
+    public X509Certificate getSigner() {
+        return signer;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.jscep.client.inspect.CertStoreInspector#getRecipient()
+     */
+    @Override
+    public X509Certificate getRecipient() {
+        return recipient;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.jscep.client.inspect.CertStoreInspector#getIssuer()
+     */
+    @Override
+    public X509Certificate getIssuer() {
+        return issuer;
+    }
+
     /**
      * Finds the certificate of the certificate issuer.
-     * 
+     *
      * @param store
      *            the certificate store to inspect.
      * @return the certificate issuer's certificate.
      * @throws CertStoreException
      *             if the CertStore cannot be inspected
      */
-    private static X509Certificate findIssuer(final CertStore store)
+    X509Certificate findIssuer(final CertStore store)
             throws CertStoreException {
         X509CertSelector selector = new X509CertSelector();
         selector.setBasicConstraints(CA_PATH_LENGTH);
@@ -165,14 +136,14 @@ public final class CertStoreInspector {
 
     /**
      * Finds the certificate of the SCEP message object signer.
-     * 
+     *
      * @param store
      *            the certificate store to inspect.
      * @return the signer's certificate.
      * @throws CertStoreException
      *             if the CertStore cannot be inspected
      */
-    private static X509Certificate findSigner(final CertStore store)
+    X509Certificate findSigner(final CertStore store)
             throws CertStoreException {
         boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];
         keyUsage[0] = true;
@@ -196,14 +167,14 @@ public final class CertStoreInspector {
 
     /**
      * Finds the certificate of the SCEP message object recipient.
-     * 
+     *
      * @param store
      *            the certificate store to inspect.
      * @return the recipient's certificate.
      * @throws CertStoreException
      *             if the CertStore cannot be inspected
      */
-    private static X509Certificate findRecipient(final CertStore store)
+    X509Certificate findRecipient(final CertStore store)
             throws CertStoreException {
         boolean[] keyUsage = new boolean[KEY_USAGE_LENGTH];
         keyUsage[2] = true;

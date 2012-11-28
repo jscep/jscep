@@ -1,4 +1,4 @@
-package org.jscep.client;
+package org.jscep.client.inspect;
 
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -11,13 +11,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.jscep.client.inspect.CertStoreInspector;
+import org.jscep.client.inspect.CertStoreInspectorFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class CertStoreInspectorTest {
+public abstract class CertStoreInspectorTest {
     @Parameterized.Parameters
     public static Collection<Object[]> setUp() throws Exception {
         InputStream keyStoreIn = CertStoreInspectorTest.class.getClassLoader()
@@ -59,18 +61,22 @@ public class CertStoreInspectorTest {
     private final String encryption;
     private final String signing;
     private final String issuer;
+    private final CertStoreInspectorFactory inspectorFactory;
 
-    public CertStoreInspectorTest(CertStore store, String encryption,
-            String signing, String issuer) {
+    public CertStoreInspectorTest(final CertStore store, final String encryption,
+            final String signing, final String issuer) {
         this.store = store;
         this.encryption = encryption;
         this.signing = signing;
         this.issuer = issuer;
+        this.inspectorFactory = getCertStoreInspectorFactory();
     }
+
+    abstract CertStoreInspectorFactory getCertStoreInspectorFactory();
 
     @Test
     public void example() {
-        CertStoreInspector auths = CertStoreInspector.getInstance(store);
+        CertStoreInspector auths = inspectorFactory.getInstance(store);
 
         Assert.assertEquals(encryption, auths.getRecipient().getSubjectDN()
                 .getName());
