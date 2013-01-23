@@ -45,9 +45,8 @@ import org.jscep.transaction.MessageType;
 import org.jscep.transaction.NonEnrollmentTransaction;
 import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
-import org.jscep.transport.HttpGetTransport;
-import org.jscep.transport.Transport;
-import org.jscep.transport.TransportException;
+import org.jscep.transport.*;
+import org.jscep.transport.TransportFactory.Method;
 import org.jscep.transport.request.GetCaCapsRequest;
 import org.jscep.transport.request.GetCaCertRequest;
 import org.jscep.transport.request.GetNextCaCertRequest;
@@ -73,6 +72,7 @@ public class ScepServletTest {
     private int port;
     private String goodIdentifier;
     private String badIdentifier;
+    private TransportFactory transportFactory;
 
     @Before
     public void configureFixtures() throws Exception {
@@ -86,6 +86,8 @@ public class ScepServletTest {
         priKey = keyPair.getPrivate();
         pubKey = keyPair.getPublic();
         sender = generateCertificate();
+        transportFactory = new UrlConnectionTransportFactory();
+
     }
 
     private X509Certificate generateCertificate() throws Exception {
@@ -129,7 +131,7 @@ public class ScepServletTest {
 
     private X509Certificate getRecipient() throws Exception {
         GetCaCertRequest req = new GetCaCertRequest();
-        Transport transport = new HttpGetTransport(getURL());
+        Transport transport = getTransport(getURL());
 
         CertStore store = transport.sendRequest(req,
                 new GetCaCertResponseHandler());
@@ -145,7 +147,7 @@ public class ScepServletTest {
     @Test
     public void testGetCaCaps() throws Exception {
         GetCaCapsRequest req = new GetCaCapsRequest();
-        Transport transport = new HttpGetTransport(getURL());
+        Transport transport = getTransport(getURL());
         Capabilities caps = transport.sendRequest(req,
                 new GetCaCapsResponseHandler());
 
@@ -155,7 +157,7 @@ public class ScepServletTest {
     @Test
     public void getNextCaCertificateGood() throws Exception {
         GetNextCaCertRequest req = new GetNextCaCertRequest(goodIdentifier);
-        Transport transport = new HttpGetTransport(getURL());
+        Transport transport = getTransport(getURL());
         CertStore certs = transport.sendRequest(req,
                 new GetNextCaCertResponseHandler(getRecipient()));
 
@@ -165,7 +167,7 @@ public class ScepServletTest {
     @Test(expected = TransportException.class)
     public void getNextCaCertificateBad() throws Exception {
         GetNextCaCertRequest req = new GetNextCaCertRequest(badIdentifier);
-        Transport transport = new HttpGetTransport(getURL());
+        Transport transport = getTransport(getURL());
         CertStore certs = transport.sendRequest(req,
                 new GetNextCaCertResponseHandler(getRecipient()));
 
@@ -185,7 +187,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
-        Transport transport = new HttpGetTransport(getURL());
+        Transport transport = getTransport(getURL());
         Transaction t = new NonEnrollmentTransaction(transport, encoder,
                 decoder, iasn, MessageType.GET_CRL);
         State s = t.send();
@@ -206,7 +208,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
-        Transport transport = new HttpGetTransport(getURL());
+        Transport transport = getTransport(getURL());
         Transaction t = new NonEnrollmentTransaction(transport, encoder,
                 decoder, iasn, MessageType.GET_CERT);
         State s = t.send();
@@ -229,7 +231,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
-        Transport transport = new HttpGetTransport(getURL());
+        Transport transport = getTransport(getURL());
         Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
                 csr);
 
@@ -252,7 +254,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
-        Transport transport = new HttpGetTransport(getURL());
+        Transport transport = getTransport(getURL());
         Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
                 csr);
 
@@ -275,7 +277,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
-        Transport transport = new HttpGetTransport(getURL());
+        Transport transport = getTransport(getURL());
         EnrollmentTransaction trans = new EnrollmentTransaction(transport,
                 encoder, decoder, csr);
         State state = trans.send();
@@ -313,5 +315,9 @@ public class ScepServletTest {
                 new DERPrintableString(new String(password)));
 
         return builder.build(signer);
+    }
+
+    private Transport getTransport(URL url) {
+        return transportFactory.forMethod(Method.GET, url);
     }
 }

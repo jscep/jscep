@@ -17,12 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transport representing the <code>HTTP GET</code> method
+ * AbstractTransport representing the <code>HTTP GET</code> method
  */
 @ThreadSafe
-public final class HttpGetTransport extends Transport {
+final class UrlConnectionGetTransport extends AbstractTransport {
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(HttpGetTransport.class);
+            .getLogger(UrlConnectionGetTransport.class);
 
     /**
      * Creates a new <tt>HttpGetTransport</tt> for the given <tt>URL</tt>.
@@ -30,7 +30,7 @@ public final class HttpGetTransport extends Transport {
      * @param url
      *            the <tt>URL</tt> to send <tt>GET</tt> requests to.
      */
-    public HttpGetTransport(final URL url) {
+    public UrlConnectionGetTransport(final URL url) {
         super(url);
     }
 

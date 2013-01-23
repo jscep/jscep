@@ -11,6 +11,7 @@ import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.message.PkiRequest;
+import org.jscep.transport.AbstractTransport;
 import org.jscep.transport.Transport;
 import org.jscep.transport.request.PkiOperationRequest;
 import org.jscep.transport.response.PkiOperationResponseHandler;

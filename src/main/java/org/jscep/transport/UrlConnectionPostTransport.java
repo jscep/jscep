@@ -19,12 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transport representing the <code>HTTP POST</code> method.
+ * AbstractTransport representing the <code>HTTP POST</code> method.
  */
 @ThreadSafe
-public final class HttpPostTransport extends Transport {
+final class UrlConnectionPostTransport extends AbstractTransport {
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(HttpPostTransport.class);
+            .getLogger(UrlConnectionPostTransport.class);
 
     /**
      * Creates a new <tt>HttpPostTransport</tt> for the given <tt>URL</tt>.
@@ -32,7 +32,7 @@ public final class HttpPostTransport extends Transport {
      * @param url
      *            the <tt>URL</tt> to send <tt>POST</tt> requests to.
      */
-    public HttpPostTransport(final URL url) {
+    public UrlConnectionPostTransport(final URL url) {
         super(url);
     }
 

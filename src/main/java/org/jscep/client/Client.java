@@ -66,10 +66,11 @@ import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transaction.TransactionException;
 import org.jscep.transaction.TransactionId;
-import org.jscep.transport.HttpGetTransport;
-import org.jscep.transport.HttpPostTransport;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
+import org.jscep.transport.TransportFactory;
+import org.jscep.transport.TransportFactory.Method;
+import org.jscep.transport.UrlConnectionTransportFactory;
 import org.jscep.transport.request.GetCaCapsRequest;
 import org.jscep.transport.request.GetCaCertRequest;
 import org.jscep.transport.request.GetNextCaCertRequest;
@@ -123,6 +124,7 @@ public final class Client {
     // We use a callback handler for this.
     private final CallbackHandler handler;
     private CertStoreInspectorFactory inspectorFactory = new DefaultCertStoreInspectorFactory();
+    private TransportFactory transportFactory = new UrlConnectionTransportFactory();
 
     /**
      * Constructs a new <tt>Client</tt> instance using the provided
@@ -216,11 +218,11 @@ public final class Client {
         LOGGER.debug("Determining capabilities of SCEP server");
         // NON-TRANSACTIONAL
         final GetCaCapsRequest req = new GetCaCapsRequest(profile);
-        final Transport trans = new HttpGetTransport(url);
+        final Transport trans = transportFactory.forMethod(Method.GET, url);
         try {
             return trans.sendRequest(req, new GetCaCapsResponseHandler());
         } catch (TransportException e) {
-            LOGGER.warn("Transport problem when determining capabilities.  Using empty capabilities.");
+            LOGGER.warn("AbstractTransport problem when determining capabilities.  Using empty capabilities.");
             return new Capabilities();
         }
     }
@@ -237,7 +239,7 @@ public final class Client {
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
-     * @see DefaultCertStoreInspector
+     * @see DefaultCertStoreInspectorFactory
      */
     public CertStore getCaCertificate() throws ClientException {
         return getCaCertificate(null);
@@ -259,7 +261,7 @@ public final class Client {
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
-     * @see DefaultCertStoreInspector
+     * @see CertStoreInspector
      */
     public CertStore getCaCertificate(final String profile)
             throws ClientException {
@@ -267,7 +269,7 @@ public final class Client {
         // NON-TRANSACTIONAL
         // CA and RA public key distribution
         final GetCaCertRequest req = new GetCaCertRequest(profile);
-        final Transport trans = new HttpGetTransport(url);
+        final Transport trans = transportFactory.forMethod(Method.GET, url);
 
         CertStore store;
         try {
@@ -321,7 +323,7 @@ public final class Client {
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
-     * @see DefaultCertStoreInspector
+     * @see CertStoreInspector
      */
     public CertStore getRolloverCertificate() throws ClientException {
         return getRolloverCertificate(null);
@@ -340,7 +342,7 @@ public final class Client {
      * @return the certificate store.
      * @throws ClientException
      *             if any client error occurs.
-     * @see DefaultCertStoreInspector
+     * @see CertStoreInspector
      */
     public CertStore getRolloverCertificate(final String profile)
             throws ClientException {
@@ -354,7 +356,7 @@ public final class Client {
         CertStoreInspector certs = inspectorFactory.getInstance(store);
         final X509Certificate signer = certs.getSigner();
 
-        final Transport trans = new HttpGetTransport(url);
+        final Transport trans = transportFactory.forMethod(Method.GET, url);
         final GetNextCaCertRequest req = new GetNextCaCertRequest(profile);
 
         try {
@@ -567,7 +569,7 @@ public final class Client {
      *             if any client error occurs.
      * @throws TransactionException
      *             if there is a problem with the SCEP transaction.
-     * @see DefaultCertStoreInspector
+     * @see CertStoreInspector
      */
     public EnrollmentResponse enrol(final X509Certificate identity,
             final PrivateKey key, final PKCS10CertificationRequest csr)
@@ -594,7 +596,7 @@ public final class Client {
      *             if any client error occurs.
      * @throws TransactionException
      *             if there is a problem with the SCEP transaction.
-     * @see DefaultCertStoreInspector
+     * @see CertStoreInspector
      */
     public EnrollmentResponse enrol(final X509Certificate identity,
             final PrivateKey key, final PKCS10CertificationRequest csr,
@@ -720,9 +722,9 @@ public final class Client {
      */
     private Transport createTransport(final String profile) {
         if (getCaCapabilities(profile).isPostSupported()) {
-            return new HttpPostTransport(url);
+            return transportFactory.forMethod(Method.POST, url);
         } else {
-            return new HttpGetTransport(url);
+            return transportFactory.forMethod(Method.GET, url);
         }
     }
 

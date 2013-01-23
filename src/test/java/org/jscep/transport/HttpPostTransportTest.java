@@ -38,6 +38,6 @@ public class HttpPostTransportTest extends AbstractTransportTest {
 
     @Override
     protected Transport getTransport(URL url) {
-        return new HttpPostTransport(url);
+        return new UrlConnectionPostTransport(url);
     }
 }
