@@ -123,11 +123,11 @@ having to construct a new SCEP client.
   Before we can generate a certificate, we must first generate a key pair.  The SCEP specification only supports RSA, so that is what we will use.  The JCA
   requires Java implementations to support 1024 and 2048-bit keys.
 
-+---+
+```java
 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
 keyPairGenerator.initialize(1024);
 KeyPair requesterKeyPair = keyPairGenerator.genKeyPair();
-+---+
+```
 
 * Generating a Self-Signed Certificate
 
@@ -139,31 +139,26 @@ KeyPair requesterKeyPair = keyPairGenerator.genKeyPair();
   simplify the usage of extensions through the {{{http://www.bouncycastle.org/docs/docs1.5on/org/bouncycastle/asn1/x509/package-summary.html}org.bouncycastle.asn1.x509}} 
   package.
   
-  If you don't require extensions, you can use <<<JcaX509v1CertificateBuilder>>>, which takes the same arguments as <<<JcaX509v3CertificateBuilder>>>
-  in its JCA-compatible constructor.  In either case, you will need to provide a <<<ContentSigner>>>, which can be 
+  If you don't require extensions, you can use `JcaX509v1CertificateBuilder`, which takes the same arguments as `JcaX509v3CertificateBuilder`
+  in its JCA-compatible constructor.  In either case, you will need to provide a `ContentSigner`, which can be 
   built using {{{http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/operator/jcajce/JcaContentSignerBuilder.html}JcaContentSignerBuilder}}.
   SCEP supports the following signature algorithms:
   
-  * <<<MD5withRSA>>>
-  
-  * <<<SHA1withRSA>>>
-  
-  * <<<SHA256withRSA>>>
-  
-  * <<<SHA512withRSA>>>
-  
-  []
+ - `MD5withRSA`
+ - `SHA1withRSA`
+ - `SHA256withRSA`
+ - `SHA512withRSA`
   
   You can find out the strongest signature algorithm supported by your SCEP server by using the following snippet.
   
-+---+
+```java
 Capabilities caps = client.getCaCapabilities();
 String sigAlg = caps.getStrongestSignatureAlgorithm();
-+---+
+```
 
-  <<Note>>: if you're using a self-signed certificate, your certificate subject X500 name <must> be the same as the subject in your certificate-signing request.  
+*Note*: if you're using a self-signed certificate, your certificate subject X500 name _must_ be the same as the subject in your certificate-signing request.  
  
-+---+
+```java
 // Mandatory
 X500Principal requesterIssuer = new X500Principal("CN=jscep.org, L=Cardiff, ST=Wales, C=UK");
 BigInteger serial = BigInteger.ONE;
@@ -185,14 +180,14 @@ JcaContentSignerBuilder certSignerBuilder = new JcaContentSignerBuilder(sigAlg);
 ContentSigner certSigner = signerBuilder.build(requesterPrivKey);
 
 X509CertificateHolder certHolder = certBuilder.build(certSigner);
-+---+
+```
 
   You can extract a JCA-compatible certificate by using the {{{http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/cert/jcajce/JcaX509CertificateConverter.html}JcaX509CertificateConverter}}:
 
-+---+
+```java
 JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
 X509Certificate requesterCert = converter.getCertificate(certHolder);
-+---+
+```
 
   Congratulations! You now have everything you need to invoke operations against your SCEP server.
 
@@ -205,50 +200,50 @@ Certificate Enrollment
   When enrolling an entity into a PKI, you should generate a new key pair to represent the entity, as shown in the following snippet.  There is no reason not to reuse the <<<KeyPairGenerator>>> from
   the earlier steps, but we'll create another here for simplicity.
   
-+---+
+```java
 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
 keyPairGenerator.initialize(1024);
 KeyPair entityKeyPair = keyPairGenerator.genKeyPair();
-+---+
+```
 
   We'll name this key pair <<<entityKeyPair>>> to distinguish it from the key pair used to represent the SCEP client, which is named <<<requesterKeyPair>>>.  After the key pair has been created, we
   need to start creating the signing request to send to the CA.  Since the JCA does not support the creation of CSRs, we'll use Bouncy Castle again:
   
-+---+
+```java
 X500Principal entitySubject = requesterSubject; // use the same subject as the self-signed certificate
 PublicKey entityPubKey = entityPair.getPublic();
 PKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(entitySubject, entityPubKey); 
-+---+
+```
 
   We can now use the <<<PKCS10CertificationRequestBuilder>>> to add attributes.  Depending on your SCEP server, you may need to provide
   additional extensions, but in <most> cases, you'll add a PKCS#9 <<<challengePassword>>>:
 
-+---+
+```java
 DERPrintableString password = new DERPrintableString("password");
 csrBuilder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, password);
-+---+
+```
 
   If you're renewing a certificate, you should still send an empty password, as per the following snippet, but the SCEP server must validate
   the request against the requester certificate, <<<requesterCert>>>.
   
-+---+
+```java
 DERPrintableString password = new DERPrintableString("");
 csrBuilder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, password);
-+---+
+```
 
 ** Extensions
 
-  If you wish to add extensions to your CSR, add an extensionRequest OID.  BC provides an <<ExtensionsGenerator>> to simplify common use cases:
+  If you wish to add extensions to your CSR, add an extensionRequest OID.  BC provides an `ExtensionsGenerator` to simplify common use cases:
   
-+---+
+```java
 ExtensionsGenerator extGen = new ExtensionsGenerator();
 extGen.addExtension(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_eapOverLAN));
 csrBuilder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest, extGen.generate());
-+---+
+```
 
   In some cases, BC won't provide a specific object, so you'll have to build it yourself:
   
-+---+
+```java
 ASN1EncodableVector otherName = new ASN1EncodableVector(); 
 otherName.add(new DERObjectIdentifier("1.3.6.1.4.1.311.20.2.3")); 
 otherName.add(new DERTaggedObject(true, 0, new DERUTF8String( "devuser@dvam.local"))); 
@@ -259,25 +254,25 @@ genNames.add(genName);
 
 ExtensionsGenerator extGen = new ExtensionsGenerator();
 extGen.addExtension(Extension.subjectAlternativeName, true, new DERSequence(genNames));
-+---+
+```
 
 ** Signing the CSR
 
   When you've finished adding your attributes, you must then sign your CSR with your entity's private key.
 
-+---+
+```java
 PrivateKey entityPrivKey = entityPair.getPrivate();
 JcaContentSignerBuilder csrSignerBuilder = new JcaContentSignerBuilder("SHA1withRSA");
 ContentSigner csrSigner = csrSignerBuilder.build(entityPrivKey);
 PKCS10CertificationRequest csr = csrBuilder.build(csrSigner);
-+---+
+```
 
   You now have everthing you need to enrol.  The next line in your application will typically be to send
   the CSR to the SCEP server, and to assign the response.
 
-+---+
+```java
 EnrollmentResponse res = client.enrol(requesterCert, requesterPrivKey, csr);
-+---+
+```
 
   Understanding the server response is critical for knowing what to do next.
 
@@ -287,23 +282,19 @@ EnrollmentResponse res = client.enrol(requesterCert, requesterPrivKey, csr);
   to determine what to do next.  <<<EnrollmentResponse>>> contains three methods which can be used to determine the state
   of the response:
   
-  * <<<isSuccess()>>>
+ - `isSuccess()`
+ - `isPending()`
+ - `isFailure()`
   
-  * <<<isPending()>>>
-  
-  * <<<isFailure()>>>
-  
-  []
-  
-  If <<<isSuccess()>>> returns <<<true>>>, your application should call <<<getCertStore()>>> to retrieve the enrolled certificates.  For a lot
+  If `isSuccess()` returns `true`, your application should call `getCertStore()` to retrieve the enrolled certificates.  For a lot
   of applications, this will be the last interaction you have with the jscep client.  
   
-  If <<<isFailure()>>> returns <<<true>>>, your application should call <<<getFailInfo()>>> to determine the reason for failure.  Applications should
+  If `isFailure()` returns `true`, your application should call `getFailInfo()` to determine the reason for failure.  Applications should
   treat this as a permanent failure.  Unfortunately, the SCEP protocol doesn't provide a lot of detail for failure reasons, so it is non-trivial to make
   your application resilient to SCEP failure.
   
-  The last method, <<<isPending()>>>, is guaranteed to be <<<true>>> if the other two methods return <<<false>>>.  For pending responses,
-  your application should call <<<getTransactionId()>>>, and use the returned <<<TransactionId>>> when invoking <<<Client.poll()>>>,
+  The last method, `isPending()`, is guaranteed to be `true` if the other two methods return `false`.  For pending responses,
+  your application should call `getTransactionId()`, and use the returned `TransactionId` when invoking `Client.poll()`,
   as detailed below.
   
   Your application may use a number of different approaches for sending a poll request to the server, and jscep does not
@@ -313,14 +304,14 @@ EnrollmentResponse res = client.enrol(requesterCert, requesterPrivKey, csr);
   Applications are <<strongly>> recommended not to pass the requester <<<PrivateKey>>> around in the clear.  The JCA provides the <<<KeyStore>>> class for securely
   storing keys, and can store the requester certificate and pair like so:
   
-+---+
+```java
 KeyStore store = KeyStore.getInstance("JKS");
 store.load(null, null);
 store.setKeyEntry("requester", requesterPrivKey, "secret".toCharArray(), requesterCert);
 
 ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 store.store(bOut, "secret".toCharArray());
-+---+
+```
 
   Alternatively, applications can use a <<<SealedObject>>> to simplify serialization, but this is arguably more complicated.
 
@@ -330,9 +321,9 @@ store.store(bOut, "secret".toCharArray());
   current state of the enrollment.  The <<<poll()>>> method returns the same type as the <<<enrol()>>> method, so applications
   should follow the same steps to determine the <current> state of the enrollment.
 
-+---+
+```java
 EnrollmentResponse res = client.poll(requesterCert, requesterPrivKey, subject, transId);
-+---+
+```
 
   Since issuing a certificate may involve a lengthy manual process, your application may have to make numerous polling requests.
 
@@ -342,17 +333,17 @@ Non-Enrollment Operations
 
   If you need to retrieve a CRL for a particular certificate.
 
-+---+
+```java
 X509CRL crl = client.getRevocationList(cert, keyPair.getPrivate(), issuer, serial);
-+---+
+```
 
 * Certificate Access
 
   If you need to access a certificate that was previously issued, you need only pass the serial number of the certificate:
 
-+---+
+```java
 CertStore store = client.getCertificate(cert, keyPair.getPrivate(), serial);
-+---+
+```
 
 * CA Capabilities
 
@@ -363,51 +354,36 @@ CertStore store = client.getCertificate(cert, keyPair.getPrivate(), serial);
   
   By default, jscep will invoke this operation to determine which algorithms to use when constructing secure message objects. 
 
-+---+
+```java
 Capabilities capabilities = client.getCaCapabilities();
-+---+
+```
 
-  * Digest Algorithms:
-
-    * MD5
-  
-    * SHA-1
-  
-    * SHA-256
-  
-    * SHA-512
-  
-    []
-  
-  * Ciphers:
-  
-    * DES
-  
-    * Triple DES
-  
-    []
-  
-  * Use of HTTP POST
-  
-  []
-  
+- Digest Algorithms:
+-- MD5
+-- SHA-1
+-- SHA-256
+-- SHA-512
+- Ciphers:
+-- DES
+-- Triple DES
+- Use of HTTP POST
   See: {http://tools.ietf.org/html/draft-nourse-scep-23#appendix-C}
 
-* CA Key Rollover
+# CA Key Rollover
 
-+---+
+```java
 CertStore store = client.getRolloverCertificate();
-+---+
+```
 
-  See: {http://tools.ietf.org/html/draft-nourse-scep-23#appendix-E}
+See: {http://tools.ietf.org/html/draft-nourse-scep-23#appendix-E}
 
-* RA/CA Certificate Distribution
+## RA/CA Certificate Distribution
 
-  Retrieving the CA and RA certificates from the SCEP server is an important operation.
+Retrieving the CA and RA certificates from the SCEP server is an important operation.
 
-+---+
+```java
 CertStore store = client.getCaCertificate();
-+---+
+```
 
 Credits
 
