@@ -1,3 +1,5 @@
+[![Latest Build Status](https://jscep.ci.cloudbees.com/job/jscep/badge/icon)](https://jscep.ci.cloudbees.com/)
+
 # Client
 
 ## Constructing a Client
