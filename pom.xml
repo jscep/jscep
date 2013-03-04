@@ -33,7 +33,7 @@
 	</licenses>
 	<scm>
 		<connection>scm:git:git://github.com/seize-the-dave/jscep.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:seize-the-dave/jscep.git</developerConnection>
+		<developerConnection>scm:git:ssh://git@github.com/seize-the-dave/jscep.git</developerConnection>
 		<url>https://github.com/seize-the-dave/jscep</url>
 	</scm>
 	<mailingLists>
