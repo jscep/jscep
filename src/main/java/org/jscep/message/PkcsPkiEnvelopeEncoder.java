@@ -1,6 +1,7 @@
 package org.jscep.message;
 
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.des_EDE3_CBC;
+import static org.bouncycastle.cms.CMSAlgorithm.DES_CBC;
+import static org.bouncycastle.cms.CMSAlgorithm.DES_EDE3_CBC;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -101,9 +102,9 @@ public final class PkcsPkiEnvelopeEncoder {
 
     private OutputEncryptor getEncryptor() throws CMSException {
         if ("DES".equals(encAlg)) {
-            return new DesOutputEncryptor();
+            return new JceCMSContentEncryptorBuilder(DES_CBC).build();
         } else {
-            return new JceCMSContentEncryptorBuilder(des_EDE3_CBC).build();
+            return new JceCMSContentEncryptorBuilder(DES_EDE3_CBC).build();
         }
     }
 }
