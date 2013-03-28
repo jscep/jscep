@@ -80,8 +80,8 @@ public final class PkcsPkiEnvelopeEncoder {
         }
         edGenerator.addRecipientInfoGenerator(recipientGenerator);
         LOGGER.debug(
-                "Encrypting pkcsPkiEnvelope using key belonging to [issuer={}; serial={}]",
-                recipient.getIssuerDN(), recipient.getSerialNumber());
+                "Encrypting pkcsPkiEnvelope using key belonging to [dn={}; serial={}]",
+                recipient.getSubjectDN(), recipient.getSerialNumber());
 
         OutputEncryptor encryptor;
         try {
