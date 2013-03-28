@@ -71,8 +71,8 @@ public final class PkcsPkiEnvelopeDecoder {
         validate(pkcsPkiEnvelope);
 
         LOGGER.debug(
-                "Decrypting pkcsPkiEnvelope using key belonging to [issuer={}; serial={}]",
-                recipient.getIssuerDN(), recipient.getSerialNumber());
+                "Decrypting pkcsPkiEnvelope using key belonging to [dn={}; serial={}]",
+                recipient.getSubjectDN(), recipient.getSerialNumber());
         final RecipientInformationStore recipientInfos = pkcsPkiEnvelope
                 .getRecipientInfos();
         RecipientInformation info = recipientInfos
@@ -80,7 +80,7 @@ public final class PkcsPkiEnvelopeDecoder {
 
         if (info == null) {
             throw new MessageDecodingException(
-                    "Missing expected key transfer recipient");
+                    "Missing expected key transfer recipient " + recipient.getSubjectDN());
         }
 
         LOGGER.debug("pkcsPkiEnvelope encryption algorithm: {}", info

@@ -88,7 +88,7 @@ public final class PkiMessageDecoder {
         SignerInformation signerInfo = signerStore.get(new JcaSignerId(signer));
         if (signerInfo == null) {
             throw new MessageDecodingException("Could not for signerInfo for "
-                    + signer.getIssuerDN());
+                    + signer.getSubjectDN());
         }
 
         LOGGER.debug("pkiMessage digest algorithm: {}", signerInfo
@@ -107,8 +107,8 @@ public final class PkiMessageDecoder {
             X509CertificateHolder cert = (X509CertificateHolder) certColl
                     .iterator().next();
             LOGGER.debug(
-                    "Verifying pkiMessage using key belonging to [issuer={}; serial={}]",
-                    cert.getIssuer(), cert.getSerialNumber());
+                    "Verifying pkiMessage using key belonging to [dn={}; serial={}]",
+                    cert.getSubject(), cert.getSerialNumber());
             SignerInformationVerifier verifier;
             try {
                 verifier = new JcaSimpleSignerInfoVerifierBuilder().build(cert);

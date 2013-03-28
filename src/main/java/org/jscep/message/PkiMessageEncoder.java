@@ -124,8 +124,8 @@ public final class PkiMessageEncoder {
 
         CMSProcessable content = getContent(message);
         LOGGER.debug(
-                "Signing pkiMessage using key belonging to [issuer={}; serial={}]",
-                signerId.getIssuerDN(), signerId.getSerialNumber());
+                "Signing pkiMessage using key belonging to [dn={}; serial={}]",
+                signerId.getSubjectDN(), signerId.getSerialNumber());
         try {
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
             generator.addSignerInfoGenerator(getSignerInfo(message));
