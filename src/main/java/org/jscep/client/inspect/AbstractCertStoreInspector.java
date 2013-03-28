@@ -38,24 +38,24 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 		int i = 0;
 		for (Certificate cert : certs) {
 			X509Certificate x509 = (X509Certificate) cert;
-			LOGGER.debug("{}. '[issuer={}; serial={}]'", new Object[] { ++i,
-					x509.getIssuerDN(), x509.getSerialNumber() });
+			LOGGER.debug("{}. '[dn={}; serial={}]'", new Object[] { ++i,
+					x509.getSubjectDN(), x509.getSerialNumber() });
 		}
 
 		LOGGER.debug("Looking for recipient entity");
 		recipient = selectCertificate(store, getRecipientSelectors());
-		LOGGER.debug("Using [issuer={}; serial={}] for recipient entity",
-				recipient.getIssuerDN(), recipient.getSerialNumber());
+		LOGGER.debug("Using [dn={}; serial={}] for recipient entity",
+				recipient.getSubjectDN(), recipient.getSerialNumber());
 
 		LOGGER.debug("Looking for message signing entity");
 		signer = selectCertificate(store, getSignerSelectors());
-		LOGGER.debug("Using [issuer={}; serial={}] for message signing entity",
-				signer.getIssuerDN(), signer.getSerialNumber());
+		LOGGER.debug("Using [dn={}; serial={}] for message signing entity",
+				signer.getSubjectDN(), signer.getSerialNumber());
 
 		LOGGER.debug("Looking for issuing entity");
 		issuer = selectCertificate(store, getIssuerSelectors());
-		LOGGER.debug("Using [issuer={}; serial={}] for issuing entity",
-				issuer.getIssuerDN(), issuer.getSerialNumber());
+		LOGGER.debug("Using [dn={}; serial={}] for issuing entity",
+				issuer.getSubjectDN(), issuer.getSerialNumber());
 	}
 
 	/**
