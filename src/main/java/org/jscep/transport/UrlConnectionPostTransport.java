@@ -53,6 +53,7 @@ final class UrlConnectionPostTransport extends AbstractTransport {
         try {
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/octet-stream");
         } catch (IOException e) {
             throw new TransportException(e);
         }
