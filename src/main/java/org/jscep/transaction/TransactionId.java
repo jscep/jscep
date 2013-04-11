@@ -15,7 +15,7 @@ import org.apache.commons.lang.ArrayUtils;
 /**
  * This class represents a SCEP <code>transactionID</code> attribute.
  */
-public final class TransactionId implements Serializable {
+public final class TransactionId implements Serializable, Comparable<TransactionId> {
     private static final long serialVersionUID = -5248125945726721520L;
     private static final AtomicLong ID_SOURCE = new AtomicLong();
     private final byte[] id;
@@ -105,6 +105,18 @@ public final class TransactionId implements Serializable {
 
         return Arrays.equals(id, that.id);
 
+    }
+    
+    @Override
+    public int compareTo(TransactionId that) {
+        for (int i = 0, j = 0; i < this.id.length && j < that.id.length; i++, j++) {
+            int a = (this.id[i] & 0xff);
+            int b = (that.id[j] & 0xff);
+            if (a != b) {
+                return a - b;
+            }
+        }
+        return this.id.length - that.id.length;
     }
 
     /**
