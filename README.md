@@ -280,7 +280,7 @@ EnrollmentResponse res = client.enrol(requesterCert, requesterPrivKey, csr);
 
 ** Enrollment Response
 
-  The <<<EnrollmentResponse>>> returned by <<<Client.enrol()>>> and <<<Client.poll()>>> should be inspected by your application
+  The `EnrollmentResponse` returned by `Client.enrol()` and `Client.poll()` should be inspected by your application
   to determine what to do next.  <<<EnrollmentResponse>>> contains three methods which can be used to determine the state
   of the response:
   
@@ -301,9 +301,9 @@ EnrollmentResponse res = client.enrol(requesterCert, requesterPrivKey, csr);
   
   Your application may use a number of different approaches for sending a poll request to the server, and jscep does not
   attempt to second-guess how your application will want to approach this situation.  However, it should be noted that all of the classes used as arguments to
-  <<<poll>>> implement <<<Serializable>>> and are immutable, so can safely be used in different threads and even in different JVMs.
+  `poll` implement `Serializable` and are immutable, so can safely be used in different threads and even in different JVMs.
   
-  Applications are <<strongly>> recommended not to pass the requester <<<PrivateKey>>> around in the clear.  The JCA provides the <<<KeyStore>>> class for securely
+  Applications are <<strongly>> recommended not to pass the requester `PrivateKey` around in the clear.  The JCA provides the `KeyStore` class for securely
   storing keys, and can store the requester certificate and pair like so:
   
 ```java
@@ -369,7 +369,7 @@ Capabilities capabilities = client.getCaCapabilities();
 -- DES
 -- Triple DES
 - Use of HTTP POST
-  See: {http://tools.ietf.org/html/draft-nourse-scep-23#appendix-C}
+  See: http://tools.ietf.org/html/draft-nourse-scep-23#appendix-C
 
 # CA Key Rollover
 
@@ -377,7 +377,7 @@ Capabilities capabilities = client.getCaCapabilities();
 CertStore store = client.getRolloverCertificate();
 ```
 
-See: {http://tools.ietf.org/html/draft-nourse-scep-23#appendix-E}
+See: http://tools.ietf.org/html/draft-nourse-scep-23#appendix-E
 
 ## RA/CA Certificate Distribution
 
@@ -393,7 +393,7 @@ Credits
 
 References
 
-  * {{{http://www.bouncycastle.org/docs/pkixdocs1.5on/index.html}Bouncy Castle PKIX and CMS Documentation}}
+  * [Bouncy Castle PKIX and CMS Documentation](http://www.bouncycastle.org/docs/pkixdocs1.5on/index.html)
   
   * {{{http://www.bouncycastle.org/docs/docs1.5on/index.html}Bouncy Castle Provider and Main Documentation}}
   
@@ -403,4 +403,4 @@ References
 
   * {{{http://social.technet.microsoft.com/wiki/contents/articles/9063.network-device-enrollment-service-ndes-in-active-directory-certificate-services-ad-cs.aspx}Network Device Enrollment Service (NDES) in Active Directory Certificate Services (AD CS)}}
   
-  []
+
