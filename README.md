@@ -390,12 +390,12 @@ CertStore store = client.getCaCertificate();
 
   * [Bouncy Castle PKIX and CMS Documentation](http://www.bouncycastle.org/docs/pkixdocs1.5on/index.html)
   
-  * {{{http://www.bouncycastle.org/docs/docs1.5on/index.html}Bouncy Castle Provider and Main Documentation}}
+  * [Bouncy Castle Provider and Main Documentation](http://www.bouncycastle.org/docs/docs1.5on/index.html)
   
-  * {{{http://docs.oracle.com/javase/6/docs/technotes/guides/security/}Java 6 Security}}
+  * [Java 6 Security](http://docs.oracle.com/javase/6/docs/technotes/guides/security/)
 
-  * {{{http://technet.microsoft.com/en-us/library/cc753828(v=ws.10).aspx}Active Directory Certificate Services and Public Key Management}}
+  * [Active Directory Certificate Services and Public Key Management](http://technet.microsoft.com/en-us/library/cc753828(v=ws.10).aspx)
 
-  * {{{http://social.technet.microsoft.com/wiki/contents/articles/9063.network-device-enrollment-service-ndes-in-active-directory-certificate-services-ad-cs.aspx}Network Device Enrollment Service (NDES) in Active Directory Certificate Services (AD CS)}}
+  * [Network Device Enrollment Service (NDES) in Active Directory Certificate Services (AD CS)](http://social.technet.microsoft.com/wiki/contents/articles/9063.network-device-enrollment-service-ndes-in-active-directory-certificate-services-ad-cs.aspx)
   
 
