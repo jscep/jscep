@@ -312,7 +312,7 @@ store.store(bOut, "secret".toCharArray());
 
   Alternatively, applications can use a `SealedObject` to simplify serialization, but this is arguably more complicated.
 
-* Polling for a Pending Enrollment
+## Polling for a Pending Enrollment
 
   If your application has previously received a _pending_ response, your application should poll the SCEP server to determine the
   current state of the enrollment.  The `poll()` method returns the same type as the `enrol()` method, so applications
@@ -324,9 +324,9 @@ EnrollmentResponse res = client.poll(requesterCert, requesterPrivKey, subject, t
 
   Since issuing a certificate may involve a lengthy manual process, your application may have to make numerous polling requests.
 
-Non-Enrollment Operations
+# Non-Enrollment Operations
 
-# CRL Access
+## CRL Access
 
   If you need to retrieve a CRL for a particular certificate.
 
@@ -334,7 +334,7 @@ Non-Enrollment Operations
 X509CRL crl = client.getRevocationList(cert, keyPair.getPrivate(), issuer, serial);
 ```
 
-# Certificate Access
+## Certificate Access
 
   If you need to access a certificate that was previously issued, you need only pass the serial number of the certificate:
 
@@ -342,9 +342,9 @@ X509CRL crl = client.getRevocationList(cert, keyPair.getPrivate(), issuer, seria
 CertStore store = client.getCertificate(cert, keyPair.getPrivate(), serial);
 ```
 
-# CA Capabilities
+## CA Capabilities
 
-  The capabilities of the SCEP are used extensively by internal jscep operations, for determining the cipher to use for key wrapping in the
+  The capabilities of the SCEP server are used extensively by internal jscep operations, for determining the cipher to use for key wrapping in the
   `pkcsPkiEnvelope` structure, and for the signature to use for signing the `pkiMessage` structure. 
   
   This operation is used to determine how to interact with the server.  
@@ -356,17 +356,17 @@ Capabilities capabilities = client.getCaCapabilities();
 ```
 
 - Digest Algorithms:
--- MD5
--- SHA-1
--- SHA-256
--- SHA-512
+ - MD5
+ - SHA-1
+ - SHA-256
+ - SHA-512
 - Ciphers:
--- DES
--- Triple DES
+ - DES
+ - Triple DES
 - Use of HTTP POST
   See: http://tools.ietf.org/html/draft-nourse-scep-23#appendix-C
 
-# CA Key Rollover
+## CA Key Rollover
 
 ```java
 CertStore store = client.getRolloverCertificate();
