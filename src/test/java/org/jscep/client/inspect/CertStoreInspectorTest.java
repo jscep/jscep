@@ -33,12 +33,12 @@ public abstract class CertStoreInspectorTest {
         configs.add(new Object[] { "ca_ra", "ca_ra", "ca_ra", "ca" });
         configs.add(new Object[] { "ca_ra-de", "ca_ra-de", "ca", "ca" });
         configs.add(new Object[] { "ca_ra-ds", "ca", "ca_ra-ds", "ca" });
-        configs.add(new Object[] { "ca_ca", "ca_ca", "ca_ca", "ca_ca" });
+        configs.add(new Object[] { "ca_ca", "ca_ca", "ca_ca", "ca" });
         configs.add(new Object[] { "ca_ca_ra", "ca_ca_ra", "ca_ca_ra", "ca_ca" });
         configs.add(new Object[] { "ca_ca_ra-de", "ca_ca_ra-de", "ca_ca",
                 "ca_ca" });
         configs.add(new Object[] { "ca_ca_ra-ds", "ca_ca", "ca_ca_ra-ds",
-                "ca_ca" });
+                "ca" });
 
         for (Object[] config : configs) {
             Certificate[] chain = testStore
