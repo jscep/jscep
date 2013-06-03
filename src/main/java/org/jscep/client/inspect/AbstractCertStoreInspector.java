@@ -8,6 +8,8 @@ import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
+import javax.security.auth.x500.X500Principal;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +55,7 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 				signer.getSubjectDN(), signer.getSerialNumber());
 
 		LOGGER.debug("Looking for issuing entity");
-		issuer = selectCertificate(store, getIssuerSelectors());
+		issuer = selectCertificate(store, getIssuerSelectors(recipient.getIssuerX500Principal().getEncoded()));
 		LOGGER.debug("Using [dn={}; serial={}] for issuing entity",
 				issuer.getSubjectDN(), issuer.getSerialNumber());
 	}
@@ -84,7 +86,7 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 		return (X509Certificate) store.getCertificates(null).iterator().next();
 	}
 
-	protected abstract Collection<X509CertSelector> getIssuerSelectors();
+	protected abstract Collection<X509CertSelector> getIssuerSelectors(byte[] issuerDN);
 
 	protected abstract Collection<X509CertSelector> getSignerSelectors();
 
