@@ -27,7 +27,7 @@ import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.LinkedList;
 
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.AttributeTable;
@@ -65,6 +65,7 @@ public final class PkiMessageEncoder {
             .getLogger(PkiMessageEncoder.class);
     private final PrivateKey signerKey;
     private final X509Certificate signerId;
+    private X509Certificate[] chain = null;
     private final PkcsPkiEnvelopeEncoder enveloper;
     private final String signatureAlgorithm;
 
@@ -83,6 +84,28 @@ public final class PkiMessageEncoder {
             final PkcsPkiEnvelopeEncoder enveloper) {
         this.signerKey = signerKey;
         this.signerId = signerId;
+        this.enveloper = enveloper;
+        this.signatureAlgorithm = "SHA1withRSA";
+    }
+    
+    /**
+     * Creates a new <tt>PkiMessageEncoder</tt> instance.
+     * 
+     * @param signerKey
+     *            the key to use to sign the <tt>signedData</tt>.
+     * @param signerId
+     *            the certificate to use to identify the signer.
+     * @param chain
+     *            the chain of ca certicate[s] to add to the signedData
+     * @param enveloper
+     *            the enveloper used for encoding the <tt>messageData</tt>
+     */
+    public PkiMessageEncoder(final PrivateKey signerKey,
+            final X509Certificate signerId, final X509Certificate[] chain,
+            final PkcsPkiEnvelopeEncoder enveloper) {
+        this.signerKey = signerKey;
+        this.signerId = signerId;
+        this.chain = chain;
         this.enveloper = enveloper;
         this.signatureAlgorithm = "SHA1withRSA";
     }
@@ -196,7 +219,14 @@ public final class PkiMessageEncoder {
     }
 
     private JcaCertStore getCertificates() throws MessageEncodingException {
-        Collection<X509Certificate> certColl = Collections.singleton(signerId);
+        Collection<X509Certificate> certColl = new LinkedList<X509Certificate>();
+        certColl.add(signerId);
+        if (this.chain != null) {
+          for (X509Certificate c : this.chain) {
+            certColl.add(c);
+            LOGGER.debug("Add ca certificate {} to signed data", c.getSubjectX500Principal().toString());
+          }
+        }
         JcaCertStore certStore;
         try {
             certStore = new JcaCertStore(certColl);
