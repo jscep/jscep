@@ -755,4 +755,9 @@ public final class Client {
             final CertStoreInspectorFactory inspectorFactory) {
         this.inspectorFactory = inspectorFactory;
     }
+
+    public synchronized void setTransportFactory(
+    		final TransportFactory transportFactory) {
+    	this.transportFactory = transportFactory;
+    }
 }

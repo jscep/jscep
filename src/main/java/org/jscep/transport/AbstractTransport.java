@@ -20,7 +20,7 @@ public abstract class AbstractTransport implements Transport {
      * @param url
      *            the <tt>URL</tt> used for sending requests.
      */
-    AbstractTransport(final URL url) {
+    public AbstractTransport(final URL url) {
         this.url = url;
     }
 
@@ -33,7 +33,7 @@ public abstract class AbstractTransport implements Transport {
      * @throws TransportException
      *             if the generated <tt>URL</tt> is malformed.
      */
-    final URL getUrl(final Operation op) throws TransportException {
+    public final URL getUrl(final Operation op) throws TransportException {
         try {
             return new URL(url.toExternalForm() + "?operation=" + op.getName());
         } catch (MalformedURLException e) {
