@@ -462,7 +462,7 @@ public abstract class ScepServlet extends HttpServlet {
     private void doGetCaCaps(final HttpServletRequest req,
             final HttpServletResponse res) throws Exception {
         res.setHeader("Content-Type", "text/plain");
-        final Set<Capability> caps = doCapabilities(req.getParameter("message"));
+        final Set<Capability> caps = doCapabilities(req.getParameter(MSG_PARAM));
         for (Capability cap : caps) {
             res.getWriter().write(cap.toString());
             res.getWriter().write('\n');
