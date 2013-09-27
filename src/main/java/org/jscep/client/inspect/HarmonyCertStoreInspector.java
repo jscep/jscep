@@ -1,5 +1,6 @@
 package org.jscep.client.inspect;
 
+import java.io.IOException;
 import java.security.cert.CertStore;
 import java.security.cert.X509CertSelector;
 import java.util.Arrays;
@@ -20,9 +21,14 @@ final class HarmonyCertStoreInspector extends AbstractCertStoreInspector impleme
     /**
      * {@inheritDoc}
      */
-	protected Collection<X509CertSelector> getIssuerSelectors() {
+	protected Collection<X509CertSelector> getIssuerSelectors(byte[] subjectDN) {
 		X509CertSelector caSelector = new X509CertSelector();
         caSelector.setBasicConstraints(0);
+        try {
+            caSelector.setSubject(subjectDN);
+        } catch (IOException e) {
+            // shut up
+        }
         
 		return Arrays.asList(caSelector);
 	}
@@ -57,3 +63,4 @@ final class HarmonyCertStoreInspector extends AbstractCertStoreInspector impleme
 		return Arrays.asList(keyEncSelector, dataEncSelector, caSelector);
 	}
 }
+
