@@ -227,5 +227,10 @@ public class ScepServletImpl extends ScepServlet {
     protected X509Certificate getSigner() {
         return ca;
     }
+    
+    @Override
+    protected X509Certificate[] getSignerCertificateChain() {
+        return null;
+    }
 
 }

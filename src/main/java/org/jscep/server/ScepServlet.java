@@ -328,7 +328,7 @@ public abstract class ScepServlet extends HttpServlet {
             PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
                     reqCert, "DESede");
             PkiMessageEncoder encoder = new PkiMessageEncoder(getSignerKey(),
-                    getSigner(), envEncoder);
+                    getSigner(), getSignerCertificateChain(), envEncoder);
             CMSSignedData signedData;
             try {
                 signedData = encoder.encode(certRep);
@@ -609,6 +609,13 @@ public abstract class ScepServlet extends HttpServlet {
      * @return the certificate.
      */
     protected abstract X509Certificate getSigner();
+    
+    /**
+     * Returns the certificate chain of the entity represented by this SCEP server.
+     * 
+     * @return the chain
+     */
+    protected abstract X509Certificate[] getSignerCertificateChain();
 
     private byte[] getMessageBytes(final HttpServletRequest req)
             throws IOException {
