@@ -50,7 +50,7 @@ final class DefaultCertStoreInspector extends AbstractCertStoreInspector {
      	 * {@inheritDoc}
      	 */
 	protected Collection<X509CertSelector> getRecipientSelectors() {
-		boolean digialSignature = false;
+		boolean digitalSignature = false;
 		boolean nonRepudiation = false;
 		boolean keyEncipherment = true;
 		boolean dataEncipherment = false;
