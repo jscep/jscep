@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jscep/jscep.png?branch=master)](https://travis-ci.org/jscep/jscep)
+
 # Constructing a Client
 
 In order to construct a client, we need two objects:
