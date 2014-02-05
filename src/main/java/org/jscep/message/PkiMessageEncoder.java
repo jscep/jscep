@@ -40,6 +40,7 @@ import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
@@ -145,7 +146,7 @@ public final class PkiMessageEncoder {
         LOGGER.debug("Encoding pkiMessage");
         LOGGER.debug("Encoding message: {}", message);
 
-        CMSProcessable content = getContent(message);
+        CMSTypedData content = getContent(message);
         LOGGER.debug(
                 "Signing pkiMessage using key belonging to [dn={}; serial={}]",
                 signerId.getSubjectDN(), signerId.getSerialNumber());
@@ -154,8 +155,7 @@ public final class PkiMessageEncoder {
             generator.addSignerInfoGenerator(getSignerInfo(message));
             generator.addCertificates(getCertificates());
             LOGGER.debug("Signing {} content", content);
-            CMSSignedData pkiMessage = generator.generate(DATA, content, true,
-                    (Provider) null, true);
+            CMSSignedData pkiMessage = generator.generate(content, true);
             LOGGER.debug("Finished encoding pkiMessage");
 
             return pkiMessage;
@@ -166,9 +166,9 @@ public final class PkiMessageEncoder {
         }
     }
 
-    private CMSProcessable getContent(final PkiMessage<?> message)
+    private CMSTypedData getContent(final PkiMessage<?> message)
             throws MessageEncodingException {
-        CMSProcessable signable;
+        CMSTypedData signable;
 
         boolean hasMessageData = true;
         if (message instanceof CertRep) {
