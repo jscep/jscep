@@ -129,7 +129,7 @@ public final class PkcsPkiEnvelopeDecoder {
                 try {
                     Key contentKey = unwrapKey(wrappingKey, wrappedKey);
                     dataCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
-                    dataCipher.init(Cipher.DECRYPT_MODE, contentKey, getIv(contentAlg));
+                    dataCipher.init(Cipher.DECRYPT_MODE, contentKey, getIV(contentAlg));
                 } catch (GeneralSecurityException e) {
                     throw new CMSException("Could not create DES cipher", e);
                 }
