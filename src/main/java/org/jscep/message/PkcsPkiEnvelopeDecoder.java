@@ -107,7 +107,7 @@ public final class PkcsPkiEnvelopeDecoder {
                 .getEncryptedContentInfo().getContentType());
     }
     
-    private static class InternalKeyTransEnvelopedRecipient {
+    private static class InternalKeyTransEnvelopedRecipient extends JceKeyTransEnvelopedRecipient {
         private static final String RSA = "RSA";
         private static final String DES = "DES";
         private final PrivateKey wrappingKey;
