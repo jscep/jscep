@@ -5,6 +5,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.spec.AlgorithmParameterSpec;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
