@@ -1,4 +1,4 @@
-jscep [![Build Status](https://travis-ci.org/jscep/jscep.png?branch=master)](https://travis-ci.org/jscep/jscep)
+jscep [![Build Status](https://drone.io/github.com/jscep/jscep/status.png)](https://drone.io/github.com/jscep/jscep/latest)
 =====
 
 ## Constructing a Client
