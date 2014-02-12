@@ -123,7 +123,7 @@ public final class PkcsPkiEnvelopeDecoder {
             final AlgorithmIdentifier contentAlg,
             final byte[] wrappedKey)
             throws CMSException {
-            if ("1.3.14.3.2.7".equals(contentEncryptionAlgorithm.getAlgorithm().getId())) {
+            if ("1.3.14.3.2.7".equals(contentAlg.getAlgorithm().getId())) {
                 final Cipher dataCipher;
                 try {
                     Key contentKey = unwrapKey(wrappingKey, wrappedKey);
