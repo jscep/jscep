@@ -5,6 +5,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.spec.AlgorithmParameterSpec;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
@@ -96,51 +97,7 @@ public final class PkcsPkiEnvelopeDecoder {
     }
 
     private JceKeyTransEnvelopedRecipient getKeyTransRecipient() {
-        return new JceKeyTransEnvelopedRecipient(privKey) {
-            @Override
-            public RecipientOperator getRecipientOperator(
-                    final AlgorithmIdentifier keyEncryptionAlgorithm,
-                    final AlgorithmIdentifier contentEncryptionAlgorithm,
-                    final byte[] encryptedContentEncryptionKey)
-                    throws CMSException {
-                if ("1.3.14.3.2.7".equals(contentEncryptionAlgorithm
-                        .getAlgorithm().getId())) {
-                    final Cipher dataCipher;
-                    try {
-                        Cipher unwrapper = Cipher.getInstance("RSA");
-                        unwrapper.init(Cipher.UNWRAP_MODE, privKey);
-                        Key encKey = unwrapper.unwrap(
-                                encryptedContentEncryptionKey, "DES",
-                                Cipher.SECRET_KEY);
-                        ASN1Encodable sParams = contentEncryptionAlgorithm
-                                .getParameters();
-
-                        dataCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
-                        dataCipher.init(Cipher.DECRYPT_MODE, encKey,
-                                new IvParameterSpec(ASN1OctetString
-                                        .getInstance(sParams).getOctets()));
-                    } catch (GeneralSecurityException e) {
-                        throw new CMSException("Could not create DES cipher", e);
-                    }
-
-                    return new RecipientOperator(new InputDecryptor() {
-                        @Override
-                        public AlgorithmIdentifier getAlgorithmIdentifier() {
-                            return contentEncryptionAlgorithm;
-                        }
-
-                        @Override
-                        public InputStream getInputStream(
-                                final InputStream dataIn) {
-                            return new CipherInputStream(dataIn, dataCipher);
-                        }
-                    });
-                }
-                return super.getRecipientOperator(keyEncryptionAlgorithm,
-                        contentEncryptionAlgorithm,
-                        encryptedContentEncryptionKey);
-            }
-        };
+        return new InternalKeyTransEnvelopedRecipient(privKey);
     }
 
     private void validate(final CMSEnvelopedData pkcsPkiEnvelope) {
@@ -149,5 +106,58 @@ public final class PkcsPkiEnvelopeDecoder {
         LOGGER.debug("pkcsPkiEnvelope version: {}", ed.getVersion());
         LOGGER.debug("pkcsPkiEnvelope encryptedContentInfo contentType: {}", ed
                 .getEncryptedContentInfo().getContentType());
+    }
+    
+    private static class InternalKeyTransEnvelopedRecipient extends JceKeyTransEnvelopedRecipient {
+        private static final String RSA = "RSA";
+        private static final String DES = "DES";
+        private final PrivateKey wrappingKey;
+        
+        public InternalKeyTransEnvelopedRecipient(PrivateKey wrappingKey) {
+            super(wrappingKey);
+            this.wrappingKey = wrappingKey;
+        }
+        
+        @Override
+        public RecipientOperator getRecipientOperator(
+            final AlgorithmIdentifier notUsed,
+            final AlgorithmIdentifier contentAlg,
+            final byte[] wrappedKey)
+            throws CMSException {
+            if ("1.3.14.3.2.7".equals(contentAlg.getAlgorithm().getId())) {
+                final Cipher dataCipher;
+                try {
+                    Key contentKey = unwrapKey(wrappingKey, wrappedKey);
+                    dataCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
+                    dataCipher.init(Cipher.DECRYPT_MODE, contentKey, getIV(contentAlg));
+                } catch (GeneralSecurityException e) {
+                    throw new CMSException("Could not create DES cipher", e);
+                }
+
+                return new RecipientOperator(new InputDecryptor() {
+                    @Override
+                    public AlgorithmIdentifier getAlgorithmIdentifier() {
+                        return contentAlg;
+                    }
+
+                    @Override
+                    public InputStream getInputStream(final InputStream dataIn) {
+                        return new CipherInputStream(dataIn, dataCipher);
+                    }
+                });
+            }
+            return super.getRecipientOperator(notUsed, contentAlg, wrappedKey);
+        }
+        
+        private Key unwrapKey(PrivateKey wrappingKey, byte[] wrappedKey) throws GeneralSecurityException {
+            Cipher unwrapper = Cipher.getInstance(RSA);
+            unwrapper.init(Cipher.UNWRAP_MODE, wrappingKey);
+            return unwrapper.unwrap(wrappedKey, DES, Cipher.SECRET_KEY);
+        }
+                
+        private AlgorithmParameterSpec getIV(AlgorithmIdentifier envelopingAlgorithm) throws GeneralSecurityException {
+            ASN1Encodable ivParams = envelopingAlgorithm.getParameters();
+            return new IvParameterSpec(ASN1OctetString.getInstance(ivParams).getOctets());
+        }
     }
 }
