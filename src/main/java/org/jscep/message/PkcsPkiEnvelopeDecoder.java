@@ -108,7 +108,7 @@ public final class PkcsPkiEnvelopeDecoder {
                 .getEncryptedContentInfo().getContentType());
     }
     
-    private static class InternalKeyTransEnvelopedRecipient(privKey) {
+    private static class InternalKeyTransEnvelopedRecipient() {
         private final PrivateKey privKey;
         
         public InternalKeyTransEnvelopedRecipient(PrivateKey privKey) {
