@@ -113,6 +113,7 @@ public final class PkcsPkiEnvelopeDecoder {
         private final PrivateKey wrappingKey;
         
         public InternalKeyTransEnvelopedRecipient(PrivateKey wrappingKey) {
+            super(wrappingKey);
             this.wrappingKey = wrappingKey;
         }
         
