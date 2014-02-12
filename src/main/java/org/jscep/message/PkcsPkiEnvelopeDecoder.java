@@ -33,7 +33,6 @@ import org.slf4j.Logger;
  * @see PkcsPkiEnvelopeEncoder
  */
 public final class PkcsPkiEnvelopeDecoder {
-    private static final String RSA = "RSA";
     private static final Logger LOGGER = getLogger(PkcsPkiEnvelopeDecoder.class);
     private final X509Certificate recipient;
     private final PrivateKey privKey;
@@ -108,26 +107,27 @@ public final class PkcsPkiEnvelopeDecoder {
                 .getEncryptedContentInfo().getContentType());
     }
     
-    private static class InternalKeyTransEnvelopedRecipient() {
-        private final PrivateKey privKey;
+    private static class InternalKeyTransEnvelopedRecipient {
+        private static final String RSA = "RSA";
+        private static final String DES = "DES";
+        private final PrivateKey wrappingKey;
         
-        public InternalKeyTransEnvelopedRecipient(PrivateKey privKey) {
-            this.privKey = privKey;
+        public InternalKeyTransEnvelopedRecipient(PrivateKey wrappingKey) {
+            this.wrappingKey = wrappingKey;
         }
         
         @Override
         public RecipientOperator getRecipientOperator(
             final AlgorithmIdentifier keyEncryptionAlgorithm,
-            final AlgorithmIdentifier contentEncryptionAlgorithm,
-            final byte[] encryptedContentEncryptionKey)
+            final AlgorithmIdentifier contentAlg,
+            final byte[] wrappedKey)
             throws CMSException {
             if ("1.3.14.3.2.7".equals(contentEncryptionAlgorithm.getAlgorithm().getId())) {
                 final Cipher dataCipher;
                 try {
-                    Key encKey = unwrapKey(privKey, encryptedContentEncryptionKey);
-                    ASN1Encodable sParams = contentEncryptionAlgorithm.getParameters();
+                    Key contentKey = unwrapKey(wrappingKey, wrappedKey);
                     dataCipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
-                    dataCipher.init(Cipher.DECRYPT_MODE, encKey, new IvParameterSpec(ASN1OctetString.getInstance(sParams).getOctets()));
+                    dataCipher.init(Cipher.DECRYPT_MODE, contentKey, getIv(contentAlg));
                 } catch (GeneralSecurityException e) {
                     throw new CMSException("Could not create DES cipher", e);
                 }
@@ -135,13 +135,18 @@ public final class PkcsPkiEnvelopeDecoder {
                 private Key unwrapKey(PrivateKey wrappingKey, byte[] wrappedKey) throws GeneralSecurityException {
                     Cipher unwrapper = Cipher.getInstance(RSA);
                     unwrapper.init(Cipher.UNWRAP_MODE, wrappingKey);
-                    return unwrapper.unwrap(wrappedKey, "DES",Cipher.SECRET_KEY);
+                    return unwrapper.unwrap(wrappedKey, DES, Cipher.SECRET_KEY);
+                }
+                
+                private IvParameterSpec getIV(AlgorithmIdentifier envelopingAlgorithm) throws GeneralSecurityException {
+                    ASN1Encodable ivParams = envelopingAlgorithm.getParameters();
+                    return new IvParameterSpec(ASN1OctetString.getInstance(ivParams).getOctets());
                 }
 
                 return new RecipientOperator(new InputDecryptor() {
                     @Override
                     public AlgorithmIdentifier getAlgorithmIdentifier() {
-                        return contentEncryptionAlgorithm;
+                        return contentAlg;
                     }
 
                     @Override
@@ -150,7 +155,7 @@ public final class PkcsPkiEnvelopeDecoder {
                     }
                 });
             }
-            return super.getRecipientOperator(keyEncryptionAlgorithm, contentEncryptionAlgorithm, encryptedContentEncryptionKey);
+            return super.getRecipientOperator(keyEncryptionAlgorithm, contentAlg, wrappedKey);
         }
     }
 }
