@@ -118,7 +118,7 @@ public final class PkcsPkiEnvelopeDecoder {
         
         @Override
         public RecipientOperator getRecipientOperator(
-            final AlgorithmIdentifier keyEncryptionAlgorithm,
+            final AlgorithmIdentifier notUsed,
             final AlgorithmIdentifier contentAlg,
             final byte[] wrappedKey)
             throws CMSException {
@@ -130,17 +130,6 @@ public final class PkcsPkiEnvelopeDecoder {
                     dataCipher.init(Cipher.DECRYPT_MODE, contentKey, getIv(contentAlg));
                 } catch (GeneralSecurityException e) {
                     throw new CMSException("Could not create DES cipher", e);
-                }
-                    
-                private Key unwrapKey(PrivateKey wrappingKey, byte[] wrappedKey) throws GeneralSecurityException {
-                    Cipher unwrapper = Cipher.getInstance(RSA);
-                    unwrapper.init(Cipher.UNWRAP_MODE, wrappingKey);
-                    return unwrapper.unwrap(wrappedKey, DES, Cipher.SECRET_KEY);
-                }
-                
-                private IvParameterSpec getIV(AlgorithmIdentifier envelopingAlgorithm) throws GeneralSecurityException {
-                    ASN1Encodable ivParams = envelopingAlgorithm.getParameters();
-                    return new IvParameterSpec(ASN1OctetString.getInstance(ivParams).getOctets());
                 }
 
                 return new RecipientOperator(new InputDecryptor() {
@@ -155,7 +144,18 @@ public final class PkcsPkiEnvelopeDecoder {
                     }
                 });
             }
-            return super.getRecipientOperator(keyEncryptionAlgorithm, contentAlg, wrappedKey);
+            return super.getRecipientOperator(notUsed, contentAlg, wrappedKey);
+        }
+        
+        private Key unwrapKey(PrivateKey wrappingKey, byte[] wrappedKey) throws GeneralSecurityException {
+            Cipher unwrapper = Cipher.getInstance(RSA);
+            unwrapper.init(Cipher.UNWRAP_MODE, wrappingKey);
+            return unwrapper.unwrap(wrappedKey, DES, Cipher.SECRET_KEY);
+        }
+                
+        private IvParameterSpec getIV(AlgorithmIdentifier envelopingAlgorithm) throws GeneralSecurityException {
+            ASN1Encodable ivParams = envelopingAlgorithm.getParameters();
+            return new IvParameterSpec(ASN1OctetString.getInstance(ivParams).getOctets());
         }
     }
 }
