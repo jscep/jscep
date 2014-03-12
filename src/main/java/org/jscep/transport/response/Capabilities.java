@@ -157,7 +157,8 @@ public final class Capabilities {
     }
 
     private boolean sigExists(final String sig) {
-        return algorithmExists("Signature", sig + "withRSA")
+        return (algorithmExists("Signature", sig + "withRSA")
+                || algorithmExists("Signature", sig + "WithRSAEncryption"))
                 && digestExists(sig);
     }
 

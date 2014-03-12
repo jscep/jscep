@@ -627,7 +627,7 @@ public final class Client {
             byte[] hash = digest.digest(csr.getEncoded());
 
             LOGGER.debug("{} PKCS#10 Fingerprint: [{}]", digest.getAlgorithm(),
-                    Hex.encodeHexString(hash));
+                    new String(Hex.encodeHex(hash)));
         } catch (IOException e) {
             LOGGER.error("Error getting encoded CSR", e);
         }
