@@ -31,7 +31,7 @@ public final class PkiOperationRequest extends Request {
     @Override
     public String getMessage() {
         try {
-            return Base64.encodeBase64String(msgData.getEncoded());
+            return new String(Base64.encodeBase64(msgData.getEncoded(), false), "UTF-8");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
