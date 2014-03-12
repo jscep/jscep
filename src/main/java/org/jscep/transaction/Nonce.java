@@ -40,7 +40,7 @@ public final class Nonce {
      */
     @Override
     public String toString() {
-        return "Nonce [" + Hex.encodeHexString(nonce) + "]";
+        return "Nonce [" + new String(Hex.encodeHex(nonce)) + "]";
     }
 
     /**
