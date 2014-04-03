@@ -12,6 +12,9 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.pkcs.Attribute;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
 /**
  * This class is used for performing utility operations on
@@ -52,5 +55,27 @@ public final class CertificationRequestUtils {
         }
         return kf.generatePublic(keySpec);
     }
+
+    /**
+     * Extracts the <tt>Challenge password</tt> from the provided CSR.
+     * <p>
+     * 
+     * @param csr
+     *            the CSR to extract from.
+     * @return the extracted <tt>Challenge password</tt>
+     */
+    public static String getChallengePassword(final PKCS10CertificationRequest csr) {
+        Attribute[] attrs = csr.getAttributes();
+        for (Attribute attr : attrs) {
+            if (attr.getAttrType().equals(
+                    PKCSObjectIdentifiers.pkcs_9_at_challengePassword)) {
+                DERPrintableString challangePassword = (DERPrintableString) attr
+                        .getAttrValues().getObjectAt(0);
+                return challangePassword.getString();
+            }
+        }
+        return null;
+    }
+
 
 }

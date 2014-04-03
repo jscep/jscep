@@ -22,10 +22,8 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import org.bouncycastle.asn1.DERPrintableString;
+
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.pkcs.Attribute;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.X509Extension;
@@ -116,7 +114,7 @@ public class ScepServletImpl extends ScepServlet {
             if (subject.equals(pollName)) {
                 return Collections.emptyList();
             }
-            String password = getPassword(csr);
+            String password = CertificationRequestUtils.getChallengePassword(csr);
             if (!password.equals("password")) {
                 LOGGER.debug("Invalid password");
                 throw new OperationFailureException(FailInfo.badRequest);
@@ -140,19 +138,6 @@ public class ScepServletImpl extends ScepServlet {
     private BigInteger getSerial() {
         Random rnd = new Random();
         return BigInteger.valueOf(Math.abs(rnd.nextLong()) + 1);
-    }
-
-    private String getPassword(PKCS10CertificationRequest csr) {
-        Attribute[] attrs = csr.getAttributes();
-        for (Attribute attr : attrs) {
-            if (attr.getAttrType().equals(
-                    PKCSObjectIdentifiers.pkcs_9_at_challengePassword)) {
-                DERPrintableString password = (DERPrintableString) attr
-                        .getAttrValues().getObjectAt(0);
-                return password.getString();
-            }
-        }
-        return null;
     }
 
     @Override
