@@ -109,7 +109,7 @@ public final class PkcsPkiEnvelopeDecoder {
     }
     
     private static class InternalKeyTransEnvelopedRecipient extends JceKeyTransEnvelopedRecipient {
-        private static final String RSA = "RSA";
+        private static final String RSA = "RSA/ECB/PKCS1Padding";
         private static final String DES = "DES";
         private final PrivateKey wrappingKey;
         
