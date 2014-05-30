@@ -529,7 +529,7 @@ public final class Client {
         CertStoreInspector certs = inspectorFactory.getInstance(store);
         final X509Certificate ca = certs.getIssuer();
 
-        X500Name name = new X500Name(ca.getIssuerX500Principal().toString());
+        X500Name name = new X500Name(ca.getSubjectX500Principal().toString());
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
