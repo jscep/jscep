@@ -5,11 +5,13 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
+import java.util.EnumSet;
 
-import org.jscep.transport.response.Capabilities;
-import org.jscep.transport.response.Capability;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -58,29 +60,52 @@ public class CapabilitiesTest {
 
     @Test
     public void testNoAlgorithmSupportYieldsDefaultCipher() {
-        Provider[] providers = Security.getProviders();
-        for (Provider provider : providers) {
-            Security.removeProvider(provider.getName());
-        }
+        Provider[] providers = removeProviders();
         Capabilities caps = new Capabilities(Capability.TRIPLE_DES);
         assertThat(caps.getStrongestCipher(), is("DES"));
 
-        for (Provider provider : providers) {
-            Security.addProvider(provider);
-        }
+        restoreProviders(providers);
     }
 
     @Test
     public void testNoAlgorithmSupportYieldsDefaultDigest() {
-        Provider[] providers = Security.getProviders();
-        for (Provider provider : providers) {
-            Security.removeProvider(provider.getName());
-        }
+        Provider[] providers = removeProviders();
         Capabilities caps = new Capabilities(Capability.SHA_512);
         assertThat(caps.getStrongestMessageDigest(), is(nullValue()));
 
-        for (Provider provider : providers) {
+        restoreProviders(providers);
+    }
+    
+    @Test
+    public void testStrongestSignature() throws NoSuchAlgorithmException {
+    	Provider[] providers =removeProviders();
+        BouncyCastleProvider bouncyCastle = new BouncyCastleProvider();
+        Security.addProvider(bouncyCastle);
+        assertThat(Security.getProviders().length, is(1));
+        final EnumSet<Capability> capsConstructorArg = EnumSet.noneOf(Capability.class);
+        for (Capability enumValue : Capability.values()) {
+            capsConstructorArg.add(enumValue);
+        }
+        
+        Capabilities caps = new Capabilities(capsConstructorArg.toArray(new Capability[capsConstructorArg.size()]));
+        assertThat(caps.getStrongestMessageDigest().toString(), is(MessageDigest.getInstance("SHA-512").toString()));
+        assertThat(caps.getStrongestSignatureAlgorithm(), is("SHA512withRSA"));
+        
+        removeProviders();
+        restoreProviders(providers);
+    }
+    
+	private void restoreProviders(Provider[] providers) {
+		for (Provider provider : providers) {
             Security.addProvider(provider);
         }
-    }
+	}
+
+	private Provider[] removeProviders() {
+		Provider[] providers = Security.getProviders();
+        for (Provider provider : providers) {
+            Security.removeProvider(provider.getName());
+        }
+		return providers;
+	}
 }

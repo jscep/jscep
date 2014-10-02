@@ -105,7 +105,7 @@ public final class Capabilities {
         for (Provider provider : Security.getProviders()) {
             for (Service service : provider.getServices()) {
                 if (service.getType().equals(serviceType)
-                        && service.getAlgorithm().equals(algorithm)) {
+                        && service.getAlgorithm().equalsIgnoreCase(algorithm)) {
                     return true;
                 }
             }
@@ -163,7 +163,8 @@ public final class Capabilities {
     }
 
     private boolean digestExists(final String digest) {
-        return algorithmExists("MessageDigest", digest);
+        return algorithmExists("MessageDigest", digest) 
+        		|| algorithmExists("MessageDigest", digest.replaceFirst("SHA", "SHA-"));
     }
 
     private MessageDigest getDigest(final String algorithm) {
