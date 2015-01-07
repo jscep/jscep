@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -126,13 +127,13 @@ public final class PkiMessageDecoder {
             LOGGER.warn("Unable to verify message because the signedData contained no certificates.");
         }
 
-        Hashtable<DERObjectIdentifier, Attribute> attrTable = signerInfo
+        Hashtable<ASN1ObjectIdentifier, Attribute> attrTable = signerInfo
                 .getSignedAttributes().toHashtable();
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("pkiMessage has {} signed attributes:", signerInfo
                     .getSignedAttributes().size());
-            for (Entry<DERObjectIdentifier, Attribute> entry : attrTable
+            for (Entry<ASN1ObjectIdentifier, Attribute> entry : attrTable
                     .entrySet()) {
                 LOGGER.debug("  {}: {}", entry.getKey().getId(), entry
                         .getValue().getAttrValues());
