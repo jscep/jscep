@@ -1,6 +1,7 @@
 package org.jscep.client.inspect;
 
 import java.security.cert.CertStore;
+import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -9,7 +10,7 @@ import java.util.WeakHashMap;
  */
 public class DefaultCertStoreInspectorFactory implements
         CertStoreInspectorFactory {
-    private static final Map<CertStore, CertStoreInspector> INSTANCES = new WeakHashMap<CertStore, CertStoreInspector>();
+    private static final Map<CertStore, CertStoreInspector> INSTANCES = Collections.synchronizedMap(new WeakHashMap<CertStore, CertStoreInspector>());
 
     /**
      * {@inheritDoc}
