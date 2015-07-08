@@ -17,13 +17,21 @@ import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSAbsentContent;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
@@ -44,6 +52,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import junit.framework.Assert;
 
 @RunWith(Parameterized.class)
 public class PkiMessageEncoderTest {
@@ -121,6 +131,41 @@ public class PkiMessageEncoderTest {
         assertEquals(message, actual);
     }
 
+    @Test
+    public void invalidSignatureTest() throws Exception {
+        KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+        X509Certificate ca = X509Certificates.createEphemeral(
+                new X500Principal("CN=CA"), caPair);
+
+        KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
+                .generateKeyPair();
+        X509Certificate client = X509Certificates.createEphemeral(
+                new X500Principal("CN=Client"), clientPair);
+
+        // Everything below this line only available to client
+        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca,
+                "DES");
+        PkiMessageEncoder encoder = new PkiMessageEncoder(
+                clientPair.getPrivate(), client, envEncoder);
+
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
+                caPair.getPrivate());
+
+        PkiMessageDecoder decoder = new PkiMessageDecoder(client, envDecoder);
+
+        CMSSignedData encodedMessage = encoder.encode(message);
+
+        // modifify the signature
+        CMSSignedData encodedMessage2 = modifySignature(encodedMessage);
+        try{
+            decoder.decode(encodedMessage2);
+            Assert.fail("decoding exception expected");
+        }catch(MessageDecodingException e)
+        {
+            assertEquals("decoding exception", "pkiMessage verification failed.", e.getMessage());
+        }
+    }
+
     private static PKCS10CertificationRequest getCsr(X500Principal subject,
             PublicKey pubKey, PrivateKey priKey, char[] password)
             throws GeneralSecurityException, IOException {
@@ -146,5 +191,37 @@ public class PkiMessageEncoderTest {
                 cpSet);
 
         return builder.build(signer);
+    }
+
+    private static CMSSignedData modifySignature(CMSSignedData sd)
+    throws CMSException
+    {
+        ContentInfo ci = sd.toASN1Structure();
+        SignedData content = (SignedData) ci.getContent();
+        SignerInfo si = (SignerInfo) content.getSignerInfos().getObjectAt(0);
+
+        byte[] signature = si.getEncryptedDigest().getOctets();
+        int index = signature.length - 10;
+        signature[index] = (byte) (signature[index] + 1);
+
+        ASN1OctetString signature2 = new DEROctetString(signature);
+        SignerInfo si2 = new SignerInfo(
+                si.getSID(),
+                si.getDigestAlgorithm(),
+                si.getAuthenticatedAttributes(),
+                si.getDigestEncryptionAlgorithm(),
+                signature2,
+                si.getUnauthenticatedAttributes());
+        ASN1Set signerInfos2 = new DERSet(si2);
+
+        SignedData content2 = new SignedData(
+                content.getDigestAlgorithms(),
+                content.getEncapContentInfo(),
+                content.getCertificates(),
+                content.getCRLs(),
+                signerInfos2);
+
+        ContentInfo ci2 = new ContentInfo(ci.getContentType(), content2);
+        return new CMSSignedData(ci2);
     }
 }
