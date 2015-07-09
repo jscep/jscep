@@ -55,6 +55,13 @@ public final class MessageDigestCertificateVerifier implements
         byte[] actual;
         try {
             digest.reset();
+            actual = digest.digest(cert.getEncoded());
+            if(Arrays.equals(actual, expected))
+            {
+                return true;
+            }
+
+            // the following code is for backwards compatibility
             actual = digest.digest(cert.getTBSCertificate());
         } catch (CertificateEncodingException e) {
             return false;
