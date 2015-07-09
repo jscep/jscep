@@ -113,7 +113,11 @@ public final class PkiMessageDecoder {
             SignerInformationVerifier verifier;
             try {
                 verifier = new JcaSimpleSignerInfoVerifierBuilder().build(cert);
-                signerInfo.verify(verifier);
+                if(signerInfo.verify(verifier) == false) {
+                    final String msg = "pkiMessage verification failed.";
+                    LOGGER.warn(msg);
+                    throw new MessageDecodingException(msg);
+                 }
 
                 LOGGER.debug("pkiMessage verified.");
             } catch (CMSException e) {
