@@ -56,6 +56,10 @@ if your SSL server provides a certificate that doesn't match the hostname in the
 By default, `HttpsURLConnection` will use the `SSLSocketFactory` as specified by JSSE, so there should be no need to configure it directly.  For more information, read the [JSSE Reference Guide](http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html),
 particularly the section on [customization](http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#Customization).
 
+### Customising the Transport
+
+If you want to provide your own transport implementation, take a look at the [TransportFactory](https://github.com/jscep/jscep/blob/master/src/main/java/org/jscep/transport/TransportFactory.java) class.
+
 ## Creating a Callback Handler
 
 The callback handler is used to verify the CA certificate being sent by the SCEP server is the certificate you expect.  With jscep, you can choose to use either the default callback mechanism with a choice of certificate verifiers, or to provide your own callback handler.
