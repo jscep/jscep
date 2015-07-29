@@ -18,6 +18,9 @@ import org.jscep.transport.response.ScepResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
+
 /**
  * AbstractTransport representing the <code>HTTP POST</code> method.
  */
@@ -34,6 +37,16 @@ final class UrlConnectionPostTransport extends AbstractTransport {
      */
     public UrlConnectionPostTransport(final URL url) {
         super(url);
+    }
+
+    /**
+     * Creates a new <tt>HttpPostTransport</tt> for the given <tt>URL</tt>.
+     *
+     * @param url
+     *            the <tt>URL</tt> to send <tt>POST</tt> requests to.
+     */
+    public UrlConnectionPostTransport(final URL url, final SSLSocketFactory sslSocketFactory) {
+        super(url, sslSocketFactory);
     }
 
     /**
@@ -54,6 +67,9 @@ final class UrlConnectionPostTransport extends AbstractTransport {
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/octet-stream");
+            if(conn instanceof HttpsURLConnection && sslSocketFactory != null){
+                ((HttpsURLConnection) conn).setSSLSocketFactory(sslSocketFactory);
+            }
         } catch (IOException e) {
             throw new TransportException(e);
         }

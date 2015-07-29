@@ -16,6 +16,9 @@ import org.jscep.transport.response.ScepResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
+
 /**
  * AbstractTransport representing the <code>HTTP GET</code> method
  */
@@ -35,6 +38,16 @@ final class UrlConnectionGetTransport extends AbstractTransport {
     }
 
     /**
+     * Creates a new <tt>HttpGetTransport</tt> for the given <tt>URL</tt>.
+     *
+     * @param url
+     *            the <tt>URL</tt> to send <tt>GET</tt> requests to.
+     */
+    public UrlConnectionGetTransport(final URL url, final SSLSocketFactory sslSocketFactory) {
+        super(url, sslSocketFactory);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -47,6 +60,9 @@ final class UrlConnectionGetTransport extends AbstractTransport {
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) url.openConnection();
+            if(conn instanceof HttpsURLConnection && sslSocketFactory != null){
+                ((HttpsURLConnection) conn).setSSLSocketFactory(sslSocketFactory);
+            }
         } catch (IOException e) {
             throw new TransportException(e);
         }

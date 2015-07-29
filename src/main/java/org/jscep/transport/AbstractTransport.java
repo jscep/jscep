@@ -7,12 +7,15 @@ import org.jscep.transport.request.Operation;
 import org.jscep.transport.request.Request;
 import org.jscep.transport.response.ScepResponseHandler;
 
+import javax.net.ssl.SSLSocketFactory;
+
 /**
  * This class represents an abstract transport method for sending a message to a
  * SCEP server.
  */
 public abstract class AbstractTransport implements Transport {
     private final URL url;
+    protected SSLSocketFactory sslSocketFactory;
 
     /**
      * Creates a new <tt>AbstractTransport</tt> for the given URL.
@@ -22,6 +25,17 @@ public abstract class AbstractTransport implements Transport {
      */
     public AbstractTransport(final URL url) {
         this.url = url;
+    }
+
+    /**
+     * Creates a new <tt>AbstractTransport</tt> for the given URL.
+     *
+     * @param url
+     *            the <tt>URL</tt> used for sending requests.
+     */
+    public AbstractTransport(final URL url, final SSLSocketFactory sslSocketFactory) {
+        this.url = url;
+        this.sslSocketFactory = sslSocketFactory;
     }
 
     /**
