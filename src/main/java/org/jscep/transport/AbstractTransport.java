@@ -15,7 +15,6 @@ import javax.net.ssl.SSLSocketFactory;
  */
 public abstract class AbstractTransport implements Transport {
     private final URL url;
-    protected SSLSocketFactory sslSocketFactory;
 
     /**
      * Creates a new <tt>AbstractTransport</tt> for the given URL.
@@ -25,17 +24,6 @@ public abstract class AbstractTransport implements Transport {
      */
     public AbstractTransport(final URL url) {
         this.url = url;
-    }
-
-    /**
-     * Creates a new <tt>AbstractTransport</tt> for the given URL.
-     *
-     * @param url
-     *            the <tt>URL</tt> used for sending requests.
-     */
-    public AbstractTransport(final URL url, final SSLSocketFactory sslSocketFactory) {
-        this.url = url;
-        this.sslSocketFactory = sslSocketFactory;
     }
 
     /**

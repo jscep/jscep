@@ -27,6 +27,8 @@ final class UrlConnectionGetTransport extends AbstractTransport {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(UrlConnectionGetTransport.class);
 
+    private SSLSocketFactory sslSocketFactory;
+
     /**
      * Creates a new <tt>HttpGetTransport</tt> for the given <tt>URL</tt>.
      * 
@@ -42,9 +44,13 @@ final class UrlConnectionGetTransport extends AbstractTransport {
      *
      * @param url
      *            the <tt>URL</tt> to send <tt>GET</tt> requests to.
+     * @param sslSocketFactory
+     *            the sslSocketFactory to be passed along https requests
      */
     public UrlConnectionGetTransport(final URL url, final SSLSocketFactory sslSocketFactory) {
-        super(url, sslSocketFactory);
+        super(url);
+
+        this.sslSocketFactory = sslSocketFactory;
     }
 
     /**
