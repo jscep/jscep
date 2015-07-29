@@ -34,7 +34,6 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-import javax.net.ssl.SSLSocketFactory;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -67,8 +66,11 @@ import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transaction.TransactionException;
 import org.jscep.transaction.TransactionId;
-import org.jscep.transport.*;
+import org.jscep.transport.Transport;
+import org.jscep.transport.TransportException;
+import org.jscep.transport.TransportFactory;
 import org.jscep.transport.TransportFactory.Method;
+import org.jscep.transport.UrlConnectionTransportFactory;
 import org.jscep.transport.request.GetCaCapsRequest;
 import org.jscep.transport.request.GetCaCertRequest;
 import org.jscep.transport.request.GetNextCaCertRequest;
@@ -122,7 +124,7 @@ public final class Client {
     // We use a callback handler for this.
     private final CallbackHandler handler;
     private CertStoreInspectorFactory inspectorFactory = new DefaultCertStoreInspectorFactory();
-    private TransportFactory transportFactory;
+    private TransportFactory transportFactory = new UrlConnectionTransportFactory();
 
     /**
      * Constructs a new <tt>Client</tt> instance using the provided
@@ -143,35 +145,6 @@ public final class Client {
         this.url = url;
         this.handler = handler;
 
-        transportFactory = TransportFactoryFactory.getTransportFactory(url, null);
-
-        validateInput();
-    }
-
-
-    /**
-     * Constructs a new <tt>Client</tt> instance using the provided
-     * <tt>CallbackHandler</tt> for the provided URL.
-     * <p>
-     * The <tt>CallbackHandler</tt> must be able to handle
-     * {@link CertificateVerificationCallback}. Unless the
-     * <tt>CallbackHandler</tt> will be used to handle additional
-     * <tt>Callback</tt>s, users of this class are recommended to use the
-     * {@link #Client(URL, CertificateVerifier)} constructor instead.
-     *
-     * @param url
-     *            the URL of the SCEP server.
-     * @param handler
-     *            the callback handler used to check the CA identity.
-     * @param sslSocketFactory
-     *            the sslSocketFactory to be used when sending a request.
-     */
-    public Client(final URL url, final CallbackHandler handler, SSLSocketFactory sslSocketFactory) {
-        this.url = url;
-        this.handler = handler;
-
-        transportFactory = TransportFactoryFactory.getTransportFactory(url, sslSocketFactory);
-
         validateInput();
     }
 
@@ -190,31 +163,6 @@ public final class Client {
     public Client(final URL url, final CertificateVerifier verifier) {
         this.url = url;
         this.handler = new DefaultCallbackHandler(verifier);
-
-        transportFactory = TransportFactoryFactory.getTransportFactory(url, null);
-
-        validateInput();
-    }
-
-    /**
-     * Constructs a new <tt>Client</tt> instance using the provided
-     * <tt>CertificateVerifier</tt> for the provided URL.
-     * <p/>
-     * The provided <tt>CertificateVerifier</tt> is used to verify that the
-     * identity of the SCEP server matches what the client expects.
-     *
-     * @param url
-     *            the URL of the SCEP server.
-     * @param verifier
-     *            the verifier used to check the CA identity.
-     * @param sslSocketFactory
-     *            the sslSocketFactory to be used when sending a request.
-     */
-    public Client(final URL url, final CertificateVerifier verifier, final SSLSocketFactory sslSocketFactory) {
-        this.url = url;
-        this.handler = new DefaultCallbackHandler(verifier);
-
-        transportFactory = TransportFactoryFactory.getTransportFactory(url, sslSocketFactory);
 
         validateInput();
     }
@@ -442,8 +390,8 @@ public final class Client {
      *             if the request fails.
      */
     public X509CRL getRevocationList(final X509Certificate identity,
-            final PrivateKey key, final X500Principal issuer,
-            final BigInteger serial) throws ClientException,
+                                     final PrivateKey key, final X500Principal issuer,
+                                     final BigInteger serial) throws ClientException,
             OperationFailureException {
         return getRevocationList(identity, key, issuer, serial, null);
     }
@@ -474,8 +422,8 @@ public final class Client {
      */
     @SuppressWarnings("unchecked")
     public X509CRL getRevocationList(final X509Certificate identity,
-            final PrivateKey key, final X500Principal issuer,
-            final BigInteger serial, final String profile)
+                                     final PrivateKey key, final X500Principal issuer,
+                                     final BigInteger serial, final String profile)
             throws ClientException, OperationFailureException {
         LOGGER.debug("Retriving CRL from CA");
         // TRANSACTIONAL
@@ -487,7 +435,7 @@ public final class Client {
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
                 getEncoder(identity, key, profile), getDecoder(identity, key,
-                        profile), iasn, MessageType.GET_CRL);
+                profile), iasn, MessageType.GET_CRL);
         State state;
         try {
             state = t.send();
@@ -543,7 +491,7 @@ public final class Client {
      *             if the SCEP server refuses to service the request.
      */
     public CertStore getCertificate(final X509Certificate identity,
-            final PrivateKey key, final BigInteger serial)
+                                    final PrivateKey key, final BigInteger serial)
             throws ClientException, OperationFailureException {
         return getCertificate(identity, key, serial, null);
     }
@@ -572,7 +520,7 @@ public final class Client {
      *             if the SCEP server refuses to service the request.
      */
     public CertStore getCertificate(final X509Certificate identity,
-            final PrivateKey key, final BigInteger serial, final String profile)
+                                    final PrivateKey key, final BigInteger serial, final String profile)
             throws OperationFailureException, ClientException {
         LOGGER.debug("Retriving certificate from CA");
         // TRANSACTIONAL
@@ -586,7 +534,7 @@ public final class Client {
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
                 getEncoder(identity, key, profile), getDecoder(identity, key,
-                        profile), iasn, MessageType.GET_CERT);
+                profile), iasn, MessageType.GET_CERT);
 
         State state;
         try {
@@ -624,7 +572,7 @@ public final class Client {
      * @see CertStoreInspector
      */
     public EnrollmentResponse enrol(final X509Certificate identity,
-            final PrivateKey key, final PKCS10CertificationRequest csr)
+                                    final PrivateKey key, final PKCS10CertificationRequest csr)
             throws ClientException, TransactionException {
         return enrol(identity, key, csr, null);
     }
@@ -651,8 +599,8 @@ public final class Client {
      * @see CertStoreInspector
      */
     public EnrollmentResponse enrol(final X509Certificate identity,
-            final PrivateKey key, final PKCS10CertificationRequest csr,
-            final String profile) throws ClientException, TransactionException {
+                                    final PrivateKey key, final PKCS10CertificationRequest csr,
+                                    final String profile) throws ClientException, TransactionException {
         LOGGER.debug("Enrolling certificate with CA");
 
         if (isSelfSigned(identity)) {
@@ -701,15 +649,15 @@ public final class Client {
     }
 
     public EnrollmentResponse poll(final X509Certificate identity,
-            final PrivateKey identityKey, final X500Principal subject,
-            final TransactionId transId) throws ClientException,
+                                   final PrivateKey identityKey, final X500Principal subject,
+                                   final TransactionId transId) throws ClientException,
             TransactionException {
         return poll(identity, identityKey, subject, transId, null);
     }
 
     public EnrollmentResponse poll(final X509Certificate identity,
-            final PrivateKey identityKey, final X500Principal subject,
-            final TransactionId transId, final String profile)
+                                   final PrivateKey identityKey, final X500Principal subject,
+                                   final TransactionId transId, final String profile)
             throws ClientException, TransactionException {
         final Transport transport = createTransport(profile);
         CertStore store = getCaCertificate(profile);
@@ -741,7 +689,7 @@ public final class Client {
     }
 
     private PkiMessageEncoder getEncoder(final X509Certificate identity,
-            final PrivateKey priKey, final String profile)
+                                         final PrivateKey priKey, final String profile)
             throws ClientException {
         CertStore store = getCaCertificate(profile);
         Capabilities caps = getCaCapabilities(profile);
@@ -755,7 +703,7 @@ public final class Client {
     }
 
     private PkiMessageDecoder getDecoder(final X509Certificate identity,
-            final PrivateKey key, final String profile) throws ClientException {
+                                         final PrivateKey key, final String profile) throws ClientException {
         final CertStore store = getCaCertificate(profile);
         CertStoreInspector certs = inspectorFactory.getInstance(store);
         X509Certificate signer = certs.getSigner();
@@ -809,7 +757,7 @@ public final class Client {
     }
 
     public synchronized void setTransportFactory(
-    		final TransportFactory transportFactory) {
-    	this.transportFactory = transportFactory;
+            final TransportFactory transportFactory) {
+        this.transportFactory = transportFactory;
     }
 }
