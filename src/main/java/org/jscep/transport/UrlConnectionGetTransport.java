@@ -16,6 +16,9 @@ import org.jscep.transport.response.ScepResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
+
 /**
  * AbstractTransport representing the <code>HTTP GET</code> method
  */
@@ -23,6 +26,8 @@ import org.slf4j.LoggerFactory;
 final class UrlConnectionGetTransport extends AbstractTransport {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(UrlConnectionGetTransport.class);
+
+    private SSLSocketFactory sslSocketFactory;
 
     /**
      * Creates a new <tt>HttpGetTransport</tt> for the given <tt>URL</tt>.
@@ -32,6 +37,20 @@ final class UrlConnectionGetTransport extends AbstractTransport {
      */
     public UrlConnectionGetTransport(final URL url) {
         super(url);
+    }
+
+    /**
+     * Creates a new <tt>HttpGetTransport</tt> for the given <tt>URL</tt>.
+     *
+     * @param url
+     *            the <tt>URL</tt> to send <tt>GET</tt> requests to.
+     * @param sslSocketFactory
+     *            the sslSocketFactory to be passed along https requests
+     */
+    public UrlConnectionGetTransport(final URL url, final SSLSocketFactory sslSocketFactory) {
+        super(url);
+
+        this.sslSocketFactory = sslSocketFactory;
     }
 
     /**
@@ -47,6 +66,9 @@ final class UrlConnectionGetTransport extends AbstractTransport {
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) url.openConnection();
+            if(conn instanceof HttpsURLConnection && sslSocketFactory != null){
+                ((HttpsURLConnection) conn).setSSLSocketFactory(sslSocketFactory);
+            }
         } catch (IOException e) {
             throw new TransportException(e);
         }
