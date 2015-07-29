@@ -34,6 +34,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
+import javax.net.ssl.SSLSocketFactory;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -66,11 +67,8 @@ import org.jscep.transaction.Transaction;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transaction.TransactionException;
 import org.jscep.transaction.TransactionId;
-import org.jscep.transport.Transport;
-import org.jscep.transport.TransportException;
-import org.jscep.transport.TransportFactory;
+import org.jscep.transport.*;
 import org.jscep.transport.TransportFactory.Method;
-import org.jscep.transport.UrlConnectionTransportFactory;
 import org.jscep.transport.request.GetCaCapsRequest;
 import org.jscep.transport.request.GetCaCertRequest;
 import org.jscep.transport.request.GetNextCaCertRequest;
@@ -124,7 +122,7 @@ public final class Client {
     // We use a callback handler for this.
     private final CallbackHandler handler;
     private CertStoreInspectorFactory inspectorFactory = new DefaultCertStoreInspectorFactory();
-    private TransportFactory transportFactory = new UrlConnectionTransportFactory();
+    private TransportFactory transportFactory;
 
     /**
      * Constructs a new <tt>Client</tt> instance using the provided
@@ -145,6 +143,35 @@ public final class Client {
         this.url = url;
         this.handler = handler;
 
+        transportFactory = TransportFactoryFactory.getTransportFactory(url, null);
+
+        validateInput();
+    }
+
+
+    /**
+     * Constructs a new <tt>Client</tt> instance using the provided
+     * <tt>CallbackHandler</tt> for the provided URL.
+     * <p>
+     * The <tt>CallbackHandler</tt> must be able to handle
+     * {@link CertificateVerificationCallback}. Unless the
+     * <tt>CallbackHandler</tt> will be used to handle additional
+     * <tt>Callback</tt>s, users of this class are recommended to use the
+     * {@link #Client(URL, CertificateVerifier)} constructor instead.
+     *
+     * @param url
+     *            the URL of the SCEP server.
+     * @param handler
+     *            the callback handler used to check the CA identity.
+     * @param sslSocketFactory
+     *            the sslSocketFactory to be used when sending a request.
+     */
+    public Client(final URL url, final CallbackHandler handler, SSLSocketFactory sslSocketFactory) {
+        this.url = url;
+        this.handler = handler;
+
+        transportFactory = TransportFactoryFactory.getTransportFactory(url, sslSocketFactory);
+
         validateInput();
     }
 
@@ -163,6 +190,31 @@ public final class Client {
     public Client(final URL url, final CertificateVerifier verifier) {
         this.url = url;
         this.handler = new DefaultCallbackHandler(verifier);
+
+        transportFactory = TransportFactoryFactory.getTransportFactory(url, null);
+
+        validateInput();
+    }
+
+    /**
+     * Constructs a new <tt>Client</tt> instance using the provided
+     * <tt>CertificateVerifier</tt> for the provided URL.
+     * <p/>
+     * The provided <tt>CertificateVerifier</tt> is used to verify that the
+     * identity of the SCEP server matches what the client expects.
+     *
+     * @param url
+     *            the URL of the SCEP server.
+     * @param verifier
+     *            the verifier used to check the CA identity.
+     * @param sslSocketFactory
+     *            the sslSocketFactory to be used when sending a request.
+     */
+    public Client(final URL url, final CertificateVerifier verifier, final SSLSocketFactory sslSocketFactory) {
+        this.url = url;
+        this.handler = new DefaultCallbackHandler(verifier);
+
+        transportFactory = TransportFactoryFactory.getTransportFactory(url, sslSocketFactory);
 
         validateInput();
     }
