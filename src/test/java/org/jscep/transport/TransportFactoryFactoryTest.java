@@ -1,6 +1,5 @@
 package org.jscep.transport;
 
-import com.sun.net.ssl.internal.ssl.SSLSocketFactoryImpl;
 import org.junit.Test;
 
 import javax.net.ssl.SSLSocketFactory;
