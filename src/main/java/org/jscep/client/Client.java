@@ -668,7 +668,7 @@ public final class Client {
         PkiMessageDecoder decoder = getDecoder(identity, identityKey, profile);
 
         IssuerAndSubject ias = new IssuerAndSubject(X500Utils.toX500Name(issuer
-                .getIssuerX500Principal()), X500Utils.toX500Name(subject));
+                .getSubjectX500Principal()), X500Utils.toX500Name(subject));
 
         final EnrollmentTransaction trans = new EnrollmentTransaction(
                 transport, encoder, decoder, ias, transId);

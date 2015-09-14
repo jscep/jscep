@@ -40,6 +40,22 @@ public class MessageDigestCertificateVerifierTest {
         X509Certificate cert = X509Certificates.createEphemeral(subject,
                 keyPair);
 
+        byte[] expected = digest.digest(cert.getEncoded());
+
+        CertificateVerifier verifier = new MessageDigestCertificateVerifier(
+                digest, expected);
+        assertTrue(verifier.verify(cert));
+    }
+
+    // For backwards compatibility, make sure that the MessageDigestCertificateVerifier
+    // works with the fingerprint over TBSCertificate.
+    @Theory
+    public void testVerifyTbsCertificate(MessageDigest digest) throws Exception {
+        X500Principal subject = new X500Principal("CN=example");
+        KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+        X509Certificate cert = X509Certificates.createEphemeral(subject,
+                keyPair);
+
         byte[] expected = digest.digest(cert.getTBSCertificate());
 
         CertificateVerifier verifier = new MessageDigestCertificateVerifier(

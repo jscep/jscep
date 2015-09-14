@@ -6,6 +6,8 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This <tt>CertificateVerifier</tt> uses a pre-provisioned message digest to
@@ -23,6 +25,9 @@ import org.apache.commons.lang.ArrayUtils;
  */
 public final class MessageDigestCertificateVerifier implements
         CertificateVerifier {
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(MessageDigestCertificateVerifier.class);
+
     /**
      * The digest to use.
      */
@@ -52,14 +57,27 @@ public final class MessageDigestCertificateVerifier implements
      */
     @Override
     public boolean verify(final X509Certificate cert) {
-        byte[] actual;
         try {
             digest.reset();
+            byte[] actual = digest.digest(cert.getEncoded());
+            if(Arrays.equals(actual, expected))
+            {
+                return true;
+            }
+
+            // the following code is for backwards compatibility
             actual = digest.digest(cert.getTBSCertificate());
+            if(Arrays.equals(actual, expected))
+            {
+                LOGGER.warn("MessageDigest over the Certificate.tbsCertificate is configured, "
+                        + "but it should be over the DER encoded Certificate");
+                return true;
+            } else
+            {
+                return false;
+            }
         } catch (CertificateEncodingException e) {
             return false;
         }
-
-        return Arrays.equals(actual, expected);
     }
 }
