@@ -5,6 +5,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.InvalidKeyException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -152,7 +153,12 @@ public final class PkcsPkiEnvelopeDecoder {
         private Key unwrapKey(PrivateKey wrappingKey, byte[] wrappedKey) throws GeneralSecurityException {
             Cipher unwrapper = Cipher.getInstance(RSA);
             unwrapper.init(Cipher.UNWRAP_MODE, wrappingKey);
-            return unwrapper.unwrap(wrappedKey, DES, Cipher.SECRET_KEY);
+            try {
+                return unwrapper.unwrap(wrappedKey, DES, Cipher.SECRET_KEY);
+            } catch (InvalidKeyException e) {
+                LOGGER.error("Cannot unwrap symetric key.  Are you using a valid key pair?");
+                throw e;
+            }
         }
                 
         private AlgorithmParameterSpec getIV(AlgorithmIdentifier envelopingAlgorithm) throws GeneralSecurityException {
