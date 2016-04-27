@@ -90,6 +90,21 @@ public class ClientTest extends AbstractClientTest {
         assertNotNull(c);
     }
 
+    @Test
+    public void testRenew() throws Exception {
+        PKCS10CertificationRequest csr = getCsr(
+                identity.getSubjectX500Principal(), keyPair.getPublic(),
+                keyPair.getPrivate(), password);
+        EnrollmentResponse response = client.enrol(identity, keyPair.getPrivate(), csr);
+        X509Certificate issued = (X509Certificate) response.getCertStore()
+                .getCertificates(null).iterator().next();
+
+        csr = getCsr(
+                issued.getSubjectX500Principal(), keyPair.getPublic(),
+                keyPair.getPrivate(), password);
+        client.enrol(issued, keyPair.getPrivate(), csr);
+    }
+
     private PKCS10CertificationRequest getCsr(X500Principal subject,
             PublicKey pubKey, PrivateKey priKey, char[] password)
             throws GeneralSecurityException, IOException {

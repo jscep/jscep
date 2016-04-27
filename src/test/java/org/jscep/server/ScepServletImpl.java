@@ -67,7 +67,10 @@ public class ScepServletImpl extends ScepServlet {
         pollName = new X500Name("CN=Poll");
         caSerial = BigInteger.TEN;
         try {
-            KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
+
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(4096);
+            KeyPair keyPair = keyPairGenerator.genKeyPair();
             priKey = keyPair.getPrivate();
             pubKey = keyPair.getPublic();
         } catch (NoSuchAlgorithmException e) {

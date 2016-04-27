@@ -27,11 +27,8 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
+import java.security.SignatureException;
+import java.security.cert.*;
 import java.util.Collection;
 
 import javax.security.auth.callback.Callback;
@@ -47,6 +44,7 @@ import org.bouncycastle.cert.CertException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.operator.ContentVerifierProvider;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.RuntimeOperatorException;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.asn1.IssuerAndSubject;
@@ -643,6 +641,12 @@ public final class Client {
                     .build(holder);
 
             return holder.isSignatureValid(verifierProvider);
+        } catch (RuntimeOperatorException e) {
+            if(e.getCause() instanceof  SignatureException) {
+                LOGGER.warn("SignatureException detected so we consider that the certificate is not self signed");
+                return false;
+            }
+            throw new ClientException(e);
         } catch (Exception e) {
             throw new ClientException(e);
         }
