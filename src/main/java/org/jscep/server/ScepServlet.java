@@ -190,7 +190,7 @@ public abstract class ScepServlet extends HttpServlet {
 
             if (msgType == MessageType.GET_CERT) {
                 final IssuerAndSerialNumber iasn = (IssuerAndSerialNumber) msgData;
-                final X509Name principal = iasn.getName();
+                final X509Name principal = X509Name.getInstance(iasn.getName());
                 final BigInteger serial = iasn.getSerialNumber().getValue();
 
                 try {
@@ -233,7 +233,7 @@ public abstract class ScepServlet extends HttpServlet {
                 }
             } else if (msgType == MessageType.GET_CRL) {
                 final IssuerAndSerialNumber iasn = (IssuerAndSerialNumber) msgData;
-                final X509Name issuer = iasn.getName();
+                final X509Name issuer = X509Name.getInstance(iasn.getName());
                 final BigInteger serialNumber = iasn.getSerialNumber().getValue();
 
                 try {
