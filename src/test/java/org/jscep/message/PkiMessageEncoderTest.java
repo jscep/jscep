@@ -130,6 +130,32 @@ public class PkiMessageEncoderTest {
 
         assertEquals(message, actual);
     }
+    
+    @Test
+    public void simpleTestTripleDES() throws Exception {
+        KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+        X509Certificate ca = X509Certificates.createEphemeral(
+                new X500Principal("CN=CA"), caPair);
+
+        KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
+                .generateKeyPair();
+        X509Certificate client = X509Certificates.createEphemeral(
+                new X500Principal("CN=Client"), clientPair);
+
+        // Everything below this line only available to client
+        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca,
+                "DESede");
+        PkiMessageEncoder encoder = new PkiMessageEncoder(
+                clientPair.getPrivate(), client, envEncoder);
+
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
+                caPair.getPrivate());
+        PkiMessageDecoder decoder = new PkiMessageDecoder(client, envDecoder);
+
+        PkiMessage<?> actual = decoder.decode(encoder.encode(message));
+
+        assertEquals(message, actual);
+    }
 
     @Test
     public void invalidSignatureTest() throws Exception {
