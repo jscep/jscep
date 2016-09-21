@@ -250,4 +250,29 @@ public class PkiMessageEncoderTest {
         ContentInfo ci2 = new ContentInfo(ci.getContentType(), content2);
         return new CMSSignedData(ci2);
     }
+    @Test
+    public void simpleTestAES128() throws Exception {
+        KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+        X509Certificate ca = X509Certificates.createEphemeral(
+                new X500Principal("CN=CA"), caPair);
+
+        KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
+                .generateKeyPair();
+        X509Certificate client = X509Certificates.createEphemeral(
+                new X500Principal("CN=Client"), clientPair);
+
+        // Everything below this line only available to client
+        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca,
+                "AES_128");
+        PkiMessageEncoder encoder = new PkiMessageEncoder(
+                clientPair.getPrivate(), client, envEncoder);
+
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
+                caPair.getPrivate());
+        PkiMessageDecoder decoder = new PkiMessageDecoder(client, envDecoder);
+
+        PkiMessage<?> actual = decoder.decode(encoder.encode(message));
+
+        assertEquals(message, actual);
+    }
 }
