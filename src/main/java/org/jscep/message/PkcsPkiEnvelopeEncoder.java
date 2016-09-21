@@ -3,6 +3,8 @@ package org.jscep.message;
 import static org.bouncycastle.cms.CMSAlgorithm.DES_CBC;
 import static org.bouncycastle.cms.CMSAlgorithm.DES_EDE3_CBC;
 import static org.bouncycastle.cms.CMSAlgorithm.AES128_CBC;
+import static org.bouncycastle.cms.CMSAlgorithm.AES192_CBC;
+import static org.bouncycastle.cms.CMSAlgorithm.AES256_CBC;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -107,6 +109,12 @@ public final class PkcsPkiEnvelopeEncoder {
         } 
         else if("AES_128".equals(encAlg)){
         	return new JceCMSContentEncryptorBuilder(AES128_CBC).build();
+        }
+        else if ("AES_192".equals(encAlg)) {
+            return new JceCMSContentEncryptorBuilder(AES192_CBC).build();
+        }
+        else if ("AES_256".equals(encAlg)) {
+            return new JceCMSContentEncryptorBuilder(AES256_CBC).build();
         }
         else {
             return new JceCMSContentEncryptorBuilder(DES_EDE3_CBC).build();
