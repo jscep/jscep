@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
@@ -106,56 +107,35 @@ public class PkiMessageEncoderTest {
     }
 
     @Test
-    public void simpleTest() throws Exception {
-        KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate ca = X509Certificates.createEphemeral(
-                new X500Principal("CN=CA"), caPair);
-
-        KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
-                .generateKeyPair();
-        X509Certificate client = X509Certificates.createEphemeral(
-                new X500Principal("CN=Client"), clientPair);
-
-        // Everything below this line only available to client
-        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca,
-                "DES");
-        PkiMessageEncoder encoder = new PkiMessageEncoder(
-                clientPair.getPrivate(), client, envEncoder);
-
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
-                caPair.getPrivate());
-        PkiMessageDecoder decoder = new PkiMessageDecoder(client, envDecoder);
-
-        PkiMessage<?> actual = decoder.decode(encoder.encode(message));
-
+    public void simpleTestDES() throws Exception {
+    	PkiMessage<?> actual = encodeAndDecodeEnvelope("DES");
         assertEquals(message, actual);
     }
     
     @Test
     public void simpleTestTripleDES() throws Exception {
-        KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        X509Certificate ca = X509Certificates.createEphemeral(
-                new X500Principal("CN=CA"), caPair);
-
-        KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
-                .generateKeyPair();
-        X509Certificate client = X509Certificates.createEphemeral(
-                new X500Principal("CN=Client"), clientPair);
-
-        // Everything below this line only available to client
-        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca,
-                "DESede");
-        PkiMessageEncoder encoder = new PkiMessageEncoder(
-                clientPair.getPrivate(), client, envEncoder);
-
-        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
-                caPair.getPrivate());
-        PkiMessageDecoder decoder = new PkiMessageDecoder(client, envDecoder);
-
-        PkiMessage<?> actual = decoder.decode(encoder.encode(message));
-
+    	PkiMessage<?> actual = encodeAndDecodeEnvelope("DESede");
         assertEquals(message, actual);
     }
+    
+    @Test
+    public void simpleTestAES192() throws Exception {
+    	PkiMessage<?> actual = encodeAndDecodeEnvelope("AES_192");
+        assertEquals(message, actual);
+    }
+    
+    @Test
+    public void simpleTestAES256() throws Exception {
+    	PkiMessage<?> actual = encodeAndDecodeEnvelope("AES_256");
+        assertEquals(message, actual);
+    }
+    
+    @Test
+    public void simpleTestAES128() throws Exception {
+    	PkiMessage<?> actual = encodeAndDecodeEnvelope("AES_128");
+        assertEquals(message, actual);
+    }
+
 
     @Test
     public void invalidSignatureTest() throws Exception {
@@ -250,9 +230,9 @@ public class PkiMessageEncoderTest {
         ContentInfo ci2 = new ContentInfo(ci.getContentType(), content2);
         return new CMSSignedData(ci2);
     }
-    @Test
-    public void simpleTestAES128() throws Exception {
-        KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+    
+    public PkiMessage<?> encodeAndDecodeEnvelope(String cipherAlgorithm) throws Exception{
+    	KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
         X509Certificate ca = X509Certificates.createEphemeral(
                 new X500Principal("CN=CA"), caPair);
 
@@ -263,7 +243,7 @@ public class PkiMessageEncoderTest {
 
         // Everything below this line only available to client
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca,
-                "AES_128");
+                cipherAlgorithm);
         PkiMessageEncoder encoder = new PkiMessageEncoder(
                 clientPair.getPrivate(), client, envEncoder);
 
@@ -273,6 +253,7 @@ public class PkiMessageEncoderTest {
 
         PkiMessage<?> actual = decoder.decode(encoder.encode(message));
 
-        assertEquals(message, actual);
+        return actual;
+    	
     }
 }

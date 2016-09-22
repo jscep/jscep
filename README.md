@@ -332,8 +332,13 @@ Capabilities capabilities = client.getCaCapabilities();
  - SHA-512
 - Ciphers:
  - DES
- - Triple DES
+ - Triple DES ( default )
+ - AES-128
+ - AES-192
+ - AES-256 
 - Use of HTTP POST (See: http://tools.ietf.org/html/draft-nourse-scep-23#appendix-C)
+
+Note: AES-192 and AES-256 needs unrestricted policy JARs
 
 ## CA Key Rollover
 
