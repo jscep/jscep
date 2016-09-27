@@ -4,7 +4,7 @@ import net.jcip.annotations.Immutable;
 
 /**
  * This <tt>Exception</tt> represents the situation where the <tt>Nonce</tt>
- * received in a server response does not match the <tt>Nonce</tt> send in the
+ * received in a server response does not match the <tt>Nonce</tt> sent in the
  * client request, or where the <tt>Nonce</tt> received has been used before.
  * 
  * @see Nonce
