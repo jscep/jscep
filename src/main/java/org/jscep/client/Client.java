@@ -149,7 +149,7 @@ public final class Client {
     /**
      * Constructs a new <tt>Client</tt> instance using the provided
      * <tt>CertificateVerifier</tt> for the provided URL.
-     * <p/>
+     * 
      * The provided <tt>CertificateVerifier</tt> is used to verify that the
      * identity of the SCEP server matches what the client expects.
      *

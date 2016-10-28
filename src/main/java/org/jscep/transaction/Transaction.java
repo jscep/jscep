@@ -30,7 +30,7 @@ public abstract class Transaction {
 
     /**
      * Constructs a new <tt>Transaction</tt>.
-     * 
+     *
      * @param transport
      *            the transport used to conduct the transaction.
      * @param encoder
@@ -50,7 +50,7 @@ public abstract class Transaction {
      * <p>
      * If the transaction did not fail, this method throws an
      * {@link IllegalStateException}.
-     * 
+     *
      * @return the reason for failure.
      */
     public final FailInfo getFailInfo() {
@@ -66,7 +66,7 @@ public abstract class Transaction {
      * <p>
      * If the transaction did not succeed, this method throws an
      * {@link IllegalStateException}
-     * 
+     *
      * @return the <tt>CertStore</tt>
      */
     public final CertStore getCertStore() {
@@ -79,7 +79,7 @@ public abstract class Transaction {
 
     /**
      * Sends the request and processes the server response.
-     * 
+     *
      * @return the state as return by the SCEP server.
      * @throws TransactionException
      *             if an error was encountered when sending this transaction.
@@ -88,7 +88,7 @@ public abstract class Transaction {
 
     /**
      * Returns the ID of this transaction.
-     * 
+     *
      * @return the ID of this transaction.
      */
     public abstract TransactionId getId();
@@ -147,14 +147,14 @@ public abstract class Transaction {
         CERT_REQ_PENDING,
         /**
          * The transaction is in a failed state.
-         * <p/>
+         * 
          * Clients should use {@link Transaction#getFailInfo()} to retrieve the
          * failure reason.
          */
         CERT_NON_EXISTANT,
         /**
          * The transaction has succeeded.
-         * <p/>
+         *
          * Clients should use {@link Transaction#getCertStore()} to retrieve the
          * enrolled certificates.
          */

@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class handles responses to <code>GetCACaps</code> requests.
- * 
+ *
  * @author David Grant
  */
 @ThreadSafe
@@ -50,8 +50,8 @@ public final class GetCaCapsResponseHandler implements
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws InvalidContentTypeException
+     *
+     * @throws InvalidContentTypeException if the response is invalid
      */
     @Override
     public Capabilities getResponse(final byte[] content, final String mimeType)

@@ -19,7 +19,7 @@ public final class Capabilities {
 
     /**
      * Constructs a new instance of this class with the specified capabilities.
-     * 
+     *
      * @param capabilities
      *            the capabilities.
      */
@@ -31,7 +31,7 @@ public final class Capabilities {
     /**
      * Returns <code>true</code> if the server supports the provided Capability,
      * <code>false</code> otherwise.
-     * 
+     *
      * @param capability
      *            the capability to test for.
      * @return <code>true</code> if the server supports the provided Capability,
@@ -43,7 +43,7 @@ public final class Capabilities {
 
     /**
      * Returns <tt>true</tt> if POST is supported, <tt>false</tt> otherwise.
-     * 
+     *
      * @return <tt>true</tt> if POST is supported, <tt>false</tt> otherwise.
      */
     public boolean isPostSupported() {
@@ -53,7 +53,7 @@ public final class Capabilities {
     /**
      * Returns <tt>true</tt> if retrieval of the next CA is supported,
      * <tt>false</tt> otherwise.
-     * 
+     *
      * @return <tt>true</tt> if retrieval of the next CA is supported,
      *         <tt>false</tt> otherwise.
      */
@@ -64,7 +64,7 @@ public final class Capabilities {
     /**
      * Returns <tt>true</tt> if certificate renewal is supported, <tt>false</tt>
      * otherwise.
-     * 
+     *
      * @return <tt>true</tt> if certificate renewal is supported, <tt>false</tt>
      *         otherwise.
      */
@@ -75,13 +75,13 @@ public final class Capabilities {
     /**
      * Returns the strongest cipher algorithm supported by the server and
      * client.
-     * <p/>
+     *
      * The algorithms are ordered thus:
      * <ol>
      * <li>DESede ("Triple DES")</li>
      * <li>DES</li>
      * </ol>
-     * 
+     *
      * @return the strongest cipher algorithm supported by the server and
      *         client.
      */
@@ -117,7 +117,7 @@ public final class Capabilities {
     /**
      * Returns the strongest message digest algorithm supported by the server
      * and client.
-     * <p/>
+     * 
      * The algorithms are ordered thus:
      * <ol>
      * <li>SHA-512</li>
@@ -126,7 +126,7 @@ public final class Capabilities {
      * <li>MD5</li>
      * </ol>
      * If none of the above algorithms are supported, this method returns null.
-     * 
+     *
      * @return the strongest message digest algorithm supported by the server
      *         and client.
      */
@@ -163,7 +163,7 @@ public final class Capabilities {
     }
 
     private boolean digestExists(final String digest) {
-        return algorithmExists("MessageDigest", digest) 
+        return algorithmExists("MessageDigest", digest)
         		|| algorithmExists("MessageDigest", digest.replaceFirst("SHA", "SHA-"));
     }
 

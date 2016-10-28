@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is used to encode a <tt>pkiMessage</tt> into a PKCS #7 signedData
  * object.
- * 
+ *
  * @see PkiMessageDecoder
  */
 public final class PkiMessageEncoder {
@@ -72,7 +72,7 @@ public final class PkiMessageEncoder {
 
     /**
      * Creates a new <tt>PkiMessageEncoder</tt> instance.
-     * 
+     *
      * @param signerKey
      *            the key to use to sign the <tt>signedData</tt>.
      * @param signerId
@@ -88,10 +88,10 @@ public final class PkiMessageEncoder {
         this.enveloper = enveloper;
         this.signatureAlgorithm = "SHA1withRSA";
     }
-    
+
     /**
      * Creates a new <tt>PkiMessageEncoder</tt> instance.
-     * 
+     *
      * @param signerKey
      *            the key to use to sign the <tt>signedData</tt>.
      * @param signerId
@@ -113,13 +113,15 @@ public final class PkiMessageEncoder {
 
     /**
      * Creates a new <tt>PkiMessageEncoder</tt> instance.
-     * 
+     *
      * @param signerKey
      *            the key to use to sign the <tt>signedData</tt>.
      * @param signerId
      *            the certificate to use to identify the signer.
      * @param enveloper
      *            the enveloper used for encoding the <tt>messageData</tt>
+     * @param signatureAlgorithm
+     *            the algorithm used for signing the <tt>messageData</tt>
      */
     public PkiMessageEncoder(final PrivateKey signerKey,
             final X509Certificate signerId,
@@ -134,7 +136,7 @@ public final class PkiMessageEncoder {
     /**
      * Encodes the provided <tt>PkiMessage</tt> into a PKCS #7
      * <tt>signedData</tt>.
-     * 
+     *
      * @param message
      *            the <tt>PkiMessage</tt> to encode.
      * @return the encoded <tt>signedData</tt>
