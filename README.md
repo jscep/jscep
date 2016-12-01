@@ -247,7 +247,7 @@ When you've finished adding your attributes, you must then sign your CSR with yo
 PrivateKey entityPrivKey = entityPair.getPrivate();
 JcaContentSignerBuilder csrSignerBuilder = new JcaContentSignerBuilder("SHA1withRSA");
 ContentSigner csrSigner = csrSignerBuilder.build(entityPrivKey);
-PKCS10CertificationRequest csr = csrBuilder.build(csrSigner);
+PKCS10CertificationRequest csr = csrBuilder.build(csrSigner); 
 ```
 
 You now have everthing you need to enrol.  The next line in your application will typically be to send the CSR to the SCEP server, and to assign the response.
@@ -355,6 +355,27 @@ Retrieving the CA and RA certificates from the SCEP server is an important opera
 ```java
 CertStore store = client.getCaCertificate();
 ```
+
+# Logging
+
+To enable logging in jscep, you need to provide an [SLF4J](http://www.slf4j.org/) binding (e.g. log4j, jcl) to your classpath, then provide a configuration for your binding.  For example, the jscep project uses log4j for logging during the build process by using the following dependencies in the `pom.xml`:
+
+```xml
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-log4j12</artifactId>
+	<version>1.7.1</version>
+	<scope>test</scope>
+</dependency>
+<dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>1.2.17</version>
+	<scope>test</scope>
+</dependency>
+```
+
+and using this configration file: https://github.com/jscep/jscep/blob/master/src/test/resources/log4j.properties
 
 # Credits
 
