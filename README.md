@@ -1,9 +1,9 @@
 jscep [![Build Status](https://travis-ci.org/jscep/jscep.svg?branch=master)](https://travis-ci.org/jscep/jscep)
 =====
 
-## New! Android Fork
+## Getting Support
 
-[Wes Bunton](https://github.com/WesBunton/) is now maintaining an Android fork of the jscep project [here](https://github.com/WesBunton/jscep).  Thanks Wes!
+If you have a question about the jscep library, please send an email to jscep-support@googlegroups.com.
 
 ## Constructing a Client
 
