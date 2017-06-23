@@ -26,6 +26,14 @@ public final class Capabilities {
     public Capabilities(final Capability... capabilities) {
         this.caps = EnumSet.noneOf(Capability.class);
         Collections.addAll(this.caps, capabilities);
+
+        // SCEPStandard implies AES, POSTPKIOperation, and SHA-256
+        if (this.caps.contains(Capability.SCEP_STANDARD)) {
+            Collections.addAll(this.caps,
+                               Capability.AES,
+                               Capability.POST_PKI_OPERATION,
+                               Capability.SHA_256);
+        }
     }
 
     /**
@@ -73,11 +81,22 @@ public final class Capabilities {
     }
 
     /**
+     * Returns whether certificate update is supported.
+     *
+     * @return <tt>true</tt> if certificate update is supported, <tt>false</tt>
+     *         otherwise.
+     */
+    public boolean isUpdateSupported() {
+        return caps.contains(Capability.UPDATE);
+    }
+
+    /**
      * Returns the strongest cipher algorithm supported by the server and
      * client.
      *
      * The algorithms are ordered thus:
      * <ol>
+     * <li>AES</li>
      * <li>DESede ("Triple DES")</li>
      * <li>DES</li>
      * </ol>
@@ -87,7 +106,10 @@ public final class Capabilities {
      */
     public String getStrongestCipher() {
         final String cipher;
-        if (cipherExists("DESede") && caps.contains(Capability.TRIPLE_DES)) {
+        if (cipherExists("AES") && caps.contains(Capability.AES)) {
+            cipher = "AES";
+        } else if (cipherExists("DESede")
+                   && caps.contains(Capability.TRIPLE_DES)) {
             cipher = "DESede";
         } else {
             cipher = "DES";

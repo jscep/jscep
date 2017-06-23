@@ -33,6 +33,8 @@ public class CapabilitiesMessageDigestTest {
         capabilities = new Capabilities(Capability.SHA_1, Capability.SHA_256,
                 Capability.SHA_512);
         params.add(new Object[] { capabilities, "SHA-512" });
+        capabilities = new Capabilities(Capability.SCEP_STANDARD);
+        params.add(new Object[] { capabilities, "SHA-256" });
 
         return params;
     }

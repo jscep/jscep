@@ -31,6 +31,10 @@ import org.jscep.transport.request.PkiOperationRequest;
  */
 public enum Capability {
     /**
+     * CA supports the AES encryption algorithm.
+     */
+    AES("AES", "AES Encryption"),
+    /**
      * CA Supports the GetNextCACert message.
      * 
      * @see GetNextCaCertRequest
@@ -48,6 +52,11 @@ public enum Capability {
      */
     RENEWAL("Renewal", "Certificate Renewal"),
     /**
+     * CA supports all mandatory-to-implement sections of the SCEP standard.
+     * This keyword implies "AES", "POSTPKIOperation", and "SHA-256".
+     */
+    SCEP_STANDARD("SCEPStandard", "SCEP Standard"),
+    /**
      * CA Supports the SHA-512 hashing algorithm in signatures and fingerprints.
      */
     SHA_512("SHA-512", "SHA-512 Message Digest"),
@@ -62,7 +71,11 @@ public enum Capability {
     /**
      * CA Supports triple-DES for encryption.
      */
-    TRIPLE_DES("DES3", "Triple DES Encryption");
+    TRIPLE_DES("DES3", "Triple DES Encryption"),
+    /**
+     * CA supports the Update CA operation.
+     */
+    UPDATE("Update", "Certificate Update");
 
     /**
      * Member variable to hold the name of the capability as defined in the SCEP

@@ -9,6 +9,7 @@ import static org.bouncycastle.cms.CMSAlgorithm.AES256_CBC;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSException;
@@ -31,7 +32,7 @@ public final class PkcsPkiEnvelopeEncoder {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PkcsPkiEnvelopeEncoder.class);
     private final X509Certificate recipient;
-    private final String encAlg;
+    private final ASN1ObjectIdentifier encAlgId;
 
     /**
      * Creates a new <tt>PkcsPkiEnvelopeEncoder</tt> for the entity identified
@@ -57,7 +58,7 @@ public final class PkcsPkiEnvelopeEncoder {
     public PkcsPkiEnvelopeEncoder(final X509Certificate recipient,
             final String encAlg) {
         this.recipient = recipient;
-        this.encAlg = encAlg;
+        this.encAlgId = getAlgorithmId(encAlg);
     }
 
     /**
@@ -88,7 +89,7 @@ public final class PkcsPkiEnvelopeEncoder {
 
         OutputEncryptor encryptor;
         try {
-            encryptor = getEncryptor();
+            encryptor = new JceCMSContentEncryptorBuilder(encAlgId).build();
         } catch (CMSException e) {
             throw new MessageEncodingException(e);
         }
@@ -103,21 +104,24 @@ public final class PkcsPkiEnvelopeEncoder {
         }
     }
 
-    private OutputEncryptor getEncryptor() throws CMSException {
+    private ASN1ObjectIdentifier getAlgorithmId(String encAlg) {
         if ("DES".equals(encAlg)) {
-            return new JceCMSContentEncryptorBuilder(DES_CBC).build();
+            return DES_CBC;
         } 
-        else if("AES_128".equals(encAlg)){
-        	return new JceCMSContentEncryptorBuilder(AES128_CBC).build();
+        else if("AES".equals(encAlg) || "AES_128".equals(encAlg)){
+            return AES128_CBC;
         }
         else if ("AES_192".equals(encAlg)) {
-            return new JceCMSContentEncryptorBuilder(AES192_CBC).build();
+            return AES192_CBC;
         }
         else if ("AES_256".equals(encAlg)) {
-            return new JceCMSContentEncryptorBuilder(AES256_CBC).build();
+            return AES256_CBC;
+        }
+        else if ("DESede".equals(encAlg)) {
+            return DES_EDE3_CBC;
         }
         else {
-            return new JceCMSContentEncryptorBuilder(DES_EDE3_CBC).build();
+            throw new IllegalArgumentException("Unknown algorithm: " + encAlg);
         }
     }
 }

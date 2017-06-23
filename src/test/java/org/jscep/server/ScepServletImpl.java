@@ -156,8 +156,9 @@ public class ScepServletImpl extends ScepServlet {
 
     @Override
     protected Set<Capability> doCapabilities(String identifier) {
-        return EnumSet.of(Capability.SHA_1, Capability.SHA_256,
-                Capability.SHA_512, Capability.POST_PKI_OPERATION);
+        return EnumSet.of(Capability.AES, Capability.TRIPLE_DES,
+                Capability.SHA_1, Capability.SHA_256, Capability.SHA_512,
+                Capability.POST_PKI_OPERATION);
     }
 
     @Override
