@@ -24,6 +24,10 @@ public class CapabilitiesCipherTest {
         params.add(new Object[] { capabilities, "DES" });
         capabilities = new Capabilities(Capability.TRIPLE_DES);
         params.add(new Object[] { capabilities, "DESede" });
+        capabilities = new Capabilities(Capability.TRIPLE_DES, Capability.AES);
+        params.add(new Object[] { capabilities, "AES" });
+        capabilities = new Capabilities(Capability.SCEP_STANDARD);
+        params.add(new Object[] { capabilities, "AES" });
 
         return params;
     }

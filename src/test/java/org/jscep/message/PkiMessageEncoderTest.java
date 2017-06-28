@@ -136,6 +136,11 @@ public class PkiMessageEncoderTest {
         assertEquals(message, actual);
     }
 
+    @Test
+    public void simpleTestAES() throws Exception {
+        PkiMessage<?> actual = encodeAndDecodeEnvelope("AES");
+        assertEquals(message, actual);
+    }
 
     @Test
     public void invalidSignatureTest() throws Exception {

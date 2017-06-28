@@ -254,7 +254,7 @@ public class ScepServletTest {
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
-        Transport transport = getTransport(getURL());
+        Transport transport = transportFactory.forMethod(Method.POST, getURL());
         Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
                 csr);
 

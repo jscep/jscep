@@ -53,9 +53,30 @@ public class CapabilitiesTest {
     }
 
     @Test
+    public void testUpdateNotSupported() {
+        Capabilities caps = new Capabilities();
+        Assert.assertFalse(caps.isUpdateSupported());
+    }
+
+    @Test
+    public void testUpdateSupported() {
+        Capabilities caps = new Capabilities(Capability.UPDATE);
+        Assert.assertTrue(caps.isUpdateSupported());
+    }
+
+    @Test
     public void testContains() {
         Capabilities caps = new Capabilities(Capability.GET_NEXT_CA_CERT);
         assertTrue(caps.contains(Capability.GET_NEXT_CA_CERT));
+    }
+
+    @Test
+    public void testScepStandard() {
+        Capabilities caps = new Capabilities(Capability.SCEP_STANDARD);
+        assertTrue(caps.contains(Capability.AES));
+        assertTrue(caps.contains(Capability.POST_PKI_OPERATION));
+        assertTrue(caps.contains(Capability.SHA_256));
+        assertTrue(caps.isPostSupported());
     }
 
     @Test
