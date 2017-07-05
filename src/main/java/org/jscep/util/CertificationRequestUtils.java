@@ -12,7 +12,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
@@ -69,9 +69,12 @@ public final class CertificationRequestUtils {
         for (Attribute attr : attrs) {
             if (attr.getAttrType().equals(
                     PKCSObjectIdentifiers.pkcs_9_at_challengePassword)) {
-                DERPrintableString challangePassword = (DERPrintableString) attr
+                // According to RFC 2985 this may be any of the DirectoryString
+                // types, but we can be more flexible and allow any ASN.1
+                // string.
+                ASN1String challengePassword = (ASN1String) attr
                         .getAttrValues().getObjectAt(0);
-                return challangePassword.getString();
+                return challengePassword.getString();
             }
         }
         return null;
