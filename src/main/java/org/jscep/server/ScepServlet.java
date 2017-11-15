@@ -304,7 +304,7 @@ public abstract class ScepServlet extends HttpServlet {
 
                 try {
                     LOGGER.debug("Invoking doEnrol");
-                    List<X509Certificate> issued = doEnrol(certReq, transId);
+                    List<X509Certificate> issued = doEnrol(certReq, reqCert, transId);
 
                     if (issued.size() == 0) {
                         certRep = new CertRep(transId, senderNonce,
@@ -579,6 +579,7 @@ public abstract class ScepServlet extends HttpServlet {
      */
     protected abstract List<X509Certificate> doEnrol(
             final PKCS10CertificationRequest certificationRequest,
+            final X509Certificate sender,
             final TransactionId transId) throws Exception;
 
     /**
