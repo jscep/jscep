@@ -6,8 +6,10 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -21,7 +23,6 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-
 
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -110,7 +111,8 @@ public class ScepServletImpl extends ScepServlet {
 
     @Override
     protected List<X509Certificate> doEnrol(PKCS10CertificationRequest csr,
-            TransactionId transId) throws OperationFailureException {
+            X509Certificate sender, TransactionId transId
+    ) throws OperationFailureException {
         try {
             X500Name subject = X500Name.getInstance(csr.getSubject());
             LOGGER.debug(subject.toString());
@@ -118,7 +120,9 @@ public class ScepServletImpl extends ScepServlet {
                 return Collections.emptyList();
             }
             String password = CertificationRequestUtils.getChallengePassword(csr);
-            if (!password.equals("password")) {
+            if (password == null) {
+                authorizeRenewal(sender);
+            } else if (!password.equals("password")) {
                 LOGGER.debug("Invalid password");
                 throw new OperationFailureException(FailInfo.badRequest);
             }
@@ -134,6 +138,18 @@ public class ScepServletImpl extends ScepServlet {
             return Collections.singletonList(issued);
         } catch (Exception e) {
             LOGGER.debug("Error in enrollment", e);
+            throw new OperationFailureException(FailInfo.badRequest);
+        }
+    }
+
+    private void authorizeRenewal(X509Certificate sender)
+            throws CertificateEncodingException, OperationFailureException {
+        X500Name issuer = X500Name.getInstance(sender.getIssuerX500Principal().getEncoded());
+        BigInteger serial = sender.getSerialNumber();
+        IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(issuer, serial);
+        X509Certificate certificate = CACHE.get(iasn);
+        if (certificate == null || !Arrays.equals(sender.getEncoded(), certificate.getEncoded())) {
+            LOGGER.debug("Unknown sender certificate on renewal");
             throw new OperationFailureException(FailInfo.badRequest);
         }
     }
