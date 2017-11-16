@@ -297,8 +297,7 @@ public class ScepServletTest {
 
     @Test
     public void testEnrollmentNotAuthorized() throws Exception {
-        PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey,
-                null);
+        PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey);
 
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
                 getRecipient(), "DES");
@@ -349,7 +348,7 @@ public class ScepServletTest {
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
         PrivateKey newPriKey = keyPair.getPrivate();
         PublicKey newPubKey = keyPair.getPublic();
-        csr = getCsr(name, newPubKey, newPriKey, null);
+        csr = getCsr(name, newPubKey, newPriKey);
         encoder = new PkiMessageEncoder(priKey, prevCertificate, envEncoder);
         envDecoder = new PkcsPkiEnvelopeDecoder(prevCertificate, priKey);
         decoder = new PkiMessageDecoder(getRecipient(), envDecoder);
@@ -358,34 +357,43 @@ public class ScepServletTest {
         assertThat(renewalSate, is(State.CERT_ISSUED));
     }
 
-    private PKCS10CertificationRequest getCsr(X500Name subject,
-            PublicKey pubKey, PrivateKey priKey, char[] password)
-            throws GeneralSecurityException, IOException {
+    private PKCS10CertificationRequest getCsr(
+            X500Name subject, PublicKey pubKey, PrivateKey priKey
+    ) throws GeneralSecurityException, IOException {
+        return csrBuilder(subject, pubKey)
+                .build(getContentSigner(priKey));
+    }
+
+    private PKCS10CertificationRequest getCsr(
+            X500Name subject, PublicKey pubKey, PrivateKey priKey,
+            char[] password
+    ) throws GeneralSecurityException, IOException {
+        return csrBuilder(subject, pubKey)
+                .addAttribute(
+                        PKCSObjectIdentifiers.pkcs_9_at_challengePassword,
+                        new DERPrintableString(new String(password))
+                )
+                .build(getContentSigner(priKey));
+    }
+
+    private PKCS10CertificationRequestBuilder csrBuilder(
+            X500Name subject, PublicKey pubKey
+    ) {
         SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
                 .getEncoded());
+        return new PKCS10CertificationRequestBuilder(subject, pkInfo);
+    }
 
+    private ContentSigner getContentSigner(PrivateKey priKey)
+            throws IOException {
         JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(
-                "SHA1withRSA");
-        ContentSigner signer;
+                "SHA1withRSA"
+        );
         try {
-            signer = signerBuilder.build(priKey);
+            return signerBuilder.build(priKey);
         } catch (OperatorCreationException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-
-            throw ioe;
+            throw new IOException(e);
         }
-
-        PKCS10CertificationRequestBuilder builder =
-                new PKCS10CertificationRequestBuilder(subject, pkInfo);
-        if (password != null) {
-            builder.addAttribute(
-                    PKCSObjectIdentifiers.pkcs_9_at_challengePassword,
-                    new DERPrintableString(new String(password))
-            );
-        }
-
-        return builder.build(signer);
     }
 
     private Transport getTransport(URL url) {
