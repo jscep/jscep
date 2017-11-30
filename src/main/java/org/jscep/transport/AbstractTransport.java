@@ -26,6 +26,10 @@ public abstract class AbstractTransport implements Transport {
     public AbstractTransport(final URL url) {
         this.url = url;
         this.userInfo = url.getUserInfo();
+        
+        if (null != this.url && "http".equalsIgnoreCase(this.url.getProtocol())) {
+          System.err.println("WARNING: HTTP BasicAuth is used without SSL/TLS! Are you using a secure transport layer?");
+        }
     }
     
     /**
