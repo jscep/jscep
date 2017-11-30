@@ -68,6 +68,7 @@ final class UrlConnectionPostTransport extends AbstractTransport {
         }
 
         URL url = getUrl(msg.getOperation());
+        String userInfo = getUserInfo();
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) url.openConnection();
@@ -75,6 +76,10 @@ final class UrlConnectionPostTransport extends AbstractTransport {
             conn.setRequestProperty("Content-Type", "application/octet-stream");
             if(conn instanceof HttpsURLConnection && sslSocketFactory != null){
                 ((HttpsURLConnection) conn).setSSLSocketFactory(sslSocketFactory);
+            }
+            if (userInfo != null && !userInfo.isEmpty()) {
+              String encoded = new String(Base64.encode(userInfo.getBytes(Charsets.US_ASCII.name())), Charsets.US_ASCII.name());
+              conn.setRequestProperty("Authorization", "Basic " + encoded);
             }
         } catch (IOException e) {
             throw new TransportException(e);
