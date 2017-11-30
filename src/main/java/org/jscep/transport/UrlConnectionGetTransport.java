@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.bouncycastle.util.encoders.Base64;
+
 /**
  * AbstractTransport representing the <code>HTTP GET</code> method
  */
@@ -60,6 +62,7 @@ final class UrlConnectionGetTransport extends AbstractTransport {
     public <T> T sendRequest(final Request msg,
             final ScepResponseHandler<T> handler) throws TransportException {
         URL url = getUrl(msg.getOperation(), msg.getMessage());
+        String userInfo = getUserInfo();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Sending {} to {}", msg, url);
         }
@@ -69,6 +72,10 @@ final class UrlConnectionGetTransport extends AbstractTransport {
             if(conn instanceof HttpsURLConnection && sslSocketFactory != null){
                 ((HttpsURLConnection) conn).setSSLSocketFactory(sslSocketFactory);
             }
+            if (userInfo != null) {
+              String encoded = new String(Base64.encode(userInfo.getBytes(Charsets.US_ASCII.name())), Charsets.US_ASCII.name());
+              conn.setRequestProperty("Authorization", "Basic " + encoded);
+          }
         } catch (IOException e) {
             throw new TransportException(e);
         }
