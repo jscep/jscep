@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 
 import net.jcip.annotations.ThreadSafe;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.jscep.transport.request.Operation;
 import org.jscep.transport.request.Request;
