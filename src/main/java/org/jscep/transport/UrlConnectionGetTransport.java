@@ -72,7 +72,7 @@ final class UrlConnectionGetTransport extends AbstractTransport {
             if(conn instanceof HttpsURLConnection && sslSocketFactory != null){
                 ((HttpsURLConnection) conn).setSSLSocketFactory(sslSocketFactory);
             }
-            if (userInfo != null) {
+            if (userInfo != null && !userInfo.isEmpty()) {
               String encoded = new String(Base64.encode(userInfo.getBytes(Charsets.US_ASCII.name())), Charsets.US_ASCII.name());
               conn.setRequestProperty("Authorization", "Basic " + encoded);
           }
