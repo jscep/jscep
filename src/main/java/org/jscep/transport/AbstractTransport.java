@@ -15,6 +15,7 @@ import javax.net.ssl.SSLSocketFactory;
  */
 public abstract class AbstractTransport implements Transport {
     private final URL url;
+    private final String userInfo;
 
     /**
      * Creates a new <tt>AbstractTransport</tt> for the given URL.
@@ -24,6 +25,20 @@ public abstract class AbstractTransport implements Transport {
      */
     public AbstractTransport(final URL url) {
         this.url = url;
+        this.userInfo = url.getUserInfo();
+        
+        if (null != this.url && "http".equalsIgnoreCase(this.url.getProtocol())) {
+          System.err.println("WARNING: HTTP BasicAuth is used without SSL/TLS! Are you using a secure transport layer?");
+        }
+    }
+    
+    /**
+     * Returns the <tt>UserInfo</tt> for the transport.
+     *
+     * @return the <tt>UserInfo</tt> for the transport.
+     */
+    public final String getUserInfo() {
+      return this.userInfo;
     }
 
     /**
