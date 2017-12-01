@@ -64,6 +64,8 @@ particularly the section on [customization](http://docs.oracle.com/javase/6/docs
 
 If you want to provide your own transport implementation, take a look at the [TransportFactory](https://github.com/jscep/jscep/blob/master/src/main/java/org/jscep/transport/TransportFactory.java) class.
 
+Ernst-Georg Schmid has created a transport which uses HTTP Basic authentication.  You can find his repo at [ergo70/jscep-basic-auth](https://github.com/ergo70/jscep-basic-auth).
+
 ## Creating a Callback Handler
 
 The callback handler is used to verify the CA certificate being sent by the SCEP server is the certificate you expect.  With jscep, you can choose to use either the default callback mechanism with a choice of certificate verifiers, or to provide your own callback handler.
