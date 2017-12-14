@@ -633,10 +633,20 @@ public abstract class ScepServlet extends HttpServlet {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Decoding {}", msg);
                 }
-                return Base64.decode(msg);
+                return Base64.decode(fixBrokenBase64(msg));
             } else {
                 return new byte[0];
             }
         }
     }
+
+    /**
+     * iOS 11's MDM sends badly encoded Base64 data, with '+' encoded as ' '.
+     *
+     * @return the base64 string with ' ' replaced by '+'.
+     */
+    private String fixBrokenBase64(String base64) {
+        return base64.replace(' ', '+');
+    }
+
 }
