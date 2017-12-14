@@ -51,6 +51,7 @@ import org.jscep.transport.TransportException;
 import org.jscep.transport.TransportFactory;
 import org.jscep.transport.TransportFactory.Method;
 import org.jscep.transport.UrlConnectionTransportFactory;
+import org.jscep.transport.Issue78UrlConnectionTransportFactory;
 import org.jscep.transport.request.GetCaCapsRequest;
 import org.jscep.transport.request.GetCaCertRequest;
 import org.jscep.transport.request.GetNextCaCertRequest;
@@ -398,5 +399,29 @@ public class ScepServletTest {
 
     private Transport getTransport(URL url) {
         return transportFactory.forMethod(Method.GET, url);
+    }
+
+    @Test
+    public void testIssue78t() throws Exception {
+        PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey,
+                "password".toCharArray());
+
+        PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
+                getRecipient(), "DESede");
+        PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
+                envEncoder);
+
+        PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
+                priKey);
+        PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
+                envDecoder);
+
+        this.transportFactory = new Issue78UrlConnectionTransportFactory();
+        Transport transport = getTransport(getURL());
+        Transaction t = new EnrollmentTransaction(transport, encoder, decoder,
+                csr);
+
+        State s = t.send();
+        assertThat(s, is(State.CERT_ISSUED));
     }
 }
