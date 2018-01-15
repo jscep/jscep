@@ -1,0 +1,21 @@
+This directory contains sample SCEP messages that can be used to verify that
+your SCEP implementation is producing correctly-formatted data.  You can
+display the messages with a tool like dumpasn1,
+https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.c.
+
+The sample messages are broken down into requests, scep_reqX.der, and
+responses, scep_respX.der.  The value X denotes the level of processing for
+each message.  0 = innermost message, the PKCSReq or CertRep.  1 = encrypted
+form of level 0 message.  2 = signed form of level 1 message.  So for example
+in the sample messages below scep_req0.der is the PKCSReq, scep_req1.der is
+the EnvelopedData form of the PKCSReq, and scep_req2.der is the SignedData
+form of the EnvelopedData form of the PKCSReq.
+
+Sample standard SCEP request and response messages:
+
+scep_req0.der 
+scep_req1.der 
+scep_req2.der 
+scep_resp0.der
+scep_resp1.der
+scep_resp2.der
