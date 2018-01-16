@@ -1,7 +1,7 @@
 This directory contains sample SCEP messages that can be used to verify that
-your SCEP implementation is producing correctly-formatted data.  You can
-display the messages with a tool like dumpasn1,
-https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.c.
+your SCEP implementation is producing correctly-formatted data.  The messages
+are in both binary format, .der suffix, and in text form, created with
+dumpasn1, https://www.cs.auckland.ac.nz/~pgut001/dumpasn1.c.
 
 The sample messages are broken down into requests, scep_reqX.der, and
 responses, scep_respX.der.  The value X denotes the level of processing for
@@ -13,9 +13,9 @@ form of the EnvelopedData form of the PKCSReq.
 
 Sample standard SCEP request and response messages:
 
-scep_req0.der 
-scep_req1.der 
-scep_req2.der 
-scep_resp0.der
-scep_resp1.der
-scep_resp2.der
+scep_req0.der / scep_req0.txt
+scep_req1.der / scep_req1.txt
+scep_req2.der / scep_req2.txt
+scep_resp0.der / scep_resp0.txt
+scep_resp1.der / scep_resp1.txt
+scep_resp2.der / scep_resp2.txt

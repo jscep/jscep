@@ -1,0 +1,90 @@
+  0 657: SEQUENCE {
+  4 442:   SEQUENCE {
+  8   1:     INTEGER 0
+ 11  93:     SEQUENCE {
+ 13  11:       SET {
+ 15   9:         SEQUENCE {
+ 17   3:           OBJECT IDENTIFIER countryName (2 5 4 6)
+ 22   2:           PrintableString 'NZ'
+       :           }
+       :         }
+ 26  27:       SET {
+ 28  25:         SEQUENCE {
+ 30   3:           OBJECT IDENTIFIER organizationName (2 5 4 10)
+ 35  18:           PrintableString 'Dave's Wetaburgers'
+       :           }
+       :         }
+ 55  20:       SET {
+ 57  18:         SEQUENCE {
+ 59   3:           OBJECT IDENTIFIER organizationalUnitName (2 5 4 11)
+ 64  11:           PrintableString 'Procurement'
+       :           }
+       :         }
+ 77  27:       SET {
+ 79  25:         SEQUENCE {
+ 81   3:           OBJECT IDENTIFIER commonName (2 5 4 3)
+ 86  18:           PrintableString 'Test SCEP PKI user'
+       :           }
+       :         }
+       :       }
+106 223:     SEQUENCE {
+109  13:       SEQUENCE {
+111   9:         OBJECT IDENTIFIER rsaEncryption (1 2 840 113549 1 1 1)
+122   0:         NULL
+       :         }
+124 205:       BIT STRING, encapsulates {
+128 201:         SEQUENCE {
+131 193:           INTEGER
+       :             00 D1 59 99 78 12 B3 25 AD CB 75 11 DA F7 C9 88
+       :             D6 05 5B 13 71 A1 EA 54 53 6B 4E 21 B3 57 34 A0
+       :             A1 33 6E 6C EE 2C 2A B5 F8 5A 8F 14 EC 56 97 E1
+       :             A6 26 06 59 47 51 DF 21 CF 4F 3B D8 07 0D A3 72
+       :             C5 2F 5C 85 09 81 38 F1 67 49 04 94 FA 27 D1 BC
+       :             E5 ED F4 3F 02 1C 20 BB 26 42 C9 62 5C C1 A5 F6
+       :             C4 0F 84 D2 18 F1 30 74 8B E7 46 07 64 E9 EB 30
+       :             A3 BC 7B 48 74 FD 65 0F 55 E0 65 14 15 0F 41 52
+       :                     [ Another 65 bytes skipped ]
+327   3:           INTEGER 65537
+       :           }
+       :         }
+       :       }
+332 116:     [0] {
+334  38:       SEQUENCE {
+336   9:         OBJECT IDENTIFIER challengePassword (1 2 840 113549 1 9 7)
+347  25:         SET {
+349  23:           PrintableString 'NQ3C6-GS3ZN-2XPGL-SEJTQ'
+       :           }
+       :         }
+374  74:       SEQUENCE {
+376   9:         OBJECT IDENTIFIER extensionRequest (1 2 840 113549 1 9 14)
+387  61:         SET {
+389  59:           SEQUENCE {
+391  57:             SEQUENCE {
+393   3:               OBJECT IDENTIFIER subjectAltName (2 5 29 17)
+398  50:               OCTET STRING, encapsulates {
+400  48:                 SEQUENCE {
+402  19:                   [1] 'dave@wetas-r-us.com'
+423  25:                   [6] 'http://www.wetas-r-us.com'
+       :                   }
+       :                 }
+       :               }
+       :             }
+       :           }
+       :         }
+       :       }
+       :     }
+450  13:   SEQUENCE {
+452   9:     OBJECT IDENTIFIER sha256WithRSAEncryption (1 2 840 113549 1 1 11)
+463   0:     NULL
+       :     }
+465 193:   BIT STRING
+       :     21 63 3C DF 87 85 5D 15 13 2A 55 AA 65 05 43 22
+       :     E4 8E EB 1C 00 01 E7 46 B7 F4 98 C6 98 74 F8 02
+       :     A0 13 45 90 E2 C8 5A B6 45 74 49 AD CF 34 C2 AF
+       :     F9 81 5C 5E 16 2A 7C 94 B1 FC 67 20 28 0E 17 9D
+       :     B9 5E 09 F2 05 E7 E9 BF 94 87 92 AD BE 78 F3 1E
+       :     19 B5 78 24 4B CE 59 7D 58 B7 E4 C0 CA 66 9F C7
+       :     36 86 39 95 73 E7 5C 32 1D 0B 1A DC 0A 7A AB 28
+       :     3D 06 E0 0F E4 DD C2 F9 89 B0 18 B7 A0 BD B6 E2
+       :             [ Another 64 bytes skipped ]
+       :   }
