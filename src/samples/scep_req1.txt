@@ -1,0 +1,73 @@
+   0 1084: SEQUENCE {
+   4    9:   OBJECT IDENTIFIER envelopedData (1 2 840 113549 1 7 3)
+  15 1069:   [0] {
+  19 1065:     SEQUENCE {
+  23    1:       INTEGER 0
+  26  336:       SET {
+  30  332:         SEQUENCE {
+  34    1:           INTEGER 0
+  37  117:           SEQUENCE {
+  39  105:             SEQUENCE {
+  41   11:               SET {
+  43    9:                 SEQUENCE {
+  45    3:                   OBJECT IDENTIFIER countryName (2 5 4 6)
+  50    2:                   PrintableString 'NZ'
+         :                   }
+         :                 }
+  54   34:               SET {
+  56   32:                 SEQUENCE {
+  58    3:                   OBJECT IDENTIFIER organizationName (2 5 4 10)
+  63   25:                   PrintableString 'Dave's Wetaburgers and CA'
+         :                   }
+         :                 }
+  90   31:               SET {
+  92   29:                 SEQUENCE {
+  94    3:                   OBJECT IDENTIFIER organizationalUnitName (2 5 4 11)
+  99   22:                   PrintableString 'Certification Division'
+         :                   }
+         :                 }
+ 123   21:               SET {
+ 125   19:                 SEQUENCE {
+ 127    3:                   OBJECT IDENTIFIER commonName (2 5 4 3)
+ 132   12:                   PrintableString 'Dave Himself'
+         :                   }
+         :                 }
+         :               }
+ 146    8:             INTEGER 24 CC 28 5C 16 74 F2 07
+         :             }
+ 156   13:           SEQUENCE {
+ 158    9:             OBJECT IDENTIFIER rsaEncryption (1 2 840 113549 1 1 1)
+ 169    0:             NULL
+         :             }
+ 171  192:           OCTET STRING
+         :             33 3B 17 F4 65 EF 13 DE B9 44 50 E0 3E D2 61 75
+         :             C5 B3 DA 99 9F F9 AE CA F8 68 93 33 96 B9 02 62
+         :             58 C5 CD 7D 9E BF 83 1F 1A 8F A0 15 7C 81 89 45
+         :             5B 9B C8 AA 94 DB 8D 83 2C DE 94 7B E7 94 A0 37
+         :             BC 19 51 78 14 D5 82 18 E6 54 A6 6D 51 9C EB 77
+         :             04 B7 19 4C 7B 89 E8 9F 88 E0 44 FE F6 97 22 7A
+         :             AE 08 97 88 28 9D 1B C0 B4 6E 5E 96 72 43 73 81
+         :             97 19 EA 21 0B 08 28 66 00 50 C3 63 C5 F8 3F 16
+         :                     [ Another 64 bytes skipped ]
+         :           }
+         :         }
+ 366  718:       SEQUENCE {
+ 370    9:         OBJECT IDENTIFIER data (1 2 840 113549 1 7 1)
+ 381   29:         SEQUENCE {
+ 383    9:           OBJECT IDENTIFIER aes128-CBC (2 16 840 1 101 3 4 1 2)
+ 394   16:           OCTET STRING 02 CD 49 FB C5 5B E5 23 0F 73 DE C5 7D CD F4 9F
+         :           }
+ 412  672:         [0]
+         :           7C B9 C9 B9 8D 8F 87 59 1A 4B EF F0 BD 0D D2 94
+         :           F8 91 7C CE 16 85 51 BF 1D 86 25 56 D5 33 0A 54
+         :           E1 14 87 12 A3 A6 FE EE 9A C8 FE F4 AE 92 28 3D
+         :           A6 FB 9D 69 C2 B8 41 71 DE F8 E8 95 16 E2 E4 A3
+         :           DF 83 31 62 B7 DC 6E 92 47 45 55 4F 0A 7E F2 E3
+         :           9E 9D 8B 40 94 45 2E 21 01 33 4D 84 46 C6 01 B2
+         :           50 9B 32 D1 30 4F FB 4E BB 1C 3A E7 D4 DC F1 E4
+         :           07 24 F0 78 7A 5F B5 84 CF 8A 62 44 1F 8D 81 64
+         :                   [ Another 544 bytes skipped ]
+         :         }
+         :       }
+         :     }
+         :   }
