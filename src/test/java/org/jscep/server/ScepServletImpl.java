@@ -28,7 +28,10 @@ import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v2CRLBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
@@ -99,14 +102,19 @@ public class ScepServletImpl extends ScepServlet {
         builder.addExtension(X509Extension.basicConstraints, true,
                 new BasicConstraints(0));
 
+        ContentSigner signer = buildContentSigner();
+        X509CertificateHolder holder = builder.build(signer);
+        return new JcaX509CertificateConverter().getCertificate(holder);
+    }
+
+    private ContentSigner buildContentSigner() throws Exception {
         ContentSigner signer;
         try {
             signer = new JcaContentSignerBuilder("SHA1withRSA").build(priKey);
         } catch (OperatorCreationException e) {
             throw new Exception(e);
         }
-        X509CertificateHolder holder = builder.build(signer);
-        return new JcaX509CertificateConverter().getCertificate(holder);
+        return signer;
     }
 
     @Override
@@ -167,7 +175,13 @@ public class ScepServletImpl extends ScepServlet {
     @Override
     protected X509CRL doGetCrl(X500Name issuer, BigInteger serial)
             throws OperationFailureException {
-        return null;
+        try {
+            ContentSigner signer = buildContentSigner();
+            X509CRLHolder crlHolder = new X509v2CRLBuilder(issuer, new Date()).build(signer);
+            return new JcaX509CRLConverter().getCRL(crlHolder);
+        } catch (Exception e) {
+            throw new OperationFailureException(FailInfo.badRequest);
+        }
     }
 
     @Override

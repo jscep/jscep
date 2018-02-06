@@ -370,7 +370,7 @@ public abstract class ScepServlet extends HttpServlet {
         } else {
             store = new JcaCRLStore(Collections.singleton(crl));
         }
-        generator.addCertificates(store);
+        generator.addCRLs(store);
         return generator.generate(new CMSAbsentContent());
     }
 
