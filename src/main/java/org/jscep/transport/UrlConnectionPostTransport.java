@@ -20,11 +20,7 @@ import org.jscep.transport.response.ScepResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.SSLParameters;
-import javax.net.ssl.SNIServerName;
-import javax.net.ssl.SNIHostName;
+import javax.net.ssl.*;
 
 /**
  * AbstractTransport representing the <code>HTTP POST</code> method.
@@ -43,7 +39,7 @@ final class UrlConnectionPostTransport extends AbstractTransport {
      *            the <tt>URL</tt> to send <tt>POST</tt> requests to.
      */
     public UrlConnectionPostTransport(final URL url) {
-        super(url);
+        this(url, (SSLSocketFactory)SSLSocketFactory.getDefault());
     }
 
     /**
@@ -137,5 +133,9 @@ final class UrlConnectionPostTransport extends AbstractTransport {
         }
 
         return handler.getResponse(response, conn.getContentType());
+    }
+
+    public SSLSocketFactory getSslSocketFactory() {
+        return sslSocketFactory;
     }
 }

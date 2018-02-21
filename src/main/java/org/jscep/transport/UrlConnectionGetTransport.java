@@ -41,7 +41,7 @@ final class UrlConnectionGetTransport extends AbstractTransport {
      *            the <tt>URL</tt> to send <tt>GET</tt> requests to.
      */
     public UrlConnectionGetTransport(final URL url) {
-        super(url);
+        this(url, (SSLSocketFactory)SSLSocketFactory.getDefault());
     }
 
     /**
@@ -118,5 +118,9 @@ final class UrlConnectionGetTransport extends AbstractTransport {
         } catch (UnsupportedEncodingException e) {
             throw new TransportException(e);
         }
+    }
+
+    public SSLSocketFactory getSslSocketFactory() {
+        return sslSocketFactory;
     }
 }
