@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -20,6 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SNIServerName;
+import javax.net.ssl.SNIHostName;
 
 /**
  * AbstractTransport representing the <code>HTTP POST</code> method.
@@ -33,7 +38,7 @@ final class UrlConnectionPostTransport extends AbstractTransport {
 
     /**
      * Creates a new <tt>HttpPostTransport</tt> for the given <tt>URL</tt>.
-     * 
+     *
      * @param url
      *            the <tt>URL</tt> to send <tt>POST</tt> requests to.
      */
@@ -52,7 +57,12 @@ final class UrlConnectionPostTransport extends AbstractTransport {
     public UrlConnectionPostTransport(final URL url, final SSLSocketFactory sslSocketFactory) {
         super(url);
 
-        this.sslSocketFactory = sslSocketFactory;
+        SSLParameters sslParameters = new SSLParameters();
+        List<SNIServerName> sniServerNames = new ArrayList<SNIServerName>(1);
+        sniServerNames.add(new SNIHostName(url.getHost()));
+        sslParameters.setServerNames(sniServerNames);
+
+        this.sslSocketFactory = new ParameterizedSSLSocketFactory(sslSocketFactory, sslParameters);
     }
 
     /**
