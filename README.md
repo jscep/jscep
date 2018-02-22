@@ -50,19 +50,30 @@ ProxySelector.setDefault(new ProxySelector() {
 ### Using HTTPS
 
 jscep uses [HttpURLConnection](http://docs.oracle.com/javase/6/docs/api/java/net/HttpURLConnection.html) under the hood,
-and offers full support for HTTPS-enabled SCEP servers - although HTTPS is unnecessary.
+and offers full support for HTTPS-enabled SCEP servers - although SCEP doesn't require a HTTPS connection.
    
 If your SCEP server requires the use of SSL to establish a connection, you may wish to configure 
 [HttpsURLConnection](http://docs.oracle.com/javase/6/docs/api/javax/net/ssl/HttpsURLConnection.html) by using the static 
 `setDefaultHostnameVerifier` and `setDefaultSSLSocketFactory` methods. You'll only need to specify a `HostnameVerifier` 
 if your SSL server provides a certificate that doesn't match the hostname in the SCEP URL.
   
-By default, `HttpsURLConnection` will use the `SSLSocketFactory` as specified by JSSE, so there should be no need to configure it directly.  For more information, read the [JSSE Reference Guide](http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html),
+By default, `HttpsURLConnection` will use the `SSLSocketFactory` as specified by JSSE, so there should be no need to configure it directly.  However, if you do want to customise the socket factory, you can do this by customising the transport (see below).
+
+For more information, read the [JSSE Reference Guide](http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html),
 particularly the section on [customization](http://docs.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#Customization).
 
 ### Customising the Transport
 
-If you want to provide your own transport implementation, take a look at the [TransportFactory](https://github.com/jscep/jscep/blob/master/src/main/java/org/jscep/transport/TransportFactory.java) class.
+If you want to provide your own transport implementation (e.g. using something other than HttpURLConnection) take a look at the [TransportFactory](https://github.com/jscep/jscep/blob/master/src/main/java/org/jscep/transport/TransportFactory.java) interface.  Once instantiated, you can inject the custom `TransportFactory` using `Client.setTransportFactory()`.
+
+If you're looking to customise the default `SSLSocketFactory` used by [UrlConnectionTransportFactory](https://github.com/jscep/jscep/blob/master/src/main/java/org/jscep/transport/UrlConnectionTransportFactory.java), you can do so without creating your own custom `TransportFactory`. Instead, instantiate `UrlConnectionTransportFactory` yourself, and pass in your customised `SSLSocketFactory`, like so:
+
+```java
+SSLSocketFactory factory = new CustomisedSSLSocketFactory();
+
+Client client = new Client(url, handler);
+client.setTransportFactory(new UrlConnectionTransportFactory(factory));
+```
 
 Ernst-Georg Schmid has created a transport which uses HTTP Basic authentication.  You can find his repo at [ergo70/jscep-basic-auth](https://github.com/ergo70/jscep-basic-auth).
 
