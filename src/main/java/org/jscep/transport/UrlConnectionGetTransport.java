@@ -6,6 +6,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -18,6 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SNIServerName;
+import javax.net.ssl.SNIHostName;
 
 /**
  * AbstractTransport representing the <code>HTTP GET</code> method
@@ -31,12 +36,12 @@ final class UrlConnectionGetTransport extends AbstractTransport {
 
     /**
      * Creates a new <tt>HttpGetTransport</tt> for the given <tt>URL</tt>.
-     * 
+     *
      * @param url
      *            the <tt>URL</tt> to send <tt>GET</tt> requests to.
      */
     public UrlConnectionGetTransport(final URL url) {
-        super(url);
+        this(url, (SSLSocketFactory)SSLSocketFactory.getDefault());
     }
 
     /**
@@ -50,7 +55,12 @@ final class UrlConnectionGetTransport extends AbstractTransport {
     public UrlConnectionGetTransport(final URL url, final SSLSocketFactory sslSocketFactory) {
         super(url);
 
-        this.sslSocketFactory = sslSocketFactory;
+        SSLParameters sslParameters = new SSLParameters();
+        List<SNIServerName> sniServerNames = new ArrayList<SNIServerName>(1);
+        sniServerNames.add(new SNIHostName(url.getHost()));
+        sslParameters.setServerNames(sniServerNames);
+
+        this.sslSocketFactory = new ParameterizedSSLSocketFactory(sslSocketFactory, sslParameters);
     }
 
     /**
@@ -59,6 +69,7 @@ final class UrlConnectionGetTransport extends AbstractTransport {
     @Override
     public <T> T sendRequest(final Request msg,
             final ScepResponseHandler<T> handler) throws TransportException {
+
         URL url = getUrl(msg.getOperation(), msg.getMessage());
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Sending {} to {}", msg, url);
@@ -107,5 +118,9 @@ final class UrlConnectionGetTransport extends AbstractTransport {
         } catch (UnsupportedEncodingException e) {
             throw new TransportException(e);
         }
+    }
+
+    public SSLSocketFactory getSslSocketFactory() {
+        return sslSocketFactory;
     }
 }
