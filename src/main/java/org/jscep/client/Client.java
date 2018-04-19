@@ -428,7 +428,7 @@ public final class Client {
         // CRL query
         checkDistributionPoints(profile);
 
-        X500Name name = new X500Name(issuer.getName());
+        X500Name name = X500Utils.toX500Name(issuer);
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
@@ -527,7 +527,7 @@ public final class Client {
         CertStoreInspector certs = inspectorFactory.getInstance(store);
         final X509Certificate ca = certs.getIssuer();
 
-        X500Name name = new X500Name(ca.getSubjectX500Principal().toString());
+        X500Name name = X500Utils.toX500Name(ca.getSubjectX500Principal());
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, serial);
         Transport transport = createTransport(profile);
         final Transaction t = new NonEnrollmentTransaction(transport,
