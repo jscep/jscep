@@ -1,5 +1,4 @@
 jscep [![Build Status](https://travis-ci.org/jscep/jscep.svg?branch=master)](https://travis-ci.org/jscep/jscep) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.google.code.jscep/jscep/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.google.code.jscep/jscep)
-
 =====
 
 ## Getting Support
