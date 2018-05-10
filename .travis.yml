@@ -3,3 +3,10 @@ jdk:
   - oraclejdk8
   - oraclejdk9
   - openjdk8
+
+addons:
+  sonarcloud:
+    organization: "seize-the-dave-github"
+
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
