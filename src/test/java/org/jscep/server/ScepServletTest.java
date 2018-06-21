@@ -373,13 +373,16 @@ public class ScepServletTest {
     @Test
     public void testMissingOperation() throws Exception {
         Map<String, String> expectedResponseHeaders = new HashMap<String, String>();
-        expectedResponseHeaders.put("Transfer-Encoding", "chunked");
+        expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
+        expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
+        expectedResponseHeaders.put("Content-Length", "1327");
         expectedResponseHeaders.put("Server", "Jetty(7.6.4.v20120524)");
 
         String errorMessage = "Missing \"operation\" parameter.";
 
-        String response = verifyResponse(getURL(), 400, "Bad Request", expectedResponseHeaders);
-        assertEquals(errorMessage, response);
+        String response = verifyResponse(getURL(), 400, errorMessage, expectedResponseHeaders);
+        assertThat(response, containsString(errorMessage));
+        assertThat(response, containsString("Jetty"));
     }
 
     @Test
