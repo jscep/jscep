@@ -393,12 +393,12 @@ public class ScepServletTest {
         Map<String, String> expectedResponseHeaders = new HashMap<String, String>();
         expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
         expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
-        expectedResponseHeaders.put("Content-Length", "1297");
+        expectedResponseHeaders.put("Content-Length", "1327");
         expectedResponseHeaders.put("Server", "Jetty(7.6.4.v20120524)");
 
-        String errorMessage = bogusOperation + " not found";
+        String errorMessage = "Invalid \"operation\" parameter.";
 
-        String response = verifyResponse(url, 500, errorMessage, expectedResponseHeaders);
+        String response = verifyResponse(url, 400, errorMessage, expectedResponseHeaders);
         assertThat(response, containsString(errorMessage));
         assertThat(response, containsString("Jetty"));
     }

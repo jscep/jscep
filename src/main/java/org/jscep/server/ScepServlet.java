@@ -611,7 +611,15 @@ public abstract class ScepServlet extends HttpServlet {
         if (req.getMethod().equals(POST)) {
             return IOUtils.toByteArray(req.getInputStream());
         } else {
-            Operation op = getOperation(req);
+            final Operation op;
+            try {
+                op = getOperation(req);
+            } catch (IllegalArgumentException e) {
+               // Assume the caller also calls getOperation and deals with this
+               // failure.  For us return the same body we do for non-pki
+               // operations.
+               return new byte[0];
+            }
 
             if (op == Operation.PKI_OPERATION) {
                 String msg = req.getParameter(MSG_PARAM);
