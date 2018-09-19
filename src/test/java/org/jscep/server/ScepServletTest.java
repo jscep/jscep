@@ -1,6 +1,9 @@
 package org.jscep.server;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -19,7 +22,17 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.io.Charsets;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -357,6 +370,39 @@ public class ScepServletTest {
         assertThat(renewalSate, is(State.CERT_ISSUED));
     }
 
+    @Test
+    public void testMissingOperation() throws Exception {
+        Map<String, String> expectedResponseHeaders = new HashMap<String, String>();
+        expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
+        expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
+        expectedResponseHeaders.put("Content-Length", "1327");
+        expectedResponseHeaders.put("Server", "Jetty(7.6.4.v20120524)");
+
+        String errorMessage = "Missing \"operation\" parameter.";
+
+        String response = verifyResponse(getURL(), 400, errorMessage, expectedResponseHeaders);
+        assertThat(response, containsString(errorMessage));
+        assertThat(response, containsString("Jetty"));
+    }
+
+    @Test
+    public void testBogusOperation() throws Exception {
+        String bogusOperation = "bogus";
+        URL url = new URL("http", "localhost", port, PATH + "?operation=" + bogusOperation);
+
+        Map<String, String> expectedResponseHeaders = new HashMap<String, String>();
+        expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
+        expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
+        expectedResponseHeaders.put("Content-Length", "1327");
+        expectedResponseHeaders.put("Server", "Jetty(7.6.4.v20120524)");
+
+        String errorMessage = "Invalid \"operation\" parameter.";
+
+        String response = verifyResponse(url, 400, errorMessage, expectedResponseHeaders);
+        assertThat(response, containsString(errorMessage));
+        assertThat(response, containsString("Jetty"));
+    }
+
     private PKCS10CertificationRequest getCsr(
             X500Name subject, PublicKey pubKey, PrivateKey priKey
     ) throws GeneralSecurityException, IOException {
@@ -398,5 +444,71 @@ public class ScepServletTest {
 
     private Transport getTransport(URL url) {
         return transportFactory.forMethod(Method.GET, url);
+    }
+
+    /**
+     * Verify that a response from a particular URL is as expected.a
+     *
+     * @param url the URL to GET
+     * @param expectedResponseCode the expected response code
+     * @param expectedResponseMessage the expected response message (from the status line)
+     * @param expectedResponseHeaders the expected response headers
+     * @return the response body, for further verification.
+     */
+    private String verifyResponse(
+            URL url, int expectedResponseCode, String expectedResponseMessage,
+            Map<String, String> expectedResponseHeaders
+    ) throws Exception {
+
+        // It's tempting to write a response handler to provide us the response
+        // body without any additional processing.  Trouble is, because we're
+        // dealing with non-200 responses, UrlConnectionGetTransport throws a
+        // TransportException instead of invoking the response handler.  And
+        // TransportException doesn't provide access to the response body, so we
+        // need something different for this test.  Writing a different
+        // implementation of AbstractHandler isn't quite right either since the
+        // whole point is that we don't have an Operation enum here, so we drop
+        // down a level and examine the response directly.
+        //
+        // Even URLConnection isn't sufficient, since for non-200 responses,
+        // getInputStream throws an IOException, so use an http client with more
+        // control, e.g. apache.
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse response = null;
+        try {
+            httpClient = HttpClients.createDefault();
+            HttpGet request = new HttpGet(url.toURI());
+            response = httpClient.execute(request);
+
+            assertEquals(expectedResponseCode, response.getStatusLine().getStatusCode());
+            assertEquals(expectedResponseMessage, response.getStatusLine().getReasonPhrase());
+
+            assertEquals(expectedResponseHeaders.size(), response.getAllHeaders().length);
+            for (Map.Entry<String, String> expectedHeader : expectedResponseHeaders.entrySet()) {
+                // So far all tests only have one instance of any particular
+                // header, so no need for getHeaders.  getFirstHeader is
+                // sufficient.
+                Header header = response.getFirstHeader(expectedHeader.getKey());
+                // Make sure the header we're looking for is present.
+                assertNotNull(header);
+                // Make sure the value matches
+                assertEquals(expectedHeader.getValue(), header.getValue());
+            }
+
+            HttpEntity entity = response.getEntity();
+            // N.B. If there's no response body, entity is null.  So far all the
+            // tests expect a response body.
+            assertNotNull(entity);
+
+            String responseBody = EntityUtils.toString(entity, Charsets.UTF_8);
+            return responseBody;
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+            if (httpClient != null) {
+               httpClient.close();
+            }
+        }
     }
 }

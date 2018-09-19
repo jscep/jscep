@@ -25,7 +25,6 @@ package org.jscep.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.Writer;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -38,7 +37,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -111,23 +109,13 @@ public abstract class ScepServlet extends HttpServlet {
         try {
             op = getOperation(req);
             if (op == null) {
-                // The operation parameter must be set.
-
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                Writer writer = res.getWriter();
-                writer.write("Missing \"operation\" parameter.");
-                writer.flush();
-
+                 // The operation parameter must be set.
+                res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing \"operation\" parameter.");
                 return;
             }
         } catch (IllegalArgumentException e) {
             // The operation was not recognised.
-
-            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            Writer writer = res.getWriter();
-            writer.write("Invalid \"operation\" parameter.");
-            writer.flush();
-
+            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid \"operation\" parameter.");
             return;
         }
 
@@ -472,7 +460,7 @@ public abstract class ScepServlet extends HttpServlet {
 
     /**
      * Returns the capabilities of the specified CA.
-     * 
+     *
      * @param identifier
      *            the CA identifier, which may be an empty string.
      * @return the capabilities.
@@ -484,7 +472,7 @@ public abstract class ScepServlet extends HttpServlet {
 
     /**
      * Returns the certificate chain of the specified CA.
-     * 
+     *
      * @param identifier
      *            the CA identifier, which may be an empty string.
      * @return the CA's certificate.
@@ -497,7 +485,7 @@ public abstract class ScepServlet extends HttpServlet {
     /**
      * Return the chain of the next X.509 certificate which will be used by the
      * specified CA.
-     * 
+     *
      * @param identifier
      *            the CA identifier, which may be an empty string.
      * @return the list of certificates.
@@ -509,7 +497,7 @@ public abstract class ScepServlet extends HttpServlet {
 
     /**
      * Retrieve the certificate chain identified by the given parameters.
-     * 
+     *
      * @param issuer
      *            the issuer name.
      * @param serial
@@ -528,7 +516,7 @@ public abstract class ScepServlet extends HttpServlet {
      * the certificate has been issued, this method will return the appropriate
      * certificate chain. Otherwise, this method should return null or an empty
      * list to indicate that the request is still pending.
-     * 
+     *
      * @param issuer
      *            the issuer name.
      * @param subject
@@ -547,7 +535,7 @@ public abstract class ScepServlet extends HttpServlet {
 
     /**
      * Retrieve the CRL covering the given certificate identifiers.
-     * 
+     *
      * @param issuer
      *            the certificate issuer.
      * @param serial
@@ -566,7 +554,7 @@ public abstract class ScepServlet extends HttpServlet {
      * the request can be completed immediately, this method returns an
      * appropriate certificate chain. If the request is pending, this method
      * should return null or any empty list.
-     * 
+     *
      * @param certificationRequest
      *            the PKCS #10 CertificationRequest
      * @param transId
@@ -585,35 +573,35 @@ public abstract class ScepServlet extends HttpServlet {
     /**
      * Returns the private key of the recipient entity represented by this SCEP
      * server.
-     * 
+     *
      * @return the private key.
      */
     protected abstract PrivateKey getRecipientKey();
 
     /**
      * Returns the certificate of the server recipient entity.
-     * 
+     *
      * @return the certificate.
      */
     protected abstract X509Certificate getRecipient();
 
     /**
      * Returns the private key of the entity represented by this SCEP server.
-     * 
+     *
      * @return the private key.
      */
     protected abstract PrivateKey getSignerKey();
 
     /**
      * Returns the certificate of the entity represented by this SCEP server.
-     * 
+     *
      * @return the certificate.
      */
     protected abstract X509Certificate getSigner();
-    
+
     /**
      * Returns the certificate chain of the entity represented by this SCEP server.
-     * 
+     *
      * @return the chain
      */
     protected abstract X509Certificate[] getSignerCertificateChain();
@@ -623,7 +611,15 @@ public abstract class ScepServlet extends HttpServlet {
         if (req.getMethod().equals(POST)) {
             return IOUtils.toByteArray(req.getInputStream());
         } else {
-            Operation op = getOperation(req);
+            final Operation op;
+            try {
+                op = getOperation(req);
+            } catch (IllegalArgumentException e) {
+               // Assume the caller also calls getOperation and deals with this
+               // failure.  For us return the same body we do for non-pki
+               // operations.
+               return new byte[0];
+            }
 
             if (op == Operation.PKI_OPERATION) {
                 String msg = req.getParameter(MSG_PARAM);
