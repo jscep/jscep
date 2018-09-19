@@ -140,7 +140,7 @@ KeyPair requesterKeyPair = keyPairGenerator.genKeyPair();
 
 ## Generating a Self-Signed Certificate
 
-Once you have your key pair, the next step is to generate an X509 Certificate.  The JCA doesn't provide a mechanism for building certificates programatically.  However, you _can_ use Bouncy Castle to do it, using either the [JcaX509v1CertificateBuilder](http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/cert/jcajce/JcaX509v1CertificateBuilder.html) or the [JcaX509v3CertificateBuilder](http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/cert/jcajce/JcaX509v3CertificateBuilder.html) class.
+Once you have your key pair, the next step is to generate an X509 Certificate.  The JCA doesn't provide a mechanism for building certificates programmatically.  However, you _can_ use Bouncy Castle to do it, using either the [JcaX509v1CertificateBuilder](http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/cert/jcajce/JcaX509v1CertificateBuilder.html) or the [JcaX509v3CertificateBuilder](http://www.bouncycastle.org/docs/pkixdocs1.5on/org/bouncycastle/cert/jcajce/JcaX509v3CertificateBuilder.html) class.
   
 The following example uses `JcaX509v3CertificateBuilder` due to its support for X509 extensions.  Bouncy Castle provides classes and interfaces to  simplify the usage of extensions through the [org.bouncycastle.asn1.x509](http://www.bouncycastle.org/docs/docs1.5on/org/bouncycastle/asn1/x509/package-summary.html) package.
   
@@ -213,7 +213,7 @@ We'll name this key pair `entityKeyPair` to distinguish it from the key pair use
   
 ```java
 X500Principal entitySubject = requesterSubject; // use the same subject as the self-signed certificate
-PublicKey entityPubKey = entityPair.getPublic();
+PublicKey entityPubKey = entityKeyPair.getPublic();
 PKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(entitySubject, entityPubKey); 
 ```
 
@@ -261,7 +261,7 @@ extGen.addExtension(Extension.subjectAlternativeName, true, new DERSequence(genN
 When you've finished adding your attributes, you must then sign your CSR with your entity's private key.
 
 ```java
-PrivateKey entityPrivKey = entityPair.getPrivate();
+PrivateKey entityPrivKey = entityKeyPair.getPrivate();
 JcaContentSignerBuilder csrSignerBuilder = new JcaContentSignerBuilder("SHA1withRSA");
 ContentSigner csrSigner = csrSignerBuilder.build(entityPrivKey);
 PKCS10CertificationRequest csr = csrBuilder.build(csrSigner); 
