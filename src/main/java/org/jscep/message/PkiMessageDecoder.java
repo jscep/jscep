@@ -11,7 +11,6 @@ import java.util.Hashtable;
 import java.util.Map.Entry;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.cms.Attribute;
@@ -214,8 +213,8 @@ public final class PkiMessageDecoder {
                 .getEncapContentInfo().getContentType());
     }
 
-    private DERObjectIdentifier toOid(final ScepObjectIdentifier oid) {
-        return new DERObjectIdentifier(oid.id());
+    private ASN1ObjectIdentifier toOid(final ScepObjectIdentifier oid) {
+        return new ASN1ObjectIdentifier(oid.id());
     }
 
     private CMSEnvelopedData getEnvelopedData(final Object bytes)
