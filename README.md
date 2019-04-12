@@ -1,6 +1,8 @@
 jscep [![Build Status](https://travis-ci.org/jscep/jscep.svg?branch=master)](https://travis-ci.org/jscep/jscep) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.google.code.jscep/jscep/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.google.code.jscep/jscep)
 =====
 
+jscep is a Java implementation of the SCEP protocol.
+
 ## Getting Support
 
 If you have a question about the jscep library, please send an email to jscep-support@googlegroups.com.
