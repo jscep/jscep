@@ -27,7 +27,7 @@ import javax.servlet.ServletException;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v2CRLBuilder;
@@ -99,7 +99,7 @@ public class ScepServletImpl extends ScepServlet {
 
         JcaX509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
                 issuer, serial, notBefore, notAfter, subject, pubKey);
-        builder.addExtension(X509Extension.basicConstraints, true,
+        builder.addExtension(Extension.basicConstraints, true,
                 new BasicConstraints(0));
 
         ContentSigner signer = buildContentSigner();
