@@ -28,7 +28,11 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.SignatureException;
-import java.security.cert.*;
+import java.security.cert.CertStore;
+import java.security.cert.CertStoreException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 
 import javax.security.auth.callback.Callback;
@@ -39,7 +43,7 @@ import javax.security.auth.x500.X500Principal;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.X509Extension;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.CertException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.operator.ContentVerifierProvider;
@@ -124,7 +128,7 @@ public final class Client {
     private CertStoreInspectorFactory inspectorFactory = new DefaultCertStoreInspectorFactory();
     private TransportFactory transportFactory = new UrlConnectionTransportFactory();
 
-    /**
+	/**
      * Constructs a new <tt>Client</tt> instance using the provided
      * <tt>CallbackHandler</tt> for the provided URL.
      * <p>
@@ -464,7 +468,7 @@ public final class Client {
         CertStore store = getCaCertificate(profile);
         CertStoreInspector certs = inspectorFactory.getInstance(store);
         final X509Certificate ca = certs.getIssuer();
-        if (ca.getExtensionValue(X509Extension.cRLDistributionPoints.getId()) != null) {
+        if (ca.getExtensionValue(Extension.cRLDistributionPoints.getId()) != null) {
             LOGGER.warn("CA supports distribution points");
         }
     }

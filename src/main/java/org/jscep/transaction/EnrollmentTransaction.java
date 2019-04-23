@@ -3,7 +3,6 @@ package org.jscep.transaction;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
-import java.security.spec.InvalidKeySpecException;
 
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
@@ -17,7 +16,6 @@ import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
 import org.jscep.message.PkiRequest;
-import org.jscep.transport.AbstractTransport;
 import org.jscep.transport.Transport;
 import org.jscep.transport.request.PkiOperationRequest;
 import org.jscep.transport.response.PkiOperationResponseHandler;
@@ -58,8 +56,6 @@ public final class EnrollmentTransaction extends Transaction {
             this.transId = TransactionId.createTransactionId(
                     CertificationRequestUtils.getPublicKey(csr), "SHA-1");
         } catch (IOException e) {
-            throw new TransactionException(e);
-        } catch (InvalidKeySpecException e) {
             throw new TransactionException(e);
         }
         this.request = new PkcsReq(transId, Nonce.nextNonce(), csr);

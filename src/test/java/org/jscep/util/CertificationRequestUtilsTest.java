@@ -4,6 +4,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
+
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DERUTF8String;
@@ -16,16 +21,16 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.junit.Test;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-
 public class CertificationRequestUtilsTest {
-    private PKCS10CertificationRequest getCsr(ASN1Encodable challengePassword)
+
+	private KeyPair keyPair;
+
+	private PKCS10CertificationRequest getCsr(ASN1Encodable challengePassword)
             throws Exception {
 
         final X500Name subject = new X500Name("CN=Test");
 
-        final KeyPair keyPair = KeyPairGenerator.getInstance("RSA")
+        keyPair = KeyPairGenerator.getInstance("RSA")
             .genKeyPair();
 
         final SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo
@@ -42,6 +47,20 @@ public class CertificationRequestUtilsTest {
                 challengePassword);
         }
         return builder.build(signer);
+    }
+
+    @Test
+    public void testGetPublicKey() throws Exception {
+        final PKCS10CertificationRequest csr = getCsr(null);
+        PublicKey publicKey = CertificationRequestUtils.getPublicKey(csr);
+        assertThat(publicKey.getEncoded(),
+				is(keyPair.getPublic().getEncoded()));
+        // Only casting to RSAPublicKey to get access to
+		// the modulus and publicExponent for comparison
+        assertThat(((RSAPublicKey) publicKey).getModulus(),
+				is(((RSAPublicKey) keyPair.getPublic()).getModulus()));
+        assertThat(((RSAPublicKey) publicKey).getPublicExponent(),
+				is(((RSAPublicKey) keyPair.getPublic()).getPublicExponent()));
     }
 
     @Test
