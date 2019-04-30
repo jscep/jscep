@@ -559,6 +559,8 @@ public abstract class ScepServlet extends HttpServlet {
      *            the PKCS #10 CertificationRequest
      * @param transId
      *            the transaction ID
+     * @param sender
+     *            the sender of the certificate
      * @return the certificate chain, if any
      * @throws OperationFailureException
      *             if the operation cannot be completed
