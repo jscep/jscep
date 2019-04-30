@@ -28,8 +28,6 @@ public final class CertificationRequestUtils {
      * @param csr
      *            the CSR to extract from.
      * @return the extracted <tt>PublicKey</tt>
-     * @throws InvalidKeySpecException
-     *             if the CSR is not using an RSA key.
      * @throws IOException
      *             if there is an error extracting the <tt>PublicKey</tt>
      *             parameters.
