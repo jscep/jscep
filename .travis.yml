@@ -1,4 +1,5 @@
+dist: bionic
 language: java
 jdk:
-  - oraclejdk11
   - openjdk10
+  - openjdk11
