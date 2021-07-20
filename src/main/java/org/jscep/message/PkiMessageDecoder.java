@@ -68,7 +68,7 @@ public final class PkiMessageDecoder {
         this.checkSignatureTime = true;
     }
 
-    public void NoSignatureTimeCheck() {
+    public void ignoreSigningTime() {
         this.checkSignatureTime = false;
     }
 
