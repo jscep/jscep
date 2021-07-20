@@ -17,6 +17,7 @@ import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessable;
@@ -49,6 +50,7 @@ public final class PkiMessageDecoder {
     private static final Logger LOGGER = getLogger(PkiMessageDecoder.class);
     private final PkcsPkiEnvelopeDecoder decoder;
     private final X509Certificate signer;
+    private boolean checkSignatureTime;
 
     /**
      * Creates a new <tt>PkiMessageDecoder</tt>.
@@ -63,6 +65,11 @@ public final class PkiMessageDecoder {
             final PkcsPkiEnvelopeDecoder decoder) {
         this.decoder = decoder;
         this.signer = signer;
+        this.checkSignatureTime = true;
+    }
+
+    public void ignoreSigningTime() {
+        this.checkSignatureTime = false;
     }
 
     /**
@@ -112,11 +119,16 @@ public final class PkiMessageDecoder {
             SignerInformationVerifier verifier;
             try {
                 verifier = new JcaSimpleSignerInfoVerifierBuilder().build(cert);
-                if(signerInfo.verify(verifier) == false) {
+                if (!this.checkSignatureTime) {
+                    X509Certificate javaCert = new JcaX509CertificateConverter().setProvider( "BC" )
+                            .getCertificate( cert );
+                    verifier = new JcaSimpleSignerInfoVerifierBuilder().build(javaCert.getPublicKey());
+                }
+                if (signerInfo.verify(verifier) == false) {
                     final String msg = "pkiMessage verification failed.";
                     LOGGER.warn(msg);
                     throw new MessageDecodingException(msg);
-                 }
+                }
 
                 LOGGER.debug("pkiMessage verified.");
             } catch (CMSException e) {
