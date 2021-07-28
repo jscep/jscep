@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * Implementation of the <code>CertStoreInspector</code> for Apache Harmony (Android)
  */
-final class HarmonyCertStoreInspector extends AbstractCertStoreInspector implements CertStoreInspector {
+final class HarmonyCertStoreInspector extends AbstractCertStoreInspector {
     /**
      * @param store
      *            the store to inspect
