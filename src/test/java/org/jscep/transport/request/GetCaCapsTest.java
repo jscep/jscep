@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-
 public class GetCaCapsTest {
     private GetCaCapsRequest fixture;
     private String caIdentifier;
@@ -28,7 +26,7 @@ public class GetCaCapsTest {
     }
 
     @Test
-    public void testGetMessage() throws IOException {
+    public void testGetMessage() {
         Assert.assertEquals(caIdentifier, fixture.getMessage());
     }
 

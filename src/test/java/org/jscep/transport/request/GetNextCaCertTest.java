@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-
 public class GetNextCaCertTest {
     private GetNextCaCertRequest fixture;
     private String caIdentifier;
@@ -22,7 +20,7 @@ public class GetNextCaCertTest {
     }
 
     @Test
-    public void testGetMessage() throws IOException {
+    public void testGetMessage() {
         Assert.assertEquals(caIdentifier, fixture.getMessage());
     }
 }

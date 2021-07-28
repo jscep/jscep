@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -405,7 +404,7 @@ public class ScepServletTest {
 
     private PKCS10CertificationRequest getCsr(
             X500Name subject, PublicKey pubKey, PrivateKey priKey
-    ) throws GeneralSecurityException, IOException {
+    ) throws IOException {
         return csrBuilder(subject, pubKey)
                 .build(getContentSigner(priKey));
     }
@@ -413,7 +412,7 @@ public class ScepServletTest {
     private PKCS10CertificationRequest getCsr(
             X500Name subject, PublicKey pubKey, PrivateKey priKey,
             char[] password
-    ) throws GeneralSecurityException, IOException {
+    ) throws IOException {
         return csrBuilder(subject, pubKey)
                 .addAttribute(
                         PKCSObjectIdentifiers.pkcs_9_at_challengePassword,

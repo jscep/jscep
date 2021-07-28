@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
@@ -81,8 +80,7 @@ public class ClientTest extends AbstractClientTest {
     }
 
     @Test
-    public void cgiProgIsIgnoredForIssue24() throws GeneralSecurityException,
-            MalformedURLException {
+    public void cgiProgIsIgnoredForIssue24() throws MalformedURLException {
         final URL url = new URL("http://someurl/certsrv/mscep/mscep.dll");
 
         Client c = new Client(url, new DefaultCallbackHandler(
@@ -107,7 +105,7 @@ public class ClientTest extends AbstractClientTest {
 
     private PKCS10CertificationRequest getCsr(X500Principal subject,
             PublicKey pubKey, PrivateKey priKey, char[] password)
-            throws GeneralSecurityException, IOException {
+            throws IOException {
         DERPrintableString cpSet = new DERPrintableString(new String(password));
         SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
                 .getEncoded());

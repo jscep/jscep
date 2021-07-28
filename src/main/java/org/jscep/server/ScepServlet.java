@@ -333,7 +333,7 @@ public abstract class ScepServlet extends HttpServlet {
     }
 
     private CMSSignedData getMessageData(final List<X509Certificate> certs)
-            throws IOException, CMSException, GeneralSecurityException {
+            throws IOException, CMSException {
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
         JcaCertStore store;
         try {
@@ -348,8 +348,8 @@ public abstract class ScepServlet extends HttpServlet {
         return generator.generate(new CMSAbsentContent());
     }
 
-    private CMSSignedData getMessageData(final X509CRL crl) throws IOException,
-            CMSException, GeneralSecurityException {
+    private CMSSignedData getMessageData(final X509CRL crl) throws CMSException,
+            GeneralSecurityException {
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
         JcaCRLStore store;
         if (crl == null) {

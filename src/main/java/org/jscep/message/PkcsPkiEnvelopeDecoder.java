@@ -161,7 +161,7 @@ public final class PkcsPkiEnvelopeDecoder {
             }
         }
                 
-        private AlgorithmParameterSpec getIV(AlgorithmIdentifier envelopingAlgorithm) throws GeneralSecurityException {
+        private AlgorithmParameterSpec getIV(AlgorithmIdentifier envelopingAlgorithm) {
             ASN1Encodable ivParams = envelopingAlgorithm.getParameters();
             return new IvParameterSpec(ASN1OctetString.getInstance(ivParams).getOctets());
         }

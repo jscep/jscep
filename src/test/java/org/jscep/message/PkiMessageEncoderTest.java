@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -178,7 +177,7 @@ public class PkiMessageEncoderTest {
 
     private static PKCS10CertificationRequest getCsr(X500Principal subject,
             PublicKey pubKey, PrivateKey priKey, char[] password)
-            throws GeneralSecurityException, IOException {
+            throws IOException {
         DERPrintableString cpSet = new DERPrintableString(new String(password));
         SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
                 .getEncoded());
