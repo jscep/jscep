@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * This class represents the <code>senderNonce</code> and
