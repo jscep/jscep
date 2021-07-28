@@ -449,7 +449,7 @@ public final class Client {
             try {
                 Collection<X509CRL> crls = (Collection<X509CRL>) t
                         .getCertStore().getCRLs(null);
-                if (crls.size() == 0) {
+                if (crls.isEmpty()) {
                     return null;
                 }
                 return crls.iterator().next();

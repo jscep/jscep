@@ -226,7 +226,7 @@ public abstract class ScepServlet extends HttpServlet {
 
                 try {
                     List<X509Certificate> issued = doGetCert(principal, serial);
-                    if (issued.size() == 0) {
+                    if (issued.isEmpty()) {
                         certRep = new CertRep(transId, senderNonce,
                                 recipientNonce, FailInfo.badCertId);
                     } else {
@@ -250,7 +250,7 @@ public abstract class ScepServlet extends HttpServlet {
                     List<X509Certificate> issued = doGetCertInitial(issuer,
                             subject, transId);
 
-                    if (issued.size() == 0) {
+                    if (issued.isEmpty()) {
                         certRep = new CertRep(transId, senderNonce,
                                 recipientNonce);
                     } else {
@@ -293,7 +293,7 @@ public abstract class ScepServlet extends HttpServlet {
                     LOGGER.debug("Invoking doEnrol");
                     List<X509Certificate> issued = doEnrol(certReq, reqCert, transId);
 
-                    if (issued.size() == 0) {
+                    if (issued.isEmpty()) {
                         certRep = new CertRep(transId, senderNonce,
                                 recipientNonce);
                     } else {
@@ -368,7 +368,7 @@ public abstract class ScepServlet extends HttpServlet {
         List<X509Certificate> certs = getNextCaCertificate(req
                 .getParameter(MSG_PARAM));
 
-        if (certs.size() == 0) {
+        if (certs.isEmpty()) {
             res.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED,
                     "GetNextCACert Not Supported");
         } else {
@@ -409,7 +409,7 @@ public abstract class ScepServlet extends HttpServlet {
         final List<X509Certificate> certs = doGetCaCertificate(req
                 .getParameter(MSG_PARAM));
         final byte[] bytes;
-        if (certs.size() == 0) {
+        if (certs.isEmpty()) {
             res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     "GetCaCert failed to obtain CA from store");
             bytes = new byte[0];
