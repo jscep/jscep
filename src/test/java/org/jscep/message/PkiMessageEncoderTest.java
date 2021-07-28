@@ -77,7 +77,7 @@ public class PkiMessageEncoderTest {
                 .build(pair.getPrivate());
         X509Certificate cert = X509Certificates.createEphemeral(
                 new X500Principal("CN=client"), pair);
-        Store certs = new JcaCertStore(Collections.singleton(cert));
+        Store<?> certs = new JcaCertStore(Collections.singleton(cert));
         gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder().build()).build(
                 sha1Signer, cert));

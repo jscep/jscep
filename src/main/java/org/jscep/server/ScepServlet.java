@@ -99,7 +99,6 @@ public abstract class ScepServlet extends HttpServlet {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public final void service(final HttpServletRequest req,
             final HttpServletResponse res) throws ServletException, IOException {
@@ -178,7 +177,7 @@ public abstract class ScepServlet extends HttpServlet {
                 throw new ServletException(e);
             }
 
-            Store reqStore = sd.getCertificates();
+            Store<X509CertificateHolder> reqStore = sd.getCertificates();
             Collection<X509CertificateHolder> reqCerts = reqStore
                     .getMatches(null);
 

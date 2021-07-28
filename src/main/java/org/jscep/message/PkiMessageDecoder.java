@@ -82,7 +82,6 @@ public final class PkiMessageDecoder {
      * @throws MessageDecodingException
      *             if there is a problem decoding the <tt>signedData</tt>
      */
-    @SuppressWarnings("unchecked")
     public PkiMessage<?> decode(final CMSSignedData pkiMessage)
             throws MessageDecodingException {
         LOGGER.debug("Decoding pkiMessage");
@@ -103,16 +102,15 @@ public final class PkiMessageDecoder {
         LOGGER.debug("pkiMessage encryption algorithm: {}",
                 signerInfo.getEncryptionAlgOID());
 
-        Store store = pkiMessage.getCertificates();
-        Collection<?> certColl;
+        Store<X509CertificateHolder> store = pkiMessage.getCertificates();
+        Collection<X509CertificateHolder> certColl;
         try {
             certColl = store.getMatches(signerInfo.getSID());
         } catch (StoreException e) {
             throw new MessageDecodingException(e);
         }
         if (certColl.size() > 0) {
-            X509CertificateHolder cert = (X509CertificateHolder) certColl
-                    .iterator().next();
+            X509CertificateHolder cert = certColl.iterator().next();
             LOGGER.debug(
                     "Verifying pkiMessage using key belonging to [dn={}; serial={}]",
                     cert.getSubject(), cert.getSerialNumber());
