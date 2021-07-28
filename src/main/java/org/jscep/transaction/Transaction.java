@@ -139,7 +139,7 @@ public abstract class Transaction {
     /**
      * This class represents the state of a transaction.
      */
-    public static enum State {
+    public enum State {
         /**
          * The transaction is a pending state.
          */

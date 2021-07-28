@@ -3,7 +3,7 @@ package org.jscep.transport;
 import java.net.URL;
 
 public interface TransportFactory {
-    public static enum Method {
+    public enum Method {
         GET,
         POST
     }
