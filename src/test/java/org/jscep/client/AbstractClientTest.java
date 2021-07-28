@@ -55,20 +55,24 @@ public abstract class AbstractClientTest extends ScepServerSupport {
     public static void setUpTrustManager() throws Exception {
         SSLContext ctx = SSLContext.getInstance("TLS");
         ctx.init(null, new TrustManager[] { new X509TrustManager() {
+            @Override
             public void checkClientTrusted(X509Certificate[] arg0, String arg1)
                     throws CertificateException {
             }
 
+            @Override
             public void checkServerTrusted(X509Certificate[] arg0, String arg1)
                     throws CertificateException {
             }
 
+            @Override
             public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
         } }, null);
         HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
         HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+            @Override
             public boolean verify(String hostname, SSLSession session) {
                 return true;
             }

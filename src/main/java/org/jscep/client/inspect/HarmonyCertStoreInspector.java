@@ -21,6 +21,7 @@ final class HarmonyCertStoreInspector extends AbstractCertStoreInspector {
     /**
      * {@inheritDoc}
      */
+    @Override
 	protected Collection<X509CertSelector> getIssuerSelectors(byte[] subjectDN) {
 		X509CertSelector caSelector = new X509CertSelector();
         caSelector.setBasicConstraints(0);
@@ -36,6 +37,7 @@ final class HarmonyCertStoreInspector extends AbstractCertStoreInspector {
 	/**
      * {@inheritDoc}
      */
+    @Override
 	protected Collection<X509CertSelector> getSignerSelectors() {
         X509CertSelector digSigSelector = new X509CertSelector();
         digSigSelector.setBasicConstraints(-2);
@@ -50,6 +52,7 @@ final class HarmonyCertStoreInspector extends AbstractCertStoreInspector {
 	/**
      * {@inheritDoc}
      */
+    @Override
 	protected Collection<X509CertSelector> getRecipientSelectors() {
         X509CertSelector keyEncSelector = new X509CertSelector();
         keyEncSelector.setKeyUsage(new boolean[] {false, false, true});

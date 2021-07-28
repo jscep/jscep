@@ -93,6 +93,7 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final X509Certificate getSigner() {
 		return signer;
 	}
@@ -100,6 +101,7 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final X509Certificate getRecipient() {
 		return recipient;
 	}
@@ -107,6 +109,7 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final X509Certificate getIssuer() {
 		return issuer;
 	}
