@@ -2,7 +2,6 @@ package org.jscep.util;
 
 import java.io.IOException;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.pkcs.Attribute;
