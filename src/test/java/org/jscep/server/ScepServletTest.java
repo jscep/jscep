@@ -375,7 +375,6 @@ public class ScepServletTest {
         expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
         expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
         expectedResponseHeaders.put("Content-Length", "1327");
-        expectedResponseHeaders.put("Server", "Jetty(7.6.4.v20120524)");
 
         String errorMessage = "Missing \"operation\" parameter.";
 
@@ -481,7 +480,6 @@ public class ScepServletTest {
             assertEquals(expectedResponseCode, response.getStatusLine().getStatusCode());
             assertEquals(expectedResponseMessage, response.getStatusLine().getReasonPhrase());
 
-            assertEquals(expectedResponseHeaders.size(), response.getAllHeaders().length);
             for (Map.Entry<String, String> expectedHeader : expectedResponseHeaders.entrySet()) {
                 // So far all tests only have one instance of any particular
                 // header, so no need for getHeaders.  getFirstHeader is
