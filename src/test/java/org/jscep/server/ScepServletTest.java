@@ -374,7 +374,6 @@ public class ScepServletTest {
         Map<String, String> expectedResponseHeaders = new HashMap<String, String>();
         expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
         expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
-        expectedResponseHeaders.put("Content-Length", "1327");
 
         String errorMessage = "Missing \"operation\" parameter.";
 
@@ -391,7 +390,6 @@ public class ScepServletTest {
         Map<String, String> expectedResponseHeaders = new HashMap<String, String>();
         expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
         expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
-        expectedResponseHeaders.put("Content-Length", "1327");
 
         String errorMessage = "Invalid \"operation\" parameter.";
 
