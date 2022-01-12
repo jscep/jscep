@@ -1,4 +1,4 @@
-jscep [![Build Status](https://travis-ci.org/jscep/jscep.svg?branch=master)](https://travis-ci.org/jscep/jscep) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.google.code.jscep/jscep/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.google.code.jscep/jscep)
+jscep [![Build Status](https://travis-ci.org/jscep/jscep.svg?branch=master)](https://travis-ci.org/jscep/jscep) [![Build Status](https://github.com/jscep/jscep/workflows/Build/badge.svg "GitHub Actions")](https://github.com/jscep/jscep/actions?query=workflow%3ABuild) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.google.code.jscep/jscep/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.google.code.jscep/jscep)
 =====
 
 jscep is a Java implementation of the SCEP protocol.
