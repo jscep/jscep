@@ -20,8 +20,8 @@
 		<sonar.jacoco.reportPaths>${project.basedir}/../target/jacoco.exec,${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.reportPaths>
 	</properties>
 	<issueManagement>
-		<system>Google Code</system>
-		<url>http://code.google.com/p/jscep/issues/list</url>
+		<system>GitHub </system>
+		<url>https://github.com/jscep/jscep/issues</url>
 	</issueManagement>
 	<licenses>
 		<license>
