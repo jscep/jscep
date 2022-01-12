@@ -8,8 +8,6 @@ import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-import javax.security.auth.x500.X500Principal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +93,7 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final X509Certificate getSigner() {
 		return signer;
 	}
@@ -102,6 +101,7 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final X509Certificate getRecipient() {
 		return recipient;
 	}
@@ -109,6 +109,7 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final X509Certificate getIssuer() {
 		return issuer;
 	}

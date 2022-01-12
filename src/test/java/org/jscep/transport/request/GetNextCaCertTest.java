@@ -1,12 +1,8 @@
 package org.jscep.transport.request;
 
-import org.jscep.transport.request.GetNextCaCertRequest;
-import org.jscep.transport.request.Operation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
 
 public class GetNextCaCertTest {
     private GetNextCaCertRequest fixture;
@@ -24,7 +20,7 @@ public class GetNextCaCertTest {
     }
 
     @Test
-    public void testGetMessage() throws IOException {
+    public void testGetMessage() {
         Assert.assertEquals(caIdentifier, fixture.getMessage());
     }
 }

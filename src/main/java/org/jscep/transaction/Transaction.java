@@ -9,7 +9,6 @@ import org.jscep.message.MessageEncodingException;
 import org.jscep.message.PkiMessage;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.transport.AbstractTransport;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
 import org.jscep.transport.request.Request;
@@ -140,7 +139,7 @@ public abstract class Transaction {
     /**
      * This class represents the state of a transaction.
      */
-    public static enum State {
+    public enum State {
         /**
          * The transaction is a pending state.
          */

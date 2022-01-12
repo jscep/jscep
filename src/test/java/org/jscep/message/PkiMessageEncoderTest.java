@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
@@ -78,7 +76,7 @@ public class PkiMessageEncoderTest {
                 .build(pair.getPrivate());
         X509Certificate cert = X509Certificates.createEphemeral(
                 new X500Principal("CN=client"), pair);
-        Store certs = new JcaCertStore(Collections.singleton(cert));
+        Store<?> certs = new JcaCertStore(Collections.singleton(cert));
         gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder().build()).build(
                 sha1Signer, cert));
@@ -179,7 +177,7 @@ public class PkiMessageEncoderTest {
 
     private static PKCS10CertificationRequest getCsr(X500Principal subject,
             PublicKey pubKey, PrivateKey priKey, char[] password)
-            throws GeneralSecurityException, IOException {
+            throws IOException {
         DERPrintableString cpSet = new DERPrintableString(new String(password));
         SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(pubKey
                 .getEncoded());

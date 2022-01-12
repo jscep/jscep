@@ -4,10 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.jscep.transport.request.Operation;
-import org.jscep.transport.request.Request;
-import org.jscep.transport.response.ScepResponseHandler;
-
-import javax.net.ssl.SSLSocketFactory;
 
 /**
  * This class represents an abstract transport method for sending a message to a

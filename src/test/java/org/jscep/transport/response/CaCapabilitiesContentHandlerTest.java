@@ -1,8 +1,5 @@
 package org.jscep.transport.response;
 
-import org.jscep.transport.response.Capabilities;
-import org.jscep.transport.response.ContentException;
-import org.jscep.transport.response.GetCaCapsResponseHandler;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -109,12 +109,10 @@ public final class SignedDataUtils {
             throw new RuntimeException(e);
         }
 
-        Store certStore = signedData.getCertificates();
-        Store crlStore = signedData.getCRLs();
+        Store<X509CertificateHolder> certStore = signedData.getCertificates();
+        Store<X509CRLHolder> crlStore = signedData.getCRLs();
 
-        @SuppressWarnings("unchecked")
         Collection<X509CertificateHolder> certs = certStore.getMatches(null);
-        @SuppressWarnings("unchecked")
         Collection<X509CRLHolder> crls = crlStore.getMatches(null);
 
         Collection<Object> certsAndCrls = new ArrayList<Object>();

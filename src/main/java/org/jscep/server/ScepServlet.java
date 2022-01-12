@@ -99,7 +99,6 @@ public abstract class ScepServlet extends HttpServlet {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public final void service(final HttpServletRequest req,
             final HttpServletResponse res) throws ServletException, IOException {
@@ -178,7 +177,7 @@ public abstract class ScepServlet extends HttpServlet {
                 throw new ServletException(e);
             }
 
-            Store reqStore = sd.getCertificates();
+            Store<X509CertificateHolder> reqStore = sd.getCertificates();
             Collection<X509CertificateHolder> reqCerts = reqStore
                     .getMatches(null);
 
@@ -227,7 +226,7 @@ public abstract class ScepServlet extends HttpServlet {
 
                 try {
                     List<X509Certificate> issued = doGetCert(principal, serial);
-                    if (issued.size() == 0) {
+                    if (issued.isEmpty()) {
                         certRep = new CertRep(transId, senderNonce,
                                 recipientNonce, FailInfo.badCertId);
                     } else {
@@ -251,7 +250,7 @@ public abstract class ScepServlet extends HttpServlet {
                     List<X509Certificate> issued = doGetCertInitial(issuer,
                             subject, transId);
 
-                    if (issued.size() == 0) {
+                    if (issued.isEmpty()) {
                         certRep = new CertRep(transId, senderNonce,
                                 recipientNonce);
                     } else {
@@ -294,7 +293,7 @@ public abstract class ScepServlet extends HttpServlet {
                     LOGGER.debug("Invoking doEnrol");
                     List<X509Certificate> issued = doEnrol(certReq, reqCert, transId);
 
-                    if (issued.size() == 0) {
+                    if (issued.isEmpty()) {
                         certRep = new CertRep(transId, senderNonce,
                                 recipientNonce);
                     } else {
@@ -334,7 +333,7 @@ public abstract class ScepServlet extends HttpServlet {
     }
 
     private CMSSignedData getMessageData(final List<X509Certificate> certs)
-            throws IOException, CMSException, GeneralSecurityException {
+            throws IOException, CMSException {
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
         JcaCertStore store;
         try {
@@ -349,8 +348,8 @@ public abstract class ScepServlet extends HttpServlet {
         return generator.generate(new CMSAbsentContent());
     }
 
-    private CMSSignedData getMessageData(final X509CRL crl) throws IOException,
-            CMSException, GeneralSecurityException {
+    private CMSSignedData getMessageData(final X509CRL crl) throws CMSException,
+            GeneralSecurityException {
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
         JcaCRLStore store;
         if (crl == null) {
@@ -369,7 +368,7 @@ public abstract class ScepServlet extends HttpServlet {
         List<X509Certificate> certs = getNextCaCertificate(req
                 .getParameter(MSG_PARAM));
 
-        if (certs.size() == 0) {
+        if (certs.isEmpty()) {
             res.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED,
                     "GetNextCACert Not Supported");
         } else {
@@ -410,7 +409,7 @@ public abstract class ScepServlet extends HttpServlet {
         final List<X509Certificate> certs = doGetCaCertificate(req
                 .getParameter(MSG_PARAM));
         final byte[] bytes;
-        if (certs.size() == 0) {
+        if (certs.isEmpty()) {
             res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     "GetCaCert failed to obtain CA from store");
             bytes = new byte[0];

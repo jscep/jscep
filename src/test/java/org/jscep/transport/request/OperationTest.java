@@ -3,7 +3,6 @@ package org.jscep.transport.request;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.jscep.transport.request.Operation;
 import org.junit.Test;
 
 public class OperationTest {

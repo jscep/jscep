@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * Implementation of the <code>CertStoreInspector</code> for Apache Harmony (Android)
  */
-final class HarmonyCertStoreInspector extends AbstractCertStoreInspector implements CertStoreInspector {
+final class HarmonyCertStoreInspector extends AbstractCertStoreInspector {
     /**
      * @param store
      *            the store to inspect
@@ -21,6 +21,7 @@ final class HarmonyCertStoreInspector extends AbstractCertStoreInspector impleme
     /**
      * {@inheritDoc}
      */
+    @Override
 	protected Collection<X509CertSelector> getIssuerSelectors(byte[] subjectDN) {
 		X509CertSelector caSelector = new X509CertSelector();
         caSelector.setBasicConstraints(0);
@@ -36,6 +37,7 @@ final class HarmonyCertStoreInspector extends AbstractCertStoreInspector impleme
 	/**
      * {@inheritDoc}
      */
+    @Override
 	protected Collection<X509CertSelector> getSignerSelectors() {
         X509CertSelector digSigSelector = new X509CertSelector();
         digSigSelector.setBasicConstraints(-2);
@@ -50,6 +52,7 @@ final class HarmonyCertStoreInspector extends AbstractCertStoreInspector impleme
 	/**
      * {@inheritDoc}
      */
+    @Override
 	protected Collection<X509CertSelector> getRecipientSelectors() {
         X509CertSelector keyEncSelector = new X509CertSelector();
         keyEncSelector.setKeyUsage(new boolean[] {false, false, true});
