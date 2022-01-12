@@ -393,7 +393,6 @@ public class ScepServletTest {
         expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
         expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
         expectedResponseHeaders.put("Content-Length", "1327");
-        expectedResponseHeaders.put("Server", "Jetty(7.6.4.v20120524)");
 
         String errorMessage = "Invalid \"operation\" parameter.";
 
