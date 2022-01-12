@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.Charsets;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * This class represents a SCEP <code>transactionID</code> attribute.
