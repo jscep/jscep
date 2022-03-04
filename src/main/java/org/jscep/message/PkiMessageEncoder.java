@@ -132,6 +132,31 @@ public final class PkiMessageEncoder {
     }
 
     /**
+     * Creates a new <tt>PkiMessageEncoder</tt> instance.
+     *
+     * @param signerKey
+     *            the key to use to sign the <tt>signedData</tt>.
+     * @param signerId
+     *            the certificate to use to identify the signer.
+     * @param chain
+     *            the chain of ca certicate[s] to add to the signedData
+     * @param enveloper
+     *            the enveloper used for encoding the <tt>messageData</tt>
+     * @param signatureAlgorithm
+     *            the algorithm used for signing the <tt>messageData</tt>
+     */
+    public PkiMessageEncoder(final PrivateKey signerKey,
+                             final X509Certificate signerId, final X509Certificate[] chain,
+                             final PkcsPkiEnvelopeEncoder enveloper,
+                             final String signatureAlgorithm) {
+        this.signerKey = signerKey;
+        this.signerId = signerId;
+        this.chain = chain;
+        this.enveloper = enveloper;
+        this.signatureAlgorithm = signatureAlgorithm;
+    }
+
+    /**
      * Encodes the provided <tt>PkiMessage</tt> into a PKCS #7
      * <tt>signedData</tt>.
      *
