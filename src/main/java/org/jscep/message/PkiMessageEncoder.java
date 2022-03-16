@@ -77,6 +77,9 @@ public final class PkiMessageEncoder {
      *            the certificate to use to identify the signer.
      * @param enveloper
      *            the enveloper used for encoding the <tt>messageData</tt>
+     *
+     * The PkiMessageEncoder instance created with this constructor will use
+     * SHA1withRSA as its Signature Algorithm
      */
     public PkiMessageEncoder(final PrivateKey signerKey,
             final X509Certificate signerId,
@@ -95,6 +98,9 @@ public final class PkiMessageEncoder {
      *            the chain of ca certicate[s] to add to the signedData
      * @param enveloper
      *            the enveloper used for encoding the <tt>messageData</tt>
+     *
+     * The PkiMessageEncoder instance created with this constructor will use
+     * SHA1withRSA as its Signature Algorithm
      */
     public PkiMessageEncoder(final PrivateKey signerKey,
             final X509Certificate signerId, final X509Certificate[] chain,
