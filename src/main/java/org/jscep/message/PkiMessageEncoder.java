@@ -81,10 +81,7 @@ public final class PkiMessageEncoder {
     public PkiMessageEncoder(final PrivateKey signerKey,
             final X509Certificate signerId,
             final PkcsPkiEnvelopeEncoder enveloper) {
-        this.signerKey = signerKey;
-        this.signerId = signerId;
-        this.enveloper = enveloper;
-        this.signatureAlgorithm = "SHA1withRSA";
+        this(signerKey, signerId, enveloper, "SHA1withRSA");
     }
 
     /**
@@ -102,11 +99,7 @@ public final class PkiMessageEncoder {
     public PkiMessageEncoder(final PrivateKey signerKey,
             final X509Certificate signerId, final X509Certificate[] chain,
             final PkcsPkiEnvelopeEncoder enveloper) {
-        this.signerKey = signerKey;
-        this.signerId = signerId;
-        this.chain = chain;
-        this.enveloper = enveloper;
-        this.signatureAlgorithm = "SHA1withRSA";
+        this(signerKey, signerId, chain, enveloper, "SHA1withRSA");
     }
 
     /**
