@@ -233,6 +233,17 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			  </plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -342,21 +353,15 @@
 		    <scope>test</scope>
                 </dependency>
 	</dependencies>
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>https://jscep.ci.cloudbees.com/</url>
-		<notifiers>
-			<notifier>
-				<type>mail</type>
-				<sendOnError>true</sendOnError>
-				<sendOnFailure>true</sendOnFailure>
-				<sendOnSuccess>false</sendOnSuccess>
-				<sendOnWarning>false</sendOnWarning>
-				<configuration>
-					<address>notifications@jscep.org</address>
-				</configuration>
-			</notifier>
-		</notifiers>
-	</ciManagement>
 	<inceptionYear>2009</inceptionYear>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	  </distributionManagement>
 </project>
