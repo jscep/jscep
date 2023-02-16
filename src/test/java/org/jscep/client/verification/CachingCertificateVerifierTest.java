@@ -7,14 +7,27 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.security.cert.X509Certificate;
+import javax.security.auth.x500.X500Principal;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 
+import org.jscep.util.X509Certificates;
+import org.junit.Before;
 import org.junit.Test;
 
 public class CachingCertificateVerifierTest {
+    private X509Certificate cert;
+
+    @Before
+    public void setUp() throws Exception {
+        KeyPair keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair();
+        X500Principal subject = new X500Principal("cn=example");
+
+        cert = X509Certificates.createEphemeral(subject, keyPair);
+    }
+
     @Test
     public void testVerifyDelegates() {
-        X509Certificate cert = mock(X509Certificate.class);
-
         CertificateVerifier delegate = mock(CertificateVerifier.class);
         when(delegate.verify(cert)).thenReturn(true);
 
@@ -26,8 +39,6 @@ public class CachingCertificateVerifierTest {
 
     @Test
     public void testVerifyCachesDelegateAnswer() {
-        X509Certificate cert = mock(X509Certificate.class);
-
         CertificateVerifier delegate = mock(CertificateVerifier.class);
         when(delegate.verify(cert)).thenReturn(true).thenReturn(false);
 
