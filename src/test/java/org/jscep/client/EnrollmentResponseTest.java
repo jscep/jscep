@@ -3,9 +3,11 @@ package org.jscep.client;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.security.cert.CertStore;
+import java.security.cert.CollectionCertStoreParameters;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 
 import org.jscep.transaction.FailInfo;
 import org.jscep.transaction.TransactionId;
@@ -18,10 +20,10 @@ public class EnrollmentResponseTest {
     private CertStore certStore;
 
     @Before
-    public void setUp() {
+    public void setUp() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
         transId = TransactionId.createTransactionId();
         failInfo = FailInfo.badAlg;
-        certStore = mock(CertStore.class);
+        certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters());
     }
 
     @Test
