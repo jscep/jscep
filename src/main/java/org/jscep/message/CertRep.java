@@ -30,7 +30,7 @@ import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
 
 /**
- * This class represents a <tt>CertRep</tt> <tt>pkiMessage</tt>.
+ * This class represents a {@code CertRep} {@code pkiMessage}.
  */
 public final class CertRep extends PkiMessage<CMSSignedData> {
     /**

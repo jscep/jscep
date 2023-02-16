@@ -28,7 +28,7 @@ package org.jscep.transport.request;
  */
 public enum Operation {
     /**
-     * The operation for <tt>GetCACaps</tt>.
+     * The operation for {@code GetCACaps}.
      * 
      * @see <a
      *      href="http://tools.ietf.org/html/draft-nourse-scep-20#appendix-C.1">SCEP
@@ -36,7 +36,7 @@ public enum Operation {
      */
     GET_CA_CAPS("GetCACaps"),
     /**
-     * The operation for <tt>GetCACert</tt>.
+     * The operation for {@code GetCACert}.
      * 
      * @see <a
      *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.1">SCEP
@@ -44,7 +44,7 @@ public enum Operation {
      */
     GET_CA_CERT("GetCACert"),
     /**
-     * The operation for <tt>GetNextCACert</tt>.
+     * The operation for {@code GetNextCACert}.
      * 
      * @see <a
      *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.6">SCEP
@@ -52,8 +52,8 @@ public enum Operation {
      */
     GET_NEXT_CA_CERT("GetNextCACert"),
     /**
-     * The operation for <tt>PKCSReq</tt>, <tt>GetCertInitial</tt>,
-     * <tt>GetCert</tt> and <tt>GetCRL</tt>.
+     * The operation for {@code PKCSReq}, {@code GetCertInitial},
+     * {@code GetCert} and {@code GetCRL}.
      * 
      * @see <a
      *      href="http://tools.ietf.org/html/draft-nourse-scep-20#section-5.2.2">SCEP
@@ -86,21 +86,21 @@ public enum Operation {
     }
 
     /**
-     * Returns the corresponding <tt>Operation</tt> instance for the provided
+     * Returns the corresponding {@code Operation} instance for the provided
      * name.
      * <p>
      * If the provided name is not one of:
      * <ul>
-     * <li><tt>GetCACaps</tt>;</li>
-     * <li><tt>GetCACert</tt>;</li>
-     * <li><tt>GetNextCACert</tt>; or</li>
-     * <li><tt>PKIOperation</tt></li>
+     * <li>{@code GetCACaps};</li>
+     * <li>{@code GetCACert};</li>
+     * <li>{@code GetNextCACert}; or</li>
+     * <li>{@code PKIOperation}</li>
      * </ul>
      * then this method will throw an {@link IllegalArgumentException}.
      * 
      * @param name
      *            the protocol-specific name.
-     * @return the corresponding <tt>Operation</tt>
+     * @return the corresponding {@code Operation}
      */
     public static Operation forName(final String name) {
         if (name == null) {

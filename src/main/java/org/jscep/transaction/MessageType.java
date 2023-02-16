@@ -32,23 +32,23 @@ public enum MessageType {
     }
 
     /**
-     * Returns the protocol-specific value of this <tt>messageType</tt>
+     * Returns the protocol-specific value of this {@code messageType}
      * 
-     * @return the protocol-specific value of this <tt>messageType</tt>
+     * @return the protocol-specific value of this {@code messageType}
      */
     public int getValue() {
         return value;
     }
 
     /**
-     * The <tt>messageType</tt> corresponding to the provided value.
+     * The {@code messageType} corresponding to the provided value.
      * <p>
      * If the value passed to this method is neither 3 nor 19-22 inclusive, this
      * method throws an {@link IllegalArgumentException}.
      * 
      * @param value
      *            the protocol-specific value.
-     * @return the corresponding <tt>messageType</tt>
+     * @return the corresponding {@code messageType}
      */
     public static MessageType valueOf(final int value) {
         for (MessageType msgType : MessageType.values()) {

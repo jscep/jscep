@@ -3,7 +3,7 @@ package org.jscep.transport;
 import net.jcip.annotations.Immutable;
 
 /**
- * This <tt>Exception</tt> is thrown for any error that occurs in the transport
+ * This {@code Exception} is thrown for any error that occurs in the transport
  * layer.
  */
 @Immutable
@@ -11,7 +11,7 @@ public class TransportException extends Exception {
     private static final long serialVersionUID = 7384278241045962726L;
 
     /**
-     * Constructs a new <tt>TransportException</tt> for the provided message and
+     * Constructs a new {@code TransportException} for the provided message and
      * cause.
      * 
      * @param message
@@ -24,7 +24,7 @@ public class TransportException extends Exception {
     }
 
     /**
-     * Constructs a new <tt>TransportException</tt> for the provided cause.
+     * Constructs a new {@code TransportException} for the provided cause.
      * 
      * @param cause
      *            the cause of the error.
@@ -34,7 +34,7 @@ public class TransportException extends Exception {
     }
 
     /**
-     * Constructs a new <tt>TransportException</tt> for the provided message.
+     * Constructs a new {@code TransportException} for the provided message.
      * 
      * @param message
      *            a description of the error condition.

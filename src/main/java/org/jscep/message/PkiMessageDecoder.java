@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 
 /**
  * This class is used to decode a PKCS #7 signedData object into a
- * <tt>pkiMessage</tt>.
+ * {@code pkiMessage}.
  *
  * @see PkiMessageEncoder
  */
@@ -53,13 +53,13 @@ public final class PkiMessageDecoder {
     private boolean checkSignatureTime;
 
     /**
-     * Creates a new <tt>PkiMessageDecoder</tt>.
+     * Creates a new {@code PkiMessageDecoder}.
      *
      * @param signer
-     *            the certificate used for verifying the <tt>signedData</tt>
+     *            the certificate used for verifying the {@code signedData}
      *            signature.
      * @param decoder
-     *            the decoder used for extracting the <tt>pkiMessage</tt>.
+     *            the decoder used for extracting the {@code pkiMessage}.
      */
     public PkiMessageDecoder(final X509Certificate signer,
             final PkcsPkiEnvelopeDecoder decoder) {
@@ -73,14 +73,14 @@ public final class PkiMessageDecoder {
     }
 
     /**
-     * Decodes the provided PKCS #7 <tt>signedData</tt> into a
-     * <tt>PkiMessage</tt>
+     * Decodes the provided PKCS #7 {@code signedData} into a
+     * {@code PkiMessage}
      *
      * @param pkiMessage
-     *            the <tt>signedData</tt> to decode.
-     * @return the decoded <tt>PkiMessage</tt>
+     *            the {@code signedData} to decode.
+     * @return the decoded {@code PkiMessage}
      * @throws MessageDecodingException
-     *             if there is a problem decoding the <tt>signedData</tt>
+     *             if there is a problem decoding the {@code signedData}
      */
     public PkiMessage<?> decode(final CMSSignedData pkiMessage)
             throws MessageDecodingException {

@@ -13,23 +13,23 @@ public abstract class AbstractTransport implements Transport {
     private final URL url;
 
     /**
-     * Creates a new <tt>AbstractTransport</tt> for the given URL.
+     * Creates a new {@code AbstractTransport} for the given URL.
      * 
      * @param url
-     *            the <tt>URL</tt> used for sending requests.
+     *            the {@code URL} used for sending requests.
      */
     public AbstractTransport(final URL url) {
         this.url = url;
     }
 
     /**
-     * Returns the <tt>URL</tt> for the given operation.
+     * Returns the {@code URL} for the given operation.
      * 
      * @param op
      *            the operation.
-     * @return the <tt>URL</tt> for the given operation.
+     * @return the {@code URL} for the given operation.
      * @throws TransportException
-     *             if the generated <tt>URL</tt> is malformed.
+     *             if the generated {@code URL} is malformed.
      */
     public final URL getUrl(final Operation op) throws TransportException {
         try {

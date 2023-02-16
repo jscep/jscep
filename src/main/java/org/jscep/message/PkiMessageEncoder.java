@@ -53,7 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used to encode a <tt>pkiMessage</tt> into a PKCS #7 signedData
+ * This class is used to encode a {@code pkiMessage} into a PKCS #7 signedData
  * object.
  *
  * @see PkiMessageDecoder
@@ -69,14 +69,14 @@ public final class PkiMessageEncoder {
     private final String signatureAlgorithm;
 
     /**
-     * Creates a new <tt>PkiMessageEncoder</tt> instance.
+     * Creates a new {@code PkiMessageEncoder} instance.
      *
      * @param signerKey
-     *            the key to use to sign the <tt>signedData</tt>.
+     *            the key to use to sign the {@code signedData}.
      * @param signerId
      *            the certificate to use to identify the signer.
      * @param enveloper
-     *            the enveloper used for encoding the <tt>messageData</tt>
+     *            the enveloper used for encoding the {@code messageData}
      *
      * The PkiMessageEncoder instance created with this constructor will use
      * SHA1withRSA as its Signature Algorithm
@@ -88,16 +88,16 @@ public final class PkiMessageEncoder {
     }
 
     /**
-     * Creates a new <tt>PkiMessageEncoder</tt> instance.
+     * Creates a new {@code PkiMessageEncoder} instance.
      *
      * @param signerKey
-     *            the key to use to sign the <tt>signedData</tt>.
+     *            the key to use to sign the {@code signedData}.
      * @param signerId
      *            the certificate to use to identify the signer.
      * @param chain
      *            the chain of ca certicate[s] to add to the signedData
      * @param enveloper
-     *            the enveloper used for encoding the <tt>messageData</tt>
+     *            the enveloper used for encoding the {@code messageData}
      *
      * The PkiMessageEncoder instance created with this constructor will use
      * SHA1withRSA as its Signature Algorithm
@@ -109,16 +109,16 @@ public final class PkiMessageEncoder {
     }
 
     /**
-     * Creates a new <tt>PkiMessageEncoder</tt> instance.
+     * Creates a new {@code PkiMessageEncoder} instance.
      *
      * @param signerKey
-     *            the key to use to sign the <tt>signedData</tt>.
+     *            the key to use to sign the {@code signedData}.
      * @param signerId
      *            the certificate to use to identify the signer.
      * @param enveloper
-     *            the enveloper used for encoding the <tt>messageData</tt>
+     *            the enveloper used for encoding the {@code messageData}
      * @param signatureAlgorithm
-     *            the algorithm used for signing the <tt>messageData</tt>
+     *            the algorithm used for signing the {@code messageData}
      */
     public PkiMessageEncoder(final PrivateKey signerKey,
             final X509Certificate signerId,
@@ -131,18 +131,18 @@ public final class PkiMessageEncoder {
     }
 
     /**
-     * Creates a new <tt>PkiMessageEncoder</tt> instance.
+     * Creates a new {@code PkiMessageEncoder} instance.
      *
      * @param signerKey
-     *            the key to use to sign the <tt>signedData</tt>.
+     *            the key to use to sign the {@code signedData}.
      * @param signerId
      *            the certificate to use to identify the signer.
      * @param chain
      *            the chain of ca certicate[s] to add to the signedData
      * @param enveloper
-     *            the enveloper used for encoding the <tt>messageData</tt>
+     *            the enveloper used for encoding the {@code messageData}
      * @param signatureAlgorithm
-     *            the algorithm used for signing the <tt>messageData</tt>
+     *            the algorithm used for signing the {@code messageData}
      */
     public PkiMessageEncoder(final PrivateKey signerKey,
                              final X509Certificate signerId, final X509Certificate[] chain,
@@ -156,14 +156,14 @@ public final class PkiMessageEncoder {
     }
 
     /**
-     * Encodes the provided <tt>PkiMessage</tt> into a PKCS #7
-     * <tt>signedData</tt>.
+     * Encodes the provided {@code PkiMessage} into a PKCS #7
+     * {@code signedData}.
      *
      * @param message
-     *            the <tt>PkiMessage</tt> to encode.
-     * @return the encoded <tt>signedData</tt>
+     *            the {@code PkiMessage} to encode.
+     * @return the encoded {@code signedData}
      * @throws MessageEncodingException
-     *             if there is a problem encoding the <tt>PkiMessage</tt>
+     *             if there is a problem encoding the {@code PkiMessage}
      */
     public CMSSignedData encode(final PkiMessage<?> message)
             throws MessageEncodingException {

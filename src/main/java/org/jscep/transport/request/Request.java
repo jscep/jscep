@@ -14,7 +14,7 @@ public abstract class Request {
     private final Operation operation;
 
     /**
-     * Constructs a new <tt>Request</tt> for the given SCEP <tt>Operation</tt>.
+     * Constructs a new {@code Request} for the given SCEP {@code Operation}.
      *
      * @param operation
      *            the operation to carry out.

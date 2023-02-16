@@ -7,7 +7,7 @@ public final class GetCaCertRequest extends Request {
     private final String profile;
 
     /**
-     * Creates a new <tt>GetCaCertRequest</tt> with the given CA profile.
+     * Creates a new {@code GetCaCertRequest} with the given CA profile.
      * 
      * @param profile
      *            the CA profile to use.
@@ -19,7 +19,7 @@ public final class GetCaCertRequest extends Request {
     }
 
     /**
-     * Creates a new <tt>GetCaCertRequest</tt> without a CA profile.
+     * Creates a new {@code GetCaCertRequest} without a CA profile.
      */
     public GetCaCertRequest() {
         this(null);

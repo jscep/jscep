@@ -23,7 +23,7 @@ import org.jscep.util.CertificationRequestUtils;
 import org.slf4j.Logger;
 
 /**
- * This class represents a SCEP enrollment <tt>Transaction</tt>.
+ * This class represents a SCEP enrollment transaction.
  * 
  * @see PkcsReq
  * @see GetCertInitial

@@ -32,20 +32,20 @@ final class UrlConnectionPostTransport extends AbstractTransport {
     private SSLSocketFactory sslSocketFactory;
 
     /**
-     * Creates a new <tt>HttpPostTransport</tt> for the given <tt>URL</tt>.
+     * Creates a new {@code HttpPostTransport} for the given {@code URL}.
      * 
      * @param url
-     *            the <tt>URL</tt> to send <tt>POST</tt> requests to.
+     *            the {@code URL} to send {@code POST} requests to.
      */
     public UrlConnectionPostTransport(final URL url) {
         super(url);
     }
 
     /**
-     * Creates a new <tt>HttpPostTransport</tt> for the given <tt>URL</tt>.
+     * Creates a new {@code HttpPostTransport} for the given {@code URL}.
      *
      * @param url
-     *            the <tt>URL</tt> to send <tt>POST</tt> requests to.
+     *            the {@code URL} to send {@code POST} requests to.
      * @param sslSocketFactory
      *            the sslSocketFactory to be passed along https requests
      */

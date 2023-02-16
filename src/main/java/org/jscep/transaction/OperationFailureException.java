@@ -3,8 +3,7 @@ package org.jscep.transaction;
 import net.jcip.annotations.Immutable;
 
 /**
- * This <tt>Exception</tt> reflects a failure encountered when attempting to
- * perform a SCEP operation.
+ * Represents a failure encountered when attempting to perform a SCEP operation.
  */
 @Immutable
 public final class OperationFailureException extends TransactionException {
@@ -12,8 +11,8 @@ public final class OperationFailureException extends TransactionException {
     private final FailInfo failInfo;
 
     /**
-     * Creates a new <tt>OperationFailureException</tt> based on the given
-     * <tt>FailInfo</tt>.
+     * Creates a new {@code OperationFailureException} based on the given
+     * {@code FailInfo}.
      * 
      * @param failInfo
      *            the reason for failure.
@@ -24,9 +23,9 @@ public final class OperationFailureException extends TransactionException {
     }
 
     /**
-     * Returns the <tt>failInfo</tt> that caused this exception.
+     * Returns the {@code failInfo} that caused this exception.
      * 
-     * @return the <tt>failInfo</tt>
+     * @return the {@code failInfo}
      */
     public FailInfo getFailInfo() {
         return failInfo;

@@ -16,7 +16,7 @@ import org.jscep.transport.request.PkiOperationRequest;
 import org.jscep.transport.response.PkiOperationResponseHandler;
 
 /**
- * This class represents a SCEP non-enrollment <tt>Transaction</tt>.
+ * This class represents a SCEP non-enrollment {@code Transaction}.
  * 
  * @see GetCert
  * @see GetCrl
@@ -26,7 +26,7 @@ public final class NonEnrollmentTransaction extends Transaction {
     private final PkiRequest<? extends ASN1Encodable> request;
 
     /**
-     * Creates a new <tt>NonEnrollmentTransaction</tt> for the provided message.
+     * Creates a new {@code NonEnrollmentTransaction} for the provided message.
      * <p>
      * This constructor will throw a {@link IllegalArgumentException} if invoked
      * with an inappropriate message type.
@@ -69,7 +69,7 @@ public final class NonEnrollmentTransaction extends Transaction {
      * Sends the request and processes the server response.
      * <p>
      * If the server returns a pending response, this method will throw a
-     * <tt>TransactionException</tt>, since this is unexpected behaviour.
+     * {@code TransactionException}, since this is unexpected behaviour.
      * 
      * @return the state as returned by the SCEP server.
      * @throws TransactionException

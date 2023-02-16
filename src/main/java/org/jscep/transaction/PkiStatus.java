@@ -26,23 +26,23 @@ public enum PkiStatus {
     }
 
     /**
-     * Returns the numeric identifier for this <tt>pkiStatus</tt>
+     * Returns the numeric identifier for this {@code pkiStatus}
      * 
-     * @return the numeric identifier for this <tt>pkiStatus</tt>
+     * @return the numeric identifier for this {@code pkiStatus}
      */
     public int getValue() {
         return value;
     }
 
     /**
-     * Returns the <tt>pkiStatus</tt> for the given value.
+     * Returns the {@code pkiStatus} for the given value.
      * <p>
      * If the value provided is not 0, 2 or 3, this method throws a
      * {@link IllegalArgumentException}.
      * 
      * @param value
-     *            the <tt>pkiStatus</tt> value.
-     * @return the corresponding <tt>pkiStatus</tt>
+     *            the {@code pkiStatus} value.
+     * @return the corresponding {@code pkiStatus}
      */
     public static PkiStatus valueOf(final int value) {
         for (PkiStatus status : PkiStatus.values()) {

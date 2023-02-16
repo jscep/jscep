@@ -76,27 +76,27 @@ public final class EnrollmentResponse {
     }
 
     /**
-     * Returns <tt>true</tt> for a pending response, <tt>false</tt> otherwise.
+     * Returns {@code true} for a pending response, {@code false} otherwise.
      * 
-     * @return <tt>true</tt> for a pending response, <tt>false</tt> otherwise.
+     * @return {@code true} for a pending response, {@code false} otherwise.
      */
     public boolean isPending() {
         return failInfo == null && certStore == null;
     }
 
     /**
-     * Returns <tt>true</tt> for a failure response, <tt>false</tt> otherwise.
+     * Returns {@code true} for a failure response, {@code false} otherwise.
      * 
-     * @return <tt>true</tt> for a failure response, <tt>false</tt> otherwise.
+     * @return {@code true} for a failure response, {@code false} otherwise.
      */
     public boolean isFailure() {
         return failInfo != null;
     }
 
     /**
-     * Returns <tt>true</tt> for a success response, <tt>false</tt> otherwise.
+     * Returns {@code true} for a success response, {@code false} otherwise.
      * 
-     * @return <tt>true</tt> for a success response, <tt>false</tt> otherwise.
+     * @return {@code true} for a success response, {@code false} otherwise.
      */
     public boolean isSuccess() {
         return certStore != null;

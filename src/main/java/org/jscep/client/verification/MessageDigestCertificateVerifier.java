@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This <tt>CertificateVerifier</tt> uses a pre-provisioned message digest to
+ * This {@code CertificateVerifier} uses a pre-provisioned message digest to
  * verify the certificate.
  * <p>
  * Typically, we expect the hash to be provided out of band, often as a

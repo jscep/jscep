@@ -16,7 +16,7 @@ import java.util.Scanner;
 import org.apache.commons.codec.binary.Hex;
 
 /**
- * This <tt>CertificateVerifier</tt> uses the system console to determine
+ * This {@code CertificateVerifier} uses the system console to determine
  * verification.
  * <p>
  * Implementors should use this if they require interactive certificate
@@ -29,7 +29,7 @@ public final class ConsoleCertificateVerifier implements CertificateVerifier {
      * 
      * @param cert
      *            the certificate to verify
-     * @return <tt>true</tt> if the certificate is verified, <tt>false</tt>
+     * @return {@code true} if the certificate is verified, {@code false}
      *         otherwise.
      */
     @Override

@@ -28,7 +28,7 @@ public abstract class Transaction {
     private CertStore certStore;
 
     /**
-     * Constructs a new <tt>Transaction</tt>.
+     * Constructs a new {@code Transaction}.
      *
      * @param transport
      *            the transport used to conduct the transaction.
@@ -61,12 +61,12 @@ public abstract class Transaction {
     }
 
     /**
-     * Retrieve the <tt>CertStore</tt> sent by the SCEP server.
+     * Retrieve the {@code CertStore} sent by the SCEP server.
      * <p>
      * If the transaction did not succeed, this method throws an
      * {@link IllegalStateException}
      *
-     * @return the <tt>CertStore</tt>
+     * @return the {@code CertStore}
      */
     public final CertStore getCertStore() {
         if (state != State.CERT_ISSUED) {

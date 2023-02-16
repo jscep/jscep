@@ -21,7 +21,7 @@ public final class TransactionId implements Serializable, Comparable<Transaction
     private final byte[] id;
 
     /**
-     * Creates a new <tt>TransactionId</tt> from the provided byte array.
+     * Creates a new {@code TransactionId} from the provided byte array.
      * 
      * @param id
      *            the ID to copy.
@@ -59,7 +59,7 @@ public final class TransactionId implements Serializable, Comparable<Transaction
      *            the key on which to base the transaction ID.
      * @param digestAlgorithm
      *            the algorithm to use to digest the key
-     * @return the new <tt>TransactionID</tt>
+     * @return the new {@code TransactionID}
      */
     public static TransactionId createTransactionId(final PublicKey pubKey,
             final String digestAlgorithm) {
@@ -71,7 +71,7 @@ public final class TransactionId implements Serializable, Comparable<Transaction
      * <p>
      * Each call to this method will return a different transaction ID.
      * 
-     * @return the new <tt>TransactionID</tt>
+     * @return the new {@code TransactionID}
      */
     public static TransactionId createTransactionId() {
         return new TransactionId();

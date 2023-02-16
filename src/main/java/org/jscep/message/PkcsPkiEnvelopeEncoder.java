@@ -23,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used for enveloping and encrypting a <tt>messageData</tt> to
- * produce the <tt>pkcsPkiEnvelope</tt> part of a SCEP secure message object.
+ * This class is used for enveloping and encrypting a {@code messageData} to
+ * produce the {@code pkcsPkiEnvelope} part of a SCEP secure message object.
  * 
  * @see PkcsPkiEnvelopeDecoder
  */
@@ -35,11 +35,11 @@ public final class PkcsPkiEnvelopeEncoder {
     private final ASN1ObjectIdentifier encAlgId;
 
     /**
-     * Creates a new <tt>PkcsPkiEnvelopeEncoder</tt> for the entity identified
+     * Creates a new {@code PkcsPkiEnvelopeEncoder} for the entity identified
      * by the provided certificate.
      * 
      * @param recipient
-     *            the entity for whom the <tt>pkcsPkiEnvelope</tt> is intended.
+     *            the entity for whom the {@code pkcsPkiEnvelope} is intended.
      */
     @Deprecated
     public PkcsPkiEnvelopeEncoder(final X509Certificate recipient) {
@@ -47,11 +47,11 @@ public final class PkcsPkiEnvelopeEncoder {
     }
 
     /**
-     * Creates a new <tt>PkcsPkiEnvelopeEncoder</tt> for the entity identified
+     * Creates a new {@code PkcsPkiEnvelopeEncoder} for the entity identified
      * by the provided certificate.
      * 
      * @param recipient
-     *            the entity for whom the <tt>pkcsPkiEnvelope</tt> is intended.
+     *            the entity for whom the {@code pkcsPkiEnvelope} is intended.
      * @param encAlg
      *            the encryption algorithm to use.
      */

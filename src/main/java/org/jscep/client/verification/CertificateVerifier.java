@@ -15,8 +15,8 @@ public interface CertificateVerifier {
      * 
      * @param cert
      *            the certificate to verify.
-     * @return <tt>true</tt> if the identity of the certificate can be verified,
-     *         <tt>false</tt> otherwise.
+     * @return {@code true} if the identity of the certificate can be verified,
+     *         {@code false} otherwise.
      */
     boolean verify(X509Certificate cert);
 }

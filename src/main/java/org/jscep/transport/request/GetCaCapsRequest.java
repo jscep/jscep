@@ -31,14 +31,14 @@ public final class GetCaCapsRequest extends Request {
     private final String profile;
 
     /**
-     * Creates a new <tt>GetCaCapsRequest</tt> without a CA profile.
+     * Creates a new {@code GetCaCapsRequest} without a CA profile.
      */
     public GetCaCapsRequest() {
         this(null);
     }
 
     /**
-     * Creates a new <tt>GetCaCapsRequest</tt> with the given CA profile.
+     * Creates a new {@code GetCaCapsRequest} with the given CA profile.
      * 
      * @param profile
      *            the CA profile to use.

@@ -3,7 +3,7 @@ package org.jscep.client.verification;
 import java.security.cert.X509Certificate;
 
 /**
- * This <tt>CertificateVerifier</tt> uses a pre-provisioned certificate for
+ * This {@code CertificateVerifier} uses a pre-provisioned certificate for
  * verification.
  * <p>
  * The certificate passed to {@link #verify(X509Certificate)} is deemed to be

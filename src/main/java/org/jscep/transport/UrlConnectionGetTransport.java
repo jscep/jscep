@@ -30,20 +30,20 @@ final class UrlConnectionGetTransport extends AbstractTransport {
     private SSLSocketFactory sslSocketFactory;
 
     /**
-     * Creates a new <tt>HttpGetTransport</tt> for the given <tt>URL</tt>.
+     * Creates a new {@code HttpGetTransport} for the given {@code URL}.
      * 
      * @param url
-     *            the <tt>URL</tt> to send <tt>GET</tt> requests to.
+     *            the {@code URL} to send {@code GET} requests to.
      */
     public UrlConnectionGetTransport(final URL url) {
         super(url);
     }
 
     /**
-     * Creates a new <tt>HttpGetTransport</tt> for the given <tt>URL</tt>.
+     * Creates a new {@code HttpGetTransport} for the given {@code URL}.
      *
      * @param url
-     *            the <tt>URL</tt> to send <tt>GET</tt> requests to.
+     *            the {@code URL} to send {@code GET} requests to.
      * @param sslSocketFactory
      *            the sslSocketFactory to be passed along https requests
      */

@@ -85,7 +85,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <tt>Client</tt> class is used for interacting with a SCEP server.
+ * The {@code Client} class is used for interacting with a SCEP server.
  * <p>
  * Typical usage might look like so:
  *
@@ -129,13 +129,13 @@ public final class Client {
     private TransportFactory transportFactory = new UrlConnectionTransportFactory();
 
 	/**
-     * Constructs a new <tt>Client</tt> instance using the provided
-     * <tt>CallbackHandler</tt> for the provided URL.
+     * Constructs a new {@code Client} instance using the provided
+     * {@code CallbackHandler} for the provided URL.
      * <p>
-     * The <tt>CallbackHandler</tt> must be able to handle
+     * The {@code CallbackHandler} must be able to handle
      * {@link CertificateVerificationCallback}. Unless the
-     * <tt>CallbackHandler</tt> will be used to handle additional
-     * <tt>Callback</tt>s, users of this class are recommended to use the
+     * {@code CallbackHandler} will be used to handle additional
+     * {@code Callback}s, users of this class are recommended to use the
      * {@link #Client(URL, CertificateVerifier)} constructor instead.
      *
      * @param url
@@ -151,10 +151,10 @@ public final class Client {
     }
 
     /**
-     * Constructs a new <tt>Client</tt> instance using the provided
-     * <tt>CertificateVerifier</tt> for the provided URL.
+     * Constructs a new {@code Client} instance using the provided
+     * {@code CertificateVerifier} for the provided URL.
      * 
-     * The provided <tt>CertificateVerifier</tt> is used to verify that the
+     * The provided {@code CertificateVerifier} is used to verify that the
      * identity of the SCEP server matches what the client expects.
      *
      * @param url
@@ -557,7 +557,7 @@ public final class Client {
     /**
      * Sends a CSR to the SCEP server for enrolling in a PKI.
      * <p>
-     * This method enrols the provider <tt>CertificationRequest</tt> into the
+     * This method enrols the provider {@code CertificationRequest} into the
      * PKI represented by the SCEP server.
      *
      * @param identity
@@ -582,7 +582,7 @@ public final class Client {
     /**
      * Sends a CSR to the SCEP server for enrolling in a PKI.
      * <p>
-     * This method enrols the provider <tt>CertificationRequest</tt> into the
+     * This method enrols the provider {@code CertificationRequest} into the
      * PKI represented by the SCEP server.
      *
      * @param identity

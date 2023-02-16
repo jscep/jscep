@@ -6,15 +6,15 @@ import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.cms.CMSSignedData;
 
 /**
- * The <tt>PkiOperationRequest</tt> class may represent a <tt>PKCSReq</tt>,
- * <tt>GetCertInitial</tt>, <tt>GetCert</tt> and <tt>GetCRL</tt> request.
+ * The {@code PkiOperationRequest} class may represent a {@code PKCSReq},
+ * {@code GetCertInitial}, {@code GetCert} and {@code GetCRL} request.
  */
 public final class PkiOperationRequest extends Request {
     private final CMSSignedData msgData;
 
     /**
-     * Creates a new <tt>PkiOperationRequest</tt> for the given
-     * <tt>signedData</tt>
+     * Creates a new {@code PkiOperationRequest} for the given
+     * {@code signedData}
      * 
      * @param msgData
      *            the pkiMessage to use.

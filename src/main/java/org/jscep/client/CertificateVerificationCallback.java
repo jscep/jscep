@@ -65,7 +65,7 @@ public final class CertificateVerificationCallback implements Callback {
     /**
      * Returns the outcome of the verification process.
      *
-     * @return <tt>true</tt> if the certificate was verified, <tt>false</tt>
+     * @return {@code true} if the certificate was verified, {@code false}
      *         otherwise.
      */
     public boolean isVerified() {
@@ -75,7 +75,7 @@ public final class CertificateVerificationCallback implements Callback {
     /**
      * Sets the outcome of the callback.
      * 
-     * {@link #isVerified()} returns <tt>false</tt> by default, so this method
+     * {@link #isVerified()} returns {@code false} by default, so this method
      * only needs to be called if the CA certificate can be successfully
      * verified.
      *

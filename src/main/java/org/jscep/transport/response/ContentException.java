@@ -5,7 +5,7 @@ import net.jcip.annotations.Immutable;
 import org.jscep.transport.TransportException;
 
 /**
- * The <tt>ContentException</tt> is a specialised <tt>TransportException</tt>
+ * The {@code ContentException} is a specialised {@code TransportException}
  * which relates directly to invalid content being sent by a SCEP server.
  */
 @Immutable

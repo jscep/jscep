@@ -11,14 +11,14 @@ public final class NonceQueue {
     private final Map<Nonce, Boolean> backingQueue;
 
     /**
-     * Creates a new <tt>NonceQueue</tt>.
+     * Creates a new {@code NonceQueue}.
      */
     public NonceQueue() {
         this.backingQueue = new WeakHashMap<Nonce, Boolean>(DEFAULT_QUEUE_SIZE);
     }
 
     /**
-     * Inserts the specified <tt>Nonce</tt> into this queue.
+     * Inserts the specified {@code Nonce} into this queue.
      * 
      * @param nonce
      *            the nonce to add.
@@ -28,11 +28,11 @@ public final class NonceQueue {
     }
 
     /**
-     * Checks the queue for the given <tt>Nonce</tt>.
+     * Checks the queue for the given {@code Nonce}.
      * 
      * @param nonce
-     *            the <tt>Nonce</tt> to check for.
-     * @return <tt>true</tt> if the <tt>Nonce</tt> is present, <tt>false</tt>
+     *            the {@code Nonce} to check for.
+     * @return {@code true} if the {@code Nonce} is present, {@code false}
      *         otherwise.
      */
     public synchronized boolean contains(final Nonce nonce) {

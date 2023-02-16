@@ -5,8 +5,8 @@ import java.util.Arrays;
 import net.jcip.annotations.Immutable;
 
 /**
- * <tt>InvalidContentTypeException</tt> is thrown if the HTTP
- * <tt>Content-Type</tt> header sent by the server does not match the value
+ * {@code InvalidContentTypeException} is thrown if the HTTP
+ * {@code Content-Type} header sent by the server does not match the value
  * expected by a {@link ScepResponseHandler}.
  */
 @Immutable
@@ -14,10 +14,10 @@ public class InvalidContentTypeException extends ContentException {
     private static final long serialVersionUID = 8144078591967730995L;
 
     /**
-     * Creates a new <tt>InvalidContentTypeException</tt>.
+     * Creates a new {@code InvalidContentTypeException}.
      * <p>
      * This constructor is useful for capturing the content type (or types)
-     * expected by the <tt>ScepResponseHandler</tt>, and the content type that
+     * expected by the {@code ScepResponseHandler}, and the content type that
      * the SCEP server specified. For example:
      * 
      * <pre>
@@ -27,7 +27,7 @@ public class InvalidContentTypeException extends ContentException {
      * @param actual
      *            the content type specified by the server.
      * @param expected
-     *            the content types expected by the <tt>ScepResponseHandler</tt>
+     *            the content types expected by the {@code ScepResponseHandler}
      */
     public InvalidContentTypeException(final String actual,
             final String... expected) {
@@ -36,7 +36,7 @@ public class InvalidContentTypeException extends ContentException {
     }
 
     /**
-     * Creates a new <tt>InvalidContentTypeException</tt> for the provided
+     * Creates a new {@code InvalidContentTypeException} for the provided
      * cause.
      * 
      * @param cause

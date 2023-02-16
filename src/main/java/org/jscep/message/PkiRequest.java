@@ -27,10 +27,10 @@ import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
 /**
- * This class represents an abstract SCEP <tt>pkiMessage</tt> request.
+ * This class represents an abstract SCEP {@code pkiMessage} request.
  * 
  * @param <T>
- *            the <tt>messageData</tt> for this request.
+ *            the {@code messageData} for this request.
  */
 public abstract class PkiRequest<T> extends PkiMessage<T> {
     /**

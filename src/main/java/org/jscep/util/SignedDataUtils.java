@@ -90,15 +90,15 @@ public final class SignedDataUtils {
     }
 
     /**
-     * Converts a Bouncy Castle <tt>signedData</tt> object into a
-     * <tt>CertStore</tt>.
+     * Converts a Bouncy Castle {@code signedData} object into a
+     * {@code CertStore}.
      * <p>
      * This method will extract all certificates and CRLs from the
-     * <tt>signedData</tt>. It makes <strong>no</strong> attempt to verify the
-     * integrity of the <tt>signedData</tt>.
+     * {@code signedData}. It makes <strong>no</strong> attempt to verify the
+     * integrity of the {@code signedData}.
      * 
      * @param signedData
-     *            the <tt>signedData</tt> to etract.
+     *            the {@code signedData} to etract.
      * @return the extracted certificates and CRLs.
      */
     public static CertStore fromSignedData(final CMSSignedData signedData) {

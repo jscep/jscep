@@ -29,8 +29,8 @@ import org.bouncycastle.operator.InputDecryptor;
 import org.slf4j.Logger;
 
 /**
- * This class is used to decrypt the <tt>pkcsPkiEnvelope</tt> of a SCEP secure
- * message object and extract the <tt>messageData</tt> from within.
+ * This class is used to decrypt the {@code pkcsPkiEnvelope} of a SCEP secure
+ * message object and extract the {@code messageData} from within.
  *
  * @see PkcsPkiEnvelopeEncoder
  */
@@ -40,7 +40,7 @@ public final class PkcsPkiEnvelopeDecoder {
     private final PrivateKey privKey;
 
     /**
-     * Creates a <tt>PkcsPkiEnveloperDecoder</tt> for the provided certificate
+     * Creates a {@code PkcsPkiEnveloperDecoder} for the provided certificate
      * and key.
      * <p>
      * The provided certificate is used to identify the envelope recipient info,
@@ -58,12 +58,12 @@ public final class PkcsPkiEnvelopeDecoder {
     }
 
     /**
-     * Decrypts the provided <tt>pkcsPkiEnvelope</tt>, and extracts the content.
+     * Decrypts the provided {@code pkcsPkiEnvelope}, and extracts the content.
      *
      * @param pkcsPkiEnvelope
      *            the envelope to decrypt and open.
-     * @return the content of the <tt>pkcsPkiEnvelope</tt>, the SCEP
-     *         <tt>messageData</tt>.
+     * @return the content of the {@code pkcsPkiEnvelope}, the SCEP
+     *         {@code messageData}.
      * @throws MessageDecodingException
      *             if the envelope cannot be decoded.
      */

@@ -29,7 +29,7 @@ import org.jscep.transaction.Nonce;
 import org.jscep.transaction.TransactionId;
 
 /**
- * This class represents an abstract SCEP <tt>pkiMessage</tt>, which may be
+ * This class represents an abstract SCEP {@code pkiMessage}, which may be
  * either a request or response.
  * 
  * @param <T>
@@ -42,7 +42,7 @@ public abstract class PkiMessage<T> {
     private final T messageData;
 
     /**
-     * Creates a new <tt>PkiMessage</tt> instance.
+     * Creates a new {@code PkiMessage} instance.
      * 
      * @param transId
      *            the request transaction ID.

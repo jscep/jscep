@@ -17,7 +17,7 @@ public final class Nonce {
     private final byte[] nonce;
 
     /**
-     * Creates a new <tt>Nonce</tt> with the given byte array.
+     * Creates a new {@code Nonce} with the given byte array.
      *
      * @param nonce
      *            the byte array.
@@ -27,7 +27,7 @@ public final class Nonce {
     }
 
     /**
-     * Returns the <tt>Nonce</tt> byte array.
+     * Returns the {@code Nonce} byte array.
      *
      * @return the byte array.
      */
@@ -44,12 +44,12 @@ public final class Nonce {
     }
 
     /**
-     * Generates a new random <tt>Nonce</tt>.
+     * Generates a new random {@code Nonce}.
      * 
      * This method uses a static {@link SecureRandom} instance as the source of
      * randomness, and can therefore make no guarantee of true uniqueness.
      *
-     * @return the generated <tt>Nonce</tt>.
+     * @return the generated {@code Nonce}.
      */
     public static Nonce nextNonce() {
         byte[] bytes = new byte[NONCE_LENGTH];

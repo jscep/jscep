@@ -26,8 +26,8 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 
 /**
- * This class handles responses to <tt>PKCSReq</tt>, <tt>GetCertInitial</tt>,
- * <tt>GetCert</tt> and <tt>GetCRL</tt> requests.
+ * This class handles responses to {@code PKCSReq}, {@code GetCertInitial},
+ * {@code GetCert} and {@code GetCRL} requests.
  * 
  * @author David Grant
  */

@@ -50,30 +50,30 @@ public final class Capabilities {
     }
 
     /**
-     * Returns <tt>true</tt> if POST is supported, <tt>false</tt> otherwise.
+     * Returns {@code true} if POST is supported, {@code false} otherwise.
      *
-     * @return <tt>true</tt> if POST is supported, <tt>false</tt> otherwise.
+     * @return {@code true} if POST is supported, {@code false} otherwise.
      */
     public boolean isPostSupported() {
         return caps.contains(Capability.POST_PKI_OPERATION);
     }
 
     /**
-     * Returns <tt>true</tt> if retrieval of the next CA is supported,
-     * <tt>false</tt> otherwise.
+     * Returns {@code true} if retrieval of the next CA is supported,
+     * {@code false} otherwise.
      *
-     * @return <tt>true</tt> if retrieval of the next CA is supported,
-     *         <tt>false</tt> otherwise.
+     * @return {@code true} if retrieval of the next CA is supported,
+     *         {@code false} otherwise.
      */
     public boolean isRolloverSupported() {
         return caps.contains(Capability.GET_NEXT_CA_CERT);
     }
 
     /**
-     * Returns <tt>true</tt> if certificate renewal is supported, <tt>false</tt>
+     * Returns {@code true} if certificate renewal is supported, {@code false}
      * otherwise.
      *
-     * @return <tt>true</tt> if certificate renewal is supported, <tt>false</tt>
+     * @return {@code true} if certificate renewal is supported, {@code false}
      *         otherwise.
      */
     public boolean isRenewalSupported() {
@@ -83,7 +83,7 @@ public final class Capabilities {
     /**
      * Returns whether certificate update is supported.
      *
-     * @return <tt>true</tt> if certificate update is supported, <tt>false</tt>
+     * @return {@code true} if certificate update is supported, {@code false}
      *         otherwise.
      */
     public boolean isUpdateSupported() {

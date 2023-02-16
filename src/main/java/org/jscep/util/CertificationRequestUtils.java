@@ -12,23 +12,23 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 
 /**
  * This class is used for performing utility operations on
- * <tt>CertificationRequest</tt> instances.
+ * {@code CertificationRequest} instances.
  */
 public final class CertificationRequestUtils {
     private CertificationRequestUtils() {
     }
 
     /**
-     * Extracts the <tt>PublicKey</tt> from the provided CSR.
+     * Extracts the {@code PublicKey} from the provided CSR.
      * <p>
      * This method will throw a {@link RuntimeException} if the JRE is missing
      * the RSA algorithm, which is a required algorithm as defined by the JCA.
      * 
      * @param csr
      *            the CSR to extract from.
-     * @return the extracted <tt>PublicKey</tt>
+     * @return the extracted {@code PublicKey}
      * @throws IOException
-     *             if there is an error extracting the <tt>PublicKey</tt>
+     *             if there is an error extracting the {@code PublicKey}
      *             parameters.
      */
     public static PublicKey getPublicKey(final PKCS10CertificationRequest csr)
@@ -39,12 +39,12 @@ public final class CertificationRequestUtils {
     }
 
     /**
-     * Extracts the <tt>Challenge password</tt> from the provided CSR.
+     * Extracts the {@code Challenge password} from the provided CSR.
      * <p>
      * 
      * @param csr
      *            the CSR to extract from.
-     * @return the extracted <tt>Challenge password</tt>
+     * @return the extracted {@code Challenge password}
      */
     public static String getChallengePassword(final PKCS10CertificationRequest csr) {
         Attribute[] attrs = csr.getAttributes();

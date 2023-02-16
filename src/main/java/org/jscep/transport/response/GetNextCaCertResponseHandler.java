@@ -21,11 +21,11 @@ public final class GetNextCaCertResponseHandler implements
     private final X509Certificate signer;
 
     /**
-     * Creates a new <tt>GetNextCaCertResponseHandler</tt> using the provided
+     * Creates a new {@code GetNextCaCertResponseHandler} using the provided
      * certificate.
      *
      * @param signer
-     *            the signer of the <tt>signedData</tt> response.
+     *            the signer of the {@code signedData} response.
      */
     public GetNextCaCertResponseHandler(final X509Certificate signer) {
         this.signer = signer;

@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This <tt>CertificateVerifier</tt> delegates verification to the provided
- * <tt>CertificateVerifier</tt> and caches the answer.
+ * This {@code CertificateVerifier} delegates verification to the provided
+ * {@code CertificateVerifier} and caches the answer.
  */
 public final class CachingCertificateVerifier implements CertificateVerifier {
     /**
@@ -20,11 +20,11 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
     private final CertificateVerifier delegate;
 
     /**
-     * Constructs a <tt>CachingCertificateVerifier</tt> which delegates to the
-     * specified <tt>CertificateVerifier</tt>.
+     * Constructs a {@code CachingCertificateVerifier} which delegates to the
+     * specified {@code CertificateVerifier}.
      * 
      * @param delegate
-     *            the <tt>CertificateVerifier</tt> to delegate to.
+     *            the {@code CertificateVerifier} to delegate to.
      */
     public CachingCertificateVerifier(final CertificateVerifier delegate) {
         this.delegate = delegate;
@@ -40,8 +40,8 @@ public final class CachingCertificateVerifier implements CertificateVerifier {
      * 
      * @param cert
      *            the certificate to verify.
-     * @return the result of calling <tt>verify</tt> on the delegate
-     *         <tt>CertificateVerifier</tt>.
+     * @return the result of calling {@code verify} on the delegate
+     *         {@code CertificateVerifier}.
      */
     @Override
     public synchronized boolean verify(final X509Certificate cert) {
