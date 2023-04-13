@@ -173,7 +173,7 @@ public final class PkiMessageEncoder {
         CMSTypedData content = getContent(message);
         LOGGER.debug(
                 "Signing pkiMessage using key belonging to [dn={}; serial={}]",
-                signerId.getSubjectDN(), signerId.getSerialNumber());
+                signerId.getSubjectX500Principal(), signerId.getSerialNumber());
         try {
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
             generator.addSignerInfoGenerator(getSignerInfo(message));

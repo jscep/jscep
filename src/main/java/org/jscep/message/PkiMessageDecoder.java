@@ -94,7 +94,7 @@ public final class PkiMessageDecoder {
         SignerInformation signerInfo = signerStore.get(new JcaSignerId(signer));
         if (signerInfo == null) {
             throw new MessageDecodingException("Could not for signerInfo for "
-                    + signer.getSubjectDN());
+                    + signer.getSubjectX500Principal());
         }
 
         LOGGER.debug("pkiMessage digest algorithm: {}", signerInfo

@@ -13,7 +13,8 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.x500.X500Principal;
 
-import org.apache.commons.io.Charsets;
+import static java.nio.charset.StandardCharsets.US_ASCII;
+
 import org.jscep.client.CertificateVerificationCallback;
 import org.jscep.client.DefaultCallbackHandler;
 import org.jscep.util.X509Certificates;
@@ -36,7 +37,7 @@ public class ConsoleCallbackVerifierTest {
     public void testYesResponse() throws Exception {
         CertificateVerificationCallback callback = getCallback();
 
-        byte[] bytes = String.format("Y%n").getBytes(Charsets.US_ASCII.name());
+        byte[] bytes = String.format("Y%n").getBytes(US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
         handler.handle(new Callback[] { callback });
 
@@ -51,7 +52,7 @@ public class ConsoleCallbackVerifierTest {
     public void testEmptyResponse() throws Exception {
         CertificateVerificationCallback callback = getCallback();
 
-        byte[] bytes = String.format("%n").getBytes(Charsets.US_ASCII.name());
+        byte[] bytes = String.format("%n").getBytes(US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
         handler.handle(new Callback[] { callback });
 
@@ -62,7 +63,7 @@ public class ConsoleCallbackVerifierTest {
     public void testNoResponse() throws Exception {
         CertificateVerificationCallback callback = getCallback();
 
-        byte[] bytes = String.format("N%n").getBytes(Charsets.US_ASCII.name());
+        byte[] bytes = String.format("N%n").getBytes(US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
         handler.handle(new Callback[] { callback });
 
@@ -73,8 +74,7 @@ public class ConsoleCallbackVerifierTest {
     public void testInvalidResponse() throws Exception {
         CertificateVerificationCallback callback = getCallback();
 
-        byte[] bytes = String.format("X%nY%n").getBytes(
-                Charsets.US_ASCII.name());
+        byte[] bytes = String.format("X%nY%n").getBytes(US_ASCII.name());
         System.setIn(new ByteArrayInputStream(bytes));
         handler.handle(new Callback[] { callback });
 

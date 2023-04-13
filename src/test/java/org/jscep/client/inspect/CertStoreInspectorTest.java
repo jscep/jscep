@@ -76,9 +76,9 @@ public abstract class CertStoreInspectorTest {
     public void example() {
         CertStoreInspector auths = inspectorFactory.getInstance(store);
 
-        Assert.assertEquals(encryption, auths.getRecipient().getSubjectDN()
+        Assert.assertEquals(encryption, auths.getRecipient().getSubjectX500Principal()
                 .getName());
-        Assert.assertEquals(signing, auths.getSigner().getSubjectDN().getName());
-        Assert.assertEquals(issuer, auths.getIssuer().getSubjectDN().getName());
+        Assert.assertEquals(signing, auths.getSigner().getSubjectX500Principal().getName());
+        Assert.assertEquals(issuer, auths.getIssuer().getSubjectX500Principal().getName());
     }
 }

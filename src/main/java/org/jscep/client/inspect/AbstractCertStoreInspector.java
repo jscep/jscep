@@ -39,23 +39,23 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 		for (Certificate cert : certs) {
 			X509Certificate x509 = (X509Certificate) cert;
 			LOGGER.debug("{}. '[dn={}; serial={}]'", new Object[] { ++i,
-					x509.getSubjectDN(), x509.getSerialNumber() });
+					x509.getSubjectX500Principal(), x509.getSerialNumber() });
 		}
 
 		LOGGER.debug("Looking for recipient entity");
 		recipient = selectCertificate(store, getRecipientSelectors());
 		LOGGER.debug("Using [dn={}; serial={}] for recipient entity",
-				recipient.getSubjectDN(), recipient.getSerialNumber());
+				recipient.getSubjectX500Principal(), recipient.getSerialNumber());
 
 		LOGGER.debug("Looking for message signing entity");
 		signer = selectCertificate(store, getSignerSelectors());
 		LOGGER.debug("Using [dn={}; serial={}] for message signing entity",
-				signer.getSubjectDN(), signer.getSerialNumber());
+				signer.getSubjectX500Principal(), signer.getSerialNumber());
 
 		LOGGER.debug("Looking for issuing entity");
 		issuer = selectCertificate(store, getIssuerSelectors(recipient.getIssuerX500Principal().getEncoded()));
 		LOGGER.debug("Using [dn={}; serial={}] for issuing entity",
-				issuer.getSubjectDN(), issuer.getSerialNumber());
+				issuer.getSubjectX500Principal(), issuer.getSerialNumber());
 	}
 
 	/**

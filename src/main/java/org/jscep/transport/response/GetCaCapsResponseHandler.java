@@ -32,7 +32,7 @@ import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.apache.commons.io.Charsets;
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +69,7 @@ public final class GetCaCapsResponseHandler implements
         }
         BufferedReader reader = new BufferedReader(new InputStreamReader(
                 new ByteArrayInputStream(content),
-                Charset.forName(Charsets.US_ASCII.name())));
+                Charset.forName(US_ASCII.name())));
         Set<String> caCaps = new HashSet<String>();
         String capability;
         try {

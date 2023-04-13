@@ -9,8 +9,9 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.Charsets;
 import org.apache.commons.lang3.ArrayUtils;
+
+import static java.nio.charset.StandardCharsets.US_ASCII;
 
 /**
  * This class represents a SCEP <code>transactionID</code> attribute.
@@ -42,8 +43,7 @@ public final class TransactionId implements Serializable, Comparable<Transaction
 
     private TransactionId() {
         try {
-            id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes(
-                    Charsets.US_ASCII.name());
+            id = Long.toHexString(ID_SOURCE.getAndIncrement()).getBytes(US_ASCII.name());
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
@@ -83,7 +83,7 @@ public final class TransactionId implements Serializable, Comparable<Transaction
     @Override
     public String toString() {
         try {
-            return new String(id, Charsets.US_ASCII.name());
+            return new String(id, US_ASCII.name());
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

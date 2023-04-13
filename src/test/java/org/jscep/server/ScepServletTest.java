@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
-import org.apache.commons.io.Charsets;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -494,7 +494,7 @@ public class ScepServletTest {
             // tests expect a response body.
             assertNotNull(entity);
 
-            String responseBody = EntityUtils.toString(entity, Charsets.UTF_8);
+            String responseBody = EntityUtils.toString(entity, UTF_8);
             return responseBody;
         } finally {
             if (response != null) {

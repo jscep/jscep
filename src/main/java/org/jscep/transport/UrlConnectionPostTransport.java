@@ -9,7 +9,6 @@ import java.net.URL;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.jscep.transport.request.PkiOperationRequest;
@@ -20,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
+
+import static java.nio.charset.StandardCharsets.US_ASCII;
 
 /**
  * AbstractTransport representing the <code>HTTP POST</code> method.
@@ -83,8 +84,7 @@ final class UrlConnectionPostTransport extends AbstractTransport {
 
         byte[] message;
         try {
-            message = Base64.decode(msg.getMessage().getBytes(
-                    Charsets.US_ASCII.name()));
+            message = Base64.decode(msg.getMessage().getBytes(US_ASCII.name()));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
