@@ -40,6 +40,10 @@ import org.jscep.transaction.PkiStatus;
 import org.jscep.transaction.TransactionId;
 import org.slf4j.Logger;
 
+import org.bouncycastle.util.Selector;
+import org.bouncycastle.cms.SignerId;
+import org.bouncycastle.cert.selector.X509CertificateHolderSelector;
+
 /**
  * This class is used to decode a PKCS #7 signedData object into a
  * {@code pkiMessage}.
@@ -82,6 +86,7 @@ public final class PkiMessageDecoder {
      * @throws MessageDecodingException
      *             if there is a problem decoding the {@code signedData}
      */
+    @SuppressWarnings("unchecked")
     public PkiMessage<?> decode(final CMSSignedData pkiMessage)
             throws MessageDecodingException {
         LOGGER.debug("Decoding pkiMessage");
@@ -102,10 +107,14 @@ public final class PkiMessageDecoder {
         LOGGER.debug("pkiMessage encryption algorithm: {}",
                 signerInfo.getEncryptionAlgOID());
 
+        
+        SignerId signerId = signerInfo.getSID();
+        Selector<X509CertificateHolder> selector = new X509CertificateHolderSelector(signerId.getIssuer(), signerId.getSerialNumber());
+
         Store<X509CertificateHolder> store = pkiMessage.getCertificates();
         Collection<X509CertificateHolder> certColl;
         try {
-            certColl = store.getMatches(signerInfo.getSID());
+            certColl = store.getMatches(selector);
         } catch (StoreException e) {
             throw new MessageDecodingException(e);
         }
