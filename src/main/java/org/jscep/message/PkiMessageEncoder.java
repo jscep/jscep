@@ -209,7 +209,7 @@ public final class PkiMessageEncoder {
                 throw new MessageEncodingException(e);
             }
         } else {
-            signable = new CMSAbsentContent();
+            signable = new CMSProcessableByteArray(new byte[0]);
         }
         return signable;
     }
