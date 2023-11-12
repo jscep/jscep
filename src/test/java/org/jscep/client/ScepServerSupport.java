@@ -1,21 +1,31 @@
 package org.jscep.client;
 
-import java.net.URL;
-
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.server.ServerConnector;
 import org.jscep.server.ScepServletImpl;
 
-public abstract class ScepServerSupport {
-    public URL getUrl() throws Exception {
-        final String path = "/scep/pkiclient.exe";
-        final ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(ScepServletImpl.class, path);
-        final Server server = new Server(0);
-        server.setHandler(handler);
-        server.start();
+import java.net.URL;
 
-        final int port = server.getConnectors()[0].getLocalPort();
-        return new URL("http", "localhost", port, path);
+public abstract class ScepServerSupport {
+
+    static final String PATH = "/scep/pkiclient.exe";
+
+    public URL getUrl() throws Exception {
+        final Server server = new Server(0);
+        NetworkConnector connector = new ServerConnector(server);
+        server.addConnector(connector);
+
+        ServletContextHandler context = new ServletContextHandler();
+        context.setContextPath("/");
+        server.setHandler(context);
+        context.addServlet(ScepServletImpl.class, PATH);
+
+        server.start();
+        final int port = connector.getLocalPort();
+
+        return new URL("http", "localhost", port, PATH);
     }
 }

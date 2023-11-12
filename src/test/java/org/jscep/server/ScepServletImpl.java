@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;

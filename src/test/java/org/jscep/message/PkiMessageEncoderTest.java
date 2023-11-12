@@ -1,5 +1,6 @@
 package org.jscep.message;
 
+import static junit.framework.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -168,7 +169,7 @@ public class PkiMessageEncoderTest {
         CMSSignedData encodedMessage2 = modifySignature(encodedMessage);
         try{
             decoder.decode(encodedMessage2);
-            Assert.fail("decoding exception expected");
+            fail("decoding exception expected");
         }catch(MessageDecodingException e)
         {
             assertEquals("decoding exception", "pkiMessage verification failed.", e.getMessage());
