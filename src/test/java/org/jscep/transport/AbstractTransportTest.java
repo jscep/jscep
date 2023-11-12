@@ -14,6 +14,7 @@ import junit.framework.Assert;
 
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
 import org.jscep.message.GetCert;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
@@ -35,10 +36,12 @@ abstract public class AbstractTransportTest {
 
     @Before
     public void setUp() throws Exception {
+
         server = new Server(0);
         server.start();
-        url = new URL("http://localhost:"
-                + server.getConnectors()[0].getLocalPort() + "/");
+        url = new URL("http://localhost:" +
+            ((NetworkConnector)(server.getConnectors()[0])).getLocalPort() + "/");
+
         proxy = Proxy.NO_PROXY;
         transport = getTransport(url);
     }
