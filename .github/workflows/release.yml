@@ -20,8 +20,10 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: zulu
-          java-version: 17
+          distribution: oracle
+          java-version: 21
+          server-id: ossrh
+          
 
       - name: Cache Maven packages
         uses: actions/cache@v4
