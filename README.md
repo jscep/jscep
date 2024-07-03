@@ -5,7 +5,7 @@ jscep is a Java implementation of the SCEP protocol.
 
 ## Getting Support
 
-If you have a question about the jscep library, please send an email to jscep-support@googlegroups.com.
+If you have a question about the jscep library, please send an email to davegrant674@gmail.com.
 
 ## Constructing a Client
 
