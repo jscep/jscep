@@ -351,6 +351,7 @@
                 </dependency>
 	</dependencies>
 	<inceptionYear>2009</inceptionYear>
+	<!--
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -368,4 +369,5 @@
           		</snapshots>
         	</repository>
 	  </distributionManagement>
+	-->
 </project>
