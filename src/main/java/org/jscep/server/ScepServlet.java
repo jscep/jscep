@@ -37,11 +37,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -109,11 +109,19 @@ public abstract class ScepServlet extends HttpServlet {
             op = getOperation(req);
             if (op == null) {
                  // The operation parameter must be set.
+
+                // Providing a custom reason message is deprecated:
+                // https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletResponse.html#setStatus-int-java.lang.String-
+                // @ToDo consider dropping the second parameter if no client relies on it
                 res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing \"operation\" parameter.");
                 return;
             }
         } catch (IllegalArgumentException e) {
             // The operation was not recognised.
+
+            // Providing a custom reason message is deprecated:
+            // https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletResponse.html#setStatus-int-java.lang.String-
+            // @ToDo consider dropping the second parameter if no client relies on it
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid \"operation\" parameter.");
             return;
         }
@@ -327,6 +335,9 @@ public abstract class ScepServlet extends HttpServlet {
             res.getOutputStream().write(signedData.getEncoded());
             res.getOutputStream().close();
         } else {
+            // Providing a custom reason message is deprecated:
+            // https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletResponse.html#setStatus-int-java.lang.String-
+            // @ToDo consider dropping the second parameter if no client relies on it
             res.sendError(HttpServletResponse.SC_BAD_REQUEST,
                     "Unknown Operation");
         }
@@ -369,6 +380,9 @@ public abstract class ScepServlet extends HttpServlet {
                 .getParameter(MSG_PARAM));
 
         if (certs.isEmpty()) {
+            // Providing a custom reason message is deprecated:
+            // https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletResponse.html#setStatus-int-java.lang.String-
+            // @ToDo consider dropping the second parameter if no client relies on it
             res.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED,
                     "GetNextCACert Not Supported");
         } else {
@@ -410,6 +424,9 @@ public abstract class ScepServlet extends HttpServlet {
                 .getParameter(MSG_PARAM));
         final byte[] bytes;
         if (certs.isEmpty()) {
+            // Providing a custom reason message is deprecated:
+            // https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletResponse.html#setStatus-int-java.lang.String-
+            // @ToDo consider dropping the second parameter if no client relies on it
             res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     "GetCaCert failed to obtain CA from store");
             bytes = new byte[0];
