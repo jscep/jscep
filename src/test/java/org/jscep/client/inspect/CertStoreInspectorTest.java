@@ -59,7 +59,6 @@ public abstract class CertStoreInspectorTest {
     private final String encryption;
     private final String signing;
     private final String issuer;
-    private final CertStoreInspectorFactory inspectorFactory;
 
     public CertStoreInspectorTest(final CertStore store, final String encryption,
             final String signing, final String issuer) {
@@ -67,14 +66,13 @@ public abstract class CertStoreInspectorTest {
         this.encryption = encryption;
         this.signing = signing;
         this.issuer = issuer;
-        this.inspectorFactory = getCertStoreInspectorFactory();
     }
 
     abstract CertStoreInspectorFactory getCertStoreInspectorFactory();
 
     @Test
     public void example() {
-        CertStoreInspector auths = inspectorFactory.getInstance(store);
+        CertStoreInspector auths = getCertStoreInspectorFactory().getInstance(store);
 
         Assert.assertEquals(encryption, auths.getRecipient().getSubjectX500Principal()
                 .getName());
