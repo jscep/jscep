@@ -200,7 +200,7 @@ public abstract class ScepServlet extends HttpServlet {
             PkiMessage<?> msg;
             try {
                 PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
-                        getRecipient(), getRecipientKey());
+                        getRecipient(), getRecipientKey(), getChallengePassword());
                 PkiMessageDecoder decoder = new PkiMessageDecoder(reqCert,
                         envDecoder);
                 msg = decoder.decode(sd);
@@ -313,7 +313,7 @@ public abstract class ScepServlet extends HttpServlet {
             }
 
             PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                    reqCert, "DESede");
+                    reqCert, getChallengePassword(), "DESede");
             PkiMessageEncoder encoder = new PkiMessageEncoder(getSignerKey(),
                     getSigner(), getSignerCertificateChain(), envEncoder);
             CMSSignedData signedData;
@@ -570,6 +570,13 @@ public abstract class ScepServlet extends HttpServlet {
             final PKCS10CertificationRequest certificationRequest,
             final X509Certificate sender,
             final TransactionId transId) throws Exception;
+
+    /**
+     * Returns challenge password.
+     *
+     * @return challenge password
+     */
+    protected abstract String getChallengePassword();
 
     /**
      * Returns the private key of the recipient entity represented by this SCEP

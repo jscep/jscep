@@ -165,17 +165,33 @@ public final class Capabilities {
         return null;
     }
 
-    public String getStrongestSignatureAlgorithm() {
+    /**
+     * Return the strongest signature algorithm supported by the server for the specified key algorithm
+     * @param keyAlgorithm signing key algorithm name (as returned from PrivateKey.getAlgorithm() function)
+     * @return signature algorithm name
+     */
+    public String getStrongestSignatureAlgorithm(String keyAlgorithm) {
+        if (keyAlgorithm.equals("EC")) {
+            keyAlgorithm = "ECDSA";
+        }
         if (sigExists("SHA512") && caps.contains(Capability.SHA_512)) {
-            return "SHA512withRSA";
+            return "SHA512with" + keyAlgorithm;
         } else if (sigExists("SHA256") && caps.contains(Capability.SHA_256)) {
-            return "SHA256withRSA";
+            return "SHA256with" + keyAlgorithm;
         } else if (sigExists("SHA1") && caps.contains(Capability.SHA_1)) {
-            return "SHA1withRSA";
+            return "SHA1with" + keyAlgorithm;
         } else if (sigExists("MD5")) {
-            return "MD5withRSA";
+            return "MD5with" + keyAlgorithm;
         }
         return null;
+    }
+
+    /**
+     * Return the strongest signature algorithm supported by the server for the RSA key
+     * @return signature algorithm name
+     */
+    public String getStrongestSignatureAlgorithm() {
+        return getStrongestSignatureAlgorithm("RSA");
     }
 
     private boolean sigExists(final String sig) {
