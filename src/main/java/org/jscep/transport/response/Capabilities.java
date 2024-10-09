@@ -174,13 +174,13 @@ public final class Capabilities {
         if (keyAlgorithm.equals("EC")) {
             keyAlgorithm = "ECDSA";
         }
-        if (sigExists("SHA512") && caps.contains(Capability.SHA_512)) {
+        if (sigExists("SHA512", keyAlgorithm) && caps.contains(Capability.SHA_512)) {
             return "SHA512with" + keyAlgorithm;
-        } else if (sigExists("SHA256") && caps.contains(Capability.SHA_256)) {
+        } else if (sigExists("SHA256", keyAlgorithm) && caps.contains(Capability.SHA_256)) {
             return "SHA256with" + keyAlgorithm;
-        } else if (sigExists("SHA1") && caps.contains(Capability.SHA_1)) {
+        } else if (sigExists("SHA1", keyAlgorithm) && caps.contains(Capability.SHA_1)) {
             return "SHA1with" + keyAlgorithm;
-        } else if (sigExists("MD5")) {
+        } else if (sigExists("MD5", keyAlgorithm)) {
             return "MD5with" + keyAlgorithm;
         }
         return null;
@@ -194,10 +194,10 @@ public final class Capabilities {
         return getStrongestSignatureAlgorithm("RSA");
     }
 
-    private boolean sigExists(final String sig) {
-        return (algorithmExists("Signature", sig + "withRSA")
-                || algorithmExists("Signature", sig + "WithRSAEncryption"))
-                && digestExists(sig);
+    private boolean sigExists(final String dig, final String sig) {
+        return (algorithmExists("Signature", dig + "with" + sig)
+                || algorithmExists("Signature", dig + "With" + sig + "Encryption"))
+                && digestExists(dig);
     }
 
     private boolean digestExists(final String digest) {
