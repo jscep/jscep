@@ -747,7 +747,8 @@ public final class Client {
     private String getChallengePassword(String profile) throws ClientException {
         try {
             LOGGER.debug("Requesting challenge password.");
-            PasswordCallback callback = new PasswordCallback("Enter challenge password for " + profile, false);
+            PasswordCallback callback = new PasswordCallback("Enter challenge password"
+                + (profile != null ? " for " + profile : ""), false);
             Callback[] callbacks = new Callback[1];
             callbacks[0] = callback;
             handler.handle(callbacks);

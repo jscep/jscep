@@ -80,7 +80,10 @@ public final class DefaultCallbackHandler implements CallbackHandler {
         }
         if (passwords.size() == 1) {
             // we have only one password, just return it
-            callback.setPassword(passwords.get(passwords.keySet().iterator().next()).toCharArray());
+            String password = passwords.get(passwords.keySet().iterator().next());
+            if (password != null) {
+                callback.setPassword(password.toCharArray());
+            }
         } else {
             // if we have many passwords, return one selected by profile name included in prompt
             for (String key : passwords.keySet()) {
