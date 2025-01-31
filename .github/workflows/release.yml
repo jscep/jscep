@@ -48,8 +48,9 @@ jobs:
 
       - name: Set up GPG
         run: |
+          export GPG_TTY=$(tty)
           echo "Importing private key"
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import --pinentry-mode loopback --no-tty
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import --pinentry-mode loopback
           echo "Importing public key"
           echo "${{ secrets.GPG_PUBLIC_KEY }}" | gpg --import
           echo "Listing keys"
