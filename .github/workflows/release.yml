@@ -26,8 +26,8 @@ jobs:
           distribution: oracle
           java-version: 21
           server-id: ossrh
-          server-username: SONATYPE_USERNAME
-          server-password: SONATYPE_PASSWORD
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
           
 
       - name: Cache Maven packages
@@ -61,8 +61,8 @@ jobs:
       - name: Build and Deploy
         run: mvn --batch-mode deploy -DskipTests -Dmaven.test.skip=true
         env:
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_SECRET_KEYRING: ${{ secrets.GPG_SECRET_KEYRING }}
           GPG_PUBLIC_KEYRING: ${{ secrets.GPG_PUBLIC_KEYRING }}
