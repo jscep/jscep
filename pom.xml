@@ -4,11 +4,12 @@
 	<groupId>com.google.code.jscep</groupId>
 	<artifactId>jscep</artifactId>
 	<packaging>jar</packaging>
-	<version>2.5.7-SNAPSHOT</version>
+	<version>${revision}</version>
 	<name>jscep</name>
 	<description>Java implementation of the Simple Certificate Enrollment Protocol</description>
 	<url>http://jscep.org/</url>
 	<properties>
+		<revision>2.5.7-SNAPSHOT</revision>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
