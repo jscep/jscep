@@ -340,7 +340,6 @@
 	</dependencies>
 	<inceptionYear>2009</inceptionYear>
 	<distributionManagement>
-		<!--
 		<snapshotRepository>
 			<id>ossrh</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -349,13 +348,5 @@
 			<id>ossrh</id>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
-		-->
-		<repository>
-          		<id>github</id>
-          		<url>https://maven.pkg.github.com/jscep/jscep</url>
-          		<snapshots>
-            			<enabled>true</enabled>
-          		</snapshots>
-        	</repository>
 	</distributionManagement>
 </project>
