@@ -48,8 +48,11 @@ jobs:
 
       - name: Set up GPG
         run: |
+          echo "Importing private key"
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
+          echo "Importing public key"
           echo "${{ secrets.GPG_PUBLIC_KEY }}" | gpg --import
+          echo "Listing keys"
           gpg --list-keys  # Verify the keys are imported
 
       - name: Build and Deploy
