@@ -26,8 +26,8 @@ jobs:
           distribution: oracle
           java-version: 21
           server-id: ossrh
-          server-username: ${{ secrets.SONATYPE_USERNAME }}
-          server-password: ${{ secrets.SONATYPE_PASSWORD }}
+          server-username: SONATYPE_USERNAME
+          server-password: SONATYPE_PASSWORD
           
 
       - name: Cache Maven packages
