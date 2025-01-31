@@ -56,7 +56,7 @@ jobs:
           gpg --list-keys  # Verify the keys are imported
 
       - name: Build and Deploy
-        run: mvn -e --batch-mode deploy -DskipTests -Dmaven.test.skip=true -Drevision=${{ github.event.release.tag_name }}
+        run: mvn -X --batch-mode deploy -DskipTests -Dmaven.test.skip=true -Drevision=${{ github.event.release.tag_name }}
         env:
           MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
