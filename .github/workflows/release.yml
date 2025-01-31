@@ -50,7 +50,7 @@ jobs:
         run: |
           export GPG_TTY=$(tty)
           echo "Importing private key"
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import --pinentry-mode loopback
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
           echo "Importing public key"
           echo "${{ secrets.GPG_PUBLIC_KEY }}" | gpg --import
           echo "Listing keys"
