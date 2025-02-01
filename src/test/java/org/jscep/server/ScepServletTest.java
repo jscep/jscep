@@ -89,6 +89,7 @@ public class ScepServletTest {
     private String goodIdentifier;
     private String badIdentifier;
     private TransportFactory transportFactory;
+    private String challengePassword;
 
     @Before
     public void configureFixtures() throws Exception {
@@ -103,6 +104,7 @@ public class ScepServletTest {
         pubKey = keyPair.getPublic();
         sender = generateCertificate();
         transportFactory = new UrlConnectionTransportFactory();
+        challengePassword = "secret";
 
     }
 
@@ -194,12 +196,12 @@ public class ScepServletTest {
     public void testGetCRL() throws Exception {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, goodSerial);
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                getRecipient(), "DESede");
+                getRecipient(), challengePassword, "DESede");
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-                priKey);
+                priKey, challengePassword);
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
@@ -215,12 +217,12 @@ public class ScepServletTest {
     public void testGetCertBad() throws Exception {
         IssuerAndSerialNumber iasn = new IssuerAndSerialNumber(name, badSerial);
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                getRecipient(), "DES");
+                getRecipient(), challengePassword, "DES");
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-                priKey);
+                priKey, challengePassword);
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
@@ -238,12 +240,12 @@ public class ScepServletTest {
                 "password".toCharArray());
 
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                getRecipient(), "DESede");
+                getRecipient(), challengePassword, "DESede");
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-                priKey);
+                priKey, challengePassword);
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
@@ -261,12 +263,12 @@ public class ScepServletTest {
                 "password".toCharArray());
 
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                getRecipient(), "DES");
+                getRecipient(), challengePassword, "DES");
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-                priKey);
+                priKey, challengePassword);
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
@@ -284,12 +286,12 @@ public class ScepServletTest {
                 "password".toCharArray());
 
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                getRecipient(), "DES");
+                getRecipient(), challengePassword, "DES");
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-                priKey);
+                priKey, challengePassword);
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
@@ -312,12 +314,12 @@ public class ScepServletTest {
         PKCS10CertificationRequest csr = getCsr(name, pubKey, priKey);
 
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                getRecipient(), "DES");
+                getRecipient(), challengePassword, "DES");
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-                priKey);
+                priKey, challengePassword);
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
@@ -336,12 +338,12 @@ public class ScepServletTest {
                 "password".toCharArray());
 
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                getRecipient(), "DES");
+                getRecipient(), challengePassword, "DES");
         PkiMessageEncoder encoder = new PkiMessageEncoder(priKey, sender,
                 envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(sender,
-                priKey);
+                priKey, challengePassword);
         PkiMessageDecoder decoder = new PkiMessageDecoder(getRecipient(),
                 envDecoder);
 
@@ -362,7 +364,7 @@ public class ScepServletTest {
         PublicKey newPubKey = keyPair.getPublic();
         csr = getCsr(name, newPubKey, newPriKey);
         encoder = new PkiMessageEncoder(priKey, prevCertificate, envEncoder);
-        envDecoder = new PkcsPkiEnvelopeDecoder(prevCertificate, priKey);
+        envDecoder = new PkcsPkiEnvelopeDecoder(prevCertificate, priKey, challengePassword);
         decoder = new PkiMessageDecoder(getRecipient(), envDecoder);
         t = new EnrollmentTransaction(transport, encoder, decoder, csr);
         State renewalSate = t.send();

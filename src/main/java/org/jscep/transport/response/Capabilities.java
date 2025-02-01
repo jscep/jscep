@@ -165,23 +165,39 @@ public final class Capabilities {
         return null;
     }
 
-    public String getStrongestSignatureAlgorithm() {
-        if (sigExists("SHA512") && caps.contains(Capability.SHA_512)) {
-            return "SHA512withRSA";
-        } else if (sigExists("SHA256") && caps.contains(Capability.SHA_256)) {
-            return "SHA256withRSA";
-        } else if (sigExists("SHA1") && caps.contains(Capability.SHA_1)) {
-            return "SHA1withRSA";
-        } else if (sigExists("MD5")) {
-            return "MD5withRSA";
+    /**
+     * Return the strongest signature algorithm supported by the server for the specified key algorithm
+     * @param keyAlgorithm signing key algorithm name (as returned from PrivateKey.getAlgorithm() function)
+     * @return signature algorithm name
+     */
+    public String getStrongestSignatureAlgorithm(String keyAlgorithm) {
+        if (keyAlgorithm.equals("EC")) {
+            keyAlgorithm = "ECDSA";
+        }
+        if (sigExists("SHA512", keyAlgorithm) && caps.contains(Capability.SHA_512)) {
+            return "SHA512with" + keyAlgorithm;
+        } else if (sigExists("SHA256", keyAlgorithm) && caps.contains(Capability.SHA_256)) {
+            return "SHA256with" + keyAlgorithm;
+        } else if (sigExists("SHA1", keyAlgorithm) && caps.contains(Capability.SHA_1)) {
+            return "SHA1with" + keyAlgorithm;
+        } else if (sigExists("MD5", keyAlgorithm)) {
+            return "MD5with" + keyAlgorithm;
         }
         return null;
     }
 
-    private boolean sigExists(final String sig) {
-        return (algorithmExists("Signature", sig + "withRSA")
-                || algorithmExists("Signature", sig + "WithRSAEncryption"))
-                && digestExists(sig);
+    /**
+     * Return the strongest signature algorithm supported by the server for the RSA key
+     * @return signature algorithm name
+     */
+    public String getStrongestSignatureAlgorithm() {
+        return getStrongestSignatureAlgorithm("RSA");
+    }
+
+    private boolean sigExists(final String dig, final String sig) {
+        return (algorithmExists("Signature", dig + "with" + sig)
+                || algorithmExists("Signature", dig + "With" + sig + "Encryption"))
+                && digestExists(dig);
     }
 
     private boolean digestExists(final String digest) {

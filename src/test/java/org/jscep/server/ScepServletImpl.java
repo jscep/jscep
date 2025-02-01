@@ -60,6 +60,7 @@ public class ScepServletImpl extends ScepServlet {
     private X500Name name;
     private X500Name pollName;
     private BigInteger caSerial;
+    private String challengePassword;
 
     public void init(ServletContext context) {
         LOGGER.debug("INIT");
@@ -70,6 +71,7 @@ public class ScepServletImpl extends ScepServlet {
         name = new X500Name("CN=Certification Authority");
         pollName = new X500Name("CN=Poll");
         caSerial = BigInteger.TEN;
+        challengePassword = "password";
         try {
 
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -130,7 +132,7 @@ public class ScepServletImpl extends ScepServlet {
             String password = CertificationRequestUtils.getChallengePassword(csr);
             if (password == null) {
                 authorizeRenewal(sender);
-            } else if (!password.equals("password")) {
+            } else if (!password.equals(challengePassword)) {
                 LOGGER.debug("Invalid password");
                 throw new OperationFailureException(FailInfo.badRequest);
             }
@@ -225,6 +227,11 @@ public class ScepServletImpl extends ScepServlet {
             return Collections.singletonList(ca);
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    protected String getChallengePassword() {
+        return challengePassword;
     }
 
     @Override

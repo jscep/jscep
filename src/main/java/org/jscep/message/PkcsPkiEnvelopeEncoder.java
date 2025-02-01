@@ -18,6 +18,7 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.RecipientInfoGenerator;
 import org.bouncycastle.cms.jcajce.JceCMSContentEncryptorBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipientInfoGenerator;
+import org.bouncycastle.cms.jcajce.JcePasswordRecipientInfoGenerator;
 import org.bouncycastle.operator.OutputEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public final class PkcsPkiEnvelopeEncoder {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PkcsPkiEnvelopeEncoder.class);
     private final X509Certificate recipient;
+    private final String challengePassword;
     private final ASN1ObjectIdentifier encAlgId;
 
     /**
@@ -43,7 +45,7 @@ public final class PkcsPkiEnvelopeEncoder {
      */
     @Deprecated
     public PkcsPkiEnvelopeEncoder(final X509Certificate recipient) {
-        this(recipient, "DES");
+        this(recipient, null, "DES");
     }
 
     /**
@@ -56,8 +58,10 @@ public final class PkcsPkiEnvelopeEncoder {
      *            the encryption algorithm to use.
      */
     public PkcsPkiEnvelopeEncoder(final X509Certificate recipient,
+            final String challengePassword,
             final String encAlg) {
         this.recipient = recipient;
+        this.challengePassword = challengePassword;
         this.encAlgId = getAlgorithmId(encAlg);
     }
 
@@ -77,8 +81,13 @@ public final class PkcsPkiEnvelopeEncoder {
         CMSTypedData envelopable = new CMSProcessableByteArray(messageData);
         RecipientInfoGenerator recipientGenerator;
         try {
-            recipientGenerator = new JceKeyTransRecipientInfoGenerator(
+            if (isRecipientEncryptionCapable()) {
+                recipientGenerator = new JceKeyTransRecipientInfoGenerator(
                     recipient);
+            } else {
+                recipientGenerator = new JcePasswordRecipientInfoGenerator(
+                    encAlgId, challengePassword.toCharArray());
+            }
         } catch (CertificateEncodingException e) {
             throw new MessageEncodingException(e);
         }
@@ -123,5 +132,17 @@ public final class PkcsPkiEnvelopeEncoder {
         else {
             throw new IllegalArgumentException("Unknown algorithm: " + encAlg);
         }
+    }
+
+    /**
+     * Check if recipient's key can encrypt data.
+     * @return true if it can encrypt data
+     */
+    private boolean isRecipientEncryptionCapable() {
+        // RFC8894 Section 3.1: If the key is encryption capable (for example, RSA), then the
+        // messageData is encrypted using the recipient's public key with the CMS KeyTransRecipientInfo
+        // mechanism. If the key is not encryption capable (for example, DSA or ECDSA), then the messageData is
+        // encrypted using the challengePassword with the CMS PasswordRecipientInfo mechanism.
+        return recipient != null && recipient.getPublicKey().getAlgorithm().equals("RSA");
     }
 }

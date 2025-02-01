@@ -32,6 +32,7 @@ abstract public class AbstractTransportTest {
     protected Proxy proxy;
     protected Transport transport;
     private Server server;
+    private String challengePassword;
 
     @Before
     public void setUp() throws Exception {
@@ -41,6 +42,7 @@ abstract public class AbstractTransportTest {
                 + server.getConnectors()[0].getLocalPort() + "/");
         proxy = Proxy.NO_PROXY;
         transport = getTransport(url);
+        challengePassword = "secret";
     }
 
     abstract protected Transport getTransport(URL url);
@@ -55,7 +57,7 @@ abstract public class AbstractTransportTest {
         KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 
         PkcsPkiEnvelopeEncoder envEnc = new PkcsPkiEnvelopeEncoder(
-                getCertificate(keyPair), "DES");
+                getCertificate(keyPair), challengePassword, "DES");
         PkiMessageEncoder enc = new PkiMessageEncoder(keyPair.getPrivate(),
                 getCertificate(keyPair), envEnc);
 

@@ -18,11 +18,8 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.RecipientInformation;
-import org.bouncycastle.cms.RecipientInformationStore;
-import org.bouncycastle.cms.RecipientOperator;
+import org.bouncycastle.cms.*;
+import org.bouncycastle.cms.bc.BcPasswordEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipientId;
 import org.bouncycastle.operator.InputDecryptor;
@@ -38,6 +35,7 @@ public final class PkcsPkiEnvelopeDecoder {
     private static final Logger LOGGER = getLogger(PkcsPkiEnvelopeDecoder.class);
     private final X509Certificate recipient;
     private final PrivateKey privKey;
+    private final String challengePassword;
 
     /**
      * Creates a {@code PkcsPkiEnveloperDecoder} for the provided certificate
@@ -52,9 +50,10 @@ public final class PkcsPkiEnvelopeDecoder {
      *            the key to unwrap the symmetric encrypting key.
      */
     public PkcsPkiEnvelopeDecoder(final X509Certificate recipient,
-            final PrivateKey privKey) {
+            final PrivateKey privKey, final String challengePassword) {
         this.recipient = recipient;
         this.privKey = privKey;
+        this.challengePassword = challengePassword;
     }
 
     /**
@@ -81,15 +80,27 @@ public final class PkcsPkiEnvelopeDecoder {
                 .get(new JceKeyTransRecipientId(recipient));
 
         if (info == null) {
-            throw new MessageDecodingException(
+            info = recipientInfos.get(new PasswordRecipientId());
+
+            if (info == null) {
+                throw new MessageDecodingException(
                     "Missing expected key transfer recipient " + recipient.getSubjectX500Principal());
+            }
         }
 
         LOGGER.debug("pkcsPkiEnvelope encryption algorithm: {}", info
                 .getKeyEncryptionAlgorithm().getAlgorithm());
 
         try {
-            byte[] messageData = info.getContent(getKeyTransRecipient());
+            byte[] messageData;
+            if (info.getRID().getType() == RecipientId.keyTrans) {
+                messageData = info.getContent(getKeyTransRecipient());
+            } else if (info.getRID().getType() == RecipientId.password) {
+                messageData = info.getContent(getPasswordRecipient());
+            } else {
+                throw new MessageDecodingException(
+                    "Unsupported recipient type: " + info.getRID().getType());
+            }
             LOGGER.debug("Finished decoding pkcsPkiEnvelope");
             return messageData;
         } catch (CMSException e) {
@@ -101,6 +112,10 @@ public final class PkcsPkiEnvelopeDecoder {
         return new InternalKeyTransEnvelopedRecipient(privKey);
     }
 
+    private Recipient getPasswordRecipient() {
+        return new BcPasswordEnvelopedRecipient(challengePassword.toCharArray());
+    }
+
     private void validate(final CMSEnvelopedData pkcsPkiEnvelope) {
         EnvelopedData ed = EnvelopedData.getInstance(pkcsPkiEnvelope
                 .toASN1Structure().getContent());
@@ -108,7 +123,7 @@ public final class PkcsPkiEnvelopeDecoder {
         LOGGER.debug("pkcsPkiEnvelope encryptedContentInfo contentType: {}", ed
                 .getEncryptedContentInfo().getContentType());
     }
-    
+
     private static class InternalKeyTransEnvelopedRecipient extends JceKeyTransEnvelopedRecipient {
         private static final String RSA = "RSA/ECB/PKCS1Padding";
         private static final String DES = "DES";
