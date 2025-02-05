@@ -1,7 +1,6 @@
 package org.jscep.client.verification;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.security.cert.X509Certificate;
 import javax.security.auth.x500.X500Principal;

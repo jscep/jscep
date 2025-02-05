@@ -24,12 +24,6 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 
 	public AbstractCertStoreInspector(CertStore store) {
 		this.store = store;
-
-		try {
-			inspect();
-		} catch (CertStoreException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	private void inspect() throws CertStoreException {
@@ -67,7 +61,7 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	 * @throws CertStoreException
 	 *             if the CertStore cannot be inspected
 	 */
-	X509Certificate selectCertificate(final CertStore store,
+	private X509Certificate selectCertificate(final CertStore store,
 			final Collection<X509CertSelector> selectors) throws CertStoreException {
 		for (CertSelector selector : selectors) {
 			LOGGER.debug("Selecting certificate using {}", selector);
@@ -95,6 +89,13 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	 */
 	@Override
 	public final X509Certificate getSigner() {
+		if (signer == null) {
+			try {
+				inspect();
+			} catch (CertStoreException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		return signer;
 	}
 
@@ -103,6 +104,13 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	 */
 	@Override
 	public final X509Certificate getRecipient() {
+		if (recipient == null) {
+			try {
+				inspect();
+			} catch (CertStoreException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		return recipient;
 	}
 
@@ -111,6 +119,13 @@ public abstract class AbstractCertStoreInspector implements CertStoreInspector {
 	 */
 	@Override
 	public final X509Certificate getIssuer() {
+		if (issuer == null) {
+			try {
+				inspect();
+			} catch (CertStoreException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		return issuer;
 	}
 

@@ -1,0 +1,90 @@
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       releaseVersion:
+#         description: "Default version to use when preparing a release."
+#         required: true
+#         default: "X.Y.Z"
+#       developmentVersion:
+#         description: "Default version to use for new local working copy."
+#         required: true
+#         default: "X.Y.Z-SNAPSHOT"
+on:
+  release:
+    types: [created] # Trigger on release creation
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: oracle
+          java-version: 21
+          # server-id: ossrh
+          # server-username: MAVEN_USERNAME
+          # server-password: MAVEN_PASSWORD
+          
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Configure Git User
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
+      # - name: Maven Release
+      #   run: mvn release:prepare release:perform -B -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
+      #   env:
+      #     CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
+      #     CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+
+      - name: Set up GPG
+        run: |
+          export GPG_TTY=$(tty)
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          echo "${{ secrets.GPG_PUBLIC_KEY }}" | gpg --import
+          gpg --list-keys  # Verify the keys are imported
+
+      - uses: s4u/maven-settings-action@v3.1.0
+        with:
+          servers: |
+            [{
+                "id": "ossrh",
+                "username": "${{ secrets.SONATYPE_USERNAME }}",
+                "password": "${{ secrets.SONATYPE_PASSWORD }}"
+            }]
+
+      - name: Build and Deploy
+        run: mvn --batch-mode deploy -DskipTests -Dmaven.test.skip=true -Drevision=${{ github.event.release.tag_name }}
+        env:
+          MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_SECRET_KEYRING: ${{ secrets.GPG_SECRET_KEYRING }}
+          GPG_PUBLIC_KEYRING: ${{ secrets.GPG_PUBLIC_KEYRING }}
+
+      - name: Release to Maven Central (Manual trigger after staging)
+        if: github.event_name == 'release' && github.event.action == 'created'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = context.payload.release.tag_name.replace('v', ''); // Extract version
+            console.log(`Releasing version ${version}`);
+            // Add your logic to close and release the staging repository on Sonatype.
+            // This usually involves making a REST API call to Sonatype's Nexus.
+            // Example using curl (you'll need to install curl in the workflow if needed):
+            // run: |
+            //   curl -u "${{ secrets.SONATYPE_USERNAME }}:${{ secrets.SONATYPE_PASSWORD }}" -X POST "https://oss.sonatype.org/service/local/staging/promote" -H "Content-Type: application/json" -d '{"stagedRepositoryIds":["your-staging-repo-id"],"description":"Release ${version}"}'
+            // Replace your-staging-repo-id with the actual ID.  You might need to fetch this ID.
+            // Consult the Sonatype Nexus API documentation for the correct endpoint and payload.
+            console.log('Staging repository release triggered (manual action required)');
