@@ -65,7 +65,7 @@ jobs:
             }]
 
       - name: Build and Deploy
-        run: mvn --batch-mode deploy -DskipTests -Dmaven.test.skip=true -Drevision=${{ github.event.release.tag_name }}
+        run: mvn --batch-mode deploy -DskipTests -Dmaven.test.skip=true -Drevision=${{ github.event.release.tag_name }} -P ci-execution
         env:
           MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
