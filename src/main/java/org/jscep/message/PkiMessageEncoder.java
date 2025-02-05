@@ -59,7 +59,6 @@ import org.slf4j.LoggerFactory;
  * @see PkiMessageDecoder
  */
 public final class PkiMessageEncoder {
-    private static final String DATA = "1.2.840.113549.1.7.1";
     private static final Logger LOGGER = LoggerFactory
             .getLogger(PkiMessageEncoder.class);
     private final PrivateKey signerKey;

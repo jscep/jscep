@@ -103,35 +103,6 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	<profiles>
-		<profile>
-			<id>release-sign-artifacts</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.2.5</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<build>
 		<extensions>
 			<extension>
@@ -156,47 +127,6 @@
 					<compilerArgs>
 						<arg>-Xlint</arg>
 					</compilerArgs>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.googlecode.maven-gcu-plugin</groupId>
-				<artifactId>maven-gcu-plugin</artifactId>
-				<version>1.1</version>
-				<configuration>
-					<failsOnError>true</failsOnError>
-					<projectName>jscep</projectName>
-					<uploads>
-						<upload>
-							<file>
-								${project.build.directory}/${project.artifactId}-${project.version}-sources.${project.packaging}
-							</file>
-							<summary>Source JAR for v${project.version}</summary>
-							<labels>
-								<label>Featured</label>
-								<label>Type-Sources</label>
-							</labels>
-						</upload>
-						<upload>
-							<file>
-								${project.build.directory}/${project.artifactId}-${project.version}-javadoc.${project.packaging}
-							</file>
-							<summary>Javadoc JAR for ${project.version}</summary>
-							<labels>
-								<label>Featured</label>
-								<label>Type-Docs</label>
-							</labels>
-						</upload>
-						<upload>
-							<file>
-								${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}
-							</file>
-							<summary>Binary JAR for v${project.version}</summary>
-							<labels>
-								<label>Featured</label>
-								<label>Type-Library</label>
-							</labels>
-						</upload>
-					</uploads>
 				</configuration>
 			</plugin>
             <plugin>
@@ -233,18 +163,7 @@
                     </execution>
                 </executions>
             </plugin>
- <plugin>
-      <groupId>org.sonatype.plugins</groupId>
-      <artifactId>nexus-staging-maven-plugin</artifactId>
-      <version>1.7.0</version>
-      <extensions>true</extensions>
-      <configuration>
-        <serverId>ossrh</serverId>
-        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-        <autoReleaseAfterClose>true</autoReleaseAfterClose>
-      </configuration>
-    </plugin>
-<!-- 			<plugin>
+			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
 				<version>1.7.0</version>
@@ -254,7 +173,55 @@
 					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 					<autoReleaseAfterClose>true</autoReleaseAfterClose>
 				</configuration>
-			  </plugin> -->
+			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.10.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+				<version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.2.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<gpgArguments>
+						<arg>--pinentry-mode</arg>
+						<arg>loopback</arg>
+					</gpgArguments>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
