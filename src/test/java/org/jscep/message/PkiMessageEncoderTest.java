@@ -145,6 +145,7 @@ public class PkiMessageEncoderTest {
         KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
         X509Certificate ca = X509Certificates.createEphemeral(
                 new X500Principal("CN=CA"), caPair);
+        String challengePassword = "secret";
 
         KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
                 .generateKeyPair();
@@ -153,12 +154,12 @@ public class PkiMessageEncoderTest {
 
         // Everything below this line only available to client
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca,
-                "DES");
+            challengePassword, "DES");
         PkiMessageEncoder encoder = new PkiMessageEncoder(
                 clientPair.getPrivate(), client, envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
-                caPair.getPrivate());
+                caPair.getPrivate(), challengePassword);
 
         PkiMessageDecoder decoder = new PkiMessageDecoder(client, envDecoder);
 
@@ -238,6 +239,7 @@ public class PkiMessageEncoderTest {
     	KeyPair caPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
         X509Certificate ca = X509Certificates.createEphemeral(
                 new X500Principal("CN=CA"), caPair);
+        String challengePassword = "secret";
 
         KeyPair clientPair = KeyPairGenerator.getInstance("RSA")
                 .generateKeyPair();
@@ -246,12 +248,12 @@ public class PkiMessageEncoderTest {
 
         // Everything below this line only available to client
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(ca,
-                cipherAlgorithm);
+            challengePassword, cipherAlgorithm);
         PkiMessageEncoder encoder = new PkiMessageEncoder(
                 clientPair.getPrivate(), client, envEncoder);
 
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(ca,
-                caPair.getPrivate());
+                caPair.getPrivate(), challengePassword);
         PkiMessageDecoder decoder = new PkiMessageDecoder(client, envDecoder);
 
         PkiMessage<?> actual = decoder.decode(encoder.encode(message));

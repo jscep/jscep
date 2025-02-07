@@ -85,7 +85,7 @@ The callback handler is used to verify the CA certificate being sent by the SCEP
   
 ### Default Callback Mechanism
 
-The default callback mechanism provides a `DefaultCallbackHandler` which delegates verification to a `CertificateVerifier` implementation.  jscep supports several strategies for verifying a certificate, including pre-provisioned certificates or digests, and an interactive console verifier. The following example shows the steps necessary to configure the console verifier:
+The default callback mechanism provides a `DefaultCallbackHandler` which delegates verification to a `CertificateVerifier` implementation and uses `PasswordCallback` for challengePassword fetching.  jscep supports several strategies for verifying a certificate, including pre-provisioned certificates or digests, and an interactive console verifier. The following example shows the steps necessary to configure the console verifier:
   
 ```java
   CertificateVerifier verifier = new ConsoleCertificateVerifier();
@@ -99,10 +99,21 @@ By default, jscep will request verification before each operation.  If you are p
   CertificateVerifier verifier = new CachingCertificateVerifier(consoleVerifier);
   CallbackHandler handler = new DefaultCallbackHandler(verifier);
 ```
+In SCEP, according to RFC8894 Section 3.1, if the key is encryption capable (for example, RSA), then the messageData is encrypted using the recipient's public key with the CMS KeyTransRecipientInfo mechanism. If the key is not encryption capable (for example, DSA or ECDSA), then the messageData is encrypted using the challengePassword with the CMS PasswordRecipientInfo mechanism.
+
+Therefore, if the CA certificate contains an EC or DSA key, it is necessary to provide an extra challengePassword. This can be done by defining a hash table in which the key is the CA profile name and the value is the challengePassword value. This approach allows you to define many separate challenge passwords for different CA profiles.
+
+```java
+  CertificateVerifier verifier = new ConsoleCertificateVerifier();
+  Map<String, String> passwords = new HashMap<>();
+  passwords.put("CA1", "secret1");
+  passwords.put("CA2", "secret2");
+  CallbackHandler handler = new DefaultCallbackHandler(verifier, passwords);
+```
 
 ### Providing Your Own Callback Handler
 
-If you wish to use your own `CallbackHandler`, you must handle the `CertificateVerificationCallback`. 
+If you wish to use your own `CallbackHandler`, you must handle the `CertificateVerificationCallback` and `PasswordCallback` as well. 
 
 # Creating the Client
 

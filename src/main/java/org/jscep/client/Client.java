@@ -37,6 +37,7 @@ import java.util.Collection;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 
@@ -703,10 +704,11 @@ public final class Client {
         Capabilities caps = getCaCapabilities(profile);
         CertStoreInspector certs = inspectorFactory.getInstance(store);
         X509Certificate recipientCertificate = certs.getRecipient();
+        String challengePassword = getChallengePassword(profile);
         PkcsPkiEnvelopeEncoder envEncoder = new PkcsPkiEnvelopeEncoder(
-                recipientCertificate, caps.getStrongestCipher());
+                recipientCertificate, challengePassword, caps.getStrongestCipher());
 
-        String sigAlg = caps.getStrongestSignatureAlgorithm();
+        String sigAlg = caps.getStrongestSignatureAlgorithm(priKey.getAlgorithm());
         return new PkiMessageEncoder(priKey, identity, envEncoder, sigAlg);
     }
 
@@ -715,8 +717,9 @@ public final class Client {
         final CertStore store = getCaCertificate(profile);
         CertStoreInspector certs = inspectorFactory.getInstance(store);
         X509Certificate signer = certs.getSigner();
+        String challengePassword = getChallengePassword(profile);
         PkcsPkiEnvelopeDecoder envDecoder = new PkcsPkiEnvelopeDecoder(
-                identity, key);
+                identity, key, challengePassword);
 
         return new PkiMessageDecoder(signer, envDecoder);
     }
@@ -733,6 +736,27 @@ public final class Client {
             return transportFactory.forMethod(Method.POST, url);
         } else {
             return transportFactory.forMethod(Method.GET, url);
+        }
+    }
+
+    /**
+     * Get challenge password using CallbackHandler and PasswordCallback
+     * @param profile the SCEP server profile
+     * @return challenge password or null
+     */
+    private String getChallengePassword(String profile) throws ClientException {
+        try {
+            LOGGER.debug("Requesting challenge password.");
+            PasswordCallback callback = new PasswordCallback("Enter challenge password"
+                + (profile != null ? " for " + profile : ""), false);
+            Callback[] callbacks = new Callback[1];
+            callbacks[0] = callback;
+            handler.handle(callbacks);
+            char[] password = callback.getPassword();
+            return password != null ? new String(password) : null;
+        } catch (Exception e) {
+            LOGGER.debug("Requesting challenge password failed.");
+            throw new ClientException(e);
         }
     }
 
