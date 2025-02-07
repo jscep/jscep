@@ -1,30 +1,5 @@
 package org.jscep.server;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.CertStore;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -45,18 +20,17 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.server.ServerConnector;
 import org.jscep.asn1.IssuerAndSubject;
 import org.jscep.message.PkcsPkiEnvelopeDecoder;
 import org.jscep.message.PkcsPkiEnvelopeEncoder;
 import org.jscep.message.PkiMessageDecoder;
 import org.jscep.message.PkiMessageEncoder;
-import org.jscep.transaction.EnrollmentTransaction;
-import org.jscep.transaction.FailInfo;
-import org.jscep.transaction.MessageType;
-import org.jscep.transaction.NonEnrollmentTransaction;
-import org.jscep.transaction.Transaction;
+import org.jscep.transaction.*;
 import org.jscep.transaction.Transaction.State;
 import org.jscep.transport.Transport;
 import org.jscep.transport.TransportException;
@@ -75,8 +49,26 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.*;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.*;
+
 public class ScepServletTest {
-    private static String PATH = "/scep/pkiclient.exe";
+    private static final String PATH = "/scep/pkiclient.exe";
     private BigInteger goodSerial;
     private BigInteger badSerial;
     private X500Name name;
@@ -126,14 +118,18 @@ public class ScepServletTest {
 
     @Before
     public void startUp() throws Exception {
-        final ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(ScepServletImpl.class, PATH);
-
         server = new Server(0);
-        server.setHandler(handler);
+        NetworkConnector connector = new ServerConnector(server);
+        server.addConnector(connector);
+
+        ServletContextHandler context = new ServletContextHandler();
+        context.setContextPath("/");
+        server.setHandler(context);
+        context.addServlet(ScepServletImpl.class, PATH);
+
         server.start();
 
-        port = server.getConnectors()[0].getLocalPort();
+        port = connector.getLocalPort();
     }
 
     @After
@@ -166,8 +162,6 @@ public class ScepServletTest {
         Transport transport = getTransport(getURL());
         Capabilities caps = transport.sendRequest(req,
                 new GetCaCapsResponseHandler());
-
-        System.out.println(caps);
     }
 
     @Test
@@ -375,9 +369,14 @@ public class ScepServletTest {
         expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
         expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
 
-        String errorMessage = "Missing \"operation\" parameter.";
+        // Providing a custom message is deprecated:
+        // https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletResponse.html#setStatus-int-java.lang.String-
+        // jetty dropped support for a servlet-defined reason string in version 9.4.21.
+        //
+        // Expect the detailed message in the response, only.
 
-        String response = verifyResponse(getURL(), 400, errorMessage, expectedResponseHeaders);
+        String response = verifyResponse(getURL(), 400, "Bad Request", expectedResponseHeaders);
+        String errorMessage = "Missing &quot;operation&quot; parameter.";
         assertThat(response, containsString(errorMessage));
         assertThat(response, containsString("Jetty"));
     }
@@ -391,9 +390,13 @@ public class ScepServletTest {
         expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
         expectedResponseHeaders.put("Content-Type", "text/html;charset=ISO-8859-1");
 
-        String errorMessage = "Invalid \"operation\" parameter.";
+        // Providing a custom message is deprecated:
+        // https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletResponse.html#setStatus-int-java.lang.String-
+        // jetty dropped support for a servlet-defined reason string in version 9.4.21.
+        // Expect the detailed message in the response, only.
 
-        String response = verifyResponse(url, 400, errorMessage, expectedResponseHeaders);
+        String response = verifyResponse(url, 400, "Bad Request", expectedResponseHeaders);
+        String errorMessage = "Invalid &quot;operation&quot; parameter.";
         assertThat(response, containsString(errorMessage));
         assertThat(response, containsString("Jetty"));
     }
@@ -485,8 +488,8 @@ public class ScepServletTest {
                 Header header = response.getFirstHeader(expectedHeader.getKey());
                 // Make sure the header we're looking for is present.
                 assertNotNull(header);
-                // Make sure the value matches
-                assertEquals(expectedHeader.getValue(), header.getValue());
+                // Make sure the value matches, ignoring case
+                assertEquals(expectedHeader.getValue().toLowerCase(), header.getValue().toLowerCase());
             }
 
             HttpEntity entity = response.getEntity();
