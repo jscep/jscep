@@ -1,5 +1,6 @@
 package org.jscep.client;
 
+import java.net.URI;
 import java.net.URL;
 
 import org.eclipse.jetty.server.Server;
@@ -10,12 +11,12 @@ public abstract class ScepServerSupport {
     public URL getUrl() throws Exception {
         final String path = "/scep/pkiclient.exe";
         final ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(ScepServletImpl.class, path);
+        handler.addServletWithMapping(ScepServletImpl.class.getName(), path);
         final Server server = new Server(0);
         server.setHandler(handler);
         server.start();
 
-        final int port = server.getConnectors()[0].getLocalPort();
-        return new URL("http", "localhost", port, path);
+        URI uri = server.getURI();
+        return new URL(uri.getScheme(), uri.getHost(), uri.getPort(), path);
     }
 }

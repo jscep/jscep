@@ -37,8 +37,8 @@ abstract public class AbstractTransportTest {
     public void setUp() throws Exception {
         server = new Server(0);
         server.start();
-        url = new URL("http://localhost:"
-                + server.getConnectors()[0].getLocalPort() + "/");
+
+        url = server.getURI().toURL();
         proxy = Proxy.NO_PROXY;
         transport = getTransport(url);
     }
