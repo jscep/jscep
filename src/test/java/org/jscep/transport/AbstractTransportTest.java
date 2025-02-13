@@ -23,32 +23,37 @@ import org.jscep.transaction.TransactionId;
 import org.jscep.transport.request.PkiOperationRequest;
 import org.jscep.transport.response.PkiOperationResponseHandler;
 import org.jscep.util.X509Certificates;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 abstract public class AbstractTransportTest {
-    protected URL url;
-    protected Proxy proxy;
+    protected static URL URL;
+    protected static Proxy PROXY;
     protected Transport transport;
-    private Server server;
+    private static Server SERVER;
+
+    @BeforeClass
+    public static void serverStart() throws Exception {
+        SERVER = new Server(0);
+        SERVER.start();
+
+        URL = SERVER.getURI().toURL();
+        PROXY = Proxy.NO_PROXY;
+    }
 
     @Before
     public void setUp() throws Exception {
-        server = new Server(0);
-        server.start();
+        transport = getTransport(URL);
+    }
 
-        url = server.getURI().toURL();
-        proxy = Proxy.NO_PROXY;
-        transport = getTransport(url);
+    @AfterClass
+    public static void serverStop() throws Exception {
+        SERVER.stop();
     }
 
     abstract protected Transport getTransport(URL url);
-
-    @After
-    public void tearDown() throws Exception {
-        server.stop();
-    }
 
     @Test
     public void test404() throws Exception {
@@ -71,7 +76,7 @@ abstract public class AbstractTransportTest {
         try {
             transport.sendRequest(req, new PkiOperationResponseHandler());
         } catch (TransportException e) {
-            Assert.assertEquals(e.getMessage(), "404 Not Found");
+            Assert.assertEquals("404 Not Found", e.getMessage());
         }
     }
 

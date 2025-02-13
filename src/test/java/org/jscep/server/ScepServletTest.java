@@ -9,6 +9,8 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -29,6 +31,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -71,8 +74,9 @@ import org.jscep.transport.response.GetCaCapsResponseHandler;
 import org.jscep.transport.response.GetCaCertResponseHandler;
 import org.jscep.transport.response.GetNextCaCertResponseHandler;
 import org.jscep.util.X500Utils;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ScepServletTest {
@@ -84,11 +88,28 @@ public class ScepServletTest {
     private PrivateKey priKey;
     private PublicKey pubKey;
     private X509Certificate sender;
-    private Server server;
-    private int port;
+    private static Server SERVER;
+    private static int PORT;
     private String goodIdentifier;
     private String badIdentifier;
     private TransportFactory transportFactory;
+
+    @BeforeClass
+    public static void startUp() throws Exception {
+        final ServletHandler handler = new ServletHandler();
+        handler.addServletWithMapping(ScepServletImpl.class.getName(), PATH);
+
+        SERVER = new Server(0);
+        SERVER.setHandler(handler);
+        SERVER.start();
+
+        PORT = SERVER.getURI().getPort();
+    }
+
+    @AfterClass
+    public static void shutDown() throws Exception {
+        SERVER.stop();
+    }
 
     @Before
     public void configureFixtures() throws Exception {
@@ -124,25 +145,8 @@ public class ScepServletTest {
         return new JcaX509CertificateConverter().getCertificate(holder);
     }
 
-    @Before
-    public void startUp() throws Exception {
-        final ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(ScepServletImpl.class.getName(), PATH);
-
-        server = new Server(0);
-        server.setHandler(handler);
-        server.start();
-
-        port = server.getURI().getPort();
-    }
-
-    @After
-    public void shutDown() throws Exception {
-        server.stop();
-    }
-
     private URL getURL() throws MalformedURLException {
-        return new URL("http", "localhost", port, PATH);
+        return new URL("http", "localhost", PORT, PATH);
     }
 
     private X509Certificate getRecipient() throws Exception {
@@ -383,7 +387,7 @@ public class ScepServletTest {
     @Test
     public void testBogusOperation() throws Exception {
         String bogusOperation = "bogus";
-        URL url = new URL("http", "localhost", port, PATH + "?operation=" + bogusOperation);
+        URL url = new URL("http", "localhost", PORT, PATH + "?operation=" + bogusOperation);
 
         Map<String, String> expectedResponseHeaders = new HashMap<String, String>();
         expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");
