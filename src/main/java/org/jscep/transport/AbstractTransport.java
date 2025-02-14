@@ -1,6 +1,8 @@
 package org.jscep.transport;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.jscep.transport.request.Operation;
@@ -33,8 +35,8 @@ public abstract class AbstractTransport implements Transport {
      */
     public final URL getUrl(final Operation op) throws TransportException {
         try {
-            return new URL(url.toExternalForm() + "?operation=" + op.getName());
-        } catch (MalformedURLException e) {
+            return new URI(url.getProtocol(), null, url.getHost(), url.getPort(), url.getPath(), "operation=" + op.getName(), null).toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             throw new TransportException(e);
         }
     }

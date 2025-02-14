@@ -17,6 +17,6 @@ public abstract class ScepServerSupport {
         server.start();
 
         URI uri = server.getURI();
-        return new URL(uri.getScheme(), uri.getHost(), uri.getPort(), path);
+        return new URI(uri.getScheme(), null, uri.getHost(), uri.getPort(), path, null, null).toURL();
     }
 }

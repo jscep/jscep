@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -80,8 +82,8 @@ public class ClientTest extends AbstractClientTest {
     }
 
     @Test
-    public void cgiProgIsIgnoredForIssue24() throws MalformedURLException {
-        final URL url = new URL("http://someurl/certsrv/mscep/mscep.dll");
+    public void cgiProgIsIgnoredForIssue24() throws MalformedURLException, URISyntaxException {
+        final URL url = new URI("http://someurl/certsrv/mscep/mscep.dll").toURL();
 
         Client c = new Client(url, new DefaultCallbackHandler(
                 new OptimisticCertificateVerifier()));

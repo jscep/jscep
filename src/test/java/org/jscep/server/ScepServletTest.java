@@ -31,7 +31,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -145,8 +144,8 @@ public class ScepServletTest {
         return new JcaX509CertificateConverter().getCertificate(holder);
     }
 
-    private URL getURL() throws MalformedURLException {
-        return new URL("http", "localhost", PORT, PATH);
+    private URL getURL() throws MalformedURLException, URISyntaxException {
+        return new URI("http", null, "localhost", PORT, PATH, null, null).toURL();
     }
 
     private X509Certificate getRecipient() throws Exception {
@@ -387,7 +386,7 @@ public class ScepServletTest {
     @Test
     public void testBogusOperation() throws Exception {
         String bogusOperation = "bogus";
-        URL url = new URL("http", "localhost", PORT, PATH + "?operation=" + bogusOperation);
+        URL url = new URI("http", null, "localhost", PORT, PATH, "?operation=" + bogusOperation, null).toURL();
 
         Map<String, String> expectedResponseHeaders = new HashMap<String, String>();
         expectedResponseHeaders.put("Cache-Control", "must-revalidate,no-cache,no-store");

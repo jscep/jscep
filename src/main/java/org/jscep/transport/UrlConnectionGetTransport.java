@@ -1,11 +1,11 @@
 package org.jscep.transport;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -100,11 +100,9 @@ final class UrlConnectionGetTransport extends AbstractTransport {
     private URL getUrl(final Operation op, final String message)
             throws TransportException {
         try {
-            return new URL(getUrl(op).toExternalForm() + "&message="
-                    + URLEncoder.encode(message, "UTF-8"));
-        } catch (MalformedURLException e) {
-            throw new TransportException(e);
-        } catch (UnsupportedEncodingException e) {
+            URL opUrl = getUrl(op);
+            return new URI(opUrl.getProtocol(), null, opUrl.getHost(), opUrl.getPort(), opUrl.getPath(), opUrl.getQuery() + "&message=" + message, null).toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             throw new TransportException(e);
         }
     }
